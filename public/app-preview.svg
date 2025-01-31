@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="375" height="812" viewBox="0 0 375 812" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Phone Frame -->
+  <rect width="375" height="812" rx="40" fill="#1A1A1A"/>
+  <rect x="6" y="6" width="363" height="800" rx="36" fill="#FFFFFF"/>
+  
+  <!-- Status Bar -->
+  <rect x="6" y="6" width="363" height="44" rx="36" fill="#F8F9FA"/>
+  <circle cx="40" cy="28" r="6" fill="#1A1A1A"/>
+  <rect x="280" y="22" width="54" height="12" rx="6" fill="#1A1A1A"/>
+  
+  <!-- Navigation Bar -->
+  <rect x="6" y="50" width="363" height="60" fill="#FFFFFF"/>
+  <circle cx="36" cy="80" r="20" fill="#6366F1"/>
+  <text x="70" y="88" font-family="Arial" font-size="18" font-weight="bold" fill="#1A1A1A">AdMinting</text>
+  
+  <!-- Content -->
+  <rect x="20" y="130" width="335" height="160" rx="12" fill="#F3F4F6"/>
+  <rect x="36" y="146" width="200" height="24" rx="4" fill="#4F46E5"/>
+  <rect x="36" y="182" width="303" height="12" rx="2" fill="#9CA3AF"/>
+  <rect x="36" y="202" width="280" height="12" rx="2" fill="#9CA3AF"/>
+  <rect x="36" y="222" width="260" height="12" rx="2" fill="#9CA3AF"/>
+  <rect x="36" y="252" width="120" height="24" rx="12" fill="#4F46E5"/>
+  
+  <!-- Stats Section -->
+  <rect x="20" y="310" width="160" height="120" rx="12" fill="#EEF2FF"/>
+  <rect x="195" y="310" width="160" height="120" rx="12" fill="#EEF2FF"/>
+  <text x="40" y="340" font-family="Arial" font-size="14" font-weight="bold" fill="#4F46E5">Campaign Stats</text>
+  <text x="215" y="340" font-family="Arial" font-size="14" font-weight="bold" fill="#4F46E5">Engagement</text>
+  
+  <!-- Chart -->
+  <path d="M40 390 Q80 360 120 380 T160 370 T200 350 T240 360 T280 340 T320 350" 
+        stroke="#4F46E5" stroke-width="2" fill="none"/>
+  
+  <!-- Bottom Navigation -->
+  <rect x="6" y="746" width="363" height="60" rx="0 0 36 36" fill="#FFFFFF"/>
+  <rect x="36" y="766" width="303" height="1" fill="#E5E7EB"/>
+  <g transform="translate(46, 756)">
+    <rect width="48" height="40" rx="8" fill="#EEF2FF"/>
+    <circle cx="24" cy="20" r="12" fill="#4F46E5"/>
+  </g>
+  <g transform="translate(126, 756)">
+    <rect width="48" height="40" rx="8" fill="#FFFFFF"/>
+    <path d="M138 766 h24 v24 h-24 v-24" stroke="#6B7280" stroke-width="2" fill="none"/>
+  </g>
+  <g transform="translate(206, 756)">
+    <rect width="48" height="40" rx="8" fill="#FFFFFF"/>
+    <circle cx="230" cy="776" r="12" stroke="#6B7280" stroke-width="2" fill="none"/>
+  </g>
+  <g transform="translate(286, 756)">
+    <rect width="48" height="40" rx="8" fill="#FFFFFF"/>
+    <rect x="298" y="766" width="24" height="24" rx="12" stroke="#6B7280" stroke-width="2" fill="none"/>
+  </g>
+</svg>
