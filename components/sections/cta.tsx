@@ -19,7 +19,7 @@ export function CTASection() {
               Ready to Transform Your Advertising?
             </h2>
             <p className="mt-4 mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-              Join thousands of businesses already growing with Adminting's innovative advertising platform.
+              Join thousands of businesses already growing with {"Adminting's"} innovative advertising platform.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="text-lg">
