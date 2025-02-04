@@ -1,10 +1,13 @@
-"use client"
+"use client";
 
-import Link from 'next/link'
-import Image from 'next/image'
-import { Button } from './button'
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "./button";
+import { useRouter } from "next/navigation";
 
 export function NavigationBar() {
+  const router = useRouter();
+
   return (
     <nav className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-sm z-50">
       <div className="container flex h-16 items-center px-4 max-w-7xl mx-auto">
@@ -25,16 +28,28 @@ export function NavigationBar() {
 
           {/* Main Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link href="/home" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            <Link
+              href="/home"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
               Home
             </Link>
-            <Link href="/faqs" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            <Link
+              href="/faqs"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
               FAQs
             </Link>
-            <Link href="/knowledge-base" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            <Link
+              href="/knowledge-base"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
               Knowledge base
             </Link>
-            <Link href="/calculator" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            <Link
+              href="/calculator"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
               Calculator
             </Link>
           </div>
@@ -42,14 +57,22 @@ export function NavigationBar() {
 
         {/* Right side - CTA */}
         <div className="ml-auto flex items-center space-x-4">
-          <Button variant="ghost" size="sm" className="hidden sm:flex">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="hidden sm:flex"
+            onClick={() => router.push("/auth/login")}
+          >
             Sign In
           </Button>
-          <Button size="sm" className="bg-gradient-to-r from-primary to-blue-600 text-white hover:opacity-90">
+          <Button
+            size="sm"
+            className="bg-gradient-to-r from-primary to-blue-600 text-white hover:opacity-90"
+          >
             Download App
           </Button>
         </div>
       </div>
     </nav>
-  )
+  );
 }

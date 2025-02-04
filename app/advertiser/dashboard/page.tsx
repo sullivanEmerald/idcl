@@ -1,0 +1,132 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client'
+
+import { useEffect, useState } from 'react'
+import { Card } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Metric } from '@/components/metrics/metric'
+import { CampaignList } from '@/components/campaigns/campaign-list'
+import { PerformanceChart } from '@/components/charts/performance-chart'
+import { Megaphone, Users, TrendingUp, DollarSign } from 'lucide-react'
+import advertiserService from '@/services/advertiser'
+
+export default function AdvertiserDashboard() {
+  const [metrics, setMetrics] = useState({
+    activeCampaigns: 0,
+    totalBudget: 0,
+    activePromoters: 0,
+    totalReach: 0
+  })
+  const [recentCampaigns, setRecentCampaigns] = useState<any>([])
+  const [topPerformers, setTopPerformers] = useState<any>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const data = await advertiserService.getDashboard()
+        setMetrics(data.metrics)
+        setRecentCampaigns(data.recentCampaigns)
+        setTopPerformers(data.topPerformers)
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-32" />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Skeleton className="h-96" />
+          <Skeleton className="h-96" />
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-8 p-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Welcome back!</h1>
+          <p className="mt-2 text-gray-600">{"Here's what's"} happening with your campaigns today.</p>
+        </div>
+        <button
+          onClick={() => window.location.href = '/advertiser/campaigns/new'}
+          className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          <Megaphone className="mr-2 h-4 w-4" />
+          New Campaign
+        </button>
+      </div>
+      
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Metric
+          title="Active Campaigns"
+          value={metrics.activeCampaigns}
+          description="Live campaigns"
+          trend="+2.5%"
+          icon={<Megaphone className="h-5 w-5" />}
+          className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200"
+        />
+        <Metric
+          title="Total Budget"
+          value={`$${metrics.totalBudget.toLocaleString()}`}
+          description="Available funds"
+          trend="+12.3%"
+          icon={<DollarSign className="h-5 w-5" />}
+          className="bg-gradient-to-br from-green-50 to-green-100 border-green-200"
+        />
+        <Metric
+          title="Active Promoters"
+          value={metrics.activePromoters}
+          description="Working with you"
+          trend="+5.1%"
+          icon={<Users className="h-5 w-5" />}
+          className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200"
+        />
+        <Metric
+          title="Total Reach"
+          value={metrics.totalReach.toLocaleString()}
+          description="Audience size"
+          trend="+18.7%"
+          icon={<TrendingUp className="h-5 w-5" />}
+          className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <Card className="overflow-hidden border-t-4 border-t-blue-500">
+          <div className="border-b p-6">
+            <h2 className="text-xl font-semibold">Recent Campaigns</h2>
+            <p className="mt-1 text-sm text-gray-600">Your latest campaign activities</p>
+          </div>
+          <div className="p-6">
+            <CampaignList campaigns={recentCampaigns} />
+          </div>
+        </Card>
+
+        <Card className="overflow-hidden border-t-4 border-t-purple-500">
+          <div className="border-b p-6">
+            <h2 className="text-xl font-semibold">Performance Overview</h2>
+            <p className="mt-1 text-sm text-gray-600">Campaign metrics over time</p>
+          </div>
+          <div className="p-6">
+            <PerformanceChart data={topPerformers} />
+          </div>
+        </Card>
+      </div>
+    </div>
+  )
+}
