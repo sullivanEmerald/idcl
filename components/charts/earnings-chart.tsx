@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   ChartData,
+  ChartOptions,
 } from 'chart.js'
 
 ChartJS.register(
@@ -40,7 +41,7 @@ export function EarningsChart({ data }: EarningsChartProps) {
     ],
   }
 
-  const options = {
+  const options: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
       legend: {
@@ -51,7 +52,12 @@ export function EarningsChart({ data }: EarningsChartProps) {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: (value: number) => `$${value}`,
+          callback: function(value) {
+            if (typeof value === 'number') {
+              return `$${value}`
+            }
+            return value
+          },
         },
       },
     },
