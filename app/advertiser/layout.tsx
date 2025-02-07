@@ -15,73 +15,61 @@ const sidebarItems = [
   },
   {
     title: 'Campaigns',
-    href: '/advertiser/campaigns',
-    icon: 'campaign',
-    items: [
-      {
-        title: 'All Campaigns',
-        href: '/advertiser/campaigns'
-      },
-      {
-        title: 'Create Campaign',
-        href: '/advertiser/campaigns/create'
-      }
-    ]
-  },
-  {
-    title: 'Wallet',
-    href: '/advertiser/wallet',
-    icon: 'wallet',
+    href: '/advertiser/dashboard/campaigns',
+    icon: 'store',
     items: [
       {
         title: 'Overview',
-        href: '/advertiser/wallet/overview'
+        href: '/advertiser/dashboard/campaigns/overview'
       },
       {
-        title: 'Deposit',
-        href: '/advertiser/wallet/deposit'
-      },
-      {
-        title: 'Withdraw',
-        href: '/advertiser/wallet/withdraw'
+        title: 'Create Campaign',
+        href: '/advertiser/dashboard/campaigns/create'
       }
     ]
   },
   {
     title: 'Analytics',
-    href: '/advertiser/analytics',
+    href: '/advertiser/dashboard/analytics',
     icon: 'analytics',
     items: [
       {
+        title: 'Performance',
+        href: '/advertiser/dashboard/analytics/performance'
+      },
+      {
+        title: 'Insights',
+        href: '/advertiser/dashboard/analytics/insights'
+      }
+    ]
+  },
+  {
+    title: 'Wallet',
+    href: '/advertiser/dashboard/wallet',
+    icon: 'wallet',
+    items: [
+      {
         title: 'Overview',
-        href: '/advertiser/analytics/overview'
+        href: '/advertiser/dashboard/wallet/overview'
       },
       {
-        title: 'Campaigns',
-        href: '/advertiser/analytics/campaigns'
-      },
-      {
-        title: 'Reports',
-        href: '/advertiser/analytics/reports'
+        title: 'Add Funds',
+        href: '/advertiser/dashboard/wallet/add-funds'
       }
     ]
   },
   {
     title: 'Settings',
-    href: '/advertiser/settings',
+    href: '/advertiser/dashboard/settings',
     icon: 'settings',
     items: [
       {
         title: 'Profile',
-        href: '/advertiser/settings/profile'
+        href: '/advertiser/dashboard/settings/profile'
       },
       {
-        title: 'Team',
-        href: '/advertiser/settings/team'
-      },
-      {
-        title: 'Billing',
-        href: '/advertiser/settings/billing'
+        title: 'Preferences',
+        href: '/advertiser/dashboard/settings/preferences'
       }
     ]
   }

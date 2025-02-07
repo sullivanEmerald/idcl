@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -8,17 +7,28 @@ import { Metric } from '@/components/metrics/metric'
 import { CampaignList } from '@/components/campaigns/campaign-list'
 import { PerformanceChart } from '@/components/charts/performance-chart'
 import { Megaphone, Users, TrendingUp, DollarSign } from 'lucide-react'
-import advertiserService from '@/services/advertiser'
+import advertiserService, { DashboardMetrics } from '@/services/advertiser'
 
 export default function AdvertiserDashboard() {
-  const [metrics, setMetrics] = useState({
+  const [metrics, setMetrics] = useState<DashboardMetrics>({
     activeCampaigns: 0,
     totalBudget: 0,
     activePromoters: 0,
     totalReach: 0
   })
-  const [recentCampaigns, setRecentCampaigns] = useState<any>([])
-  const [topPerformers, setTopPerformers] = useState<any>([])
+  const [recentCampaigns, setRecentCampaigns] = useState<{
+    id: string
+    title: string
+    status: string
+    budget: number
+    activePromoters: number
+    reach: number
+  }[]>([])
+  const [topPerformers, setTopPerformers] = useState<{
+    date: string
+    reach: number
+    engagements: number
+  }[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -26,8 +36,25 @@ export default function AdvertiserDashboard() {
       try {
         const data = await advertiserService.getDashboard()
         setMetrics(data.metrics)
-        setRecentCampaigns(data.recentCampaigns)
-        setTopPerformers(data.topPerformers)
+        
+        // Transform campaigns data to match CampaignList props
+        const transformedCampaigns = data.recentCampaigns.map(campaign => ({
+          id: campaign.id,
+          title: campaign.title,
+          status: campaign.status,
+          budget: campaign.budget,
+          activePromoters: campaign.approvedPromoters.length,
+          reach: campaign.metrics.totalReach
+        }))
+        setRecentCampaigns(transformedCampaigns)
+
+        // Transform performance data for chart
+        const transformedPerformance = data.topPerformers.map(performer => ({
+          date: performer.campaign.title, // Using campaign title instead of date since we don't have time series data yet
+          reach: performer.metrics.reach,
+          engagements: performer.metrics.engagements
+        }))
+        setTopPerformers(transformedPerformance)
       } catch (error) {
         console.error('Error fetching dashboard data:', error)
       } finally {

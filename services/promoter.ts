@@ -14,6 +14,20 @@ interface DashboardData {
   recentEarnings: any[];
 }
 
+interface AnalyticsData {
+  engagements: number[];
+  completedTasks: number[];
+  earnings: number[];
+  dates: string[];
+  topPerformingCampaigns: {
+    id: string;
+    name: string;
+    brand: string;
+    earnings: number;
+    engagement: number;
+  }[];
+}
+
 const promoterService = {
   getDashboard: async (): Promise<DashboardData> => {
     const response = await axiosInstance.get('/promoter/dashboard');
@@ -33,6 +47,11 @@ const promoterService = {
   getWalletOverview: async () => {
     const response = await axiosInstance.get('/promoter/wallet/overview');
     return response.data;
+  },
+
+  getAnalytics: async (timeRange: string): Promise<{ data: AnalyticsData }> => {
+    const response = await axiosInstance.get(`/promoter/analytics/overview?timeRange=${timeRange}`);
+    return response;
   }
 };
 
