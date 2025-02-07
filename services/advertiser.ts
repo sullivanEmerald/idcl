@@ -74,6 +74,7 @@ export interface WalletTransaction {
   id: string;
   amount: number;
   type: string;
+  status: 'completed' | 'pending' | 'failed';
   date: Date;
   promoter: UserBasicInfo;
   campaign: {
@@ -84,6 +85,7 @@ export interface WalletTransaction {
 
 export interface WalletOverview {
   balance: number;
+  pendingBalance: number;
   recentTransactions: WalletTransaction[];
 }
 

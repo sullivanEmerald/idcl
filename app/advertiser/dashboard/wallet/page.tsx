@@ -7,19 +7,26 @@ import { Button } from '@/components/ui/button'
 import { Plus, ArrowDown } from 'lucide-react'
 import advertiserService from '@/services/advertiser'
 
-interface Transaction {
-  id: string
-  type: 'deposit' | 'withdrawal' | 'spend'
-  amount: number
-  status: 'completed' | 'pending' | 'failed'
-  date: string
-  description: string
-}
+import type { WalletTransaction } from '@/services/advertiser'
 
 interface WalletData {
   balance: number
   pendingBalance: number
-  transactions: Transaction[]
+  transactions: {
+    id: string
+    type: string
+    amount: number
+    date: string
+    description: string
+    status: WalletTransaction['status']
+    promoter: {
+      firstName: string
+      lastName: string
+    }
+    campaign: {
+      title: string
+    }
+  }[]
 }
 
 export default function WalletPage() {
@@ -30,8 +37,30 @@ export default function WalletPage() {
     const fetchWalletData = async () => {
       try {
         // Replace with actual API call
-        const response = await advertiserService.getWalletOverview()
-        setWalletData(response.data)
+        const walletOverview = await advertiserService.getWalletOverview()
+        
+        // Transform wallet data to match our component's needs
+        const transformedData: WalletData = {
+          balance: walletOverview.balance,
+          pendingBalance: walletOverview.pendingBalance,
+          transactions: walletOverview.recentTransactions.map(tx => ({
+            id: tx.id,
+            type: tx.type,
+            amount: tx.amount,
+            date: new Date(tx.date).toLocaleDateString(),
+            description: `${tx.type} for campaign ${tx.campaign.title}`,
+            status: tx.status,
+            promoter: {
+              firstName: tx.promoter.firstName,
+              lastName: tx.promoter.lastName
+            },
+            campaign: {
+              title: tx.campaign.title
+            }
+          }))
+        }
+        
+        setWalletData(transformedData)
       } catch (error) {
         console.error('Error fetching wallet data:', error)
       } finally {

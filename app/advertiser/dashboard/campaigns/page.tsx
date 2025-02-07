@@ -12,7 +12,7 @@ import advertiserService from '@/services/advertiser'
 interface Campaign {
   id: string
   name: string
-  status: 'active' | 'paused' | 'completed'
+  status: string
   budget: number
   spent: number
   impressions: number
@@ -31,8 +31,22 @@ export default function CampaignsPage() {
     const fetchCampaigns = async () => {
       try {
         // Replace with actual API call
-        const response = await advertiserService.getCampaigns()
-        setCampaigns(response.data)
+        const { campaigns: apiCampaigns } = await advertiserService.getCampaigns()
+        
+        // Transform API campaign data to match our component's needs
+        const transformedCampaigns = apiCampaigns.map(campaign => ({
+          id: campaign.id,
+          name: campaign.title,
+          status: campaign.status,
+          budget: campaign.budget,
+          spent: campaign.metrics.totalEngagements * campaign.pricePerPost,
+          impressions: campaign.metrics.totalReach,
+          clicks: campaign.metrics.totalEngagements,
+          startDate: new Date(campaign.startDate).toLocaleDateString(),
+          endDate: new Date(campaign.endDate).toLocaleDateString()
+        }))
+        
+        setCampaigns(transformedCampaigns)
       } catch (error) {
         console.error('Error fetching campaigns:', error)
       } finally {
