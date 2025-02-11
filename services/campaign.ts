@@ -230,21 +230,16 @@ class CampaignService {
         ...(formData.startDate && { startDate: formData.startDate }),
         ...(formData.endDate && { endDate: formData.endDate }),
         ...(contentAssets.length > 0 && { contentAssets }),
-        ...(formData.contentGuidelines || formData.postingSchedule || formData.hashtags || formData.mentions || formData.brandAssetLinks) && {
+        // Only include requirements if any of the fields are present
+        ...(formData.contentGuidelines || formData.postingSchedule || formData.hashtags || formData.mentions || formData.brandAssetLinks ? {
           requirements: {
-            ...(formData.contentGuidelines && { contentGuidelines: formData.contentGuidelines }),
-            ...(formData.postingSchedule && {
-              postingSchedule: {
-                startTime: formData.postingSchedule.startTime,
-                endTime: formData.postingSchedule.endTime,
-                days: formData.postingSchedule.days,
-              },
-            }),
-            ...(formData.hashtags && { hashtags: formData.hashtags.split(",").map((tag) => tag.trim()) }),
-            ...(formData.mentions && { mentions: formData.mentions.split(",").map((mention) => mention.trim()) }),
+            contentGuidelines: formData.contentGuidelines || '',
+            postingSchedule: formData.postingSchedule || { startTime: '', endTime: '', days: [] },
+            hashtags: formData.hashtags ? formData.hashtags.split(',').map(tag => tag.trim()) : [],
+            mentions: formData.mentions ? formData.mentions.split(',').map(mention => mention.trim()) : [],
             ...(formData.brandAssetLinks && { brandAssetLinks: [formData.brandAssetLinks] }),
-          },
-        },
+          }
+        } : undefined),
       };
 
       const response = await axiosInstance.patch(

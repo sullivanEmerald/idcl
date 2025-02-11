@@ -17,11 +17,14 @@ export function MediaUpload() {
     if (!files?.length) return;
 
     const fileArray = Array.from(files);
-    const mediaFiles = fileArray.map((file) => ({
-      type: file.type.startsWith('video/') ? 'video' : 'image',
-      url: URL.createObjectURL(file),
-      file,
-    }));
+    const mediaFiles = fileArray.map((file) => {
+      const type = file.type.startsWith('video/') ? 'video' as const : 'image' as const;
+      return {
+        type,
+        url: URL.createObjectURL(file),
+        file,
+      };
+    });
 
     setValue('mediaFiles', mediaFiles);
   };
