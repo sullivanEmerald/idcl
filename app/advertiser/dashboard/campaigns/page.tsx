@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { Plus, Search } from 'lucide-react'
@@ -114,33 +115,53 @@ export default function CampaignsPage() {
 
       <div className="grid gap-6">
         {filteredCampaigns.map((campaign) => (
-          <Card key={campaign.id} className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold">{campaign.name}</h3>
-                <div className="mt-1 flex items-center gap-4 text-sm text-gray-600">
-                  <span>Budget: ${campaign.budget}</span>
-                  <span>Spent: ${campaign.spent}</span>
-                  <span>Impressions: {campaign.impressions}</span>
-                  <span>Clicks: {campaign.clicks}</span>
+          <Card key={campaign.id} className="hover:bg-accent/5 transition-colors">
+            <CardHeader className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div>
+                    <CardTitle className="text-base font-semibold">{campaign.name}</CardTitle>
+                    <CardDescription className="text-xs mt-0.5">
+                      {new Date(campaign.startDate).toLocaleDateString()} - {new Date(campaign.endDate).toLocaleDateString()}
+                    </CardDescription>
+                  </div>
                 </div>
-                <div className="mt-2 text-sm text-gray-500">
-                  {new Date(campaign.startDate).toLocaleDateString()} - {new Date(campaign.endDate).toLocaleDateString()}
+                <div className="flex items-center gap-3">
+                  <div className="text-sm text-right">
+                    <div className="font-medium">${campaign.budget}</div>
+                    <div className="text-xs text-muted-foreground">Budget</div>
+                  </div>
+                  <div className="text-sm text-right">
+                    <div className="font-medium">${campaign.spent}</div>
+                    <div className="text-xs text-muted-foreground">Spent</div>
+                  </div>
+                  <div className="text-sm text-right">
+                    <div className="font-medium">{campaign.impressions}</div>
+                    <div className="text-xs text-muted-foreground">Views</div>
+                  </div>
+                  <div className="text-sm text-right">
+                    <div className="font-medium">{campaign.clicks}</div>
+                    <div className="text-xs text-muted-foreground">Clicks</div>
+                  </div>
+                  <Badge
+                    variant={campaign.status === 'active' ? 'success' :
+                            campaign.status === 'paused' ? 'secondary' : 'outline'}
+                    className={campaign.status === 'active' ? 'bg-green-100 text-green-800 hover:bg-green-100' :
+                              campaign.status === 'paused' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' :
+                              'bg-gray-100 text-gray-800 hover:bg-gray-100'}
+                  >
+                    {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => window.location.href = `/advertiser/dashboard/campaigns/${campaign.id}`}
+                  >
+                    View
+                  </Button>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <span className={`rounded-full px-3 py-1 text-xs font-medium ${
-                  campaign.status === 'active' ? 'bg-green-100 text-green-700' :
-                  campaign.status === 'paused' ? 'bg-yellow-100 text-yellow-700' :
-                  'bg-gray-100 text-gray-700'
-                }`}>
-                  {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
-                </span>
-                <Button variant="outline" onClick={() => window.location.href = `/advertiser/campaigns/${campaign.id}`}>
-                  View Details
-                </Button>
-              </div>
-            </div>
+            </CardHeader>
           </Card>
         ))}
       </div>

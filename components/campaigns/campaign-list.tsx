@@ -28,7 +28,7 @@ export function CampaignList({ campaigns }: CampaignListProps) {
       {campaigns.map((campaign) => (
         <Link
           key={campaign.id}
-          href={`/campaigns/${campaign.id}`}
+          href={`/advertiser/dashboard/campaigns/${campaign.id}`}
           className="block rounded-lg border p-4 transition-colors hover:bg-gray-50"
         >
           <div className="flex items-center justify-between">

@@ -90,7 +90,7 @@ export default function AdvertiserDashboard() {
           <p className="mt-2 text-gray-600">{"Here's what's"} happening with your campaigns today.</p>
         </div>
         <button
-          onClick={() => window.location.href = '/advertiser/campaigns/new'}
+          onClick={() => window.location.href = '/advertiser/dashboard/campaigns/create'}
           className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           <Megaphone className="mr-2 h-4 w-4" />

@@ -4,22 +4,44 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { TrustIndicator } from '../ui/trust-indicator'
+import { useRouter } from 'next/navigation'
 
 export function HeroSection() {
+  const router = useRouter()
+
+  const handleGetStarted = () => {
+    const userRole = localStorage.getItem('userRole')
+    const token = localStorage.getItem('token')
+
+    if (token && userRole) {
+      // If user is already logged in, redirect to their dashboard
+      const dashboardPath = userRole === 'advertiser'
+        ? '/advertiser/dashboard'
+        : '/promoter/dashboard'
+      router.push(dashboardPath)
+    } else {
+      // If not logged in, go to login page
+      router.push('/auth/login')
+    }
+  }
+
+  const handleLearnMore = () => {
+    router.push('/about')
+  }
   return (
     <section className="relative min-h-[90vh] flex items-center pt-16 overflow-hidden bg-gradient-to-b from-background to-background/80">
       {/* Background decoration */}
       <div className="absolute inset-0 w-full h-full bg-grid-white/[0.02] -z-[1]" />
-      <div className="absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
+      <div className="absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] -z-[1]" />
       
-      <div className="container px-4 md:px-6 max-w-7xl mx-auto">
+      <div className="container relative z-10 px-4 md:px-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
           {/* Left side - Content */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="flex flex-col gap-6"
+            className="flex flex-col gap-6 relative z-20"
           >
             <div className="space-y-4">
               <motion.div
@@ -58,10 +80,18 @@ export function HeroSection() {
               transition={{ delay: 0.5, duration: 0.5 }}
               className="flex flex-wrap gap-4"
             >
-              <Button size="lg" className="bg-gradient-to-r from-primary to-blue-600 text-white hover:opacity-90">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-primary to-blue-600 text-white hover:opacity-90"
+                onClick={handleGetStarted}
+              >
                 Get Started
               </Button>
-              <Button size="lg" variant="outline">
+              <Button 
+                size="lg" 
+                variant="outline"
+                onClick={handleLearnMore}
+              >
                 Learn More
               </Button>
             </motion.div>
@@ -74,7 +104,7 @@ export function HeroSection() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="relative lg:ml-auto"
+            className="relative lg:ml-auto z-20"
           >
             <div className="relative w-full aspect-square">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-primary rounded-full blur-3xl opacity-20 animate-pulse" />
