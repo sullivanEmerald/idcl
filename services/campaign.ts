@@ -15,10 +15,18 @@ export interface ContentAsset {
   carouselIndex?: number;
 }
 
-export interface MediaFile {
+// Separate client and server types
+export interface MediaFileBase {
   type: "image" | "video";
   url: string;
-  file: File;
+}
+
+export interface MediaFileClient extends MediaFileBase {
+  file: any; // Use any to avoid File type during SSR
+}
+
+export interface MediaFileServer extends MediaFileBase {
+  path?: string;
 }
 
 export interface PostingSchedule {
@@ -42,7 +50,7 @@ export interface CampaignFormData {
   startDate: Date;
   endDate: Date;
   contentType: "photo" | "video" | "carousel";
-  mediaFiles: MediaFile[];
+  mediaFiles: MediaFileClient[];
   contentGuidelines: string;
   postingSchedule: PostingSchedule;
   hashtags: string;

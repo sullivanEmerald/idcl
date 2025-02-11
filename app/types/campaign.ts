@@ -1,8 +1,4 @@
-export interface MediaFile {
-  type: 'image' | 'video';
-  url: string;
-  file: File;
-}
+import { MediaFileClient, MediaFileServer } from '@/services/campaign';
 
 export interface CampaignFormData {
   // Campaign Details
@@ -24,11 +20,17 @@ export interface CampaignFormData {
 
   // Content & Assets
   contentType: 'photo' | 'video' | 'carousel';
-  mediaFiles: MediaFile[];
+  mediaFiles: MediaFileClient[];
   contentGuidelines: string;
   postingSchedule: string;
   hashtags: string;
   mentions?: string;
   brandAssetLinks?: string;
   promotionLink: string;
+}
+
+export interface CampaignData {
+  // Same as CampaignFormData but with server-side media files
+  mediaFiles: MediaFileServer[];
+  // ... other fields remain the same
 }

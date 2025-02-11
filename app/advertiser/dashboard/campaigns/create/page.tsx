@@ -4,7 +4,16 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+
+const MediaUpload = dynamic(
+  () =>
+    import("@/app/components/campaign/MediaUpload").then(
+      (mod) => mod.MediaUpload
+    ),
+  { ssr: false }
+);
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,10 +28,27 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
 import { FileUploader } from "@/components/ui/file-uploader";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, ImageIcon, VideoIcon, LayoutIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  CalendarIcon,
+  ImageIcon,
+  VideoIcon,
+  LayoutIcon,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { campaignService } from "@/services/campaign";
 
@@ -73,7 +99,7 @@ const NICHES = ["fashion", "tech", "fitness", "food", "travel", "gaming"];
 const mediaFileSchema = z.object({
   type: z.enum(["image", "video"] as const),
   url: z.string(),
-  file: z.instanceof(File),
+  file: z.any(), // Use `z.any()` instead of `z.instanceof(File)`
 });
 
 const postingScheduleSchema = z.object({
@@ -108,8 +134,12 @@ const campaignSchema = z.object({
 
   // Content & Assets
   contentType: z.enum(["photo", "video", "carousel"]),
-  mediaFiles: z.array(mediaFileSchema).min(1, "Please upload at least one media file"),
-  contentGuidelines: z.string().min(10, "Guidelines must be at least 10 characters"),
+  mediaFiles: z
+    .array(mediaFileSchema)
+    .min(1, "Please upload at least one media file"),
+  contentGuidelines: z
+    .string()
+    .min(10, "Guidelines must be at least 10 characters"),
   postingSchedule: postingScheduleSchema,
   hashtags: z.string().min(1, "Add at least one hashtag"),
   mentions: z.string().optional(),
@@ -121,7 +151,7 @@ type CampaignFormData = z.infer<typeof campaignSchema>;
 
 const STEPS = ["details", "targeting", "content"] as const;
 
-export default function CreateCampaign() {
+export default function Page() {
   const router = useRouter();
   const [currentStep, setCurrentStep] =
     useState<(typeof STEPS)[number]>("details");
@@ -189,29 +219,33 @@ export default function CreateCampaign() {
     return isValid;
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (typeof window === "undefined") return; // Skip in Node.js environment
+
     const files = event.target.files;
     if (!files?.length) return;
 
     const fileArray = Array.from(files);
     const mediaFiles = fileArray.map((file) => ({
-      type: file.type.startsWith('video/') ? 'video' as const : 'image' as const,
+      type: file.type.startsWith("video/") ? "video" as const : "image" as const,
       url: URL.createObjectURL(file),
-      file,
+      file: file as File, // Ensure file is treated as required
     }));
 
-    form.setValue('mediaFiles', mediaFiles);
+    form.setValue("mediaFiles", mediaFiles);
   };
 
-    const onSubmit = async (data: CampaignFormData) => {
+  const onSubmit = async (data: any) => {
     try {
-      toast.loading('Creating campaign...');
+      toast.loading("Creating campaign...");
       await campaignService.createCampaign(data);
-      toast.success('Campaign created successfully!');
-      router.push('/advertiser/dashboard/campaigns');
+      toast.success("Campaign created successfully!");
+      router.push("/advertiser/dashboard/campaigns");
     } catch (error: any) {
-      console.error('Error creating campaign:', error);
-      toast.error(error.response?.data?.message || 'Failed to create campaign');
+      console.error("Error creating campaign:", error);
+      toast.error(error.response?.data?.message || "Failed to create campaign");
     }
   };
 
@@ -725,7 +759,7 @@ export default function CreateCampaign() {
                               if (file.size > 104857600) {
                                 form.setError("mediaFiles", {
                                   type: "size",
-                                  message: "Video size must be less than 100MB"
+                                  message: "Video size must be less than 100MB",
                                 });
                                 return;
                               }
@@ -782,8 +816,8 @@ export default function CreateCampaign() {
                             (file) =>
                               ({
                                 type: file.type.startsWith("image/")
-                                  ? "image" as const
-                                  : "video" as const,
+                                  ? ("image" as const)
+                                  : ("video" as const),
                                 url: URL.createObjectURL(file),
                                 file,
                               }) as const
@@ -932,7 +966,9 @@ export default function CreateCampaign() {
                   <Label>Posting Schedule</Label>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label className="text-sm text-muted-foreground">Start Time</Label>
+                      <Label className="text-sm text-muted-foreground">
+                        Start Time
+                      </Label>
                       <Input
                         {...form.register("postingSchedule.startTime")}
                         type="time"
@@ -944,7 +980,9 @@ export default function CreateCampaign() {
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-sm text-muted-foreground">End Time</Label>
+                      <Label className="text-sm text-muted-foreground">
+                        End Time
+                      </Label>
                       <Input
                         {...form.register("postingSchedule.endTime")}
                         type="time"
@@ -957,7 +995,9 @@ export default function CreateCampaign() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm text-muted-foreground">Days of the Week</Label>
+                    <Label className="text-sm text-muted-foreground">
+                      Days of the Week
+                    </Label>
                     <div className="flex flex-wrap gap-2">
                       {[
                         "Monday",
@@ -966,22 +1006,30 @@ export default function CreateCampaign() {
                         "Thursday",
                         "Friday",
                         "Saturday",
-                        "Sunday"
+                        "Sunday",
                       ].map((day) => (
                         <Button
                           key={day}
                           type="button"
-                          variant={form.watch("postingSchedule.days")?.includes(day) ? "default" : "outline"}
+                          variant={
+                            form.watch("postingSchedule.days")?.includes(day)
+                              ? "default"
+                              : "outline"
+                          }
                           className="text-sm"
                           onClick={() => {
-                            const currentDays = form.watch("postingSchedule.days") || [];
+                            const currentDays =
+                              form.watch("postingSchedule.days") || [];
                             if (currentDays.includes(day)) {
                               form.setValue(
                                 "postingSchedule.days",
                                 currentDays.filter((d) => d !== day)
                               );
                             } else {
-                              form.setValue("postingSchedule.days", [...currentDays, day]);
+                              form.setValue("postingSchedule.days", [
+                                ...currentDays,
+                                day,
+                              ]);
                             }
                           }}
                         >

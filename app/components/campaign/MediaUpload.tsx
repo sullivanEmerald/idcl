@@ -1,7 +1,13 @@
+'use client';
+
 import { useFormContext } from 'react-hook-form';
 import { CampaignFormData } from '@/app/types/campaign';
+import { MediaFileClient } from '@/services/campaign';
+import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { any } from 'zod';
 
-export function MediaUpload() {
+const MediaUploadComponent = () => {
   const {
     register,
     formState: { errors },
@@ -12,21 +18,37 @@ export function MediaUpload() {
 
   const contentType = watch('contentType');
 
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (typeof window === 'undefined') return;
+    
     const files = event.target.files;
     if (!files?.length) return;
 
-    const fileArray = Array.from(files);
-    const mediaFiles = fileArray.map((file) => {
-      const type = file.type.startsWith('video/') ? 'video' as const : 'image' as const;
-      return {
-        type,
-        url: URL.createObjectURL(file),
-        file,
-      };
-    });
+    try {
+      const fileArray = Array.from(files);
+      const mediaFiles = fileArray.map((file) => {
+        if (!(file instanceof File)) {
+          throw new Error('Invalid file type');
+        }
+        
+        const type = file.type.startsWith('video/') ? 'video' as const : 'image' as const;
+        return {
+          type,
+          url: URL.createObjectURL(file),
+          file: any,
+        };
+      });
 
-    setValue('mediaFiles', mediaFiles);
+      setValue('mediaFiles', mediaFiles);
+    } catch (error) {
+      console.error('Error processing files:', error);
+    }
   };
 
   return (
@@ -115,6 +137,10 @@ export function MediaUpload() {
           </div>
         ))}
       </div>
-    </div>
+      </div>
   );
-}
+};
+
+export const MediaUpload = dynamic(() => Promise.resolve(MediaUploadComponent), {
+  ssr: false
+});
