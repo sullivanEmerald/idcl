@@ -16,14 +16,11 @@ import {
   Users,
   BarChart,
   QrCode,
-  Eye,
   Share2,
-  Target,
   Clock,
   Hash,
   AtSign,
   Link as LinkIcon,
-  Goal,
   Image as ImageIcon,
 } from "lucide-react";
 import Image from "next/image"; 
