@@ -50,17 +50,10 @@ export default function CampaignDetails() {
   const router = useRouter();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showQR, setShowQR] = useState(false);
-  const [metrics, setMetrics] = useState<LinkMetrics>({
-    clicks: 0,
-    uniqueClicks: 0,
-    conversions: 0,
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [applicationNote, setApplicationNote] = useState("");
   const [showApplicationForm, setShowApplicationForm] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
 
   useEffect(() => {
