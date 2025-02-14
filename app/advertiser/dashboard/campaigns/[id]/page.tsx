@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Progress } from '@/components/ui/progress'
 import { Calendar, ChartBar, Clock, DollarSign, Eye, Users } from 'lucide-react'
 import { campaignService } from '@/services/campaign'
-import { Carousel } from '@/components/ui/carousel'
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import Image from 'next/image'
 
 interface Campaign {
   _id: string
@@ -294,10 +295,34 @@ export default function CampaignPage() {
                       {/* Render carousel if we have carousel assets */}
                       {carouselAssets.length > 0 && (
                         <div className="aspect-[4/3] relative rounded-lg overflow-hidden">
-                          <Carousel
-                            images={carouselAssets.map(asset => asset.url)}
-                            contentType="image"
-                          />
+                          <Carousel>
+                            <CarouselContent>
+                              {carouselAssets.map((asset, index) => (
+                                <CarouselItem key={asset.url || index}>
+                                  <div className="relative aspect-[16/9] bg-gray-100">
+                                    <Image
+                                      src={asset.url}
+                                      alt={`Content asset ${index + 1}`}
+                                      sizes="100vw"
+                                      className="object-contain"
+                                      priority={index === 0}
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-black/20 pointer-events-none" />
+                                    <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-xs font-medium">
+                                      {asset.contentType}
+                                    </div>
+                                    {asset.size && (
+                                      <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-xs font-medium">
+                                        {Math.round(asset.size / 1024)} KB
+                                      </div>
+                                    )}
+                                  </div>
+                                </CarouselItem>
+                              ))}
+                            </CarouselContent>
+                            <CarouselPrevious className="-left-3 h-12 w-12 border-2 bg-white/90 hover:bg-white" />
+                            <CarouselNext className="-right-3 h-12 w-12 border-2 bg-white/90 hover:bg-white" />
+                          </Carousel>
                         </div>
                       )}
 

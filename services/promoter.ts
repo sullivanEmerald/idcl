@@ -89,7 +89,15 @@ const promoterService = {
 
   getCampaign: async (campaignId: string) => {
     const response = await axiosInstance.get(`/promoter/campaigns/${campaignId}`);
-    return response.data;
+    return {
+      ...response.data,
+      metrics: response.data.linkMetrics || {
+        clicks: 0,
+        uniqueClicks: 0,
+        conversions: 0,
+        lastClick: null
+      }
+    };
   }
 };
 
