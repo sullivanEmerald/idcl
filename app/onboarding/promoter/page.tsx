@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+
+import Select from 'react-select'
 import { UserIcon, UsersIcon, WalletIcon, GlobeIcon } from 'lucide-react'
 
 const steps = [
@@ -63,13 +64,13 @@ export default function PromoterOnboarding() {
     followersCount: '',
     engagementRate: '',
     audienceAge: '',
-    audienceInterests: '',
-    contentTypes: '',
+    audienceInterests: [] as string[],
+    contentTypes: [] as string[],
     paymentMethod: '',
     accountDetails: ''
   })
 
-  const handleInputChange = (field: string, value: string | string[]) => {
+  const handleInputChange = (field: string, value: string | string[] | null) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -241,40 +242,78 @@ export default function PromoterOnboarding() {
                   <div>
                     <Label htmlFor="audienceAge">Primary Audience Age Range</Label>
                     <Select
-                      value={formData.audienceAge}
-                      onValueChange={(value) => handleInputChange('audienceAge', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select age range" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="13-17">13-17 years</SelectItem>
-                        <SelectItem value="18-24">18-24 years</SelectItem>
-                        <SelectItem value="25-34">25-34 years</SelectItem>
-                        <SelectItem value="35-44">35-44 years</SelectItem>
-                        <SelectItem value="45+">45+ years</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="audienceInterests">Audience Interests</Label>
-                    <Textarea
-                      id="audienceInterests"
-                      value={formData.audienceInterests}
-                      onChange={(e) => handleInputChange('audienceInterests', e.target.value)}
-                      placeholder="What are your audience's main interests?"
-                      rows={3}
+                      options={[
+                        { value: '13-17', label: '13-17 years' },
+                        { value: '18-24', label: '18-24 years' },
+                        { value: '25-34', label: '25-34 years' },
+                        { value: '35-44', label: '35-44 years' },
+                        { value: '45+', label: '45+ years' }
+                      ]}
+                      value={formData.audienceAge ? { value: formData.audienceAge, label: formData.audienceAge + ' years' } : null}
+                      onChange={(selected) => handleInputChange('audienceAge', selected ? selected.value : '')}
+                      className="w-full"
+                      classNamePrefix="select"
+                      placeholder="Select age range"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="contentTypes">Content Types</Label>
-                    <Textarea
-                      id="contentTypes"
-                      value={formData.contentTypes}
-                      onChange={(e) => handleInputChange('contentTypes', e.target.value)}
-                      placeholder="What types of content do you create?"
-                      rows={3}
-                    />
+                  <div className="space-y-4">
+                    <div>
+                      <Label>Audience Interests</Label>
+                      <Select
+                        isMulti
+                        options={[
+                          { value: 'fashion', label: 'Fashion & Style' },
+                          { value: 'tech', label: 'Technology' },
+                          { value: 'gaming', label: 'Gaming' },
+                          { value: 'beauty', label: 'Beauty & Cosmetics' },
+                          { value: 'fitness', label: 'Fitness & Health' },
+                          { value: 'food', label: 'Food & Cooking' },
+                          { value: 'travel', label: 'Travel' },
+                          { value: 'music', label: 'Music' },
+                          { value: 'art', label: 'Art & Design' },
+                          { value: 'business', label: 'Business & Entrepreneurship' },
+                          { value: 'education', label: 'Education' },
+                          { value: 'entertainment', label: 'Entertainment' },
+                        ]}
+                        value={formData.audienceInterests.map(interest => ({
+                          value: interest,
+                          label: interest.charAt(0).toUpperCase() + interest.slice(1)
+                        }))}
+                        onChange={(selected) => {
+                          handleInputChange('audienceInterests', selected ? selected.map(option => option.value) : []);
+                        }}
+                        className="w-full"
+                        placeholder="Select audience interests..."
+                        classNamePrefix="select"
+                      />
+                    </div>
+                    <div>
+                      <Label>Content Types</Label>
+                      <Select
+                        isMulti
+                        options={[
+                          { value: 'photos', label: 'Photos & Images' },
+                          { value: 'videos', label: 'Videos' },
+                          { value: 'reels', label: 'Reels & Short Videos' },
+                          { value: 'stories', label: 'Stories' },
+                          { value: 'live', label: 'Live Streaming' },
+                          { value: 'blogs', label: 'Blog Posts' },
+                          { value: 'reviews', label: 'Product Reviews' },
+                          { value: 'tutorials', label: 'Tutorials & How-tos' },
+                          { value: 'podcasts', label: 'Podcasts' },
+                        ]}
+                        value={formData.contentTypes.map(type => ({
+                          value: type,
+                          label: type.charAt(0).toUpperCase() + type.slice(1)
+                        }))}
+                        onChange={(selected) => {
+                          handleInputChange('contentTypes', selected ? selected.map(option => option.value) : []);
+                        }}
+                        className="w-full"
+                        placeholder="Select content types..."
+                        classNamePrefix="select"
+                      />
+                    </div>
                   </div>
                 </div>
               )}
@@ -284,18 +323,17 @@ export default function PromoterOnboarding() {
                   <div>
                     <Label htmlFor="paymentMethod">Preferred Payment Method</Label>
                     <Select
-                      value={formData.paymentMethod}
-                      onValueChange={(value) => handleInputChange('paymentMethod', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select payment method" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="bank">Bank Transfer</SelectItem>
-                        <SelectItem value="paypal">PayPal</SelectItem>
-                        <SelectItem value="crypto">Cryptocurrency</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      options={[
+                        { value: 'bank', label: 'Bank Transfer' },
+                        { value: 'paypal', label: 'PayPal' },
+                        { value: 'crypto', label: 'Cryptocurrency' }
+                      ]}
+                      value={formData.paymentMethod ? { value: formData.paymentMethod, label: formData.paymentMethod.charAt(0).toUpperCase() + formData.paymentMethod.slice(1) } : null}
+                      onChange={(selected) => handleInputChange('paymentMethod', selected ? selected.value : '')}
+                      className="w-full"
+                      classNamePrefix="select"
+                      placeholder="Select payment method"
+                    />
                   </div>
                   <div>
                     <Label htmlFor="accountDetails">Account Details</Label>

@@ -39,6 +39,16 @@ const promoterService = {
     return response.data;
   },
 
+  applyCampaign: async (campaignId: string, data: { platforms: string[]; note?: string }) => {
+    const response = await axiosInstance.post(`/promoter/campaigns/${campaignId}/apply`, data);
+    return response.data;
+  },
+
+  getApplications: async () => {
+    const response = await axiosInstance.get('/promoter/applications');
+    return response.data;
+  },
+
   getActiveCampaigns: async () => {
     const response = await axiosInstance.get('/promoter/campaigns/active');
     return response.data;
@@ -52,6 +62,12 @@ const promoterService = {
   getAnalytics: async (timeRange: string): Promise<{ data: AnalyticsData }> => {
     const response = await axiosInstance.get(`/promoter/analytics/overview?timeRange=${timeRange}`);
     return response;
+  }
+,
+
+  getCampaign: async (campaignId: string) => {
+    const response = await axiosInstance.get(`/promoter/campaigns/${campaignId}`);
+    return response.data;
   }
 };
 

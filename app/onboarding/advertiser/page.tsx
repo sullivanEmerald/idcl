@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { BriefcaseIcon, BuildingIcon, CreditCardIcon, UserIcon } from 'lucide-react'
 import onboardingService from '@/services/onboarding'
 import { useRouter } from 'next/navigation'
+import ReactSelect from 'react-select'
 
 const steps = [
   {
@@ -41,12 +42,29 @@ const steps = [
   }
 ]
 
+interface Option {
+  value: string
+  label: string
+}
+
 export default function AdvertiserOnboarding() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    companyName: string
+    website: string
+    industry: string
+    companySize: string
+    role: string
+    phoneNumber: string
+    businessType: string
+    targetAudience: Option[]
+    goals: string
+    billingEmail: string
+    billingAddress: string
+  }>({
     companyName: '',
     website: '',
     industry: '',
@@ -54,13 +72,13 @@ export default function AdvertiserOnboarding() {
     role: '',
     phoneNumber: '',
     businessType: '',
-    targetAudience: '',
+    targetAudience: [],
     goals: '',
     billingEmail: '',
     billingAddress: ''
   })
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -93,7 +111,10 @@ export default function AdvertiserOnboarding() {
       }
 
       // Submit the form
-      await onboardingService.updateAdvertiserProfile(userId, formData)
+      await onboardingService.updateAdvertiserProfile(userId, {
+        ...formData,
+        targetAudience: formData.targetAudience.map(option => option.value)
+      })
       
       // Show success message and redirect to advertiser dashboard
       console.log('Advertiser profile updated successfully')
@@ -249,12 +270,29 @@ export default function AdvertiserOnboarding() {
                   </div>
                   <div>
                     <Label htmlFor="targetAudience">Target Audience</Label>
-                    <Textarea
-                      id="targetAudience"
+                    <ReactSelect
+                      isMulti
                       value={formData.targetAudience}
-                      onChange={(e) => handleInputChange('targetAudience', e.target.value)}
-                      placeholder="Describe your target audience"
-                      rows={3}
+                      onChange={(newValue) => handleInputChange('targetAudience', newValue || [])}
+                      options={[
+                        { label: 'Gen Z (Under 25)', value: 'Gen Z' },
+                        { label: 'Millennials (25-40)', value: 'Millennials' },
+                        { label: 'Gen X (41-56)', value: 'Gen X' },
+                        { label: 'Baby Boomers (57-75)', value: 'Baby Boomers' },
+                        { label: 'Students', value: 'Students' },
+                        { label: 'Young Professionals', value: 'Young Professionals' },
+                        { label: 'Parents', value: 'Parents' },
+                        { label: 'Business Decision Makers', value: 'Business Decision Makers' },
+                        { label: 'Tech Enthusiasts', value: 'Tech Enthusiasts' },
+                        { label: 'Fashion & Beauty', value: 'Fashion & Beauty' },
+                        { label: 'Health & Fitness', value: 'Health & Fitness' },
+                        { label: 'Gamers', value: 'Gamers' },
+                        { label: 'Travelers', value: 'Travelers' },
+                        { label: 'Foodies', value: 'Foodies' }
+                      ]}
+                      placeholder="Select target audiences"
+                      className="w-full"
+                      classNamePrefix="select"
                     />
                   </div>
                   <div>

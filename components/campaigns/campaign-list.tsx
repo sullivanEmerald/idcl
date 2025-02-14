@@ -46,7 +46,7 @@ export function CampaignList({ campaigns }: CampaignListProps) {
             </div>
             <div className="text-right">
               <div className="text-sm font-medium">Total Reach</div>
-              <div className="text-lg">{campaign.reach.toLocaleString()}</div>
+              <div className="text-lg">{campaign?.reach?.toLocaleString()}</div>
             </div>
           </div>
         </Link>

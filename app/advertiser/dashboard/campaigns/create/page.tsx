@@ -94,12 +94,25 @@ const NIGERIAN_STATES = [
 
 const PLATFORMS = ["instagram", "tiktok", "youtube", "twitter"];
 
-const NICHES = ["fashion", "tech", "fitness", "food", "travel", "gaming"];
+const NICHES = [
+  { value: 'fashion', label: 'Fashion & Style' },
+  { value: 'tech', label: 'Technology' },
+  { value: 'gaming', label: 'Gaming' },
+  { value: 'beauty', label: 'Beauty & Cosmetics' },
+  { value: 'fitness', label: 'Fitness & Health' },
+  { value: 'food', label: 'Food & Cooking' },
+  { value: 'travel', label: 'Travel' },
+  { value: 'music', label: 'Music' },
+  { value: 'art', label: 'Art & Design' },
+  { value: 'business', label: 'Business & Entrepreneurship' },
+  { value: 'education', label: 'Education' },
+  { value: 'entertainment', label: 'Entertainment' },
+]
 
 const mediaFileSchema = z.object({
   type: z.enum(["image", "video"] as const),
   url: z.string(),
-  file: z.any(), // Use `z.any()` instead of `z.instanceof(File)`
+  file: z.any(),
 });
 
 const postingScheduleSchema = z.object({
@@ -597,7 +610,7 @@ export default function Page() {
                   <Select
                     onValueChange={(value) => {
                       if (value === "all") {
-                        form.setValue("niches", NICHES);
+                        form.setValue("niches", NICHES.map(niche => niche.value));
                       } else {
                         const currentNiches = form.getValues("niches") || [];
                         form.setValue("niches", [...currentNiches, value]);
@@ -610,8 +623,8 @@ export default function Page() {
                     <SelectContent>
                       <SelectItem value="all">All Niches</SelectItem>
                       {NICHES.map((niche) => (
-                        <SelectItem key={niche} value={niche}>
-                          {niche.charAt(0).toUpperCase() + niche.slice(1)}
+                        <SelectItem key={niche.value} value={niche.value}>
+                          {niche.label.charAt(0).toUpperCase() + niche.label.slice(1)}
                         </SelectItem>
                       ))}
                     </SelectContent>
