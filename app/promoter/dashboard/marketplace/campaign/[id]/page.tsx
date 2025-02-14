@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -21,9 +22,8 @@ import {
   Hash,
   AtSign,
   Link as LinkIcon,
-  Image as ImageIcon,
 } from "lucide-react";
-import Image from "next/image"; 
+import Image from "next/image";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
@@ -31,18 +31,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Carousel,
   CarouselContent,
-  CarouselDots,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-interface LinkMetrics {
-  clicks: number;
-  uniqueClicks: number;
-  conversions: number;
-  lastClick?: Date;
-}
 import { cn } from "@/lib/utils";
 
 export default function CampaignDetails() {
@@ -271,7 +264,7 @@ export default function CampaignDetails() {
                 <Carousel>
                   <CarouselContent>
                     {campaign.contentAssets
-                      .filter(asset => asset.type === "carousel")
+                      .filter((asset) => asset.type === "carousel")
                       .map((asset, index) => (
                         <CarouselItem key={asset.url || index}>
                           <div className="overflow-hidden rounded-xl">
@@ -296,7 +289,7 @@ export default function CampaignDetails() {
                             </div>
                           </div>
                         </CarouselItem>
-                    ))}
+                      ))}
                   </CarouselContent>
                   <CarouselPrevious className="-left-3 h-12 w-12 border-2 bg-white/90 hover:bg-white" />
                   <CarouselNext className="-right-3 h-12 w-12 border-2 bg-white/90 hover:bg-white" />
