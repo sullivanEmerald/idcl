@@ -40,6 +40,11 @@ const sidebarItems = [
     ],
   },
   {
+    title: "Applications",
+    href: "/promoter/dashboard/applications",
+    icon: "clipboard",
+  },
+  {
     title: "Wallet",
     href: "/promoter/dashboard/wallet",
     icon: "wallet",

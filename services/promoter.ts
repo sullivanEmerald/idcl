@@ -44,8 +44,30 @@ const promoterService = {
     return response.data;
   },
 
-  getApplications: async () => {
-    const response = await axiosInstance.get('/promoter/applications');
+  getApplications: async (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }) => {
+    const response = await axiosInstance.get('/promoter/applications', { params });
+    console.log(response.data)
+    // For now, return the array directly and handle pagination later
+    return {
+      applications: response.data,
+      pagination: {
+        currentPage: params?.page || 1,
+        totalPages: 1,
+        totalItems: response.data.length,
+        hasNextPage: false,
+        hasPrevPage: false,
+      }
+    };
+  },
+
+  withdrawApplication: async (applicationId: string) => {
+    const response = await axiosInstance.delete(`/promoter/applications/${applicationId}`);
     return response.data;
   },
 

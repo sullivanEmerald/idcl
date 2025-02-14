@@ -11,7 +11,8 @@ import {
   Wallet,
   Settings,
   UserCircle2,
-  LogOut
+  LogOut,
+  ClipboardList
 } from 'lucide-react'
 
 interface SidebarItem {
@@ -41,6 +42,8 @@ function getIcon(iconName: string) {
       return <Wallet {...iconProps} />
     case 'settings':
       return <Settings {...iconProps} />
+    case 'clipboard':
+      return <ClipboardList {...iconProps} />
     default:
       return <LayoutDashboard {...iconProps} />
   }
