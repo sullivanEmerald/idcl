@@ -26,7 +26,7 @@ import {
   Goal,
   Image as ImageIcon,
 } from "lucide-react";
-import Image from "next/image";
+import Image from "next/image"; 
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
