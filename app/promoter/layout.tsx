@@ -17,33 +17,14 @@ const sidebarItems = [
     title: "Marketplace",
     href: "/promoter/dashboard/marketplace/browse",
     icon: "store",
-    items: [
-      {
-        title: "Browse Campaigns",
-        href: "/promoter/dashboard/marketplace/browse",
-      },
-    ],
+    // items: [
+    //   {
+    //     title: "Browse Campaigns",
+    //     href: "/promoter/dashboard/marketplace/browse",
+    //   },
+    // ],
   },
-  {
-    title: "My Campaigns",
-    href: "/promoter/dashboard/campaigns",
-    icon: "store",
-    items: [
-      {
-        title: "Active",
-        href: "/promoter/dashboard/campaigns/active",
-      },
-      {
-        title: "Completed",
-        href: "/promoter/dashboard/campaigns/completed",
-      },
-    ],
-  },
-  {
-    title: "Applications",
-    href: "/promoter/dashboard/applications",
-    icon: "clipboard",
-  },
+
   {
     title: "Wallet",
     href: "/promoter/dashboard/wallet",
