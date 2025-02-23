@@ -38,6 +38,7 @@ export interface PostingSchedule {
 export interface CampaignFormData {
   name: string;
   description: string;
+  coverImage?: string;
   budget: number;
   pricePerPost: number;
   platforms: string[];
@@ -62,6 +63,7 @@ export interface CampaignFormData {
 export interface CampaignData {
   title: string;
   description: string;
+  coverImage?: string;
   budget: number;
   pricePerPost: number;
   requiredPlatforms: string[];
@@ -158,6 +160,7 @@ class CampaignService {
       const campaignData: CampaignData = {
         title: data.name,
         description: data.description,
+        coverImage: data.coverImage,
         budget: data.budget,
         pricePerPost: data.pricePerPost,
         requiredPlatforms: data.platforms,

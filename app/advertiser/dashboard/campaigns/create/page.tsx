@@ -51,6 +51,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { campaignService } from "@/services/campaign";
+import { axiosInstance } from "@/lib/utils";
 
 const NIGERIAN_STATES = [
   "Abia",
@@ -125,6 +126,7 @@ const campaignSchema = z.object({
   // Campaign Details
   name: z.string().min(3, "Campaign name must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
+  coverImage: z.string().url("Please upload a valid cover image").optional(),
   budget: z.number().min(1, "Budget must be greater than 0"),
   pricePerPost: z.number().min(1, "Price per post must be greater than 0"),
   startDate: z.date({
@@ -179,6 +181,7 @@ export default function Page() {
       platforms: [],
       niches: [],
       mediaFiles: [],
+      coverImage: "",
       postingSchedule: {
         startTime: "09:00",
         endTime: "17:00",
@@ -198,6 +201,8 @@ export default function Page() {
   const startDate = watch("startDate");
   const endDate = watch("endDate");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateStep = async () => {
     let fieldsToValidate: (keyof CampaignFormData)[] = [];
@@ -207,6 +212,7 @@ export default function Page() {
         fieldsToValidate = [
           "name",
           "description",
+          "coverImage",
           "budget",
           "pricePerPost",
           "startDate",
@@ -232,6 +238,30 @@ export default function Page() {
     return isValid;
   };
 
+  const handleCoverImageUpload = async (file: File) => {
+    try {
+      setIsUploadingCover(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axiosInstance.post('/upload/campaign-cover', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      form.setValue('coverImage', response.data.url);
+      toast.success('Cover image uploaded successfully');
+    } catch (error: any) {
+      console.error('Error uploading cover image:', error);
+      toast.error(error.response?.data?.message || 'Failed to upload cover image. Please try again.');
+    } finally {
+      setIsUploadingCover(false);
+    }
+  };
+
+  const coverImage = watch('coverImage');
+
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -252,13 +282,15 @@ export default function Page() {
 
   const onSubmit = async (data: any) => {
     try {
-      toast.loading("Creating campaign...");
+      setIsSubmitting(true);
       await campaignService.createCampaign(data);
       toast.success("Campaign created successfully!");
       router.push("/advertiser/dashboard/campaigns");
     } catch (error: any) {
       console.error("Error creating campaign:", error);
       toast.error(error.response?.data?.message || "Failed to create campaign");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -308,6 +340,91 @@ export default function Page() {
                       {errors.description.message}
                     </p>
                   )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Campaign Cover Image</Label>
+                  <div className="flex flex-col gap-4">
+                    {form.watch('coverImage') && (
+                      <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-100">
+                        <img
+                          src={form.watch('coverImage')}
+                          alt="Campaign cover"
+                          className="object-cover w-full h-full"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => form.setValue('coverImage', '')}
+                          className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M18 6L6 18" />
+                            <path d="M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-center w-full">
+                      <label className={`flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 ${isUploadingCover ? 'opacity-50 pointer-events-none' : ''}`}>
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <svg
+                            className="w-8 h-8 mb-4 text-gray-500"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 20 16"
+                          >
+                            <path
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                            />
+                          </svg>
+                          {isUploadingCover ? (
+                            <div className="flex flex-col items-center">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-2"></div>
+                              <p className="text-sm text-gray-500">Uploading cover image...</p>
+                            </div>
+                          ) : (
+                            <>
+                              <p className="mb-2 text-sm text-gray-500">
+                                <span className="font-semibold">Click to upload</span> or drag and drop
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Upload your campaign cover image
+                              </p>
+                            </>
+                          )}
+                        </div>
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleCoverImageUpload(file);
+                          }}
+                        />
+                      </label>
+                    </div>
+                    {errors.coverImage && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.coverImage.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -1155,8 +1272,38 @@ export default function Page() {
                   Next
                 </Button>
               ) : (
-                <Button type="submit" variant="new">
-                  Create Campaign
+                <Button 
+                  type="submit" 
+                  variant="new"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center">
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Creating Campaign...
+                    </div>
+                  ) : (
+                    'Create Campaign'
+                  )}
                 </Button>
               )}
             </div>

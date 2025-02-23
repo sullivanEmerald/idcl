@@ -87,4 +87,5 @@ export interface Campaign {
   reach?: number;
   engagement?: number;
   activePromoters: number;
+  coverImage: string
 }
