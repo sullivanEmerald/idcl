@@ -128,9 +128,13 @@ const campaignSchema = z.object({
   name: z.string().min(3, "Campaign name must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
   coverImage: z.string().url("Please upload a valid cover image").optional(),
-  targetImpressions: z.number().min(1000, "Target impressions must be at least 1,000"),
-  pricePerImpression: z.number().min(0.001, "Price per impression must be greater than 0"),
-  estimatedBudget: z.number().min(1, "Estimated budget must be greater than 0"),
+  // New required budget fields
+  budget: z.number().min(100, "Budget must be at least $100"),
+  pricePerPost: z.number().min(10, "Price per post must be at least $10"),
+  // Optional impression-based fields
+  targetImpressions: z.number().min(1000, "Target impressions must be at least 1,000").optional(),
+  pricePerImpression: z.number().min(0.001, "Price per impression must be greater than 0").optional(),
+  estimatedBudget: z.number().min(1, "Estimated budget must be greater than 0").optional(),
   startDate: z.date({
     required_error: "Start date is required",
   }),
@@ -178,6 +182,8 @@ export default function Page() {
       contentType: "photo",
       isBoosted: false,
       gender: "all",
+      budget: 1000,
+      pricePerPost: 100,
       targetImpressions: 1000,
       pricePerImpression: 0.001,
       estimatedBudget: 1,
@@ -626,7 +632,7 @@ export default function Page() {
                           break;
                       }
                       form.setValue("pricePerImpression", pricePerImpression);
-                      form.setValue("estimatedBudget", impressions * pricePerImpression);
+                      form.setValue("estimatedBudget", (impressions || 0) * pricePerImpression);
                     }}
                     defaultValue={form.getValues("goal")}
                   >

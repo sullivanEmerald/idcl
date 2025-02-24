@@ -40,9 +40,11 @@ export interface CampaignFormData {
   name: string;
   description: string;
   coverImage?: string;
-  targetImpressions: number;
-  pricePerImpression: number;
-  estimatedBudget: number;
+  budget: number;
+  pricePerPost: number;
+  targetImpressions?: number;
+  pricePerImpression?: number;
+  estimatedBudget?: number;
   platforms: string[];
   niches: string[];
   goal: "awareness" | "engagement" | "conversion";
@@ -164,14 +166,15 @@ class CampaignService {
         title: data.name,
         description: data.description,
         coverImage: data.coverImage,
-        // Keep new pricing model fields
-        targetImpressions: data.targetImpressions,
-        pricePerImpression: data.pricePerImpression,
-        estimatedBudget: data.estimatedBudget,
-        // Add required backend fields
-        budget: data.estimatedBudget,
-        pricePerPost: data.pricePerImpression * 1000, // Convert to per-post price
-        targetPromotions: Math.ceil(data.targetImpressions / 1000), // Estimate number of promotions needed
+        // Use the new budget and pricePerPost fields directly
+        budget: data.budget,
+        pricePerPost: data.pricePerPost,
+        // Add optional impression-based fields if they exist
+        ...(data.targetImpressions && { targetImpressions: data.targetImpressions }),
+        ...(data.pricePerImpression && { pricePerImpression: data.pricePerImpression }),
+        ...(data.estimatedBudget && { estimatedBudget: data.estimatedBudget }),
+        // Calculate target promotions based on budget and price per post
+        targetPromotions: Math.ceil(data.budget / data.pricePerPost),
         requiredPlatforms: data.platforms,
         targetedNiches: data.niches,
         campaignGoal: data.goal,
