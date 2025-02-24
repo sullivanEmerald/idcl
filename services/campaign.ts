@@ -22,7 +22,8 @@ export interface MediaFileBase {
 }
 
 export interface MediaFileClient extends MediaFileBase {
-  file: any; // Use any to avoid File type during SSR
+  file: File; // File is required
+  type: "image" | "video";
 }
 
 export interface MediaFileServer extends MediaFileBase {
@@ -39,14 +40,15 @@ export interface CampaignFormData {
   name: string;
   description: string;
   coverImage?: string;
-  budget: number;
-  pricePerPost: number;
+  targetImpressions: number;
+  pricePerImpression: number;
+  estimatedBudget: number;
   platforms: string[];
   niches: string[];
   goal: "awareness" | "engagement" | "conversion";
   location: string[];
   gender: "all" | "male" | "female";
-  promoterCount: number;
+
   promotionLink: string;
   startDate: Date;
   endDate: Date;
@@ -64,14 +66,15 @@ export interface CampaignData {
   title: string;
   description: string;
   coverImage?: string;
-  budget: number;
-  pricePerPost: number;
+  targetImpressions: number;
+  pricePerImpression: number;
+  estimatedBudget: number;
   requiredPlatforms: string[];
   targetedNiches: string[];
   campaignGoal: "awareness" | "engagement" | "conversion";
   targetLocation: string;
   targetGender: "all" | "male" | "female";
-  targetPromotions: number;
+
   promotionLink: string;
   minFollowers: number;
   minEngagementRate: number;
@@ -157,18 +160,23 @@ class CampaignService {
       const contentAssets = await Promise.all(contentAssetsPromises);
 
       // Prepare campaign data
-      const campaignData: CampaignData = {
+      const campaignData: any = {
         title: data.name,
         description: data.description,
         coverImage: data.coverImage,
-        budget: data.budget,
-        pricePerPost: data.pricePerPost,
+        // Keep new pricing model fields
+        targetImpressions: data.targetImpressions,
+        pricePerImpression: data.pricePerImpression,
+        estimatedBudget: data.estimatedBudget,
+        // Add required backend fields
+        budget: data.estimatedBudget,
+        pricePerPost: data.pricePerImpression * 1000, // Convert to per-post price
+        targetPromotions: Math.ceil(data.targetImpressions / 1000), // Estimate number of promotions needed
         requiredPlatforms: data.platforms,
         targetedNiches: data.niches,
         campaignGoal: data.goal,
         targetLocation: data.location.join(","),
         targetGender: data.gender,
-        targetPromotions: data.promoterCount,
         promotionLink: data.promotionLink,
         minFollowers: 1000, // Default value
         minEngagementRate: 0.02, // Default value
@@ -229,14 +237,14 @@ class CampaignService {
       const campaignData: Partial<CampaignData> = {
         ...(formData.name && { title: formData.name }),
         ...(formData.description && { description: formData.description }),
-        ...(formData.budget && { budget: formData.budget }),
-        ...(formData.pricePerPost && { pricePerPost: formData.pricePerPost }),
+        ...(formData.targetImpressions && { targetImpressions: formData.targetImpressions }),
+        ...(formData.pricePerImpression && { pricePerImpression: formData.pricePerImpression }),
+        ...(formData.estimatedBudget && { estimatedBudget: formData.estimatedBudget }),
         ...(formData.platforms && { requiredPlatforms: formData.platforms }),
         ...(formData.niches && { targetedNiches: formData.niches }),
         ...(formData.goal && { campaignGoal: formData.goal }),
         ...(formData.location && { targetLocation: formData.location.join(",") }),
         ...(formData.gender && { targetGender: formData.gender }),
-        ...(formData.promoterCount && { targetPromotions: formData.promoterCount }),
         ...(formData.promotionLink && { promotionLink: formData.promotionLink }),
         ...(formData.startDate && { startDate: formData.startDate }),
         ...(formData.endDate && { endDate: formData.endDate }),

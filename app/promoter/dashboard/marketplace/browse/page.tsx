@@ -25,22 +25,20 @@ export default function BrowseCampaigns() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [nicheFilter, setNicheFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [totalCampaigns, setTotalCampaigns] = useState(0);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const response = await promoterService.getMarketplace();
-        // Combine and deduplicate campaigns based on id
-        const allCampaigns = [
-          ...response.marketplaceCampaigns,
-          ...response.availableCampaigns,
-        ];
-        const uniqueCampaigns = Array.from(
-          new Map(
-            allCampaigns.map((campaign) => [campaign.id, campaign])
-          ).values()
-        );
-        setCampaigns(uniqueCampaigns);
+        const response = await promoterService.getMarketplace(currentPage);
+        console.log(response);
+        setCampaigns(response.campaigns);
+        setTotalPages(response.pagination.totalPages);
+        setHasMore(response.pagination.hasMore);
+        setTotalCampaigns(response.pagination.total);
       } catch (error) {
         console.error("Error fetching marketplace campaigns:", error);
       } finally {
@@ -49,7 +47,7 @@ export default function BrowseCampaigns() {
     };
 
     fetchCampaigns();
-  }, []);
+  }, [currentPage]);
 
   const filteredCampaigns = campaigns?.filter((campaign) => {
     const matchesSearch =
@@ -215,6 +213,32 @@ export default function BrowseCampaigns() {
             </div>
           </Card>
         ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-center gap-4 mt-8">
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <span className="text-sm text-gray-600">
+            ({totalCampaigns} total)
+          </span>
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage(p => p + 1)}
+          disabled={!hasMore}
+        >
+          Next
+        </Button>
       </div>
     </div>
   );

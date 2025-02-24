@@ -74,24 +74,17 @@ const promoterService = {
     return '';
   },
 
-  getMarketplace: async () => {
-    const response = await axiosInstance.get('/promoter/marketplace');
-    const { marketplaceCampaigns, availableCampaigns } = response.data;
-
-    // Process cover images for both campaign lists
-    const processedMarketplaceCampaigns = marketplaceCampaigns.map((campaign: any) => ({
-      ...campaign,
-      coverImage: promoterService.determineCoverImage(campaign)
-    }));
-
-    const processedAvailableCampaigns = availableCampaigns.map((campaign: any) => ({
-      ...campaign,
-      coverImage: promoterService.determineCoverImage(campaign)
-    }));
+  getMarketplace: async (page = 1, limit = 12) => {
+    const response = await axiosInstance.get('/campaigns/marketplace', {
+      params: { page, limit }
+    });
 
     return {
-      marketplaceCampaigns: processedMarketplaceCampaigns,
-      availableCampaigns: processedAvailableCampaigns
+      campaigns: response.data.campaigns.map((campaign: any) => ({
+        ...campaign,
+        coverImage: promoterService.determineCoverImage(campaign)
+      })),
+      pagination: response.data.pagination
     };
   },
 

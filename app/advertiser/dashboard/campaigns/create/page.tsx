@@ -50,7 +50,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { campaignService } from "@/services/campaign";
+import { campaignService, MediaFileClient } from "@/services/campaign";
 import { axiosInstance } from "@/lib/utils";
 
 const NIGERIAN_STATES = [
@@ -113,22 +113,24 @@ const NICHES = [
 const mediaFileSchema = z.object({
   type: z.enum(["image", "video"] as const),
   url: z.string(),
-  file: z.any(),
+  file: z.instanceof(File, { message: "Please upload a valid file" }),
 });
 
 const postingScheduleSchema = z.object({
   startTime: z.string().min(1, "Start time is required"),
   endTime: z.string().min(1, "End time is required"),
   days: z.array(z.string()).min(1, "Select at least one day"),
-});
+}).strict();
 
 const campaignSchema = z.object({
+  postingSchedule: postingScheduleSchema,  // Add this at the top to ensure it's properly typed
   // Campaign Details
   name: z.string().min(3, "Campaign name must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
   coverImage: z.string().url("Please upload a valid cover image").optional(),
-  budget: z.number().min(1, "Budget must be greater than 0"),
-  pricePerPost: z.number().min(1, "Price per post must be greater than 0"),
+  targetImpressions: z.number().min(1000, "Target impressions must be at least 1,000"),
+  pricePerImpression: z.number().min(0.001, "Price per impression must be greater than 0"),
+  estimatedBudget: z.number().min(1, "Estimated budget must be greater than 0"),
   startDate: z.date({
     required_error: "Start date is required",
   }),
@@ -142,7 +144,7 @@ const campaignSchema = z.object({
   }),
   location: z.array(z.string()).min(1, "Select at least one location"),
   gender: z.enum(["all", "male", "female"]).default("all"),
-  promoterCount: z.number().min(5).max(200),
+
   platforms: z.array(z.string()).min(1, "Select at least one platform"),
   niches: z.array(z.string()).min(1, "Select at least one niche"),
   isBoosted: z.boolean().default(false),
@@ -155,7 +157,6 @@ const campaignSchema = z.object({
   contentGuidelines: z
     .string()
     .min(10, "Guidelines must be at least 10 characters"),
-  postingSchedule: postingScheduleSchema,
   hashtags: z.string().min(1, "Add at least one hashtag"),
   mentions: z.string().optional(),
   brandAssetLinks: z.string().url().optional(),
@@ -177,7 +178,9 @@ export default function Page() {
       contentType: "photo",
       isBoosted: false,
       gender: "all",
-      promoterCount: 10,
+      targetImpressions: 1000,
+      pricePerImpression: 0.001,
+      estimatedBudget: 1,
       platforms: [],
       niches: [],
       mediaFiles: [],
@@ -213,28 +216,69 @@ export default function Page() {
           "name",
           "description",
           "coverImage",
-          "budget",
-          "pricePerPost",
           "startDate",
           "endDate",
         ];
         break;
       case "targeting":
-        fieldsToValidate = ["goal", "platforms", "niches", "promoterCount"];
+        fieldsToValidate = [
+          "goal", 
+          "platforms", 
+          "niches", 
+          "targetImpressions", 
+          "pricePerImpression",
+          "estimatedBudget",
+          "location",
+          "gender"
+        ];
         break;
       case "content":
         fieldsToValidate = [
           "contentType",
           "mediaFiles",
           "contentGuidelines",
-          "postingSchedule",
+          "postingSchedule",  // Validate the entire postingSchedule object
           "hashtags",
           "promotionLink",
         ];
         break;
     }
 
-    const isValid = await trigger(fieldsToValidate);
+    const isValid = await trigger(fieldsToValidate, { shouldFocus: true });
+    
+    if (!isValid) {
+      const errorMessages = Object.entries(errors)
+        .filter(([field]) => fieldsToValidate.some(f => field.startsWith(f)))
+        .map(([field, error]) => {
+          if (error?.message) {
+            const fieldName = field
+              .split('.')
+              .map(part => 
+                part.replace(/([A-Z])/g, ' $1')
+                  .toLowerCase()
+                  .replace(/^./, str => str.toUpperCase())
+              )
+              .join(' › ');
+            return `${fieldName}: ${error.message}`;
+          }
+          return null;
+        })
+        .filter(Boolean);
+
+      if (errorMessages.length > 0) {
+        toast.error(
+          <div className="max-h-[80vh] overflow-auto">
+            <p className="font-medium mb-2">Please fix the following errors:</p>
+            <ul className="list-disc pl-4 space-y-1">
+              {errorMessages.map((message, index) => (
+                <li key={index}>{message}</li>
+              ))}
+            </ul>
+          </div>
+        );
+      }
+    }
+
     return isValid;
   };
 
@@ -271,24 +315,91 @@ export default function Page() {
     if (!files?.length) return;
 
     const fileArray = Array.from(files);
-    const mediaFiles = fileArray.map((file) => ({
+    const mediaFiles: MediaFileClient[] = fileArray.map((file) => ({
       type: file.type.startsWith("video/") ? "video" as const : "image" as const,
       url: URL.createObjectURL(file),
-      file: file as File, // Ensure file is treated as required
+      file, // File is required in MediaFileClient
     }));
 
     form.setValue("mediaFiles", mediaFiles);
   };
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CampaignFormData) => {
     try {
+      // Validate all fields before submitting
+      const isValid = await trigger();
+      if (!isValid) {
+        // Get all error messages
+        const errorMessages = Object.entries(errors)
+          .map(([field, error]) => {
+            if (error?.message) {
+              // Convert field name to readable format
+              const fieldName = field
+                .split('.')
+                .map(part => 
+                  part.replace(/([A-Z])/g, ' $1')
+                    .toLowerCase()
+                    .replace(/^./, str => str.toUpperCase())
+                )
+                .join(' › ');
+              return `${fieldName}: ${error.message}`;
+            }
+            return null;
+          })
+          .filter(Boolean);
+
+        if (errorMessages.length > 0) {
+          toast.error(
+            <div className="max-h-[80vh] overflow-auto">
+              <p className="font-medium mb-2">Please fix the following errors:</p>
+              <ul className="list-disc pl-4 space-y-1">
+                {errorMessages.map((message, index) => (
+                  <li key={index}>{message}</li>
+                ))}
+              </ul>
+            </div>
+          );
+          return;
+        }
+      }
+
       setIsSubmitting(true);
-      await campaignService.createCampaign(data);
-      toast.success("Campaign created successfully!");
-      router.push("/advertiser/dashboard/campaigns");
+      toast.loading('Creating your campaign...');
+
+      const response = await campaignService.createCampaign(data);
+      
+      toast.dismiss(); // Dismiss the loading toast
+      toast.success(
+        <div className="space-y-2">
+          <p className="font-medium">Congratulations 🎊!</p>
+          <p className="text-sm text-muted-foreground">
+            Your campaign was created successfully. You can view your campaign on your dashboard.
+          </p>
+        </div>,
+        {
+          duration: 5000,
+        }
+      );
+      
+      // Wait a bit for the user to see the success message
+      setTimeout(() => {
+        router.push("/advertiser/dashboard/campaigns");
+      }, 2000);
+
     } catch (error: any) {
       console.error("Error creating campaign:", error);
-      toast.error(error.response?.data?.message || "Failed to create campaign");
+      toast.dismiss(); // Dismiss the loading toast
+      toast.error(
+        <div className="space-y-2">
+          <p className="font-medium">Failed to create campaign</p>
+          <p className="text-sm text-muted-foreground">
+            {error.response?.data?.message || "An unexpected error occurred. Please try again."}
+          </p>
+        </div>,
+        {
+          duration: 5000,
+        }
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -420,6 +531,7 @@ export default function Page() {
                       </label>
                     </div>
                     {errors.coverImage && (
+                    
                       <p className="text-sm text-red-500 mt-1">
                         {errors.coverImage.message}
                       </p>
@@ -427,38 +539,7 @@ export default function Page() {
                   </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label>Campaign Budget ($)</Label>
-                    <Input
-                      {...form.register("budget", { valueAsNumber: true })}
-                      type="number"
-                      min={0}
-                      step={0.01}
-                    />
-                    {errors.budget && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.budget.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Price Per Post ($)</Label>
-                    <Input
-                      {...form.register("pricePerPost", {
-                        valueAsNumber: true,
-                      })}
-                      type="number"
-                      min={0}
-                      step={0.01}
-                    />
-                    {errors.pricePerPost && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.pricePerPost.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
+
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
@@ -528,9 +609,25 @@ export default function Page() {
                 <div className="space-y-2">
                   <Label>Campaign Goal</Label>
                   <Select
-                    onValueChange={(value) =>
-                      form.setValue("goal", value as any)
-                    }
+                    onValueChange={(value) => {
+                      form.setValue("goal", value as any);
+                      // Update pricing based on new goal
+                      const impressions = form.getValues("targetImpressions");
+                      let pricePerImpression = 0;
+                      switch(value) {
+                        case "awareness":
+                          pricePerImpression = 0.001;
+                          break;
+                        case "engagement":
+                          pricePerImpression = 0.005;
+                          break;
+                        case "conversion":
+                          pricePerImpression = 0.01;
+                          break;
+                      }
+                      form.setValue("pricePerImpression", pricePerImpression);
+                      form.setValue("estimatedBudget", impressions * pricePerImpression);
+                    }}
                     defaultValue={form.getValues("goal")}
                   >
                     <SelectTrigger>
@@ -560,15 +657,16 @@ export default function Page() {
                   <Select
                     onValueChange={(value) => {
                       if (value === "all") {
-                        form.setValue("location", NIGERIAN_STATES);
+                        form.setValue("location", NIGERIAN_STATES, { shouldValidate: true });
                       } else {
                         const currentLocations =
                           form.getValues("location") || [];
                         if (!currentLocations.includes(value)) {
-                          form.setValue("location", [
-                            ...currentLocations,
-                            value,
-                          ]);
+                          form.setValue(
+                            "location", 
+                            [...currentLocations, value],
+                            { shouldValidate: true }
+                          );
                         }
                       }
                     }}
@@ -603,7 +701,8 @@ export default function Page() {
                             const currentLocations = form.getValues("location");
                             form.setValue(
                               "location",
-                              currentLocations.filter((s) => s !== state)
+                              currentLocations.filter((s) => s !== state),
+                              { shouldValidate: true }
                             );
                           }}
                           className="hover:text-red-500"
@@ -639,28 +738,57 @@ export default function Page() {
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <Label>Target Number of Promoters</Label>
-                    <span className="text-sm text-muted-foreground">
-                      {form.watch("promoterCount") || 5} promoters
-                    </span>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <Label>Target Impressions</Label>
+                      <span className="text-sm text-muted-foreground">
+                        {(form.watch("targetImpressions") || 1000).toLocaleString()} impressions
+                      </span>
+                    </div>
+                    <Slider
+                      defaultValue={[form.getValues("targetImpressions") || 1000]}
+                      min={1000}
+                      max={1000000}
+                      step={1000}
+                      onValueChange={([value]) => {
+                        form.setValue("targetImpressions", value);
+                        // Calculate estimated budget based on goal
+                        const goal = form.getValues("goal");
+                        let pricePerImpression = 0;
+                        switch(goal) {
+                          case "awareness":
+                            pricePerImpression = 0.001; // $0.001 per impression
+                            break;
+                          case "engagement":
+                            pricePerImpression = 0.005; // $0.005 per engagement
+                            break;
+                          case "conversion":
+                            pricePerImpression = 0.01; // $0.01 per conversion
+                            break;
+                        }
+                        form.setValue("pricePerImpression", pricePerImpression);
+                        form.setValue("estimatedBudget", value * pricePerImpression);
+                      }}
+                      className="py-4"
+                    />
+                    {errors.targetImpressions && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.targetImpressions.message}
+                      </p>
+                    )}
                   </div>
-                  <Slider
-                    defaultValue={[form.getValues("promoterCount") || 5]}
-                    min={5}
-                    max={200}
-                    step={1}
-                    onValueChange={([value]) =>
-                      form.setValue("promoterCount", value)
-                    }
-                    className="py-4"
-                  />
-                  {errors.promoterCount && (
-                    <p className="text-sm text-red-500 mt-1">
-                      {errors.promoterCount.message}
-                    </p>
-                  )}
+
+                  <div className="p-4 bg-primary/5 rounded-lg space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Price per {form.watch("goal") === "awareness" ? "impression" : form.watch("goal") === "engagement" ? "engagement" : "conversion"}:</span>
+                      <span>${form.watch("pricePerImpression")?.toFixed(3) || "0.000"}</span>
+                    </div>
+                    <div className="flex justify-between font-medium">
+                      <span>Estimated Budget:</span>
+                      <span>${form.watch("estimatedBudget")?.toLocaleString() || "0"}</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -668,14 +796,15 @@ export default function Page() {
                   <Select
                     onValueChange={(value) => {
                       if (value === "all") {
-                        form.setValue("platforms", PLATFORMS);
+                        form.setValue("platforms", PLATFORMS, { shouldValidate: true });
                       } else {
                         const currentPlatforms =
                           form.getValues("platforms") || [];
-                        form.setValue("platforms", [
-                          ...currentPlatforms,
-                          value,
-                        ]);
+                        form.setValue(
+                          "platforms", 
+                          [...currentPlatforms, value],
+                          { shouldValidate: true }
+                        );
                       }
                     }}
                   >
@@ -710,7 +839,8 @@ export default function Page() {
                               form.getValues("platforms");
                             form.setValue(
                               "platforms",
-                              currentPlatforms.filter((p) => p !== platform)
+                              currentPlatforms.filter((p) => p !== platform),
+                              { shouldValidate: true }
                             );
                           }}
                           className="hover:text-red-500"
@@ -727,10 +857,18 @@ export default function Page() {
                   <Select
                     onValueChange={(value) => {
                       if (value === "all") {
-                        form.setValue("niches", NICHES.map(niche => niche.value));
+                        form.setValue(
+                          "niches", 
+                          NICHES.map(niche => niche.value),
+                          { shouldValidate: true }
+                        );
                       } else {
                         const currentNiches = form.getValues("niches") || [];
-                        form.setValue("niches", [...currentNiches, value]);
+                        form.setValue(
+                          "niches", 
+                          [...currentNiches, value],
+                          { shouldValidate: true }
+                        );
                       }
                     }}
                   >
@@ -764,7 +902,8 @@ export default function Page() {
                             const currentNiches = form.getValues("niches");
                             form.setValue(
                               "niches",
-                              currentNiches.filter((n) => n !== niche)
+                              currentNiches.filter((n) => n !== niche),
+                              { shouldValidate: true }
                             );
                           }}
                           className="hover:text-red-500"
@@ -1100,7 +1239,11 @@ export default function Page() {
                         Start Time
                       </Label>
                       <Input
-                        {...form.register("postingSchedule.startTime")}
+                        value={form.watch("postingSchedule.startTime") || ""}
+                        onChange={(e) => form.setValue("postingSchedule", {
+                          ...form.getValues("postingSchedule"),
+                          startTime: e.target.value
+                        }, { shouldValidate: true })}
                         type="time"
                       />
                       {errors.postingSchedule?.startTime && (
@@ -1114,7 +1257,11 @@ export default function Page() {
                         End Time
                       </Label>
                       <Input
-                        {...form.register("postingSchedule.endTime")}
+                        value={form.watch("postingSchedule.endTime") || ""}
+                        onChange={(e) => form.setValue("postingSchedule", {
+                          ...form.getValues("postingSchedule"),
+                          endTime: e.target.value
+                        }, { shouldValidate: true })}
                         type="time"
                       />
                       {errors.postingSchedule?.endTime && (
@@ -1142,25 +1289,23 @@ export default function Page() {
                           key={day}
                           type="button"
                           variant={
-                            form.watch("postingSchedule.days")?.includes(day)
+                            form.watch("postingSchedule")?.days?.includes(day)
                               ? "default"
                               : "outline"
                           }
                           className="text-sm"
                           onClick={() => {
-                            const currentDays =
-                              form.watch("postingSchedule.days") || [];
-                            if (currentDays.includes(day)) {
-                              form.setValue(
-                                "postingSchedule.days",
-                                currentDays.filter((d) => d !== day)
-                              );
-                            } else {
-                              form.setValue("postingSchedule.days", [
-                                ...currentDays,
-                                day,
-                              ]);
-                            }
+                            const schedule = form.getValues("postingSchedule") || { days: [], startTime: "", endTime: "" };
+                            const currentDays = schedule.days || [];
+                            const updatedDays = currentDays.includes(day)
+                              ? currentDays.filter((d) => d !== day)
+                              : [...currentDays, day];
+                            
+                            form.setValue(
+                              "postingSchedule",
+                              { ...schedule, days: updatedDays },
+                              { shouldValidate: true }
+                            );
                           }}
                         >
                           {day.slice(0, 3)}
