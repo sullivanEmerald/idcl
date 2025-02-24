@@ -32,7 +32,8 @@ const MediaUploadComponent = () => {
     try {
       const fileArray = Array.from(files);
       const mediaFiles = fileArray.map((file) => {
-        if (!(file instanceof File)) {
+        // Skip file type check during SSR
+        if (typeof File !== 'undefined' && !(file instanceof File)) {
           throw new Error('Invalid file type');
         }
         

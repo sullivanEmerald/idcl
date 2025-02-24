@@ -110,10 +110,22 @@ const NICHES = [
   { value: 'entertainment', label: 'Entertainment' },
 ]
 
+// Create a safe file schema that works on both server and client
+const fileSchema = typeof File === 'undefined'
+  ? z.any() // During SSR, accept any
+  : z.instanceof(File, { message: "Please upload a valid file" });
+
+// Define the schema to match MediaFileClient interface
 const mediaFileSchema = z.object({
   type: z.enum(["image", "video"] as const),
   url: z.string(),
-  file: z.instanceof(File, { message: "Please upload a valid file" }),
+  file: fileSchema, // File is required in MediaFileClient
+}).transform((data) => {
+  // Ensure the file property is always present and correctly typed
+  return {
+    ...data,
+    file: data.file as File // Cast to File since we validate it's a File on client-side
+  };
 });
 
 const postingScheduleSchema = z.object({
@@ -167,7 +179,12 @@ const campaignSchema = z.object({
   promotionLink: z.string().url("Please enter a valid URL"),
 });
 
-type CampaignFormData = z.infer<typeof campaignSchema>;
+// Import the type from campaign service
+import type { CampaignFormData } from '@/services/campaign';
+
+// Ensure the schema output matches CampaignFormData
+type CampaignSchemaOutput = z.infer<typeof campaignSchema>;
+type SchemaTypeCheck = CampaignSchemaOutput extends CampaignFormData ? true : false;
 
 const STEPS = ["details", "targeting", "content"] as const;
 

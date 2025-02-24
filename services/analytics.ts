@@ -3,6 +3,10 @@ import { axiosInstance } from '@/lib/utils';
 export interface TrackEventParams {
   shortUrlId: string;
   eventType: 'view' | 'click' | 'conversion';
+  metadata?: {
+    interactionType?: string;
+    [key: string]: any;
+  };
 }
 
 class AnalyticsService {

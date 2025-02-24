@@ -92,14 +92,46 @@ export function CampaignContent({ campaign, shortUrlId }: CampaignContentProps) 
           )}
 
           {campaign.contentType === 'carousel' && (
-            <Carousel
-              items={campaign.contentAssets}
-              currentIndex={currentIndex}
-              onIndexChange={(index) => {
-                setCurrentIndex(index);
-                trackInteraction('carousel_slide');
-              }}
-            />
+            <Carousel>
+              <div className="flex transition-transform duration-300 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+                {campaign.contentAssets.map((asset, index) => (
+                  <div key={index} className="w-full flex-shrink-0">
+                    {asset.type === 'video' ? (
+                      <video
+                        src={asset.url}
+                        controls
+                        className="w-full h-auto"
+                        poster={asset.thumbnail}
+                        onPlay={() => trackInteraction('video_play')}
+                      />
+                    ) : (
+                      <Image
+                        src={asset.url}
+                        alt={`${campaign.name} content ${index + 1}`}
+                        width={800}
+                        height={600}
+                        className="w-full h-auto object-cover"
+                        onClick={() => trackInteraction('image_click')}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+              {campaign.contentAssets.length > 1 && (
+                <div className="flex justify-center mt-4 space-x-2">
+                  {campaign.contentAssets.map((_, index) => (
+                    <button
+                      key={index}
+                      className={`w-2 h-2 rounded-full transition-colors ${index === currentIndex ? 'bg-primary' : 'bg-gray-300'}`}
+                      onClick={() => {
+                        setCurrentIndex(index);
+                        trackInteraction('carousel_dot_click');
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </Carousel>
           )}
         </div>
 
