@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useFormContext } from 'react-hook-form';
-import { CampaignFormData } from '@/app/types/campaign';
-import { MediaFileClient } from '@/services/campaign';
+import { CampaignFormData } from '@/services/campaign';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { any } from 'zod';
 
 const MediaUploadComponent = () => {
   const {
@@ -41,7 +40,7 @@ const MediaUploadComponent = () => {
         return {
           type,
           url: URL.createObjectURL(file),
-          file: any,
+          file, // Use the actual File object
         };
       });
 
