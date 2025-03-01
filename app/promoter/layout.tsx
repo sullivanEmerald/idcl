@@ -24,7 +24,11 @@ const sidebarItems = [
     //   },
     // ],
   },
-
+  {
+    title: 'Brands',
+    href: '/promoter/dashboard/brands',
+    icon: 'star',
+  },
   {
     title: "Wallet",
     href: "/promoter/dashboard/wallet",

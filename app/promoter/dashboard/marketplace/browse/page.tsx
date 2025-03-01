@@ -119,7 +119,11 @@ export default function BrowseCampaigns() {
           <Card
             key={campaign.id}
             className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
-            onClick={() => router.push(`/promoter/dashboard/marketplace/campaign/${campaign.id}`)}
+            onClick={() =>
+              router.push(
+                `/promoter/dashboard/marketplace/campaign/${campaign.id}`
+              )
+            }
           >
             {/* Cover Image */}
             <div className="relative aspect-video w-full overflow-hidden">
@@ -145,16 +149,22 @@ export default function BrowseCampaigns() {
                     campaign.applicationStatus.slice(1)}
                 </span>
               )}
-              
+
               {/* Price Badge */}
               <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
-                <div className="text-xs font-medium text-gray-600 uppercase">Price per post</div>
-                <div className="text-lg font-bold text-blue-600">${campaign.pricePerPost}</div>
+                <div className="text-xs font-medium text-gray-600 uppercase">
+                  Price per post
+                </div>
+                <div className="text-lg font-bold text-blue-600">
+                  ${campaign.pricePerPost}
+                </div>
               </div>
-              
+
               {/* End Date Badge */}
               <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm text-right">
-                <div className="text-xs font-medium text-gray-600 uppercase">Ends</div>
+                <div className="text-xs font-medium text-gray-600 uppercase">
+                  Ends
+                </div>
                 <div className="text-sm font-semibold text-gray-900">
                   {new Date(campaign.endDate).toLocaleDateString("en-US", {
                     month: "short",
@@ -178,16 +188,25 @@ export default function BrowseCampaigns() {
                   <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
                     {campaign.title}
                   </h3>
-                  <p className="text-sm text-gray-500">{campaign.advertiser.companyName}</p>
+                  <p className="text-sm text-gray-500">
+                    {campaign.advertiser.companyName}
+                  </p>
                 </div>
               </div>
 
-              <p className="text-sm text-gray-600 line-clamp-2">{campaign.description}</p>
+              <div className="relative">
+                <p className="text-sm text-gray-600 line-clamp-2">
+                  {campaign.description}
+                </p>
+                <div className="absolute bottom-0 right-0 bg-gradient-to-l from-white via-white to-transparent pl-10 pr-2 text-xs text-blue-600 font-medium">
+                  Read more →
+                </div>
+              </div>
 
               {/* Tags */}
               <div className="space-y-3">
                 {/* Platforms */}
-                <div className="flex flex-wrap gap-1.5">
+                {/* <div className="flex flex-wrap gap-1.5">
                   {campaign.requiredPlatforms.map((platform) => (
                     <span
                       key={platform}
@@ -196,10 +215,10 @@ export default function BrowseCampaigns() {
                       {platform}
                     </span>
                   ))}
-                </div>
+                </div> */}
 
                 {/* Niches */}
-                <div className="flex flex-wrap gap-1.5">
+                {/* <div className="flex flex-wrap gap-1.5">
                   {campaign.targetedNiches.map((niche) => (
                     <span
                       key={niche}
@@ -208,7 +227,7 @@ export default function BrowseCampaigns() {
                       {niche}
                     </span>
                   ))}
-                </div>
+                </div> */}
               </div>
             </div>
           </Card>
@@ -219,7 +238,7 @@ export default function BrowseCampaigns() {
       <div className="flex justify-center gap-4 mt-8">
         <Button
           variant="outline"
-          onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
           disabled={currentPage === 1}
         >
           Previous
@@ -234,7 +253,7 @@ export default function BrowseCampaigns() {
         </div>
         <Button
           variant="outline"
-          onClick={() => setCurrentPage(p => p + 1)}
+          onClick={() => setCurrentPage((p) => p + 1)}
           disabled={!hasMore}
         >
           Next
