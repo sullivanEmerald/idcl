@@ -1,15 +1,23 @@
-'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
-import { useState, useEffect } from 'react';
-import { brandService } from '@/services/brand';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Star, StarOff, Globe, Instagram, Twitter, ShieldCheck } from 'lucide-react';
-import { toast } from 'sonner';
-import Link from 'next/link';
-import type { Brand } from '@/services/brand';
+import { useState, useEffect } from "react";
+import { brandService } from "@/services/brand";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Star,
+  StarOff,
+  Globe,
+  Instagram,
+  Twitter,
+  ShieldCheck,
+} from "lucide-react";
+import { toast } from "sonner";
+import Link from "next/link";
+import type { Brand } from "@/services/brand";
 
 export default function BrandDetailsPage({
   params,
@@ -27,7 +35,7 @@ export default function BrandDetailsPage({
         const data = await brandService.getBrand(params.id);
         setBrand(data);
       } catch (error: any) {
-        toast.error(error.message || 'Failed to load brand');
+        toast.error(error.message || "Failed to load brand");
       } finally {
         setIsLoading(false);
       }
@@ -43,16 +51,19 @@ export default function BrandDetailsPage({
       setIsUpdating(true);
       if (isFollowing) {
         await brandService.unfollowBrand(params.id);
-        toast.success('Brand unfollowed successfully');
+        toast.success("Brand unfollowed successfully");
       } else {
         await brandService.followBrand(params.id);
-        toast.success('Brand followed successfully');
+        toast.success("Brand followed successfully");
       }
 
       // Update local state
       setBrand({ ...brand, isFollowing: !isFollowing });
     } catch (error: any) {
-      toast.error(error.message || `Failed to ${isFollowing ? 'unfollow' : 'follow'} brand`);
+      toast.error(
+        error.message ||
+          `Failed to ${isFollowing ? "unfollow" : "follow"} brand`
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -73,7 +84,8 @@ export default function BrandDetailsPage({
       <div className="container mx-auto py-8 text-center">
         <h1 className="text-2xl font-bold">Brand not found</h1>
         <p className="mt-2 text-muted-foreground">
-          The brand you're looking for doesn't exist or has been removed.
+          The brand {"you're"} looking for doesn&lsquo;t exist or has been
+          removed.
         </p>
         <Button asChild className="mt-4">
           <Link href="/promoter/brands">Back to Brands</Link>
@@ -82,7 +94,7 @@ export default function BrandDetailsPage({
     );
   }
 
-  return (
+  return brand ? (
     <div className="container mx-auto py-8 space-y-8">
       <Card className="p-8">
         <div className="flex items-start justify-between">
@@ -96,7 +108,10 @@ export default function BrandDetailsPage({
               <div className="flex items-center space-x-3">
                 <h1 className="text-3xl font-bold">{brand.name}</h1>
                 {brand.isVerified && (
-                  <Badge variant="secondary" className="flex items-center space-x-1">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center space-x-1"
+                  >
                     <ShieldCheck className="h-4 w-4" />
                     <span>Verified Brand</span>
                   </Badge>
@@ -188,7 +203,9 @@ export default function BrandDetailsPage({
                 <p className="text-muted-foreground">Total Campaigns</p>
               </div>
               <div>
-                <p className="text-2xl font-bold">{brand.activeCampaignCount}</p>
+                <p className="text-2xl font-bold">
+                  {brand.activeCampaignCount}
+                </p>
                 <p className="text-muted-foreground">Active Campaigns</p>
               </div>
             </div>
@@ -198,12 +215,14 @@ export default function BrandDetailsPage({
         <TabsContent value="campaigns" className="space-y-6">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Active Campaigns</h2>
-            {brand.activeCampaigns?.length > 0 ? (
+            {brand &&
+            brand?.activeCampaigns &&
+            brand?.activeCampaigns?.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {brand.activeCampaigns.map((campaign) => (
+                {brand?.activeCampaigns?.map((campaign) => (
                   <Card key={campaign.id} className="p-4">
                     <Link
-                      href={`/promoter/campaigns/${campaign.id}`}
+                      href={`/promoter/dashboard/campaigns/${campaign.id}`}
                       className="group"
                     >
                       <h3 className="text-lg font-semibold group-hover:text-primary">
@@ -228,40 +247,44 @@ export default function BrandDetailsPage({
           </Card>
         </TabsContent>
 
-        <TabsContent value="requirements" className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">
-              Collaboration Requirements
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-medium">Minimum Followers</h3>
-                <p className="text-muted-foreground">
-                  {brand.minFollowers.toLocaleString()}
-                </p>
+        {brand && (
+          <TabsContent value="requirements" className="space-y-6">
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">
+                Collaboration Requirements
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-medium">Minimum Followers</h3>
+                  <p className="text-muted-foreground">
+                    {brand?.minFollowers?.toLocaleString()}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-medium">Minimum Engagement Rate</h3>
+                  <p className="text-muted-foreground">
+                    {brand.minEngagementRate}%
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-medium">Preferred Content Types</h3>
+                  <p className="text-muted-foreground">
+                    {brand?.preferredContentTypes?.join(", ")}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-medium">Brand Guidelines</h3>
+                  <p className="text-muted-foreground whitespace-pre-wrap">
+                    {brand?.guidelines}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-medium">Minimum Engagement Rate</h3>
-                <p className="text-muted-foreground">
-                  {brand.minEngagementRate}%
-                </p>
-              </div>
-              <div>
-                <h3 className="font-medium">Preferred Content Types</h3>
-                <p className="text-muted-foreground">
-                  {brand.preferredContentTypes.join(', ')}
-                </p>
-              </div>
-              <div>
-                <h3 className="font-medium">Brand Guidelines</h3>
-                <p className="text-muted-foreground whitespace-pre-wrap">
-                  {brand.guidelines}
-                </p>
-              </div>
-            </div>
-          </Card>
-        </TabsContent>
+            </Card>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
+  ) : (
+    <div></div>
   );
 }

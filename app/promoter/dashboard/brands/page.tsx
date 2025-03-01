@@ -129,7 +129,7 @@ export default function BrandsPage() {
           getFilteredBrands().map((brand) => (
             <Card key={brand.id} className="p-6 space-y-4">
               <div className="flex items-start justify-between">
-                <Link href={`/promoter/brands/${brand.id}`} className="group">
+                <Link href={`/promoter/dashboard/brands/${brand.id}`} className="group">
                   <div className="flex items-center space-x-4">
                     {brand.logo ? (
                       <img
