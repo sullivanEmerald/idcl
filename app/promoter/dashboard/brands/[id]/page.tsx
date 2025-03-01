@@ -14,6 +14,11 @@ import {
   Instagram,
   Twitter,
   ShieldCheck,
+  Building2,
+  Users,
+  Phone,
+  Mail,
+  MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -57,7 +62,6 @@ export default function BrandDetailsPage({
         toast.success("Brand followed successfully");
       }
 
-      // Update local state
       setBrand({ ...brand, isFollowing: !isFollowing });
     } catch (error: any) {
       toast.error(
@@ -84,7 +88,7 @@ export default function BrandDetailsPage({
       <div className="container mx-auto py-8 text-center">
         <h1 className="text-2xl font-bold">Brand not found</h1>
         <p className="mt-2 text-muted-foreground">
-          The brand {"you're"} looking for doesn&lsquo;t exist or has been
+          The brand you&#39;re looking for doesn&#39;t exist or has been
           removed.
         </p>
         <Button asChild className="mt-4">
@@ -94,16 +98,22 @@ export default function BrandDetailsPage({
     );
   }
 
-  return brand ? (
+  return (
     <div className="container mx-auto py-8 space-y-8">
       <Card className="p-8">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-6">
-            <img
-              src={brand.logo}
-              alt={brand.name}
-              className="h-24 w-24 rounded-full object-cover"
-            />
+            <div className="h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center">
+              {brand.logo ? (
+                <img
+                  src={brand.logo}
+                  alt={brand.name}
+                  className="h-24 w-24 rounded-full object-cover"
+                />
+              ) : (
+                <Building2 className="h-12 w-12 text-gray-400" />
+              )}
+            </div>
             <div>
               <div className="flex items-center space-x-3">
                 <h1 className="text-3xl font-bold">{brand.name}</h1>
@@ -180,7 +190,7 @@ export default function BrandDetailsPage({
         <TabsList>
           <TabsTrigger value="about">About</TabsTrigger>
           <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
-          <TabsTrigger value="requirements">Requirements</TabsTrigger>
+          <TabsTrigger value="details">Company Details</TabsTrigger>
         </TabsList>
 
         <TabsContent value="about" className="space-y-6">
@@ -189,6 +199,29 @@ export default function BrandDetailsPage({
             <p className="text-muted-foreground whitespace-pre-wrap">
               {brand.description}
             </p>
+          </Card>
+
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Target Audience</h2>
+            {brand.targetAudience ? (
+              Array.isArray(brand.targetAudience) ? (
+                <div className="flex flex-wrap gap-2">
+                  {brand.targetAudience.map((audience) => (
+                    <Badge key={audience} variant="secondary">
+                      {audience}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground whitespace-pre-wrap">
+                  {brand.targetAudience}
+                </p>
+              )
+            ) : (
+              <p className="text-muted-foreground">
+                No target audience specified
+              </p>
+            )}
           </Card>
 
           <Card className="p-6">
@@ -203,10 +236,8 @@ export default function BrandDetailsPage({
                 <p className="text-muted-foreground">Total Campaigns</p>
               </div>
               <div>
-                <p className="text-2xl font-bold">
-                  {brand.activeCampaignCount}
-                </p>
-                <p className="text-muted-foreground">Active Campaigns</p>
+                <p className="text-2xl font-bold capitalize">{brand.status}</p>
+                <p className="text-muted-foreground">Status</p>
               </div>
             </div>
           </Card>
@@ -215,76 +246,65 @@ export default function BrandDetailsPage({
         <TabsContent value="campaigns" className="space-y-6">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Active Campaigns</h2>
-            {brand &&
-            brand?.activeCampaigns &&
-            brand?.activeCampaigns?.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {brand?.activeCampaigns?.map((campaign) => (
-                  <Card key={campaign.id} className="p-4">
-                    <Link
-                      href={`/promoter/dashboard/campaigns/${campaign.id}`}
-                      className="group"
-                    >
-                      <h3 className="text-lg font-semibold group-hover:text-primary">
-                        {campaign.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {campaign.description}
-                      </p>
-                      <div className="flex items-center space-x-4 mt-4 text-sm">
-                        <span>Budget: ${campaign.budget}</span>
-                        <span>{campaign.applicantCount} applicants</span>
-                      </div>
-                    </Link>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <p className="text-muted-foreground">
-                No active campaigns at the moment.
-              </p>
-            )}
+            <p className="text-muted-foreground">
+              No active campaigns at the moment.
+            </p>
           </Card>
         </TabsContent>
 
-        {brand && (
-          <TabsContent value="requirements" className="space-y-6">
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">
-                Collaboration Requirements
-              </h2>
+        <TabsContent value="details" className="space-y-6">
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Company Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium">Minimum Followers</h3>
-                  <p className="text-muted-foreground">
-                    {brand?.minFollowers?.toLocaleString()}
-                  </p>
+                <div className="flex items-center space-x-2">
+                  <Building2 className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Business Type</p>
+                    <p className="text-muted-foreground uppercase">
+                      {brand.businessType}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-medium">Minimum Engagement Rate</h3>
-                  <p className="text-muted-foreground">
-                    {brand.minEngagementRate}%
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-medium">Preferred Content Types</h3>
-                  <p className="text-muted-foreground">
-                    {brand?.preferredContentTypes?.join(", ")}
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-medium">Brand Guidelines</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap">
-                    {brand?.guidelines}
-                  </p>
+                <div className="flex items-center space-x-2">
+                  <Users className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Company Size</p>
+                    <p className="text-muted-foreground">{brand.companySize}</p>
+                  </div>
                 </div>
               </div>
-            </Card>
-          </TabsContent>
-        )}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Phone className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Phone</p>
+                    <p className="text-muted-foreground">{brand.phoneNumber}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Email</p>
+                    <p className="text-muted-foreground">
+                      {brand.billingEmail}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <MapPin className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Address</p>
+                    <p className="text-muted-foreground">
+                      {brand.billingAddress}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
-  ) : (
-    <div></div>
   );
 }

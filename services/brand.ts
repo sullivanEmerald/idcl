@@ -25,6 +25,16 @@ export interface Brand {
     budget: number;
     applicantCount: number;
   }>;
+  businessType: string;
+  companySize: string;
+  phoneNumber: string;
+  billingAddress: string;
+  billingEmail: string;
+  targetAudience: string[];
+  status: string;
+  platforms: string[];
+  audienceInterests: string[];
+  contentTypes: string[];
 }
 
 interface GetBrandsParams {
