@@ -2,7 +2,9 @@ import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
+type BaseCarouselProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'>
+
+export interface CarouselProps extends BaseCarouselProps {
   children?: React.ReactNode;
   onSelect?: (index: number) => void;
 }
