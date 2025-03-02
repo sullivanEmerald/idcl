@@ -143,7 +143,7 @@ const promoterService = {
     return {
       ...campaign,
       coverImage: promoterService.determineCoverImage(campaign),
-      metrics: campaign.linkMetrics || {
+      linkMetrics: campaign.linkMetrics || {
         clicks: 0,
         uniqueClicks: 0,
         conversions: 0,

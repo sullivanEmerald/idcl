@@ -35,26 +35,32 @@ export interface CampaignRequirements {
   };
 }
 
+export interface DeviceMetrics {
+  uniqueViews: number;
+  clicks: number;
+  conversions: number;
+}
+
 export interface CampaignMetrics {
-  totalReach: number;
-  totalEngagements: number;
-  totalPosts: number;
-  averageEngagementRate: number;
   clicks: number;
   uniqueClicks: number;
   conversions: number;
+  totalReach: number;
+  totalEngagements: number;
+  totalPosts: number;
+  totalConversions: number;
+  averageEngagementRate: number;
   byDevice: {
-    mobile: number;
-    desktop: number;
-    tablet: number;
+    mobile: DeviceMetrics;
+    desktop: DeviceMetrics;
+    tablet: DeviceMetrics;
   };
   byRegion: Record<string, number>;
   byChannel: Record<string, number>;
-  uniqueViews: number;
-  conversionMetrics?: {
-    leads: number;
-    downloads: number;
-    payments: number;
+  linkMetrics?: {
+    clicks: number;
+    uniqueClicks: number;
+    conversions: number;
   };
 }
 

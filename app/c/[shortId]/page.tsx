@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Image from 'next/image';
@@ -13,6 +13,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { analyticsService } from '@/services/analytics';
+import { usePathname } from 'next/navigation';
 
 interface ContentAsset {
   type: 'photo' | 'video' | 'carousel';
@@ -30,18 +32,24 @@ interface Campaign {
   promotionLink: string;
 }
 
-export default function CampaignPage({ params }: { params: { shortId: string } }) {
+export default function CampaignPage({ params, searchParams }: { params: { shortId: string }, searchParams: { pId?: string } }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const promoterId = searchParams.pId;
+  const [referrer] = useState(typeof document !== 'undefined' ? document.referrer : '');
 
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
         // Get campaign details directly from campaigns endpoint
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/campaigns/public/${params.shortId}`);
-        console.log(response.data);
         setCampaign(response.data);
+        
+        // Track page view after campaign loads
+        analyticsService.trackPageView(params.shortId, promoterId);
       } catch (error) {
         console.error('Failed to fetch campaign:', error);
         // router.push('/404');
@@ -51,7 +59,37 @@ export default function CampaignPage({ params }: { params: { shortId: string } }
     };
 
     fetchCampaign();
-  }, [params.shortId, router]);
+
+    // Track session duration when user leaves
+    const handleBeforeUnload = () => {
+      const duration = analyticsService.getSessionDuration();
+      const baseMetadata = analyticsService.getBaseMetadata();
+      const blob = new Blob(
+        [
+          JSON.stringify({
+            shortUrlId: params.shortId,
+            eventType: 'view',
+            promoterId: promoterId,
+            metadata: {
+              ...baseMetadata,
+              duration,
+              path: pathname,
+              interactionType: 'campaign_view_end',
+              referrer
+            }
+          })
+        ],
+        { type: 'application/json' }
+      );
+      navigator.sendBeacon(
+        `${process.env.NEXT_PUBLIC_API_URL}/analytics/track`,
+        blob
+      );
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [params.shortId, pathname, router]);
 
   if (loading) {
     return (
@@ -77,7 +115,7 @@ export default function CampaignPage({ params }: { params: { shortId: string } }
         {/* Campaign Assets */}
         <div className="mb-12">
           {campaign.contentAssets[0]?.type === 'carousel' ? (
-            <Carousel className="w-full">
+            <Carousel className="w-full" onSelect={(index) => analyticsService.trackCarouselSlide(params.shortId, index, promoterId)}>
               <CarouselContent>
                 {campaign.contentAssets
                   .sort((a, b) => (a.carouselIndex || 0) - (b.carouselIndex || 0))
@@ -100,9 +138,12 @@ export default function CampaignPage({ params }: { params: { shortId: string } }
           ) : campaign.contentAssets[0]?.type === 'video' ? (
             <div className="relative aspect-video">
               <video
+                ref={videoRef}
                 src={campaign.contentAssets[0].url}
                 controls
                 className="w-full h-full rounded-lg"
+                onPlay={() => analyticsService.trackVideoPlay(params.shortId, promoterId)}
+                onEnded={() => analyticsService.trackVideoComplete(params.shortId, promoterId)}
               />
             </div>
           ) : (
@@ -124,13 +165,7 @@ export default function CampaignPage({ params }: { params: { shortId: string } }
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-            onClick={() => {
-              // Track the click event
-              axios.post(`${process.env.NEXT_PUBLIC_API_URL}/analytics/track`, {
-                shortId: params.shortId,
-                event: 'conversion'
-              }).catch(console.error);
-            }}
+            onClick={() => analyticsService.trackConversion(params.shortId, campaign.promotionLink, promoterId)}
           >
             Learn More
           </a>

@@ -12,11 +12,11 @@ export default function RedirectPage({ params }: { params: { shortId: string } }
       try {
         // Get short URL details
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/url-shortener/campaign/${params.shortId}`);
-        console.log(response?.data)
         const campaignId = response.data.campaignId;
+        const promoterId = response.data.promoterId;
         
         // Redirect to campaign page
-        router.push(`/c/${campaignId}`);
+        router.push(`/c/${campaignId}?pId=${promoterId}`);
       } catch (error) {
         console.error('Failed to handle redirect:', error);
         router.push('/404');
