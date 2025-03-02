@@ -32,12 +32,13 @@ class AnalyticsService {
     this.sessionStartTime = Date.now();
     this.lastEventTime = this.sessionStartTime;
     // Store referrer immediately when service is instantiated
-    if (typeof window !== 'undefined') {
-      this.pageReferrer = window.location.search.includes('ref=') 
-        ? new URLSearchParams(window.location.search).get('ref') || document.referrer
+    if (typeof window !== "undefined") {
+      this.pageReferrer = window.location.search.includes("ref=")
+        ? new URLSearchParams(window.location.search).get("ref") ||
+          document.referrer
         : document.referrer;
     } else {
-      this.pageReferrer = '';
+      this.pageReferrer = "";
     }
   }
 
@@ -77,7 +78,7 @@ class AnalyticsService {
     }
   }
 
-  private async trackEvent(
+  async trackEvent(
     shortUrlId: string,
     eventType: EventType,
     metadata?: EventMetadata & { referrer?: string },
@@ -102,37 +103,62 @@ class AnalyticsService {
   }
 
   trackPageView(shortId: string, promoterId?: string) {
-    return this.trackEvent(shortId, "view", {
-      interactionType: "campaign_view",
-    }, promoterId);
+    return this.trackEvent(
+      shortId,
+      "view",
+      {
+        interactionType: "campaign_view",
+      },
+      promoterId
+    );
   }
 
   trackConversion(shortId: string, url: string, promoterId?: string) {
-    return this.trackEvent(shortId, "click", {
-      interactionType: "cta_click",
-      url,
-    }, promoterId);
+    return this.trackEvent(
+      shortId,
+      "click",
+      {
+        interactionType: "cta_click",
+        url,
+      },
+      promoterId
+    );
   }
 
   trackVideoPlay(shortId: string, promoterId?: string) {
-    return this.trackEvent(shortId, "view", {
-      interactionType: "video_play",
-    }, promoterId);
+    return this.trackEvent(
+      shortId,
+      "view",
+      {
+        interactionType: "video_play",
+      },
+      promoterId
+    );
   }
 
   trackVideoComplete(shortId: string, promoterId?: string) {
     const duration = Date.now() - this.lastEventTime;
-    return this.trackEvent(shortId, "view", {
-      interactionType: "video_complete",
-      duration,
-    }, promoterId);
+    return this.trackEvent(
+      shortId,
+      "view",
+      {
+        interactionType: "video_complete",
+        duration,
+      },
+      promoterId
+    );
   }
 
   trackCarouselSlide(shortId: string, slideIndex: number, promoterId?: string) {
-    return this.trackEvent(shortId, "view", {
-      interactionType: "carousel_slide",
-      slideIndex,
-    }, promoterId);
+    return this.trackEvent(
+      shortId,
+      "view",
+      {
+        interactionType: "carousel_slide",
+        slideIndex,
+      },
+      promoterId
+    );
   }
 
   getSessionDuration() {
