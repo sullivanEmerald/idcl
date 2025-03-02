@@ -8,20 +8,35 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeftIcon, CheckCircle2Icon, MailIcon } from 'lucide-react'
+import authService from '@/services/auth'
 
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [email, setEmail] = useState("")
+  const [error, setError] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    // TODO: Implement password reset logic
-    setTimeout(() => {
+    setError("")
+
+    try {
+      // set reset password for API comm in the Auth serive 
+      const response = await authService.forgotPassword(email)
+      console.log(response)
+
+      setTimeout(() => {
+        setIsLoading(false)
+        setIsSubmitted(true)
+      }, 1500)
+
+    } catch (error: any) {
+      const responseError = error.response?.data?.message || 'An error occured during password reset'
+      setError(responseError)
+    } finally {
       setIsLoading(false)
-      setIsSubmitted(true)
-    }, 1500)
+    }
   }
 
   return (
@@ -85,6 +100,11 @@ export default function ForgotPasswordPage() {
                   "Send reset link"
                 )}
               </Button>
+              {error && (
+                <p className="text-sm text-red-500 mt-2 text-center">
+                  {error}
+                </p>
+              )}
             </form>
           ) : (
             <div className="space-y-4">

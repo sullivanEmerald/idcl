@@ -1,4 +1,5 @@
 import { axiosInstance } from '@/lib/utils';
+import { ZodNullDef } from 'zod';
 
 export interface LoginCredentials {
   email: string;
@@ -29,12 +30,18 @@ const authService = {
   },
 
   async forgotPassword(email: string) {
-    const response = await axiosInstance.post('/auth/forgot-password', { email });
-    return response.data;
+    try {
+      const response = await axiosInstance.post('/users/forgot-password', { email });
+      console.log("Response:", response);
+      return response.data;
+    } catch (error) {
+      console.error("Error in forgotPassword service:", error);
+      throw error;
+    }
   },
 
-  async resetPassword(token: string, newPassword: string) {
-    const response = await axiosInstance.post('/auth/reset-password', {
+  async resetPassword(token: string | null, newPassword: string) {
+    const response = await axiosInstance.post('/users/reset-password', {
       token,
       newPassword,
     });

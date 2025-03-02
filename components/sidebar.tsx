@@ -51,7 +51,6 @@ function getIcon(iconName: string) {
 
 export function Sidebar({ items }: SidebarProps) {
   const pathname = usePathname()
-
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-white">
       <div className="flex h-20 items-center justify-center border-b">
