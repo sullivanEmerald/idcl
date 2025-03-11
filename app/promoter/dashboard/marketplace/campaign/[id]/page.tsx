@@ -598,24 +598,32 @@ export default function CampaignDetails() {
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-6">Device Distribution</h2>
           <div className="grid grid-cols-3 gap-4">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600">Mobile</p>
-              <p className="text-2xl font-bold mt-1">
-                {campaign?.metrics?.byDevice?.mobile || 0}%
-              </p>
-            </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600">Desktop</p>
-              <p className="text-2xl font-bold mt-1">
-                {campaign?.metrics?.byDevice?.desktop || 0}%
-              </p>
-            </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600">Tablet</p>
-              <p className="text-2xl font-bold mt-1">
-                {campaign?.metrics?.byDevice?.tablet || 0}%
-              </p>
-            </div>
+            {(['mobile', 'desktop', 'tablet'] as const).map((device) => {
+              console.log('checking device:', device);
+              console.log('byDevice:', campaign?.metrics?.byDevice);
+              const deviceMetrics = campaign?.metrics?.byDevice?.[device] || {
+                uniqueViews: 0,
+                clicks: 0,
+                conversions: 0
+              };
+              console.log('deviceMetrics for ' + device + ':', deviceMetrics)
+              
+              return (
+                <div key={device} className="p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-600">{device.charAt(0).toUpperCase() + device.slice(1)}</p>
+                  <div>
+                    <p className="text-2xl font-bold mt-1">
+                      {deviceMetrics.uniqueViews}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">unique views</p>
+                  </div>
+                  <div className="mt-2">
+                    <p className="text-sm">{deviceMetrics.clicks} clicks</p>
+                    <p className="text-sm">{deviceMetrics.conversions} conversions</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </Card>
 

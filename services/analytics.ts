@@ -1,0 +1,207 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { axiosInstance } from "@/lib/utils";
+
+export type EventType = "view" | "click" | "conversion";
+export type InteractionType =
+  | "campaign_view"
+  | "campaign_view_end"
+  | "video_play"
+  | "video_complete"
+  | "carousel_slide"
+  | "cta_click"
+  | "url_shortener_click";
+
+export interface EventMetadata {
+  interactionType?: InteractionType;
+  duration?: number;
+  slideIndex?: number;
+  videoProgress?: number;
+  screenSize?: string;
+  referrer?: string;
+  userAgent?: string;
+  url?: string;
+  [key: string]: any;
+}
+
+class AnalyticsService {
+  private sessionStartTime: number;
+  private lastEventTime: number;
+  private pageReferrer: string;
+
+  constructor() {
+    this.sessionStartTime = Date.now();
+    this.lastEventTime = this.sessionStartTime;
+    // Store referrer immediately when service is instantiated
+    if (typeof window !== "undefined") {
+      this.pageReferrer = window.location.search.includes("ref=")
+        ? new URLSearchParams(window.location.search).get("ref") ||
+          document.referrer
+        : document.referrer;
+    } else {
+      this.pageReferrer = "";
+    }
+  }
+
+  getBaseMetadata() {
+    return {
+      referrer: this.pageReferrer,
+      userAgent: navigator?.userAgent,
+      screenSize:
+        typeof window !== "undefined"
+          ? `${window.innerWidth}x${window.innerHeight}`
+          : undefined,
+    };
+  }
+  async handleShortUrl(shortId: string): Promise<string> {
+    try {
+      const response = await axiosInstance.get(`/url-shortener/s/${shortId}`, {
+        maxRedirects: 0,
+        validateStatus: (status) => status === 302 || status === 200,
+      });
+      console.log(response.data);
+      console.log(response.headers);
+
+      // For axios, we need to look in response.data for the redirect URL
+      const redirectUrl =
+        response.request?.res?.responseUrl || response.headers?.location;
+      if (!redirectUrl) {
+        throw new Error("No redirect URL found");
+      }
+
+      // If it's a relative URL (starts with /), make it absolute
+      return redirectUrl.startsWith("/")
+        ? `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}${redirectUrl}`
+        : redirectUrl;
+    } catch (error) {
+      console.error("Failed to handle short URL:", error);
+      throw error;
+    }
+  }
+
+  async trackEvent(
+    shortUrlId: string,
+    eventType: EventType,
+    metadata?: EventMetadata & { referrer?: string },
+    promoterId?: string
+  ) {
+    try {
+      const response = await axiosInstance.post("/analytics/track", {
+        shortUrlId,
+        eventType,
+        promoterId,
+        metadata: {
+          ...this.getBaseMetadata(),
+          ...metadata,
+        },
+      });
+      this.lastEventTime = Date.now();
+      return response.data;
+    } catch (error) {
+      console.error("Failed to track analytics event:", error);
+      throw error;
+    }
+  }
+
+  trackPageView(shortId: string, promoterId?: string) {
+    return this.trackEvent(
+      shortId,
+      "view",
+      {
+        interactionType: "campaign_view",
+      },
+      promoterId
+    );
+  }
+
+  trackConversion(shortId: string, url: string, promoterId?: string) {
+    return this.trackEvent(
+      shortId,
+      "click",
+      {
+        interactionType: "cta_click",
+        url,
+      },
+      promoterId
+    );
+  }
+
+  trackVideoPlay(shortId: string, promoterId?: string) {
+    return this.trackEvent(
+      shortId,
+      "view",
+      {
+        interactionType: "video_play",
+      },
+      promoterId
+    );
+  }
+
+  trackVideoComplete(shortId: string, promoterId?: string) {
+    const duration = Date.now() - this.lastEventTime;
+    return this.trackEvent(
+      shortId,
+      "view",
+      {
+        interactionType: "video_complete",
+        duration,
+      },
+      promoterId
+    );
+  }
+
+  trackCarouselSlide(shortId: string, slideIndex: number, promoterId?: string) {
+    return this.trackEvent(
+      shortId,
+      "view",
+      {
+        interactionType: "carousel_slide",
+        slideIndex,
+      },
+      promoterId
+    );
+  }
+
+  getSessionDuration() {
+    return Date.now() - this.sessionStartTime;
+  }
+
+  async getCampaignAnalytics(
+    campaignId: string,
+    timeRange: { start: Date; end: Date }
+  ) {
+    try {
+      const response = await axiosInstance.get("/analytics/campaign", {
+        params: {
+          campaignId,
+          startDate: timeRange.start.toISOString(),
+          endDate: timeRange.end.toISOString(),
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch campaign analytics:", error);
+      throw error;
+    }
+  }
+
+  async getPromoterAnalytics(
+    promoterId: string,
+    timeRange: { start: Date; end: Date }
+  ) {
+    try {
+      const response = await axiosInstance.get("/analytics/promoter", {
+        params: {
+          promoterId,
+          startDate: timeRange.start.toISOString(),
+          endDate: timeRange.end.toISOString(),
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch promoter analytics:", error);
+      throw error;
+    }
+  }
+}
+
+export const analyticsService = new AnalyticsService();

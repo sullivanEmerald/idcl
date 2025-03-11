@@ -50,7 +50,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { campaignService } from "@/services/campaign";
+import { campaignService, MediaFileClient } from "@/services/campaign";
+import { axiosInstance } from "@/lib/utils";
 
 const NIGERIAN_STATES = [
   "Abia",
@@ -109,24 +110,43 @@ const NICHES = [
   { value: 'entertainment', label: 'Entertainment' },
 ]
 
+// Create a safe file schema that works on both server and client
+const fileSchema = typeof File === 'undefined'
+  ? z.any() // During SSR, accept any
+  : z.instanceof(File, { message: "Please upload a valid file" });
+
+// Define the schema to match MediaFileClient interface
 const mediaFileSchema = z.object({
   type: z.enum(["image", "video"] as const),
   url: z.string(),
-  file: z.any(),
+  file: fileSchema, // File is required in MediaFileClient
+}).transform((data) => {
+  // Ensure the file property is always present and correctly typed
+  return {
+    ...data,
+    file: data.file as File // Cast to File since we validate it's a File on client-side
+  };
 });
 
 const postingScheduleSchema = z.object({
   startTime: z.string().min(1, "Start time is required"),
   endTime: z.string().min(1, "End time is required"),
   days: z.array(z.string()).min(1, "Select at least one day"),
-});
+}).strict();
 
 const campaignSchema = z.object({
+  postingSchedule: postingScheduleSchema,  // Add this at the top to ensure it's properly typed
   // Campaign Details
   name: z.string().min(3, "Campaign name must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
-  budget: z.number().min(1, "Budget must be greater than 0"),
-  pricePerPost: z.number().min(1, "Price per post must be greater than 0"),
+  coverImage: z.string().url("Please upload a valid cover image").optional(),
+  // New required budget fields
+  budget: z.number().min(100, "Budget must be at least $100"),
+  pricePerPost: z.number().min(10, "Price per post must be at least $10"),
+  // Optional impression-based fields
+  targetImpressions: z.number().min(1000, "Target impressions must be at least 1,000").optional(),
+  pricePerImpression: z.number().min(0.001, "Price per impression must be greater than 0").optional(),
+  estimatedBudget: z.number().min(1, "Estimated budget must be greater than 0").optional(),
   startDate: z.date({
     required_error: "Start date is required",
   }),
@@ -140,7 +160,7 @@ const campaignSchema = z.object({
   }),
   location: z.array(z.string()).min(1, "Select at least one location"),
   gender: z.enum(["all", "male", "female"]).default("all"),
-  promoterCount: z.number().min(5).max(200),
+
   platforms: z.array(z.string()).min(1, "Select at least one platform"),
   niches: z.array(z.string()).min(1, "Select at least one niche"),
   isBoosted: z.boolean().default(false),
@@ -153,14 +173,18 @@ const campaignSchema = z.object({
   contentGuidelines: z
     .string()
     .min(10, "Guidelines must be at least 10 characters"),
-  postingSchedule: postingScheduleSchema,
   hashtags: z.string().min(1, "Add at least one hashtag"),
   mentions: z.string().optional(),
   brandAssetLinks: z.string().url().optional(),
   promotionLink: z.string().url("Please enter a valid URL"),
 });
 
-type CampaignFormData = z.infer<typeof campaignSchema>;
+// Import the type from campaign service
+import type { CampaignFormData } from '@/services/campaign';
+
+// Ensure the schema output matches CampaignFormData
+type CampaignSchemaOutput = z.infer<typeof campaignSchema>;
+type SchemaTypeCheck = CampaignSchemaOutput extends CampaignFormData ? true : false;
 
 const STEPS = ["details", "targeting", "content"] as const;
 
@@ -175,10 +199,15 @@ export default function Page() {
       contentType: "photo",
       isBoosted: false,
       gender: "all",
-      promoterCount: 10,
+      budget: 1000,
+      pricePerPost: 100,
+      targetImpressions: 1000,
+      pricePerImpression: 0.001,
+      estimatedBudget: 1,
       platforms: [],
       niches: [],
       mediaFiles: [],
+      coverImage: "",
       postingSchedule: {
         startTime: "09:00",
         endTime: "17:00",
@@ -198,6 +227,8 @@ export default function Page() {
   const startDate = watch("startDate");
   const endDate = watch("endDate");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateStep = async () => {
     let fieldsToValidate: (keyof CampaignFormData)[] = [];
@@ -207,30 +238,96 @@ export default function Page() {
         fieldsToValidate = [
           "name",
           "description",
-          "budget",
-          "pricePerPost",
+          "coverImage",
           "startDate",
           "endDate",
         ];
         break;
       case "targeting":
-        fieldsToValidate = ["goal", "platforms", "niches", "promoterCount"];
+        fieldsToValidate = [
+          "goal", 
+          "platforms", 
+          "niches", 
+          "targetImpressions", 
+          "pricePerImpression",
+          "estimatedBudget",
+          "location",
+          "gender"
+        ];
         break;
       case "content":
         fieldsToValidate = [
           "contentType",
           "mediaFiles",
           "contentGuidelines",
-          "postingSchedule",
+          "postingSchedule",  // Validate the entire postingSchedule object
           "hashtags",
           "promotionLink",
         ];
         break;
     }
 
-    const isValid = await trigger(fieldsToValidate);
+    const isValid = await trigger(fieldsToValidate, { shouldFocus: true });
+    
+    if (!isValid) {
+      const errorMessages = Object.entries(errors)
+        .filter(([field]) => fieldsToValidate.some(f => field.startsWith(f)))
+        .map(([field, error]) => {
+          if (error?.message) {
+            const fieldName = field
+              .split('.')
+              .map(part => 
+                part.replace(/([A-Z])/g, ' $1')
+                  .toLowerCase()
+                  .replace(/^./, str => str.toUpperCase())
+              )
+              .join(' › ');
+            return `${fieldName}: ${error.message}`;
+          }
+          return null;
+        })
+        .filter(Boolean);
+
+      if (errorMessages.length > 0) {
+        toast.error(
+          <div className="max-h-[80vh] overflow-auto">
+            <p className="font-medium mb-2">Please fix the following errors:</p>
+            <ul className="list-disc pl-4 space-y-1">
+              {errorMessages.map((message, index) => (
+                <li key={index}>{message}</li>
+              ))}
+            </ul>
+          </div>
+        );
+      }
+    }
+
     return isValid;
   };
+
+  const handleCoverImageUpload = async (file: File) => {
+    try {
+      setIsUploadingCover(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axiosInstance.post('/upload/campaign-cover', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      form.setValue('coverImage', response.data.url);
+      toast.success('Cover image uploaded successfully');
+    } catch (error: any) {
+      console.error('Error uploading cover image:', error);
+      toast.error(error.response?.data?.message || 'Failed to upload cover image. Please try again.');
+    } finally {
+      setIsUploadingCover(false);
+    }
+  };
+
+  const coverImage = watch('coverImage');
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -241,24 +338,93 @@ export default function Page() {
     if (!files?.length) return;
 
     const fileArray = Array.from(files);
-    const mediaFiles = fileArray.map((file) => ({
+    const mediaFiles: MediaFileClient[] = fileArray.map((file) => ({
       type: file.type.startsWith("video/") ? "video" as const : "image" as const,
       url: URL.createObjectURL(file),
-      file: file as File, // Ensure file is treated as required
+      file, // File is required in MediaFileClient
     }));
 
     form.setValue("mediaFiles", mediaFiles);
   };
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CampaignFormData) => {
     try {
-      toast.loading("Creating campaign...");
-      await campaignService.createCampaign(data);
-      toast.success("Campaign created successfully!");
-      router.push("/advertiser/dashboard/campaigns");
+      // Validate all fields before submitting
+      const isValid = await trigger();
+      if (!isValid) {
+        // Get all error messages
+        const errorMessages = Object.entries(errors)
+          .map(([field, error]) => {
+            if (error?.message) {
+              // Convert field name to readable format
+              const fieldName = field
+                .split('.')
+                .map(part => 
+                  part.replace(/([A-Z])/g, ' $1')
+                    .toLowerCase()
+                    .replace(/^./, str => str.toUpperCase())
+                )
+                .join(' › ');
+              return `${fieldName}: ${error.message}`;
+            }
+            return null;
+          })
+          .filter(Boolean);
+
+        if (errorMessages.length > 0) {
+          toast.error(
+            <div className="max-h-[80vh] overflow-auto">
+              <p className="font-medium mb-2">Please fix the following errors:</p>
+              <ul className="list-disc pl-4 space-y-1">
+                {errorMessages.map((message, index) => (
+                  <li key={index}>{message}</li>
+                ))}
+              </ul>
+            </div>
+          );
+          return;
+        }
+      }
+
+      setIsSubmitting(true);
+      toast.loading('Creating your campaign...');
+
+      const response = await campaignService.createCampaign(data);
+      
+      toast.dismiss(); // Dismiss the loading toast
+      toast.success(
+        <div className="space-y-2">
+          <p className="font-medium">Congratulations 🎊!</p>
+          <p className="text-sm text-muted-foreground">
+            Your campaign was created successfully. You can view your campaign on your dashboard.
+          </p>
+        </div>,
+        {
+          duration: 5000,
+        }
+      );
+      
+      // Wait a bit for the user to see the success message
+      setTimeout(() => {
+        router.push("/advertiser/dashboard/campaigns");
+      }, 2000);
+
     } catch (error: any) {
       console.error("Error creating campaign:", error);
-      toast.error(error.response?.data?.message || "Failed to create campaign");
+      toast.dismiss(); // Dismiss the loading toast
+      toast.error(
+        <div className="space-y-2">
+          <p className="font-medium">Failed to create campaign</p>
+          <p className="text-sm text-muted-foreground">
+            {error.response?.data?.message || "An unexpected error occurred. Please try again."}
+          </p>
+        </div>,
+        {
+          duration: 5000,
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -310,38 +476,93 @@ export default function Page() {
                   )}
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label>Campaign Budget ($)</Label>
-                    <Input
-                      {...form.register("budget", { valueAsNumber: true })}
-                      type="number"
-                      min={0}
-                      step={0.01}
-                    />
-                    {errors.budget && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.budget.message}
-                      </p>
+                <div className="space-y-2">
+                  <Label>Campaign Cover Image</Label>
+                  <div className="flex flex-col gap-4">
+                    {form.watch('coverImage') && (
+                      <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-100">
+                        <img
+                          src={form.watch('coverImage')}
+                          alt="Campaign cover"
+                          className="object-cover w-full h-full"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => form.setValue('coverImage', '')}
+                          className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M18 6L6 18" />
+                            <path d="M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
                     )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Price Per Post ($)</Label>
-                    <Input
-                      {...form.register("pricePerPost", {
-                        valueAsNumber: true,
-                      })}
-                      type="number"
-                      min={0}
-                      step={0.01}
-                    />
-                    {errors.pricePerPost && (
+                    <div className="flex items-center justify-center w-full">
+                      <label className={`flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 ${isUploadingCover ? 'opacity-50 pointer-events-none' : ''}`}>
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <svg
+                            className="w-8 h-8 mb-4 text-gray-500"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 20 16"
+                          >
+                            <path
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                            />
+                          </svg>
+                          {isUploadingCover ? (
+                            <div className="flex flex-col items-center">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-2"></div>
+                              <p className="text-sm text-gray-500">Uploading cover image...</p>
+                            </div>
+                          ) : (
+                            <>
+                              <p className="mb-2 text-sm text-gray-500">
+                                <span className="font-semibold">Click to upload</span> or drag and drop
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Upload your campaign cover image
+                              </p>
+                            </>
+                          )}
+                        </div>
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleCoverImageUpload(file);
+                          }}
+                        />
+                      </label>
+                    </div>
+                    {errors.coverImage && (
+                    
                       <p className="text-sm text-red-500 mt-1">
-                        {errors.pricePerPost.message}
+                        {errors.coverImage.message}
                       </p>
                     )}
                   </div>
                 </div>
+
+
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
@@ -411,9 +632,25 @@ export default function Page() {
                 <div className="space-y-2">
                   <Label>Campaign Goal</Label>
                   <Select
-                    onValueChange={(value) =>
-                      form.setValue("goal", value as any)
-                    }
+                    onValueChange={(value) => {
+                      form.setValue("goal", value as any);
+                      // Update pricing based on new goal
+                      const impressions = form.getValues("targetImpressions");
+                      let pricePerImpression = 0;
+                      switch(value) {
+                        case "awareness":
+                          pricePerImpression = 0.001;
+                          break;
+                        case "engagement":
+                          pricePerImpression = 0.005;
+                          break;
+                        case "conversion":
+                          pricePerImpression = 0.01;
+                          break;
+                      }
+                      form.setValue("pricePerImpression", pricePerImpression);
+                      form.setValue("estimatedBudget", (impressions || 0) * pricePerImpression);
+                    }}
                     defaultValue={form.getValues("goal")}
                   >
                     <SelectTrigger>
@@ -443,15 +680,16 @@ export default function Page() {
                   <Select
                     onValueChange={(value) => {
                       if (value === "all") {
-                        form.setValue("location", NIGERIAN_STATES);
+                        form.setValue("location", NIGERIAN_STATES, { shouldValidate: true });
                       } else {
                         const currentLocations =
                           form.getValues("location") || [];
                         if (!currentLocations.includes(value)) {
-                          form.setValue("location", [
-                            ...currentLocations,
-                            value,
-                          ]);
+                          form.setValue(
+                            "location", 
+                            [...currentLocations, value],
+                            { shouldValidate: true }
+                          );
                         }
                       }
                     }}
@@ -486,7 +724,8 @@ export default function Page() {
                             const currentLocations = form.getValues("location");
                             form.setValue(
                               "location",
-                              currentLocations.filter((s) => s !== state)
+                              currentLocations.filter((s) => s !== state),
+                              { shouldValidate: true }
                             );
                           }}
                           className="hover:text-red-500"
@@ -522,28 +761,57 @@ export default function Page() {
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <Label>Target Number of Promoters</Label>
-                    <span className="text-sm text-muted-foreground">
-                      {form.watch("promoterCount") || 5} promoters
-                    </span>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <Label>Target Impressions</Label>
+                      <span className="text-sm text-muted-foreground">
+                        {(form.watch("targetImpressions") || 1000).toLocaleString()} impressions
+                      </span>
+                    </div>
+                    <Slider
+                      defaultValue={[form.getValues("targetImpressions") || 1000]}
+                      min={1000}
+                      max={1000000}
+                      step={1000}
+                      onValueChange={([value]) => {
+                        form.setValue("targetImpressions", value);
+                        // Calculate estimated budget based on goal
+                        const goal = form.getValues("goal");
+                        let pricePerImpression = 0;
+                        switch(goal) {
+                          case "awareness":
+                            pricePerImpression = 0.001; // $0.001 per impression
+                            break;
+                          case "engagement":
+                            pricePerImpression = 0.005; // $0.005 per engagement
+                            break;
+                          case "conversion":
+                            pricePerImpression = 0.01; // $0.01 per conversion
+                            break;
+                        }
+                        form.setValue("pricePerImpression", pricePerImpression);
+                        form.setValue("estimatedBudget", value * pricePerImpression);
+                      }}
+                      className="py-4"
+                    />
+                    {errors.targetImpressions && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.targetImpressions.message}
+                      </p>
+                    )}
                   </div>
-                  <Slider
-                    defaultValue={[form.getValues("promoterCount") || 5]}
-                    min={5}
-                    max={200}
-                    step={1}
-                    onValueChange={([value]) =>
-                      form.setValue("promoterCount", value)
-                    }
-                    className="py-4"
-                  />
-                  {errors.promoterCount && (
-                    <p className="text-sm text-red-500 mt-1">
-                      {errors.promoterCount.message}
-                    </p>
-                  )}
+
+                  <div className="p-4 bg-primary/5 rounded-lg space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Price per {form.watch("goal") === "awareness" ? "impression" : form.watch("goal") === "engagement" ? "engagement" : "conversion"}:</span>
+                      <span>${form.watch("pricePerImpression")?.toFixed(3) || "0.000"}</span>
+                    </div>
+                    <div className="flex justify-between font-medium">
+                      <span>Estimated Budget:</span>
+                      <span>${form.watch("estimatedBudget")?.toLocaleString() || "0"}</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -551,14 +819,15 @@ export default function Page() {
                   <Select
                     onValueChange={(value) => {
                       if (value === "all") {
-                        form.setValue("platforms", PLATFORMS);
+                        form.setValue("platforms", PLATFORMS, { shouldValidate: true });
                       } else {
                         const currentPlatforms =
                           form.getValues("platforms") || [];
-                        form.setValue("platforms", [
-                          ...currentPlatforms,
-                          value,
-                        ]);
+                        form.setValue(
+                          "platforms", 
+                          [...currentPlatforms, value],
+                          { shouldValidate: true }
+                        );
                       }
                     }}
                   >
@@ -593,7 +862,8 @@ export default function Page() {
                               form.getValues("platforms");
                             form.setValue(
                               "platforms",
-                              currentPlatforms.filter((p) => p !== platform)
+                              currentPlatforms.filter((p) => p !== platform),
+                              { shouldValidate: true }
                             );
                           }}
                           className="hover:text-red-500"
@@ -610,10 +880,18 @@ export default function Page() {
                   <Select
                     onValueChange={(value) => {
                       if (value === "all") {
-                        form.setValue("niches", NICHES.map(niche => niche.value));
+                        form.setValue(
+                          "niches", 
+                          NICHES.map(niche => niche.value),
+                          { shouldValidate: true }
+                        );
                       } else {
                         const currentNiches = form.getValues("niches") || [];
-                        form.setValue("niches", [...currentNiches, value]);
+                        form.setValue(
+                          "niches", 
+                          [...currentNiches, value],
+                          { shouldValidate: true }
+                        );
                       }
                     }}
                   >
@@ -647,7 +925,8 @@ export default function Page() {
                             const currentNiches = form.getValues("niches");
                             form.setValue(
                               "niches",
-                              currentNiches.filter((n) => n !== niche)
+                              currentNiches.filter((n) => n !== niche),
+                              { shouldValidate: true }
                             );
                           }}
                           className="hover:text-red-500"
@@ -983,7 +1262,11 @@ export default function Page() {
                         Start Time
                       </Label>
                       <Input
-                        {...form.register("postingSchedule.startTime")}
+                        value={form.watch("postingSchedule.startTime") || ""}
+                        onChange={(e) => form.setValue("postingSchedule", {
+                          ...form.getValues("postingSchedule"),
+                          startTime: e.target.value
+                        }, { shouldValidate: true })}
                         type="time"
                       />
                       {errors.postingSchedule?.startTime && (
@@ -997,7 +1280,11 @@ export default function Page() {
                         End Time
                       </Label>
                       <Input
-                        {...form.register("postingSchedule.endTime")}
+                        value={form.watch("postingSchedule.endTime") || ""}
+                        onChange={(e) => form.setValue("postingSchedule", {
+                          ...form.getValues("postingSchedule"),
+                          endTime: e.target.value
+                        }, { shouldValidate: true })}
                         type="time"
                       />
                       {errors.postingSchedule?.endTime && (
@@ -1025,25 +1312,23 @@ export default function Page() {
                           key={day}
                           type="button"
                           variant={
-                            form.watch("postingSchedule.days")?.includes(day)
+                            form.watch("postingSchedule")?.days?.includes(day)
                               ? "default"
                               : "outline"
                           }
                           className="text-sm"
                           onClick={() => {
-                            const currentDays =
-                              form.watch("postingSchedule.days") || [];
-                            if (currentDays.includes(day)) {
-                              form.setValue(
-                                "postingSchedule.days",
-                                currentDays.filter((d) => d !== day)
-                              );
-                            } else {
-                              form.setValue("postingSchedule.days", [
-                                ...currentDays,
-                                day,
-                              ]);
-                            }
+                            const schedule = form.getValues("postingSchedule") || { days: [], startTime: "", endTime: "" };
+                            const currentDays = schedule.days || [];
+                            const updatedDays = currentDays.includes(day)
+                              ? currentDays.filter((d) => d !== day)
+                              : [...currentDays, day];
+                            
+                            form.setValue(
+                              "postingSchedule",
+                              { ...schedule, days: updatedDays },
+                              { shouldValidate: true }
+                            );
                           }}
                         >
                           {day.slice(0, 3)}
@@ -1155,8 +1440,38 @@ export default function Page() {
                   Next
                 </Button>
               ) : (
-                <Button type="submit" variant="new">
-                  Create Campaign
+                <Button 
+                  type="submit" 
+                  variant="new"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center">
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Creating Campaign...
+                    </div>
+                  ) : (
+                    'Create Campaign'
+                  )}
                 </Button>
               )}
             </div>

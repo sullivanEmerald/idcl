@@ -34,9 +34,58 @@ const promoterService = {
     return response.data;
   },
 
-  getMarketplace: async () => {
-    const response = await axiosInstance.get('/promoter/marketplace');
-    return response.data;
+  determineCoverImage: (campaign: any): string => {
+    // If campaign has a valid cover image, use it
+    if (campaign.coverImage && campaign.coverImage !== '') {
+      return campaign.coverImage;
+    }
+
+    // If campaign has content assets, try to find a suitable image
+    if (Array.isArray(campaign.contentAssets) && campaign.contentAssets.length > 0) {
+      // For photo type content
+      const photoAsset = campaign.contentAssets.find(
+        (asset: any) => asset.type === 'photo' && asset.contentType === 'image'
+      );
+      if (photoAsset?.url) {
+        return photoAsset.url;
+      }
+
+      // For carousel type content, use first image
+      const carouselAsset = campaign.contentAssets.find(
+        (asset: any) => asset.type === 'carousel' && asset.contentType === 'image' && asset.carouselIndex === 0
+      );
+      if (carouselAsset?.url) {
+        return carouselAsset.url;
+      }
+
+      // For video type content, use thumbnail
+      const videoAsset = campaign.contentAssets.find(
+        (asset: any) => asset.type === 'video' && (asset.thumbnailUrl || asset.url)
+      );
+      // Try thumbnail first, fallback to video url
+      if (videoAsset?.thumbnailUrl) {
+        return videoAsset.thumbnailUrl;
+      } else if (videoAsset?.url) {
+        return videoAsset.url; // Fallback to video URL if no thumbnail
+      }
+    }
+
+    // Default fallback - empty string
+    return '';
+  },
+
+  getMarketplace: async (page = 1, limit = 12) => {
+    const response = await axiosInstance.get('/campaigns/marketplace', {
+      params: { page, limit }
+    });
+
+    return {
+      campaigns: response.data.campaigns.map((campaign: any) => ({
+        ...campaign,
+        coverImage: promoterService.determineCoverImage(campaign)
+      })),
+      pagination: response.data.pagination
+    };
   },
 
   applyCampaign: async (campaignId: string, data: { platforms: string[]; note?: string }) => {
@@ -89,9 +138,12 @@ const promoterService = {
 
   getCampaign: async (campaignId: string) => {
     const response = await axiosInstance.get(`/promoter/campaigns/${campaignId}`);
+    const campaign = response.data;
+
     return {
-      ...response.data,
-      metrics: response.data.linkMetrics || {
+      ...campaign,
+      coverImage: promoterService.determineCoverImage(campaign),
+      linkMetrics: campaign.linkMetrics || {
         clicks: 0,
         uniqueClicks: 0,
         conversions: 0,

@@ -12,51 +12,7 @@ import { campaignService } from '@/services/campaign'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import Image from 'next/image'
 
-interface Campaign {
-  _id: string
-  title: string
-  description: string
-  status: string
-  budget: number
-  pricePerPost: number
-  startDate: string
-  endDate: string
-  contentAssets: Array<{
-    type: 'photo' | 'video' | 'carousel'
-    contentType: 'image' | 'video'
-    url: string
-    thumbnailUrl?: string
-    carouselIndex?: number
-    width?: number
-    height?: number
-    size?: number
-  }>
-  metrics: {
-    totalReach: number
-    totalEngagements: number
-    totalPosts: number
-    averageEngagementRate: number
-    byDevice: {
-      mobile: number
-      desktop: number
-      tablet: number
-    }
-    byRegion: Record<string, number>
-    byChannel: Record<string, number>
-    uniqueViews: number
-  }
-  requirements: {
-    contentGuidelines: string
-    postingSchedule: {
-      startTime: string
-      endTime: string
-      days: string[]
-    }
-    hashtags: string[]
-    mentions: string[]
-    brandAssetLinks?: string[]
-  }
-}
+import { Campaign } from '@/types/campaign'
 
 export default function CampaignPage() {
   const { id } = useParams()
@@ -67,6 +23,7 @@ export default function CampaignPage() {
     const fetchCampaign = async () => {
       try {
         const data = await campaignService.getCampaign(id as string)
+        console.log(data)
         setCampaign(data)
       } catch (error) {
         console.error('Error fetching campaign:', error)
@@ -98,13 +55,13 @@ export default function CampaignPage() {
         </div>
         <div className="flex items-center gap-4">
           <Badge
-            variant={campaign.status === 'active' ? 'success' :
-                    campaign.status === 'paused' ? 'secondary' : 'outline'}
-            className={campaign.status === 'active' ? 'bg-green-100 text-green-800 hover:bg-green-100' :
-                      campaign.status === 'paused' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' :
+            variant={campaign?.status === 'active' ? 'success' :
+                    campaign?.status === 'paused' ? 'secondary' : 'outline'}
+            className={campaign?.status === 'active' ? 'bg-green-100 text-green-800 hover:bg-green-100' :
+                      campaign?.status === 'paused' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' :
                       'bg-gray-100 text-gray-800 hover:bg-gray-100'}
           >
-            {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+            {(campaign?.status || 'draft').charAt(0).toUpperCase() + (campaign?.status || 'draft').slice(1)}
           </Badge>
           <Button 
             variant="outline"
@@ -165,7 +122,9 @@ export default function CampaignPage() {
           <CardContent>
             <div className="text-2xl font-bold">{campaign.metrics.totalReach}</div>
             <p className="text-xs text-muted-foreground mt-2">
-              {campaign.metrics.uniqueViews} unique views
+              {campaign.metrics.byDevice.desktop.uniqueViews + 
+               campaign.metrics.byDevice.mobile.uniqueViews + 
+               campaign.metrics.byDevice.tablet.uniqueViews} unique views
             </p>
           </CardContent>
         </Card>

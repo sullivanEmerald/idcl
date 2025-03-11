@@ -24,25 +24,37 @@ export default function EditCampaignPage() {
       try {
         const campaign = await campaignService.getCampaign(id as string)
         setFormData({
+          // Basic campaign info
           name: campaign.title,
           description: campaign.description,
+          coverImage: campaign.coverImage,
+          
+          // Budget and pricing
           budget: campaign.budget,
           pricePerPost: campaign.pricePerPost,
+          targetImpressions: campaign.targetImpressions,
+          pricePerImpression: campaign.pricePerImpression,
+          estimatedBudget: campaign.estimatedBudget,
+
+          // Targeting
           platforms: campaign.requiredPlatforms,
           niches: campaign.targetedNiches,
           goal: campaign.campaignGoal,
           location: campaign.targetLocation.split(','),
           gender: campaign.targetGender,
-          promoterCount: campaign.targetPromotions,
+
+          // Dates and promotion
           promotionLink: campaign.promotionLink,
           startDate: new Date(campaign.startDate),
           endDate: new Date(campaign.endDate),
+
+          // Content
           contentType: campaign.contentAssets[0]?.type || 'photo',
           mediaFiles: [], // We don't need to load existing files
           contentGuidelines: campaign.requirements.contentGuidelines,
           postingSchedule: campaign.requirements.postingSchedule,
           hashtags: campaign.requirements.hashtags.join(', '),
-          mentions: campaign.requirements.mentions.join(', '),
+          mentions: campaign.requirements.mentions?.join(', ') || '',
           brandAssetLinks: campaign.requirements.brandAssetLinks?.join(', ') || '',
           isBoosted: campaign.isBoosted,
         })

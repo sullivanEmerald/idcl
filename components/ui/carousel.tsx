@@ -2,8 +2,11 @@ import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
+type BaseCarouselProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'>
+
+export interface CarouselProps extends BaseCarouselProps {
   children?: React.ReactNode;
+  onSelect?: (index: number) => void;
 }
 
 export interface CarouselContentProps
@@ -27,7 +30,7 @@ const CarouselContext = React.createContext<{
   numItems: number;
 }>({ selectedIndex: 0, setSelectedIndex: () => null, numItems: 0 });
 
-export function Carousel({ className, children, ...props }: CarouselProps) {
+export function Carousel({ className, children, onSelect, ...props }: CarouselProps) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [numItems, setNumItems] = React.useState(0);
 
@@ -36,9 +39,14 @@ export function Carousel({ className, children, ...props }: CarouselProps) {
     setNumItems(items.length);
   }, []);
 
+  const handleSelect = React.useCallback((index: number) => {
+    setSelectedIndex(index);
+    onSelect?.(index);
+  }, [onSelect]);
+
   return (
     <CarouselContext.Provider
-      value={{ selectedIndex, setSelectedIndex, numItems }}
+      value={{ selectedIndex, setSelectedIndex: handleSelect, numItems }}
     >
       <div className={cn("relative w-full", className)} {...props}>
         {children}

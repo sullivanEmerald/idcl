@@ -17,6 +17,7 @@ import promoterService from "@/services/promoter";
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function BrowseCampaigns() {
   const router = useRouter();
@@ -24,22 +25,20 @@ export default function BrowseCampaigns() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [nicheFilter, setNicheFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [totalCampaigns, setTotalCampaigns] = useState(0);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const response = await promoterService.getMarketplace();
-        // Combine and deduplicate campaigns based on id
-        const allCampaigns = [
-          ...response.marketplaceCampaigns,
-          ...response.availableCampaigns,
-        ];
-        const uniqueCampaigns = Array.from(
-          new Map(
-            allCampaigns.map((campaign) => [campaign.id, campaign])
-          ).values()
-        );
-        setCampaigns(uniqueCampaigns);
+        const response = await promoterService.getMarketplace(currentPage);
+        console.log(response);
+        setCampaigns(response.campaigns);
+        setTotalPages(response.pagination.totalPages);
+        setHasMore(response.pagination.hasMore);
+        setTotalCampaigns(response.pagination.total);
       } catch (error) {
         console.error("Error fetching marketplace campaigns:", error);
       } finally {
@@ -48,7 +47,7 @@ export default function BrowseCampaigns() {
     };
 
     fetchCampaigns();
-  }, []);
+  }, [currentPage]);
 
   const filteredCampaigns = campaigns?.filter((campaign) => {
     const matchesSearch =
@@ -119,127 +118,146 @@ export default function BrowseCampaigns() {
         {filteredCampaigns?.map((campaign) => (
           <Card
             key={campaign.id}
-            className="group overflow-hidden hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-white to-gray-50"
+            className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
+            onClick={() =>
+              router.push(
+                `/promoter/dashboard/marketplace/campaign/${campaign.id}`
+              )
+            }
           >
-            {/* Card Header with Company Info */}
-            <div className="p-6 pb-4 border-b border-gray-100">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center shadow-sm border border-gray-100">
-                    {campaign.advertiser.logo ? (
-                      <img
-                        src={campaign.advertiser.logo}
-                        alt={campaign.advertiser.companyName}
-                        className="h-full w-full rounded-lg object-cover"
-                      />
-                    ) : (
-                      <span className="text-lg font-semibold text-blue-600">
-                        {campaign.advertiser.companyName.charAt(0)}
-                      </span>
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200 truncate">
-                      {campaign.title}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {campaign.advertiser.companyName}
-                    </p>
-                  </div>
+            {/* Cover Image */}
+            <div className="relative aspect-video w-full overflow-hidden">
+              <Image
+                src={campaign.coverImage}
+                alt={campaign.title}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              {campaign.applicationStatus && (
+                <span
+                  className={`absolute top-4 right-4 px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap ${
+                    campaign.applicationStatus === "approved"
+                      ? "bg-green-500/90 text-white"
+                      : campaign.applicationStatus === "pending"
+                        ? "bg-yellow-500/90 text-white"
+                        : campaign.applicationStatus === "rejected"
+                          ? "bg-red-500/90 text-white"
+                          : "bg-blue-500/90 text-white"
+                  }`}
+                >
+                  {campaign.applicationStatus.charAt(0).toUpperCase() +
+                    campaign.applicationStatus.slice(1)}
+                </span>
+              )}
+
+              {/* Price Badge */}
+              <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
+                <div className="text-xs font-medium text-gray-600 uppercase">
+                  Price per post
                 </div>
-                {campaign.applicationStatus && (
-                  <span
-                    className={`shrink-0 px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap ${
-                      campaign.applicationStatus === "approved"
-                        ? "bg-green-50 text-green-700 ring-1 ring-green-600/20"
-                        : campaign.applicationStatus === "pending"
-                          ? "bg-yellow-50 text-yellow-700 ring-1 ring-yellow-600/20"
-                          : "bg-red-50 text-red-700 ring-1 ring-red-600/20"
-                    }`}
-                  >
-                    {campaign.applicationStatus.charAt(0).toUpperCase() +
-                      campaign.applicationStatus.slice(1)}
-                  </span>
-                )}
+                <div className="text-lg font-bold text-blue-600">
+                  ${campaign.pricePerPost}
+                </div>
               </div>
 
-              <p className="mt-3 text-sm text-gray-600 line-clamp-2">
-                {campaign.description}
-              </p>
+              {/* End Date Badge */}
+              <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm text-right">
+                <div className="text-xs font-medium text-gray-600 uppercase">
+                  Ends
+                </div>
+                <div className="text-sm font-semibold text-gray-900">
+                  {new Date(campaign.endDate).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </div>
+              </div>
             </div>
 
-            {/* Card Body */}
-            <div className="p-6 pt-4 space-y-4">
-              {/* Price and Date */}
-              <div className="flex items-center justify-between gap-3">
-                <div className="bg-blue-50 px-3 py-2 rounded-lg min-w-[120px]">
-                  <div className="text-xs font-medium text-blue-600 uppercase">
-                    Price per post
-                  </div>
-                  <div className="text-lg font-bold text-blue-700">
-                    ${campaign.pricePerPost}
-                  </div>
+            {/* Content */}
+            <div className="p-6 space-y-4">
+              {/* Header */}
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center border border-gray-100">
+                  <span className="text-sm font-semibold text-blue-600">
+                    {campaign.advertiser.companyName.charAt(0)}
+                  </span>
                 </div>
-                <div className="text-right bg-gray-50 px-3 py-2 rounded-lg min-w-[100px]">
-                  <div className="text-xs font-medium text-gray-600 uppercase">
-                    Ends
-                  </div>
-                  <div className="text-sm font-semibold text-gray-900">
-                    {new Date(campaign.endDate).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                    {campaign.title}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {campaign.advertiser.companyName}
+                  </p>
                 </div>
               </div>
 
-              {/* Niches */}
-              <div className="space-y-2">
-                <div className="text-xs font-medium text-gray-500 uppercase">
-                  Target Niches
-                </div>
-                <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto">
-                  {campaign.targetedNiches.map((niche) => (
-                    <span
-                      key={niche}
-                      className="px-2.5 py-1 bg-gray-100 text-gray-600 text-xs rounded-md font-medium hover:bg-gray-200 transition-colors duration-200"
-                    >
-                      {niche}
-                    </span>
-                  ))}
+              <div className="relative">
+                <p className="text-sm text-gray-600 line-clamp-2">
+                  {campaign.description}
+                </p>
+                <div className="absolute bottom-0 right-0 bg-gradient-to-l from-white via-white to-transparent pl-10 pr-2 text-xs text-blue-600 font-medium">
+                  Read more →
                 </div>
               </div>
 
-              {/* Platforms */}
-              <div className="space-y-2">
-                <div className="text-xs font-medium text-gray-500 uppercase">
-                  Required Platforms
-                </div>
-                <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto">
+              {/* Tags */}
+              <div className="space-y-3">
+                {/* Platforms */}
+                {/* <div className="flex flex-wrap gap-1.5">
                   {campaign.requiredPlatforms.map((platform) => (
                     <span
                       key={platform}
-                      className="px-2.5 py-1 bg-blue-50 text-blue-600 text-xs rounded-md font-medium hover:bg-blue-100 transition-colors duration-200"
+                      className="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-md font-medium"
                     >
                       {platform}
                     </span>
                   ))}
-                </div>
-              </div>
+                </div> */}
 
-              {/* Apply Button */}
-              <Button
-                className="w-full mt-2 font-medium shadow-sm hover:shadow-md transition-all duration-200"
-                variant={campaign.applicationStatus ? "secondary" : "default"}
-                disabled={campaign.applicationStatus === "pending"}
-                onClick={() => router.push(`/promoter/dashboard/marketplace/campaign/${campaign.id}`)}
-              >
-                {campaign.applicationStatus ? "View Details" : "Apply Now"}
-              </Button>
+                {/* Niches */}
+                {/* <div className="flex flex-wrap gap-1.5">
+                  {campaign.targetedNiches.map((niche) => (
+                    <span
+                      key={niche}
+                      className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md font-medium"
+                    >
+                      {niche}
+                    </span>
+                  ))}
+                </div> */}
+              </div>
             </div>
           </Card>
         ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-center gap-4 mt-8">
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <span className="text-sm text-gray-600">
+            ({totalCampaigns} total)
+          </span>
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage((p) => p + 1)}
+          disabled={!hasMore}
+        >
+          Next
+        </Button>
       </div>
     </div>
   );
