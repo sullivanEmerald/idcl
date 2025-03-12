@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { campaignService } from '@/services/campaign'
 
 interface Campaign {
-  _id: string
+  id: string
   title: string
   status: string
   budget: number
@@ -71,7 +71,7 @@ export default function CampaignsOverview() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Total Budget</p>
-              <p className="text-2xl font-bold">${totalBudget.toLocaleString()}</p>
+              <p className="text-2xl font-bold">₦{totalBudget.toLocaleString()}</p>
             </div>
           </div>
         </Card>
@@ -122,8 +122,8 @@ export default function CampaignsOverview() {
             <div className="space-y-6">
               {activeCampaigns.map(campaign => (
                 <Link 
-                  key={campaign._id} 
-                  href={`/advertiser/dashboard/campaigns/${campaign._id}`}
+                  key={campaign.id}
+                  href={`/advertiser/dashboard/campaigns/${campaign.id}`}
                   className="block hover:bg-gray-50 rounded-lg transition-colors"
                 >
                   <div className="border rounded-lg p-4">

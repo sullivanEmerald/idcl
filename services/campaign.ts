@@ -161,20 +161,37 @@ class CampaignService {
 
       const contentAssets = await Promise.all(contentAssetsPromises);
 
+      // Calculate pricing based on campaign goal
+      let pricePerImpression = 0;
+      let pricePerPost = 0;
+      switch(data.goal) {
+        case "awareness":
+          pricePerImpression = 6; // ₦6,000 per 1,000 impressions
+          pricePerPost = data.pricePerPost || 30; // Use provided price or default
+          break;
+        case "engagement":
+          pricePerImpression = 0.3; // ₦300 per click
+          pricePerPost = data.pricePerPost || 50; // Use provided price or default
+          break;
+        case "conversion":
+          pricePerImpression = 1; // ₦1,000 per action
+          pricePerPost = data.pricePerPost || 600; // Use provided price or default
+          break;
+      }
+
+      const estimatedBudget = (data.targetImpressions || 0) * pricePerImpression;
+
       // Prepare campaign data
       const campaignData: any = {
         title: data.name,
         description: data.description,
         coverImage: data.coverImage,
-        // Use the new budget and pricePerPost fields directly
-        budget: data.budget,
-        pricePerPost: data.pricePerPost,
-        // Add optional impression-based fields if they exist
-        ...(data.targetImpressions && { targetImpressions: data.targetImpressions }),
-        ...(data.pricePerImpression && { pricePerImpression: data.pricePerImpression }),
-        ...(data.estimatedBudget && { estimatedBudget: data.estimatedBudget }),
-        // Calculate target promotions based on budget and price per post
-        targetPromotions: Math.ceil(data.budget / data.pricePerPost),
+        budget: estimatedBudget,
+        pricePerPost,
+        pricePerImpression,
+        targetImpressions: data.targetImpressions,
+        estimatedBudget,
+        targetPromotions: Math.ceil(estimatedBudget / pricePerPost),
         requiredPlatforms: data.platforms,
         targetedNiches: data.niches,
         campaignGoal: data.goal,

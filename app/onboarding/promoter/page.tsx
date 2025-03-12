@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -67,8 +67,67 @@ export default function PromoterOnboarding() {
     audienceInterests: [] as string[],
     contentTypes: [] as string[],
     paymentMethod: '',
-    accountDetails: ''
+    accountNumber: '',
+    bankCode: '',
+    bankName: ''
   })
+
+  const [banks, setBanks] = useState<Array<{ value: string; label: string }>>([]);
+  const [isValidatingAccount, setIsValidatingAccount] = useState(false);
+  const [accountValidationError, setAccountValidationError] = useState('');
+  const [isLoadingBanks, setIsLoadingBanks] = useState(true);
+  const [validatedAccountName, setValidatedAccountName] = useState('');
+
+  useEffect(() => {
+    const fetchBanks = async () => {
+      try {
+        const response = await fetch('/api/banks');
+        const data = await response.json();
+        if (data.status) {
+          const formattedBanks = data.data.map((bank: any) => ({
+            value: bank.code,
+            label: bank.name
+          }));
+          setBanks(formattedBanks);
+        }
+      } catch (error) {
+        console.error('Error fetching banks:', error);
+      } finally {
+        setIsLoadingBanks(false);
+      }
+    };
+
+    fetchBanks();
+  }, []);
+
+  const validateAccountNumber = async (accountNumber: string, bankCode: string) => {
+    if (accountNumber.length === 10 && bankCode) {
+      setIsValidatingAccount(true);
+      setAccountValidationError('');
+      try {
+        const response = await fetch(`/api/validate-account?account_number=${accountNumber}&bank_code=${bankCode}`);
+        const data = await response.json();
+        console.log(data)
+        if (data.status) {
+          setValidatedAccountName(data.data.account_name);
+          setAccountValidationError('');
+        } else {
+          setValidatedAccountName('');
+          setAccountValidationError('Invalid account details');
+        }
+      } catch (error) {
+        setAccountValidationError('Failed to validate account');
+      } finally {
+        setIsValidatingAccount(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (formData.accountNumber && formData.bankCode) {
+      validateAccountNumber(formData.accountNumber, formData.bankCode);
+    }
+  }, [formData.accountNumber, formData.bankCode]);
 
   const handleInputChange = (field: string, value: string | string[] | null) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -325,8 +384,8 @@ export default function PromoterOnboarding() {
                     <Select
                       options={[
                         { value: 'bank', label: 'Bank Transfer' },
-                        { value: 'paypal', label: 'PayPal' },
-                        { value: 'crypto', label: 'Cryptocurrency' }
+                        // { value: 'paypal', label: 'PayPal' },
+                        // { value: 'crypto', label: 'Cryptocurrency' }
                       ]}
                       value={formData.paymentMethod ? { value: formData.paymentMethod, label: formData.paymentMethod.charAt(0).toUpperCase() + formData.paymentMethod.slice(1) } : null}
                       onChange={(selected) => handleInputChange('paymentMethod', selected ? selected.value : '')}
@@ -335,15 +394,41 @@ export default function PromoterOnboarding() {
                       placeholder="Select payment method"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="accountDetails">Account Details</Label>
-                    <Textarea
-                      id="accountDetails"
-                      value={formData.accountDetails}
-                      onChange={(e) => handleInputChange('accountDetails', e.target.value)}
-                      placeholder="Enter your payment account details"
-                      rows={3}
-                    />
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="bankCode">Select Bank</Label>
+                      <Select
+                        options={banks}
+                        isLoading={isLoadingBanks}
+                        value={formData.bankCode ? { value: formData.bankCode, label: formData.bankName } : null}
+                        onChange={(selected) => {
+                          if (selected) {
+                            handleInputChange('bankCode', selected.value);
+                            handleInputChange('bankName', selected.label);
+                          } else {
+                            handleInputChange('bankCode', '');
+                            handleInputChange('bankName', '');
+                          }
+                        }}
+                        className="w-full"
+                        classNamePrefix="select"
+                        placeholder="Select your bank"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="accountNumber">Account Number</Label>
+                      <Input
+                        id="accountNumber"
+                        value={formData.accountNumber || ''}
+                        onChange={(e) => handleInputChange('accountNumber', e.target.value)}
+                        placeholder="Enter your account number"
+                        maxLength={10}
+                        pattern="\d*"
+                      />
+                      {isValidatingAccount && <p className="text-sm text-gray-500">Validating account...</p>}
+                      {accountValidationError && <p className="text-sm text-red-500">{accountValidationError}</p>}
+                      {validatedAccountName && <p className="text-sm text-green-500">Account Name: {validatedAccountName}</p>}
+                    </div>
                   </div>
                 </div>
               )}

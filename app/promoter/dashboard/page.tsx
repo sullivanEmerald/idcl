@@ -78,7 +78,7 @@ export default function PromoterDashboard() {
         />
         <Metric
           title="Total Earnings"
-          value={`$${metrics.totalEarnings.toLocaleString()}`}
+          value={`₦${metrics.totalEarnings.toLocaleString()}`}
           description="Lifetime earnings"
           trend="+12.3%"
           icon={<PaymentsIcon className="h-5 w-5" />}

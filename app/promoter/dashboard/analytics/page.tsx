@@ -44,7 +44,7 @@ interface AnalyticsData {
 }
 
 export default function AnalyticsPage() {
-  const [timeRange, setTimeRange] = useState('7d')
+  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('7d')
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -82,7 +82,7 @@ export default function AnalyticsPage() {
         tension: 0.3,
       },
       {
-        label: 'Earnings ($)',
+        label: 'Earnings (₦)',
         data: analyticsData?.earnings || [],
         borderColor: 'rgb(249, 115, 22)',
         backgroundColor: 'rgba(249, 115, 22, 0.5)',
@@ -143,7 +143,7 @@ export default function AnalyticsPage() {
           <h1 className="text-3xl font-bold">Performance Analytics</h1>
           <p className="mt-2 text-gray-600">Track your promotional performance and earnings</p>
         </div>
-        <Select value={timeRange} onValueChange={setTimeRange}>
+        <Select value={timeRange} onValueChange={(value: '7d' | '30d' | '90d') => setTimeRange(value)}>
           <SelectTrigger className="w-36">
             <SelectValue placeholder="Select range" />
           </SelectTrigger>
@@ -188,10 +188,10 @@ export default function AnalyticsPage() {
         <Card className="p-6">
           <h3 className="text-lg font-semibold">Total Earnings</h3>
           <p className="mt-2 text-3xl font-bold">
-            ${(analyticsData?.earnings || []).reduce((a, b) => a + b, 0).toLocaleString()}
+          ₦{(analyticsData?.earnings || []).reduce((a, b) => a + b, 0).toLocaleString()}
           </p>
           <p className="mt-2 text-sm text-gray-600">
-            Average: ${Math.round(
+            Average: ₦{Math.round(
               (analyticsData?.earnings || []).reduce((a, b) => a + b, 0) / (analyticsData?.earnings || []).length || 0
             ).toLocaleString()} per day
           </p>
@@ -208,10 +208,10 @@ export default function AnalyticsPage() {
             <div key={campaign.id} className="flex items-center justify-between p-6">
               <div>
                 <h4 className="font-medium">{campaign.name}</h4>
-                <p className="text-sm text-gray-600">{campaign.brand}</p>
+                {/* <p className="text-sm text-gray-600">{campaign.brand}</p> */}
               </div>
               <div className="text-right">
-                <p className="font-medium">${campaign.earnings.toLocaleString()}</p>
+                <p className="font-medium">₦{campaign.earnings.toLocaleString()}</p>
                 <p className="text-sm text-gray-600">
                   {campaign.engagement.toLocaleString()} engagements
                 </p>

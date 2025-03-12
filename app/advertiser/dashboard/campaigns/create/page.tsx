@@ -52,6 +52,13 @@ import {
 import { cn } from "@/lib/utils";
 import { campaignService, MediaFileClient } from "@/services/campaign";
 import { axiosInstance } from "@/lib/utils";
+// Import the type from campaign service
+import type { CampaignFormData } from '@/services/campaign';
+// Ensure the schema output matches CampaignFormData
+type CampaignSchemaOutput = z.infer<typeof campaignSchema>;
+type SchemaTypeCheck = CampaignSchemaOutput extends CampaignFormData ? true : false;
+
+const STEPS = ["details", "targeting", "content"] as const;
 
 const NIGERIAN_STATES = [
   "Abia",
@@ -179,15 +186,6 @@ const campaignSchema = z.object({
   promotionLink: z.string().url("Please enter a valid URL"),
 });
 
-// Import the type from campaign service
-import type { CampaignFormData } from '@/services/campaign';
-
-// Ensure the schema output matches CampaignFormData
-type CampaignSchemaOutput = z.infer<typeof campaignSchema>;
-type SchemaTypeCheck = CampaignSchemaOutput extends CampaignFormData ? true : false;
-
-const STEPS = ["details", "targeting", "content"] as const;
-
 export default function Page() {
   const router = useRouter();
   const [currentStep, setCurrentStep] =
@@ -202,8 +200,8 @@ export default function Page() {
       budget: 1000,
       pricePerPost: 100,
       targetImpressions: 1000,
-      pricePerImpression: 0.001,
-      estimatedBudget: 1,
+      pricePerImpression: 0.06, // Updated to ₦60 per impression (default awareness pricing)
+      estimatedBudget: 60, // Updated based on new pricePerImpression
       platforms: [],
       niches: [],
       mediaFiles: [],
@@ -639,13 +637,15 @@ export default function Page() {
                       let pricePerImpression = 0;
                       switch(value) {
                         case "awareness":
-                          pricePerImpression = 0.001;
+                          pricePerImpression = 0.06;
                           break;
                         case "engagement":
-                          pricePerImpression = 0.005;
+                          const viewCost = 0.1;
+                          const clickCost = 0.3;
+                          pricePerImpression = viewCost + clickCost;
                           break;
                         case "conversion":
-                          pricePerImpression = 0.01;
+                          pricePerImpression = 1;
                           break;
                       }
                       form.setValue("pricePerImpression", pricePerImpression);
@@ -658,13 +658,13 @@ export default function Page() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="awareness">
-                        Awareness (Reach & Impressions)
+                        Awareness (CPM - ₦60 per reach)
                       </SelectItem>
                       <SelectItem value="engagement">
-                        Engagement (Views & Clicks)
+                        Engagement (CPA - ₦100 per view, ₦300 per click)
                       </SelectItem>
                       <SelectItem value="conversion">
-                        Conversion (Leads & Downloads)
+                        Action (CPA - ₦1,000 per action)
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -781,13 +781,13 @@ export default function Page() {
                         let pricePerImpression = 0;
                         switch(goal) {
                           case "awareness":
-                            pricePerImpression = 0.001; // $0.001 per impression
+                            pricePerImpression = 0.06; // ₦60 per impression
                             break;
                           case "engagement":
-                            pricePerImpression = 0.005; // $0.005 per engagement
+                            pricePerImpression = 0.3 + 0.1; // ₦300 per engagement
                             break;
                           case "conversion":
-                            pricePerImpression = 0.01; // $0.01 per conversion
+                            pricePerImpression = 1; // ₦1,000 per action
                             break;
                         }
                         form.setValue("pricePerImpression", pricePerImpression);
@@ -805,11 +805,11 @@ export default function Page() {
                   <div className="p-4 bg-primary/5 rounded-lg space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Price per {form.watch("goal") === "awareness" ? "impression" : form.watch("goal") === "engagement" ? "engagement" : "conversion"}:</span>
-                      <span>${form.watch("pricePerImpression")?.toFixed(3) || "0.000"}</span>
+                      <span>₦{((form.watch("pricePerImpression") || 0) * 1000).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between font-medium">
                       <span>Estimated Budget:</span>
-                      <span>${form.watch("estimatedBudget")?.toLocaleString() || "0"}</span>
+                      <span>₦{form.watch("estimatedBudget")?.toLocaleString() || "0"}</span>
                     </div>
                   </div>
                 </div>

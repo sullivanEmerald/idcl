@@ -37,10 +37,10 @@ const sidebarItems = [
         title: 'Performance',
         href: '/advertiser/dashboard/analytics/performance'
       },
-      {
-        title: 'Insights',
-        href: '/advertiser/dashboard/analytics/insights'
-      }
+      // {
+      //   title: 'Insights',
+      //   href: '/advertiser/dashboard/analytics/insights'
+      // }
     ]
   },
   {

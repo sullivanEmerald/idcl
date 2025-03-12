@@ -150,16 +150,6 @@ export default function BrowseCampaigns() {
                 </span>
               )}
 
-              {/* Price Badge */}
-              <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm">
-                <div className="text-xs font-medium text-gray-600 uppercase">
-                  Price per post
-                </div>
-                <div className="text-lg font-bold text-blue-600">
-                  ${campaign.pricePerPost}
-                </div>
-              </div>
-
               {/* End Date Badge */}
               <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm text-right">
                 <div className="text-xs font-medium text-gray-600 uppercase">

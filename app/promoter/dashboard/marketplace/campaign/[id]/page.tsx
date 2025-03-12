@@ -12,7 +12,6 @@ import promoterService from "@/services/promoter";
 import {
   ArrowLeft,
   Calendar,
-  DollarSign,
   Globe,
   Users,
   BarChart,
@@ -143,13 +142,13 @@ export default function CampaignDetails() {
           <Card className="p-6">
             <h2 className="text-lg font-semibold mb-4">Campaign Details</h2>
             <div className="space-y-4">
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <DollarSign className="h-5 w-5 text-blue-600 mr-2" />
                 <div>
                   <div className="text-sm text-gray-600">Price per Post</div>
                   <div className="font-semibold">${campaign.pricePerPost}</div>
                 </div>
-              </div>
+              </div> */}
               <div className="flex items-center">
                 <Calendar className="h-5 w-5 text-blue-600 mr-2" />
                 <div>
@@ -348,7 +347,7 @@ export default function CampaignDetails() {
             <Card className="p-6">
               <h2 className="text-lg font-semibold mb-4">Campaign Details</h2>
               <div className="space-y-4">
-                <div className="flex items-center">
+                {/* <div className="flex items-center">
                   <DollarSign className="h-5 w-5 text-blue-600 mr-2" />
                   <div>
                     <div className="text-sm text-gray-600">Price per Post</div>
@@ -356,7 +355,7 @@ export default function CampaignDetails() {
                       ${campaign.pricePerPost}
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <div className="flex items-center">
                   <Calendar className="h-5 w-5 text-blue-600 mr-2" />
                   <div>

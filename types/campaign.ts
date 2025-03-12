@@ -92,6 +92,20 @@ export interface Campaign {
   earnings?: number;
   reach?: number;
   engagement?: number;
-  activePromoters: number;
+  activePromoters: Array<{
+    _id: string;
+    promoter: {
+      fullName: string;
+      email: string;
+      location?: string;
+      platforms: string[];
+      followersCount: number;
+      engagementRate: number;
+      contentTypes: string[];
+      status: string;
+    };
+    lastActivity: string;
+    totalEvents: number;
+  }>;
   coverImage: string
 }

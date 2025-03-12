@@ -9,6 +9,7 @@ import { Plus, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import advertiserService from '@/services/advertiser'
+import { useRouter } from 'next/navigation'
 
 interface Campaign {
   id: string
@@ -27,6 +28,7 @@ export default function CampaignsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -128,11 +130,11 @@ export default function CampaignsPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="text-sm text-right">
-                    <div className="font-medium">${campaign.budget}</div>
+                    <div className="font-medium">₦{campaign.budget.toLocaleString()}</div>
                     <div className="text-xs text-muted-foreground">Budget</div>
                   </div>
                   <div className="text-sm text-right">
-                    <div className="font-medium">${campaign.spent}</div>
+                    <div className="font-medium">₦{campaign.spent.toLocaleString()}</div>
                     <div className="text-xs text-muted-foreground">Spent</div>
                   </div>
                   <div className="text-sm text-right">
@@ -155,7 +157,7 @@ export default function CampaignsPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => window.location.href = `/advertiser/dashboard/campaigns/${campaign.id}`}
+                    onClick={() => router.push(`/advertiser/dashboard/campaigns/${campaign.id}`)}
                   >
                     View
                   </Button>
