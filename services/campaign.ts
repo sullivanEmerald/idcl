@@ -62,6 +62,7 @@ export interface CampaignFormData {
   mentions?: string;
   brandAssetLinks?: string;
   isBoosted: boolean;
+  ctaLabel?: string;
 }
 
 export interface CampaignData {
@@ -150,7 +151,27 @@ class CampaignService {
 
   async createCampaign(data: CampaignFormData): Promise<any> {
     try {
-      // Upload and process all media files
+      // // Calculate pricing based on campaign goal
+      // let pricePerImpression = 0;
+      // let pricePerPost = 0;
+      // switch(data.goal) {
+      //   case "awareness":
+      //     pricePerImpression = 6; // ₦6,000 per 1,000 impressions
+      //     pricePerPost = data.pricePerPost || 30; // Use provided price or default
+      //     break;
+      //   case "engagement":
+      //     pricePerImpression = 0.3; // ₦300 per click
+      //     pricePerPost = data.pricePerPost || 50; // Use provided price or default
+      //     break;
+      //   case "conversion":
+      //     pricePerImpression = 1; // ₦1,000 per action
+      //     pricePerPost = data.pricePerPost || 600; // Use provided price or default
+      //     break;
+      // }
+
+      // const estimatedBudget = (data.targetImpressions || 0) * pricePerImpression;
+
+      // Process media files
       const contentAssetsPromises = data.mediaFiles.map((media, index) =>
         this.processMediaFile(media.file).then((asset) => ({
           ...asset,
@@ -161,37 +182,17 @@ class CampaignService {
 
       const contentAssets = await Promise.all(contentAssetsPromises);
 
-      // Calculate pricing based on campaign goal
-      let pricePerImpression = 0;
-      let pricePerPost = 0;
-      switch(data.goal) {
-        case "awareness":
-          pricePerImpression = 6; // ₦6,000 per 1,000 impressions
-          pricePerPost = data.pricePerPost || 30; // Use provided price or default
-          break;
-        case "engagement":
-          pricePerImpression = 0.3; // ₦300 per click
-          pricePerPost = data.pricePerPost || 50; // Use provided price or default
-          break;
-        case "conversion":
-          pricePerImpression = 1; // ₦1,000 per action
-          pricePerPost = data.pricePerPost || 600; // Use provided price or default
-          break;
-      }
-
-      const estimatedBudget = (data.targetImpressions || 0) * pricePerImpression;
-
       // Prepare campaign data
       const campaignData: any = {
         title: data.name,
         description: data.description,
         coverImage: data.coverImage,
-        budget: estimatedBudget,
-        pricePerPost,
-        pricePerImpression,
+        budget: data.estimatedBudget,
+        pricePerPost: data.pricePerPost,
+        pricePerImpression: data.pricePerImpression,
         targetImpressions: data.targetImpressions,
-        estimatedBudget,
-        targetPromotions: Math.ceil(estimatedBudget / pricePerPost),
+        estimatedBudget: data.estimatedBudget,
+        targetPromotions: Math.ceil((data.estimatedBudget || 0) / data.pricePerPost),
         requiredPlatforms: data.platforms,
         targetedNiches: data.niches,
         campaignGoal: data.goal,
@@ -215,18 +216,85 @@ class CampaignService {
             ? data.mentions.split(",").map((mention) => mention.trim())
             : [],
           brandAssetLinks: data.brandAssetLinks ? [data.brandAssetLinks] : [],
-        },
+        }
       };
 
-      const response = await axiosInstance.post(`/campaigns`, campaignData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+      console.log(data.estimatedBudget)
+      // Initialize payment with Paystack
+      const paymentResponse = await axiosInstance.post('/payments/initialize', {
+        amount: data.budget * 100,
+        email: localStorage.getItem('userEmail') || '',
+        metadata: {
+          campaignData: {
+            title: data.name,
+            budget: data.estimatedBudget,
+            goal: data.goal
+          }
+        }
+      });
+      
+      return new Promise((resolve, reject) => {
+        // Ensure Paystack script is loaded
+        const loadPaystackScript = () => {
+          return new Promise<void>((scriptResolve, scriptReject) => {
+            if (window.PaystackPop) {
+              scriptResolve();
+              return;
+            }
+
+            const script = document.createElement('script');
+            script.src = 'https://js.paystack.co/v1/inline.js';
+            script.async = true;
+            script.onload = () => scriptResolve();
+            script.onerror = () => scriptReject(new Error('Failed to load Paystack script'));
+            document.body.appendChild(script);
+          });
+        };
+
+        loadPaystackScript()
+          .then(() => {
+            const handler = window.PaystackPop.setup({
+              key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_1314747ea4facd0eb85aa524096ade7f85a8a24b',
+              email: localStorage.getItem('userEmail') || '',
+              amount: (data.estimatedBudget || 0) * 100,
+              ref: paymentResponse?.data.reference,
+              callback: function(response) {
+                console.log(campaignData);
+                if (response.status === 'success') {
+                  // Create campaign after successful payment
+                  axiosInstance.post(`/campaigns`, {
+                    ...campaignData,
+                    paymentReference: response.reference // Use the reference from Paystack callback
+                  }, {
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  })
+                  .then((campaignResponse) => {
+                    resolve(campaignResponse.data);
+                  })
+                  .catch((error) => {
+                    reject(error);
+                  });
+                } else {
+                  reject(new Error('Payment failed'));
+                }
+              },
+              onClose: () => {
+                // Handle payment modal close
+                console.log('Payment window closed');
+              }
+            });
+
+            handler.openIframe();
+          })
+          .catch((error) => {
+            reject(error);
+          });
       });
 
-      return response.data;
     } catch (error) {
-      console.error("Error creating campaign:", error);
+      console.error('Error creating campaign:', error);
       throw error;
     }
   }

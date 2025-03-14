@@ -28,6 +28,7 @@ export interface CampaignRequirements {
   hashtags: string[];
   mentions: string[];
   brandAssetLinks?: string[];
+  ctaLabel?: string;
   aiSuggestions?: {
     targetAudience: string;
     contentStrategy: string;

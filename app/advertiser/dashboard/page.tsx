@@ -109,7 +109,7 @@ export default function AdvertiserDashboard() {
         />
         <Metric
           title="Total Budget"
-          value={`$${metrics.totalBudget.toLocaleString()}`}
+          value={`₦${metrics.totalBudget.toLocaleString()}`}
           description="Available funds"
           trend="+12.3%"
           icon={<DollarSign className="h-5 w-5" />}

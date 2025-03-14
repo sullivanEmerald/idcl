@@ -39,7 +39,7 @@ export function CampaignList({ campaigns }: CampaignListProps) {
                   {campaign.status}
                 </Badge>
                 <span>•</span>
-                <span>${campaign.budget}</span>
+                <span>₦{campaign.budget.toLocaleString()}</span>
                 <span>•</span>
                 <span>{campaign.activePromoters} promoters</span>
               </div>

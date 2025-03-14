@@ -27,6 +27,7 @@ export interface CampaignFormData {
   mentions?: string;
   brandAssetLinks?: string;
   promotionLink: string;
+  ctaLabel?: string; // Custom label for the call-to-action button
 }
 
 export interface CampaignData {
