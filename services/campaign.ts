@@ -254,17 +254,16 @@ class CampaignService {
         loadPaystackScript()
           .then(() => {
             const handler = window.PaystackPop.setup({
-              key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_1314747ea4facd0eb85aa524096ade7f85a8a24b',
+              key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
               email: localStorage.getItem('userEmail') || '',
               amount: (data.estimatedBudget || 0) * 100,
               ref: paymentResponse?.data.reference,
               callback: function(response) {
                 console.log(campaignData);
                 if (response.status === 'success') {
-                  // Create campaign after successful payment
                   axiosInstance.post(`/campaigns`, {
                     ...campaignData,
-                    paymentReference: response.reference // Use the reference from Paystack callback
+                    paymentReference: response.reference
                   }, {
                     headers: {
                       "Content-Type": "application/json",
@@ -281,7 +280,6 @@ class CampaignService {
                 }
               },
               onClose: () => {
-                // Handle payment modal close
                 console.log('Payment window closed');
               }
             });
