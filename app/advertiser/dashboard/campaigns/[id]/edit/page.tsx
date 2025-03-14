@@ -28,7 +28,7 @@ export default function EditCampaignPage() {
           name: campaign.title,
           description: campaign.description,
           coverImage: campaign.coverImage,
-          
+
           // Budget and pricing
           budget: campaign.budget,
           pricePerPost: campaign.pricePerPost,

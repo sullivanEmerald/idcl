@@ -16,7 +16,7 @@ export interface RegisterData {
 
 const authService = {
   async login(credentials: LoginCredentials) {
-    const response = await axiosInstance.post('/api/auth/login', credentials);
+    const response = await axiosInstance.post('/auth/login', credentials);
     if (response.data.access_token) {
       localStorage.setItem('token', response.data.access_token);
     }
@@ -25,7 +25,7 @@ const authService = {
   },
 
   async register(data: RegisterData) {
-    const response = await axiosInstance.post('/api/auth/register', data);
+    const response = await axiosInstance.post('/auth/register', data);
     return response.data;
   },
 
@@ -49,7 +49,12 @@ const authService = {
   },
 
   async verifyEmail(token: string) {
-    const response = await axiosInstance.get(`/api/auth/verify?token=${token}`);
+    const response = await axiosInstance.get(`/auth/verify?token=${token}`);
+    return response.data;
+  },
+
+  async getProfile() {
+    const response = await axiosInstance.get(`/api/users/me`);
     return response.data;
   },
 

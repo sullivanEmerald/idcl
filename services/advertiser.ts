@@ -117,6 +117,8 @@ export interface AnalyticsOverview {
   topPerformers: TopPerformer[];
 }
 
+
+
 export const advertiserService = {
   getDashboard: async (): Promise<DashboardData> => {
     const response = await axiosInstance.get('/advertiser/dashboard');
@@ -136,7 +138,7 @@ export const advertiserService = {
   getAnalyticsOverview: async (): Promise<AnalyticsOverview> => {
     const response = await axiosInstance.get('/advertiser/analytics/overview');
     return response.data;
-  }
+  },
 };
 
 // export type { 
