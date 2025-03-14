@@ -275,7 +275,7 @@ class CampaignService {
                   })
                   .catch((error) => {
                     reject(error);
-                  });
+                  }); 
                 } else {
                   reject(new Error('Payment failed'));
                 }
