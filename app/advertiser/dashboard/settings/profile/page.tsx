@@ -76,6 +76,7 @@ export default function ProfileSettings() {
                 const data = await authService.getProfile()
 
                 console.log(data)
+                console.log('sullivan')
 
                 // the firstName and LastName will appear empty fields intially due to change in 
                 // user schema. For recent accounts, everything works properly 
@@ -95,7 +96,7 @@ export default function ProfileSettings() {
                     companySize: data?.companySize || '',
                     phoneNumber: data?.phoneNumber || '',
                     businessType: data?.businessType || '',
-                    targetAudience: [data?.targetAudience] || [],
+                    targetAudience: data?.targetAudience || [],
                     goals: data?.goals || '',
                     billingEmail: data.billingEmail || '',
                     billingAddress: data?.billingAddress || '',

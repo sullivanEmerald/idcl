@@ -28,6 +28,7 @@ export const useAccountSettingHandler = () => {
         phone: ''
     })
 
+
     const isEmpty = (): boolean => {
         return Object.values(userData).some((item) => item.trim() === "")
     }
@@ -192,6 +193,8 @@ export const useOnBoardingHandler = () => {
     const [isOnboardingProessError, setIsOnboardingProessError] = useState('')
     const [isOnboardingProessSuccessful, setIsOnboardingProessSuccessful] = useState(false)
     const [onboardingData, setOnboardingData] = useState<onboardingUserDto>(onboardingUserDefaultValues)
+
+
 
     const onChangeOnboardingHandler = (field: string, value: any) => {
         setOnboardingData((prev) => ({
