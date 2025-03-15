@@ -37,6 +37,12 @@ export function NavigationBar() {
               Home
             </Link>
             <Link
+              href="/giveaways"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
+              Giveaways
+            </Link>
+            <Link
               href="/faqs"
               className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
             >
