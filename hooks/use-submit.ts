@@ -6,6 +6,7 @@ import {
 import userService, { updatePersonalDto, PasswordResetDto } from "@/services/user";
 import { useRouter } from 'next/navigation'
 import * as yup from 'yup'
+import onboardingService from "@/services/onboarding";
 
 
 interface Errors {
@@ -153,5 +154,88 @@ export const useUpdatePasswordHandler = () => {
         passwordErrors,
         isPasswordLoading,
         isPasswordResetSuccessful
+    }
+}
+
+interface Option {
+    value: string
+    label: string
+}
+
+interface onboardingUserDto {
+    website: string
+    industry: string
+    companySize: string
+    phoneNumber: string
+    businessType: string
+    targetAudience: Option[]
+    goals: string
+    billingEmail: string
+    billingAddress: string,
+}
+
+
+const onboardingUserDefaultValues: onboardingUserDto = {
+    website: '',
+    industry: '',
+    companySize: '',
+    phoneNumber: '',
+    businessType: '',
+    targetAudience: [],
+    goals: '',
+    billingEmail: '',
+    billingAddress: ''
+}
+
+export const useOnBoardingHandler = () => {
+    const [isOnboardingProcessLoading, setIsOnboardingProcessLoading] = useState(false)
+    const [isOnboardingProessError, setIsOnboardingProessError] = useState('')
+    const [isOnboardingProessSuccessful, setIsOnboardingProessSuccessful] = useState(false)
+    const [onboardingData, setOnboardingData] = useState<onboardingUserDto>(onboardingUserDefaultValues)
+
+    const onChangeOnboardingHandler = (field: string, value: any) => {
+        setOnboardingData((prev) => ({
+            ...prev,
+            [field]: value
+        }))
+    }
+
+    const onSubmitOnBoardingHandler = async (event: any) => {
+        event.preventDefault();
+        setIsOnboardingProcessLoading(true);
+        setIsOnboardingProessError('');
+
+        try {
+
+            const userId = localStorage.getItem('userId')
+            if (!userId) {
+                throw new Error('User ID not found. Please log in again.')
+            }
+
+            await onboardingService.updateAdvertiserProfile(userId, {
+                ...onboardingData,
+                targetAudience: onboardingData.targetAudience.map((item) => item.value)
+            })
+
+            setIsOnboardingProessSuccessful(true);
+
+            window.location.reload();
+
+        } catch (error: any) {
+            const responseError = error.response?.data?.message || 'An error occured. Try again!!'
+            setIsOnboardingProessError(responseError)
+        } finally {
+            setIsOnboardingProcessLoading(false)
+        }
+    }
+
+    return {
+        onChangeOnboardingHandler,
+        onboardingData,
+        setOnboardingData,
+        onSubmitOnBoardingHandler,
+        isOnboardingProcessLoading,
+        isOnboardingProessSuccessful,
+        isOnboardingProessError
     }
 }

@@ -57,10 +57,11 @@ export default function RegisterPage() {
     }
 
     try {
-      await authService.register({
+      const data = await authService.register({
         ...formData,
         role: selectedRole,
       });
+      console.log(data)
       // Redirect to login page after successful registration
       router.push("/auth/verify-email");
     } catch (err: any) {

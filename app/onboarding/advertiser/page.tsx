@@ -115,7 +115,7 @@ export default function AdvertiserOnboarding() {
         ...formData,
         targetAudience: formData.targetAudience.map(option => option.value)
       })
-      
+
       // Show success message and redirect to advertiser dashboard
       console.log('Advertiser profile updated successfully')
       router.push('/advertiser/dashboard')
@@ -139,7 +139,7 @@ export default function AdvertiserOnboarding() {
                 <div key={step.id} className="flex flex-col items-center">
                   <div className={`
                     w-10 h-10 rounded-full flex items-center justify-center
-                    ${index <= currentStep 
+                    ${index <= currentStep
                       ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
                       : 'bg-gray-200 text-gray-400'}
                   `}>
@@ -185,7 +185,7 @@ export default function AdvertiserOnboarding() {
                       id="website"
                       value={formData.website}
                       onChange={(e) => handleInputChange('website', e.target.value)}
-                      placeholder="https://"
+                      placeholder="https://www.adminting.com"
                     />
                   </div>
                   <div>

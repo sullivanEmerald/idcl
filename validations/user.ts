@@ -39,3 +39,25 @@ export const updatePasswordValidationShema = yup.object({
         .oneOf([yup.ref('newPassword')], 'Passwords must match')
         .required('Confirm new password'),
 })
+
+// checking for a valid url format 
+const isValidUrl = (url: string) => {
+    try {
+        new URL(url)
+        return true
+    } catch (error) {
+        return false
+    }
+}
+
+export const onBoardingValidationSchema = yup.object({
+    website: yup
+        .string()
+        .required('website in required')
+        .test('is-url', 'Invalid public URL format', isValidUrl),
+
+    industry: yup
+        .string()
+        .required('industry is required')
+
+})

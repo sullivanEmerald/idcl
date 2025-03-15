@@ -1,8 +1,8 @@
 import { axiosInstance } from "@/lib/utils"
 
 export interface updatePersonalDto {
-    firstName: string,
-    lastName: string,
+    firstName?: string,
+    lastName?: string,
     companyName: string,
     phone: string
 }
@@ -25,7 +25,7 @@ const userService = {
         const { confirmNewPassword, ...rest } = data;
         const response = await axiosInstance.put('/api/users/me/change-password', rest)
         return response.data;
-    }
+    },
 }
 
 
