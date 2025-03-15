@@ -4,9 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "./button";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
 
 export function NavigationBar() {
   const router = useRouter();
+  const { isAuthenticated, userRole } = useAuth();
 
   return (
     <nav className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-sm z-50">
@@ -62,10 +64,7 @@ export function NavigationBar() {
             size="sm"
             className="hidden sm:flex"
             onClick={() => {
-              const token = localStorage.getItem('token');
-              const userRole = localStorage.getItem('userRole');
-
-              if (token && userRole) {
+              if (isAuthenticated && userRole) {
                 const dashboardPath = userRole === 'advertiser'
                   ? '/advertiser/dashboard'
                   : '/promoter/dashboard';
@@ -75,7 +74,7 @@ export function NavigationBar() {
               }
             }}
           >
-            {localStorage.getItem('token') ? 'Dashboard' : 'Sign In'}
+            {isAuthenticated ? 'Dashboard' : 'Sign In'}
           </Button>
           <Button
             size="sm"
