@@ -77,8 +77,8 @@ export default function ProfileSettings() {
 
                 console.log(data)
 
-                // Extract first and last name from fullName array by spliting it to array
-                // const [firstName = '', lastName = ''] = (data?.fullname || '').split(' ');
+                // the firstName and LastName will appear empty fields intially due to change in 
+                // user schema. For recent accounts, everything works properly 
 
                 // Set user state with fetched data
                 setUserData({
