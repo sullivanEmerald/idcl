@@ -78,12 +78,14 @@ export default function ProfileSettings() {
                 console.log(data)
 
                 // Extract first and last name from fullName array by spliting it to array
-                // const [firstName, lastName] = data.fullName.split(' ');
+                // const [firstName = '', lastName = ''] = (data?.fullname || '').split(' ');
 
                 // Set user state with fetched data
                 setUserData({
                     companyName: data?.companyName || '',
-                    phone: data?.phone || ''
+                    phone: data?.phoneNumber || '',
+                    firstName: data?.fullName.split(" ")[0],
+                    lastName: data?.fullName.split(" ")[1],
                 })
 
                 // setting onboarding values
