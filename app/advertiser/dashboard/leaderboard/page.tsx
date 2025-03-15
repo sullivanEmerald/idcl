@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { DateRange } from 'react-day-picker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
@@ -13,7 +14,7 @@ export default function PromoterLeaderboard() {
   const { user } = useAuth();
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [campaignGoal, setCampaignGoal] = useState<'awareness' | 'engagement' | 'conversion'>('awareness');
-  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({ 
+  const [dateRange, setDateRange] = useState<DateRange>({ 
     from: addDays(new Date(), -30),
     to: new Date()
   });
@@ -22,6 +23,8 @@ export default function PromoterLeaderboard() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
+        if (!dateRange.from || !dateRange.to) return;
+
         const [leaderboardData, rankData] = await Promise.all([
           leaderboardService.getLeaderboard({
             campaignGoal,
@@ -68,7 +71,7 @@ export default function PromoterLeaderboard() {
               <SelectItem value="conversion">Conversion</SelectItem>
             </SelectContent>
           </Select>
-          <DatePickerWithRange date={dateRange} setDate={setDateRange} />
+          <DatePickerWithRange date={dateRange} setDate={(date) => date && setDateRange(date)} />
         </div>
       </div>
 
