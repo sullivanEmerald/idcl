@@ -61,9 +61,21 @@ export function NavigationBar() {
             variant="ghost"
             size="sm"
             className="hidden sm:flex"
-            onClick={() => router.push("/auth/login")}
+            onClick={() => {
+              const token = localStorage.getItem('token');
+              const userRole = localStorage.getItem('userRole');
+
+              if (token && userRole) {
+                const dashboardPath = userRole === 'advertiser'
+                  ? '/advertiser/dashboard'
+                  : '/promoter/dashboard';
+                router.push(dashboardPath);
+              } else {
+                router.push('/auth/login');
+              }
+            }}
           >
-            Sign In
+            {localStorage.getItem('token') ? 'Dashboard' : 'Sign In'}
           </Button>
           <Button
             size="sm"

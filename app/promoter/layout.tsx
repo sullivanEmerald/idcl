@@ -48,16 +48,17 @@ const sidebarItems = [
     title: "Analytics",
     href: "/promoter/dashboard/analytics",
     icon: "analytics",
-    // items: [
-    //   {
-    //     title: "Performance",
-    //     href: "/promoter/dashboard/analytics/performance",
-    //   },
-    //   {
-    //     title: "Insights",
-    //     href: "/promoter/dashboard/analytics/insights",
-    //   },
-    // ],
+    items: [
+      {
+        title: "Performance",
+        href: "/promoter/dashboard/analytics/performance",
+      }
+    ],
+  },
+  {
+    title: "Leaderboard",
+    href: "/promoter/dashboard/leaderboard",
+    icon: "trophy"
   },
   {
     title: "Settings",

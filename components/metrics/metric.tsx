@@ -14,11 +14,9 @@ export function Metric({
   title, 
   value, 
   description, 
-  trend, 
   icon,
   className 
 }: MetricProps) {
-  const isPositiveTrend = trend?.startsWith('+')
 
   return (
     <Card className={cn('p-6 transition-all hover:scale-[1.02]', className)}>
@@ -29,7 +27,7 @@ export function Metric({
           {description && (
             <p className="mt-1 text-sm text-gray-500">{description}</p>
           )}
-          {trend && (
+          {/* {trend && (
             <p className={cn(
               'mt-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-medium',
               isPositiveTrend 
@@ -38,7 +36,7 @@ export function Metric({
             )}>
               {trend}
             </p>
-          )}
+          )} */}
         </div>
         {icon && (
           <div className="rounded-full bg-white p-2 shadow-sm ring-1 ring-gray-900/5">

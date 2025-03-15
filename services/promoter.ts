@@ -125,6 +125,14 @@ const promoterService = {
     return response.data;
   },
 
+  getCompletedCampaigns: async () => {
+    const response = await axiosInstance.get('/promoter/campaigns/completed');
+    return response.data.campaigns.map((campaign: any) => ({
+      ...campaign,
+      coverImage: promoterService.determineCoverImage(campaign)
+    }));
+  },
+
   getWalletOverview: async () => {
     const response = await axiosInstance.get('/promoter/wallet/overview');
     return response.data;

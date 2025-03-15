@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Metric } from '@/components/metrics/metric'
-import { CampaignList } from '@/components/campaigns/campaign-list'
 import { EarningsChart } from '@/components/charts/earnings-chart'
 import { CampaignIcon } from '@/components/icons/campaign'
 import { PaymentsIcon } from '@/components/icons/payments'
@@ -20,7 +19,6 @@ export default function PromoterDashboard() {
     completedCampaigns: 0,
     averageRating: 0
   })
-  const [activeCampaigns, setActiveCampaigns] = useState<any>([])
   const [recentEarnings, setRecentEarnings] = useState<any>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -29,7 +27,6 @@ export default function PromoterDashboard() {
       try {
         const data = await promoterService.getDashboard()
         setMetrics(data.metrics)
-        setActiveCampaigns(data.activeCampaigns)
         setRecentEarnings(data.recentEarnings)
       } catch (error) {
         console.error('Error fetching dashboard data:', error)
@@ -103,7 +100,7 @@ export default function PromoterDashboard() {
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <Card className="overflow-hidden border-t-4 border-t-blue-500">
+        {/* <Card className="overflow-hidden border-t-4 border-t-blue-500">
           <div className="border-b p-6">
             <h2 className="text-xl font-semibold">Active Campaigns</h2>
             <p className="mt-1 text-sm text-gray-600">Your ongoing promotions</p>
@@ -111,7 +108,7 @@ export default function PromoterDashboard() {
           <div className="p-6">
             <CampaignList campaigns={activeCampaigns} />
           </div>
-        </Card>
+        </Card> */}
 
         <Card className="overflow-hidden border-t-4 border-t-green-500">
           <div className="border-b p-6">
