@@ -103,6 +103,12 @@ export interface TopPerformer {
   };
 }
 
+export interface advertiserPreferences {
+  isEmailNotificationEnabled: Boolean,
+  isSmsNotificationEnabled: Boolean
+
+}
+
 export interface AnalyticsOverview {
   performanceMetrics: {
     totalReach: number;
@@ -139,6 +145,21 @@ export const advertiserService = {
     const response = await axiosInstance.get('/advertiser/analytics/overview');
     return response.data;
   },
+
+  updateEmailPreference: async (data: { isEmailNotificationEnabled: boolean }) => {
+    const response = await axiosInstance.put('/settings/advertiser/preference/email', data)
+    return response.data;
+  },
+
+  updateSmsPreference: async (data: { isSmsNotificationEnabled: boolean }) => {
+    const response = await axiosInstance.put('/settings/advertiser/preference/sms', data)
+    return response.data;
+  },
+
+  updatePushPreference: async (data: { isPushsNotificationEnabled: boolean }) => {
+    const response = await axiosInstance.put('/settings/advertiser/preference/push', data)
+    return response.data;
+  }
 };
 
 // export type { 

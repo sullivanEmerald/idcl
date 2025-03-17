@@ -14,18 +14,26 @@ export interface PasswordResetDto {
 }
 
 const userService = {
-
     async updateProfile(data: updatePersonalDto) {
-        const response = await axiosInstance.put('/api/users/me', data)
+        const response = await axiosInstance.put('/api/settings/me', data)
         return response.data
     },
 
+
+    async getProfile() {
+        const response = await axiosInstance.get(`/api/users/me`);
+        return response.data;
+    },
 
     async updateUserPassword(data: PasswordResetDto) {
         const { confirmNewPassword, ...rest } = data;
         const response = await axiosInstance.put('/api/users/me/change-password', rest)
         return response.data;
     },
+
+    async UpdateUserNotificationSettings(data: any) {
+        const response = await axiosInstance.patch('/api/users/me/update-setting')
+    }
 }
 
 

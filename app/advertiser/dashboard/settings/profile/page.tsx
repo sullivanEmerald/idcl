@@ -5,13 +5,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import authService from '@/services/auth'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Toaster, toast } from 'sonner'
 import { Eye, EyeOff } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAccountSettingHandler, useUpdatePasswordHandler, useOnBoardingHandler } from '@/hooks/use-submit'
 import ReactSelect from 'react-select'
+import userService from '@/services/user'
 
 
 export default function ProfileSettings() {
@@ -73,10 +73,9 @@ export default function ProfileSettings() {
         const getProfile = async () => {
             try {
                 // Fetching user profile data
-                const data = await authService.getProfile()
+                const data = await userService.getProfile();
 
                 console.log(data)
-                console.log('sullivan')
 
                 // the firstName and LastName will appear empty fields intially due to change in 
                 // user schema. For recent accounts, everything works properly 

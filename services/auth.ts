@@ -53,11 +53,6 @@ const authService = {
     return response.data;
   },
 
-  async getProfile() {
-    const response = await axiosInstance.get(`/api/users/me`);
-    return response.data;
-  },
-
   logout() {
     localStorage.removeItem('token');
   },
