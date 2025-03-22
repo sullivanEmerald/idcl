@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Toaster, toast } from 'sonner'
 import { Eye, EyeOff } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useAccountSettingHandler, useUpdatePasswordHandler, useOnBoardingHandler } from '@/hooks/use-submit'
+import { useAccountSettingHandler, useUpdatePasswordHandler, useOnBoardingHandler } from '@/hooks/user/user-advertiser'
 import ReactSelect from 'react-select'
 import userService from '@/services/user'
 
@@ -84,8 +84,8 @@ export default function ProfileSettings() {
                 setUserData({
                     companyName: data?.companyName || '',
                     phone: data?.phoneNumber || '',
-                    firstName: data?.fullName.split(" ")[0],
-                    lastName: data?.fullName.split(" ")[1],
+                    firstName: data?.fullName.split(" ")[0] || '',
+                    lastName: data?.fullName.split(" ")[1] || '',
                 })
 
                 // setting onboarding values

@@ -146,20 +146,20 @@ export const advertiserService = {
     return response.data;
   },
 
-  updateEmailPreference: async (data: { isEmailNotificationEnabled: boolean }) => {
-    const response = await axiosInstance.put('/settings/advertiser/preference/email', data)
+  updatePreference: async (data: { [key: string]: boolean; }) => {
+    const response = await axiosInstance.put('/settings/advertiser/preferences', data)
     return response.data;
   },
 
-  updateSmsPreference: async (data: { isSmsNotificationEnabled: boolean }) => {
-    const response = await axiosInstance.put('/settings/advertiser/preference/sms', data)
-    return response.data;
-  },
+  // updateSmsPreference: async (data: { isSmsNotificationEnabled: boolean }) => {
+  //   const response = await axiosInstance.put('/settings/advertiser/preference/sms', data)
+  //   return response.data;
+  // },
 
-  updatePushPreference: async (data: { isPushsNotificationEnabled: boolean }) => {
-    const response = await axiosInstance.put('/settings/advertiser/preference/push', data)
-    return response.data;
-  }
+  // updatePushPreference: async (data: { isPushsNotificationEnabled: boolean }) => {
+  //   const response = await axiosInstance.put('/settings/advertiser/preference/push', data)
+  //   return response.data;
+  // }
 };
 
 // export type { 
