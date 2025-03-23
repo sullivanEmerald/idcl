@@ -28,6 +28,18 @@ interface AnalyticsData {
   }[];
 }
 
+export interface ProfileDataDto {
+  fullName: string;
+  phoneNumber: string,
+  companyName: string
+}
+
+export interface PasswordResetDto {
+  oldPassword: string,
+  newPassword: string
+  confirmNewPassword?: string
+}
+
 const promoterService = {
   getDashboard: async (): Promise<DashboardData> => {
     const response = await axiosInstance.get('/promoter/dashboard');
@@ -134,7 +146,7 @@ const promoterService = {
     const response = await axiosInstance.get(`/promoter/analytics/overview?timeRange=${timeRange}`);
     return response;
   }
-,
+  ,
 
   getCampaign: async (campaignId: string) => {
     const response = await axiosInstance.get(`/promoter/campaigns/${campaignId}`);
@@ -150,6 +162,22 @@ const promoterService = {
         lastClick: null
       }
     };
+  },
+
+  async getProfile() {
+    const response = await axiosInstance.get(`/promoter/me`);
+    return response.data;
+  },
+
+  async updatePromoterProfile(data: ProfileDataDto) {
+    const response = await axiosInstance.put('/promoter/update', data)
+    return response.data;
+  },
+
+  async upatePromoterPassword(data: PasswordResetDto) {
+    console.log(data)
+    const response = await axiosInstance.put('/promoter/update/password', data)
+    return response.data;
   }
 };
 

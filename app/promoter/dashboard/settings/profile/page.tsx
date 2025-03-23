@@ -9,9 +9,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Toaster, toast } from 'sonner'
 import { Eye, EyeOff } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useAccountSettingHandler, useUpdatePasswordHandler, useOnBoardingHandler } from '@/hooks/user/user-advertiser'
+import { usePromoterAccountSettingHandler, usePromoterUpdatePasswordHandler } from '@/hooks/user/user-promoter'
 import ReactSelect from 'react-select'
-import userService from '@/services/user'
+import promoterService from '@/services/promoter'
+
 
 
 export default function ProfileSettings() {
@@ -22,31 +23,31 @@ export default function ProfileSettings() {
     isConfirmNewPasswordVisible: false
   })
   const {
-    onSubmitUserHandler,
-    onChangeHandler,
+    onSubmitPromoterHandler,
+    onChangePromoterHandler,
     userData,
     errors,
     isLoading,
     isEmpty,
     setUserData,
-    isSuccessful } = useAccountSettingHandler()
+    isSuccessful } = usePromoterAccountSettingHandler()
 
   const {
     onChangePasswordHandler,
     passwordData,
-    onSubmitPasswordHandler,
+    onSubmitPromoterPasswordHandler,
     passwordErrors,
     isPasswordLoading,
-    isPasswordResetSuccessful } = useUpdatePasswordHandler();
+    isPasswordResetSuccessful } = usePromoterUpdatePasswordHandler();
 
-  const {
-    onChangeOnboardingHandler,
-    onSubmitOnBoardingHandler,
-    onboardingData,
-    setOnboardingData,
-    isOnboardingProcessLoading,
-    isOnboardingProessSuccessful,
-    isOnboardingProessError } = useOnBoardingHandler();
+  // const {
+  //   onChangeOnboardingHandler,
+  //   onSubmitOnBoardingHandler,
+  //   onboardingData,
+  //   setOnboardingData,
+  //   isOnboardingProcessLoading,
+  //   isOnboardingProessSuccessful,
+  //   isOnboardingProessError } = useOnBoardingHandler();
 
   useEffect(() => {
     if (isSuccessful) {
@@ -57,10 +58,11 @@ export default function ProfileSettings() {
       toast.success('Password Changed Successfully')
     }
 
-    if (isOnboardingProessSuccessful) {
-      toast.success('Records Updated Successfully')
-    }
-  }, [isSuccessful, isPasswordResetSuccessful, isOnboardingProessSuccessful]);
+    // if (isOnboardingProessSuccessful) {
+    //   toast.success('Records Updated Successfully')
+    // }
+
+  }, [isSuccessful, isPasswordResetSuccessful]);
 
   const toggleVisibiltyHandler = (key: keyof typeof passwordVisible): void => {
     setIsPasswordVisible((prev) => ({
@@ -73,33 +75,28 @@ export default function ProfileSettings() {
     const getProfile = async () => {
       try {
         // Fetching user profile data
-        const data = await userService.getProfile();
+        const { user } = await promoterService.getProfile();
 
-        console.log(data)
-
-        // the firstName and LastName will appear empty fields intially due to change in 
-        // user schema. For recent accounts, everything works properly 
 
         // Set user state with fetched data
         setUserData({
-          companyName: data?.companyName || '',
-          phone: data?.phoneNumber || '',
-          firstName: data?.fullName.split(" ")[0] || '',
-          lastName: data?.fullName.split(" ")[1] || '',
+          companyName: user?.companyName || '',
+          phoneNumber: user?.phoneNumber || '',
+          fullName: user?.fullName || '',
         })
 
         // setting onboarding values
-        setOnboardingData({
-          website: data?.website || '',
-          industry: data?.industry || '',
-          companySize: data?.companySize || '',
-          phoneNumber: data?.phoneNumber || '',
-          businessType: data?.businessType || '',
-          targetAudience: data?.targetAudience || [],
-          goals: data?.goals || '',
-          billingEmail: data.billingEmail || '',
-          billingAddress: data?.billingAddress || '',
-        })
+        // setOnboardingData({
+        //   website: data?.website || '',
+        //   industry: data?.industry || '',  
+        //   companySize: data?.companySize || '',
+        //   phoneNumber: data?.phoneNumber || '',
+        //   businessType: data?.businessType || '',
+        //   targetAudience: data?.targetAudience || [],
+        //   goals: data?.goals || '',
+        //   billingEmail: data.billingEmail || '',
+        //   billingAddress: data?.billingAddress || '',
+        // })
       } catch (error: any) {
         console.error('Error fetching profile data:', error)
       } finally {
@@ -170,50 +167,39 @@ export default function ProfileSettings() {
           {/* Personal Information Card */}
           <Card className="p-6 relative">
             <h2 className="text-xl font-semibold mb-6">Personal Information</h2>
-            <form className="space-y-4" onSubmit={onSubmitUserHandler}>
+            <form className="space-y-4" onSubmit={onSubmitPromoterHandler}>
               <div>
-                <label className="block text-sm font-medium text-gray-700">First name</label>
+                <Label htmlFor="fullName">Full Name</Label>
                 <Input
-                  type="text"
-                  name="firstName"
-                  placeholder="Enter your first name"
-                  value={userData.firstName}
-                  onChange={onChangeHandler}
+                  id="fullName"
+                  value={userData.fullName}
+                  name="fullName"
+                  placeholder="Enter your full name"
+                  onChange={onChangePromoterHandler}
                 />
-                {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
+                {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Last name</label>
+                <Label htmlFor="phoneNumber">Phone Number</Label>
                 <Input
-                  type="text"
-                  name="lastName"
-                  placeholder="Enter your last name"
-                  value={userData.lastName}
-                  onChange={onChangeHandler}
+                  id="phoneNumber"
+                  name='phoneNumber'
+                  value={userData.phoneNumber}
+                  placeholder="+1 (555) 000-0000"
+                  onChange={onChangePromoterHandler}
                 />
-                {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
+                {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Company name</label>
                 <Input
                   type="text"
                   name="companyName"
-                  placeholder="Enter your company name"
                   value={userData.companyName}
-                  onChange={onChangeHandler}
+                  placeholder="Enter your company name"
+                  onChange={onChangePromoterHandler}
                 />
                 {errors.companyName && <p className="text-red-500 text-sm">{errors.companyName}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Phone</label>
-                <Input
-                  type="tel"
-                  name="phone"
-                  placeholder="Enter your phone number"
-                  value={userData.phone}
-                  onChange={onChangeHandler}
-                />
-                {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
               </div>
               <Button
                 disabled={isLoading || isEmpty()}
@@ -227,13 +213,13 @@ export default function ProfileSettings() {
 
           {/* Password Management Card */}
           <Card className="p-6 relative">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-10 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-5 mb-6">
               <h2 className="text-xl font-semibold">Password Management</h2>
               {passwordErrors.responseError && (
                 <p className="text-red-500 text-sm">{passwordErrors.responseError}</p>
               )}
             </div>
-            <form className="space-y-4" onSubmit={onSubmitPasswordHandler}>
+            <form className="space-y-4" onSubmit={onSubmitPromoterPasswordHandler}>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Old password</label>
                 <div className="relative">
@@ -319,7 +305,7 @@ export default function ProfileSettings() {
         </div>
 
         {/* Onboarding Settings */}
-        <Card className="p-6">
+        {/* <Card className="p-6">
           <h2 className="text-xl font-semibold mb-6">Onboarding</h2>
           <form className="space-y-4" onSubmit={onSubmitOnBoardingHandler}>
             <div>
@@ -460,14 +446,14 @@ export default function ProfileSettings() {
               {isOnboardingProcessLoading ? 'Updating Records' : 'Save Changes'}
             </Button>
           </form>
-        </Card>
+        </Card> */}
 
 
         {/* Social Media Card */}
-        <Card className="p-6">
+        {/* <Card className="p-6">
           <h2 className="text-xl font-semibold mb-6">Social Media Accounts</h2>
-          {/* Social media account links will go here */}
-        </Card>
+  
+      </Card> */}
       </div>
     </>
   )

@@ -2,8 +2,8 @@ import React, { useState } from "react"
 import {
     updateUserValidationSchema,
     updatePasswordValidationShema
-} from "@/validations/user";
-import userService, { updatePersonalDto, PasswordResetDto } from "@/services/user";
+} from "@/validations/user/advertiser";
+import advertiserService, { updatePersonalDto, PasswordResetDto } from "@/services/advertiser";
 import { useRouter } from 'next/navigation'
 import * as yup from 'yup'
 import onboardingService from "@/services/onboarding";
@@ -51,7 +51,7 @@ export const useAccountSettingHandler = () => {
                 abortEarly: false
             })
 
-            await userService.updateProfile(userData)
+            await advertiserService.updateProfile(userData)
 
             setIsSuccessful(true)
 
@@ -120,7 +120,7 @@ export const useUpdatePasswordHandler = () => {
                 abortEarly: false
             })
             // sending an API call for password reset
-            await userService.updateUserPassword(passwordData)
+            await advertiserService.updateUserPassword(passwordData)
 
             setIsPasswordResetSuccessful(true);
 

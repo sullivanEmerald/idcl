@@ -104,8 +104,8 @@ export interface TopPerformer {
 }
 
 export interface advertiserPreferences {
-  isEmailNotificationEnabled: Boolean,
-  isSmsNotificationEnabled: Boolean
+  isEmailNotificationEnabled: boolean;
+  isSmsNotificationEnabled: boolean
 
 }
 
@@ -123,9 +123,22 @@ export interface AnalyticsOverview {
   topPerformers: TopPerformer[];
 }
 
+export interface updatePersonalDto {
+  firstName?: string,
+  lastName?: string,
+  companyName: string,
+  phone: string
+}
+
+export interface PasswordResetDto {
+  oldPassword: string,
+  newPassword: string,
+  confirmNewPassword?: string
+}
 
 
 export const advertiserService = {
+
   getDashboard: async (): Promise<DashboardData> => {
     const response = await axiosInstance.get('/advertiser/dashboard');
     return response.data;
@@ -151,16 +164,25 @@ export const advertiserService = {
     return response.data;
   },
 
-  // updateSmsPreference: async (data: { isSmsNotificationEnabled: boolean }) => {
-  //   const response = await axiosInstance.put('/settings/advertiser/preference/sms', data)
-  //   return response.data;
-  // },
+  updateProfile: async (data: updatePersonalDto) => {
+    const response = await axiosInstance.put('/api/settings/me', data)
+    return response.data
+  },
 
-  // updatePushPreference: async (data: { isPushsNotificationEnabled: boolean }) => {
-  //   const response = await axiosInstance.put('/settings/advertiser/preference/push', data)
-  //   return response.data;
-  // }
-};
+
+  getProfile: async () => {
+    const response = await axiosInstance.get(`/api/users/me`);
+    return response.data;
+  },
+
+  updateUserPassword: async (data: PasswordResetDto) => {
+    const { confirmNewPassword, ...rest } = data;
+    const response = await axiosInstance.put('/api/users/me/change-password', rest)
+    return response.data;
+  },
+
+
+}
 
 // export type { 
 //   UserBasicInfo,

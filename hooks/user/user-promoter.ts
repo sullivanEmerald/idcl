@@ -1,62 +1,62 @@
 import React, { useState } from "react"
-import {
-    updateUserValidationSchema,
-    updatePasswordValidationShema
-} from "@/validations/user";
-import userService, { updatePersonalDto, PasswordResetDto } from "@/services/user";
+import { updatePromoterValidationSchema, updatePasswordValidationShema } from "@/validations/user/promoter";
+import { ProfileDataDto } from "@/services/promoter";
 import { useRouter } from 'next/navigation'
 import * as yup from 'yup'
+import { PasswordResetDto } from "@/services/promoter";
 import onboardingService from "@/services/onboarding";
+import promoterService from "@/services/promoter";
 
 
 interface Errors {
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
+    fullName?: string;
+    phoneNumber?: string;
     companyName?: string;
 }
 
-export const useAccountSettingHandler = () => {
+export const usePromoterAccountSettingHandler = () => {
     const router = useRouter()
     const [errors, setErrors] = useState<Errors>({})
     const [isLoading, setIsLoading] = useState(false)
     const [isSuccessful, setIsSuccessful] = useState(false)
-    const [userData, setUserData] = useState<updatePersonalDto>({
-        firstName: '',
-        lastName: '',
+    const [userData, setUserData] = useState<ProfileDataDto>({
+        fullName: '',
         companyName: '',
-        phone: ''
+        phoneNumber: ''
     })
 
-
     const isEmpty = (): boolean => {
-        return Object.values(userData).some((item) => item.trim() === "")
+        return Object.values(userData).some((item) => item === "")
     }
 
-    const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onChangePromoterHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
         setUserData((prev) => ({
             ...prev,
-            [name]: value.trim()
+            [name]: value
         }))
     }
 
-    const onSubmitUserHandler = async (event: any) => {
+    const onSubmitPromoterHandler = async (event: any) => {
         event.preventDefault();
         setErrors({});
         setIsLoading(true)
 
         try {
-            await updateUserValidationSchema.validate(userData, {
+            await updatePromoterValidationSchema.validate(userData, {
                 abortEarly: false
             })
 
-            await userService.updateProfile(userData)
+            const { user } = await promoterService.updatePromoterProfile(userData);
+            console.log(user)
+
+            setUserData({
+                fullName: user?.fullName || '',
+                phoneNumber: user?.phoneNumber || '',
+                companyName: user?.companyName || ''
+            })
 
             setIsSuccessful(true)
-
-            // refreshing user informations 
-            window.location.reload();
 
         } catch (error: any) {
             const newErrors: Errors = {};
@@ -73,8 +73,8 @@ export const useAccountSettingHandler = () => {
 
 
     return {
-        onSubmitUserHandler,
-        onChangeHandler,
+        onSubmitPromoterHandler,
+        onChangePromoterHandler,
         userData,
         errors,
         isLoading,
@@ -83,6 +83,7 @@ export const useAccountSettingHandler = () => {
         isSuccessful
     }
 }
+// PROMOTER PASSWPORD RESET
 
 const initialPasswordData: PasswordResetDto = {
     oldPassword: '',
@@ -97,7 +98,8 @@ interface PasswordErrors {
     responseError?: string
 }
 
-export const useUpdatePasswordHandler = () => {
+export const usePromoterUpdatePasswordHandler = () => {
+    const router = useRouter()
     const [isPasswordLoading, setIsPasswordLoading] = useState(false)
     const [isPasswordResetSuccessful, setIsPasswordResetSuccessful] = useState(false)
     const [passwordErrors, setPasswordErrors] = useState<PasswordErrors>({})
@@ -107,11 +109,12 @@ export const useUpdatePasswordHandler = () => {
         const { name, value } = event.target;
         setPasswordData((prev) => ({
             ...prev,
-            [name]: value.trim()
+            [name]: value
         }))
     }
 
-    const onSubmitPasswordHandler = async (event: any) => {
+
+    const onSubmitPromoterPasswordHandler = async (event: any) => {
         event.preventDefault();
         setPasswordErrors({});
         setIsPasswordLoading(true);
@@ -119,8 +122,18 @@ export const useUpdatePasswordHandler = () => {
             await updatePasswordValidationShema.validate(passwordData, {
                 abortEarly: false
             })
+
+            // removing the comfirmNewPassword value
+            const { confirmNewPassword, ...rest } = passwordData
+
+            // prevent submitting white spaces before sending
+            const trimmedPasswordData: PasswordResetDto = {
+                oldPassword: rest.oldPassword.trim(),
+                newPassword: rest.newPassword.trim()
+            };
+
             // sending an API call for password reset
-            await userService.updateUserPassword(passwordData)
+            await promoterService.upatePromoterPassword(trimmedPasswordData)
 
             setIsPasswordResetSuccessful(true);
 
@@ -136,7 +149,18 @@ export const useUpdatePasswordHandler = () => {
                 setPasswordErrors(newErrors);
             }
             console.log(error.response.data)
-            if (error.response?.data?.message) {
+            if (error.response?.data?.message && error.response?.data?.redirect) {
+                const responseError = error.response?.data?.message || 'An error occured during password reset'
+                setPasswordErrors((prev) => ({
+                    ...prev,
+                    responseError: responseError
+                }))
+
+                setTimeout(() => {
+                    localStorage.clear();
+                    router.push('/auth/login')
+                }, 1000);
+            } else {
                 const responseError = error.response?.data?.message || 'An error occured during password reset'
                 setPasswordErrors((prev) => ({
                     ...prev,
@@ -151,94 +175,94 @@ export const useUpdatePasswordHandler = () => {
     return {
         onChangePasswordHandler,
         passwordData,
-        onSubmitPasswordHandler,
+        onSubmitPromoterPasswordHandler,
         passwordErrors,
         isPasswordLoading,
         isPasswordResetSuccessful
     }
 }
 
-interface Option {
-    value: string
-    label: string
-}
+// interface Option {
+//     value: string
+//     label: string
+// }
 
-interface onboardingUserDto {
-    website: string
-    industry: string
-    companySize: string
-    phoneNumber: string
-    businessType: string
-    targetAudience: Option[]
-    goals: string
-    billingEmail: string
-    billingAddress: string,
-}
-
-
-const onboardingUserDefaultValues: onboardingUserDto = {
-    website: '',
-    industry: '',
-    companySize: '',
-    phoneNumber: '',
-    businessType: '',
-    targetAudience: [],
-    goals: '',
-    billingEmail: '',
-    billingAddress: ''
-}
-
-export const useOnBoardingHandler = () => {
-    const [isOnboardingProcessLoading, setIsOnboardingProcessLoading] = useState(false)
-    const [isOnboardingProessError, setIsOnboardingProessError] = useState('')
-    const [isOnboardingProessSuccessful, setIsOnboardingProessSuccessful] = useState(false)
-    const [onboardingData, setOnboardingData] = useState<onboardingUserDto>(onboardingUserDefaultValues)
+// interface onboardingUserDto {
+//     website: string
+//     industry: string
+//     companySize: string
+//     phoneNumber: string
+//     businessType: string
+//     targetAudience: Option[]
+//     goals: string
+//     billingEmail: string
+//     billingAddress: string,
+// }
 
 
+// const onboardingUserDefaultValues: onboardingUserDto = {
+//     website: '',
+//     industry: '',
+//     companySize: '',
+//     phoneNumber: '',
+//     businessType: '',
+//     targetAudience: [],
+//     goals: '',
+//     billingEmail: '',
+//     billingAddress: ''
+// }
 
-    const onChangeOnboardingHandler = (field: string, value: any) => {
-        setOnboardingData((prev) => ({
-            ...prev,
-            [field]: value
-        }))
-    }
+// export const useOnBoardingHandler = () => {
+//     const [isOnboardingProcessLoading, setIsOnboardingProcessLoading] = useState(false)
+//     const [isOnboardingProessError, setIsOnboardingProessError] = useState('')
+//     const [isOnboardingProessSuccessful, setIsOnboardingProessSuccessful] = useState(false)
+//     const [onboardingData, setOnboardingData] = useState<onboardingUserDto>(onboardingUserDefaultValues)
 
-    const onSubmitOnBoardingHandler = async (event: any) => {
-        event.preventDefault();
-        setIsOnboardingProcessLoading(true);
-        setIsOnboardingProessError('');
 
-        try {
 
-            const userId = localStorage.getItem('userId')
-            if (!userId) {
-                throw new Error('User ID not found. Please log in again.')
-            }
+//     const onChangeOnboardingHandler = (field: string, value: any) => {
+//         setOnboardingData((prev) => ({
+//             ...prev,
+//             [field]: value
+//         }))
+//     }
 
-            await onboardingService.updateAdvertiserProfile(userId, {
-                ...onboardingData,
-                targetAudience: onboardingData.targetAudience.map((item) => item.value)
-            })
+//     const onSubmitOnBoardingHandler = async (event: any) => {
+//         event.preventDefault();
+//         setIsOnboardingProcessLoading(true);
+//         setIsOnboardingProessError('');
 
-            setIsOnboardingProessSuccessful(true);
+//         try {
 
-            window.location.reload();
+//             const userId = localStorage.getItem('userId')
+//             if (!userId) {
+//                 throw new Error('User ID not found. Please log in again.')
+//             }
 
-        } catch (error: any) {
-            const responseError = error.response?.data?.message || 'An error occured. Try again!!'
-            setIsOnboardingProessError(responseError)
-        } finally {
-            setIsOnboardingProcessLoading(false)
-        }
-    }
+//             await onboardingService.updateAdvertiserProfile(userId, {
+//                 ...onboardingData,
+//                 targetAudience: onboardingData.targetAudience.map((item) => item.value)
+//             })
 
-    return {
-        onChangeOnboardingHandler,
-        onboardingData,
-        setOnboardingData,
-        onSubmitOnBoardingHandler,
-        isOnboardingProcessLoading,
-        isOnboardingProessSuccessful,
-        isOnboardingProessError
-    }
-}
+//             setIsOnboardingProessSuccessful(true);
+
+//             window.location.reload();
+
+//         } catch (error: any) {
+//             const responseError = error.response?.data?.message || 'An error occured. Try again!!'
+//             setIsOnboardingProessError(responseError)
+//         } finally {
+//             setIsOnboardingProcessLoading(false)
+//         }
+//     }
+
+//     return {
+//         onChangeOnboardingHandler,
+//         onboardingData,
+//         setOnboardingData,
+//         onSubmitOnBoardingHandler,
+//         isOnboardingProcessLoading,
+//         isOnboardingProessSuccessful,
+//         isOnboardingProessError
+//     }
+// }

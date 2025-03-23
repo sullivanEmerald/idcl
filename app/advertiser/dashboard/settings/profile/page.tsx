@@ -11,7 +11,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAccountSettingHandler, useUpdatePasswordHandler, useOnBoardingHandler } from '@/hooks/user/user-advertiser'
 import ReactSelect from 'react-select'
-import userService from '@/services/user'
+import advertiserService from '@/services/advertiser'
 
 
 export default function ProfileSettings() {
@@ -73,7 +73,7 @@ export default function ProfileSettings() {
         const getProfile = async () => {
             try {
                 // Fetching user profile data
-                const data = await userService.getProfile();
+                const data = await advertiserService.getProfile();
 
                 console.log(data)
 

@@ -4,7 +4,6 @@
 import { Card } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import advertiserService from '@/services/advertiser'
-import userService from '@/services/user'
 import { Toaster, toast } from 'sonner'
 import { useEffect, useState } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -23,7 +22,7 @@ export default function PreferencesSettings() {
 
             try {
                 const [userNotificationsSetting, userCampaignSetting] = await Promise.all([
-                    userService.getProfile(),
+                    advertiserService.getProfile(),
                     () => { }
                 ]);
 
