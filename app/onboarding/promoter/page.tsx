@@ -40,7 +40,7 @@ const steps = [
   }
 ]
 
-const socialPlatforms = [
+export const socialPlatforms = [
   { value: 'instagram', label: 'Instagram' },
   { value: 'tiktok', label: 'TikTok' },
   { value: 'youtube', label: 'YouTube' },
@@ -104,7 +104,7 @@ export default function PromoterOnboarding() {
 
       // Submit the form
       await onboardingService.updatePromoterProfile(userId, formData)
-      
+
       // Show success message and redirect to promoter dashboard
       console.log('Promoter profile updated successfully')
       router.push('/promoter/dashboard')
@@ -128,7 +128,7 @@ export default function PromoterOnboarding() {
                 <div key={step.id} className="flex flex-col items-center">
                   <div className={`
                     w-10 h-10 rounded-full flex items-center justify-center
-                    ${index <= currentStep 
+                    ${index <= currentStep
                       ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
                       : 'bg-gray-200 text-gray-400'}
                   `}>
@@ -199,11 +199,10 @@ export default function PromoterOnboarding() {
                           key={platform.value}
                           type="button"
                           variant={formData.platforms.includes(platform.value) ? "default" : "outline"}
-                          className={`justify-start ${
-                            formData.platforms.includes(platform.value)
+                          className={`justify-start ${formData.platforms.includes(platform.value)
                               ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
                               : ""
-                          }`}
+                            }`}
                           onClick={() => {
                             const newPlatforms = formData.platforms.includes(platform.value)
                               ? formData.platforms.filter(p => p !== platform.value)

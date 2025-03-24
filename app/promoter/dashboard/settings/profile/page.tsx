@@ -8,10 +8,13 @@ import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Toaster, toast } from 'sonner'
 import { Eye, EyeOff } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Select as ShadcnSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePromoterAccountSettingHandler, usePromoterUpdatePasswordHandler } from '@/hooks/user/user-promoter'
 import ReactSelect from 'react-select'
 import promoterService from '@/services/promoter'
+import { socialPlatforms } from '@/app/onboarding/promoter/page'
+import { usePromoterOnboardingHandler } from '@/hooks/user/user-promoter'
+import Select from 'react-select'
 
 
 
@@ -40,14 +43,13 @@ export default function ProfileSettings() {
     isPasswordLoading,
     isPasswordResetSuccessful } = usePromoterUpdatePasswordHandler();
 
-  // const {
-  //   onChangeOnboardingHandler,
-  //   onSubmitOnBoardingHandler,
-  //   onboardingData,
-  //   setOnboardingData,
-  //   isOnboardingProcessLoading,
-  //   isOnboardingProessSuccessful,
-  //   isOnboardingProessError } = useOnBoardingHandler();
+  const {
+    onboardingData,
+    setOnboardingData,
+    isUpdatingRecordSuccessful,
+    onSubmitOnboardingHandler,
+    isUpdatingRecord,
+    onChangeOnboardingHandler } = usePromoterOnboardingHandler();
 
   useEffect(() => {
     if (isSuccessful) {
@@ -58,11 +60,11 @@ export default function ProfileSettings() {
       toast.success('Password Changed Successfully')
     }
 
-    // if (isOnboardingProessSuccessful) {
-    //   toast.success('Records Updated Successfully')
-    // }
+    if (isUpdatingRecordSuccessful) {
+      toast.success('Records Updated Successfully')
+    }
 
-  }, [isSuccessful, isPasswordResetSuccessful]);
+  }, [isSuccessful, isPasswordResetSuccessful, isUpdatingRecordSuccessful]);
 
   const toggleVisibiltyHandler = (key: keyof typeof passwordVisible): void => {
     setIsPasswordVisible((prev) => ({
@@ -74,7 +76,7 @@ export default function ProfileSettings() {
   useEffect(() => {
     const getProfile = async () => {
       try {
-        // Fetching user profile data
+        // Fetching Promoter profile informations
         const { user } = await promoterService.getProfile();
 
 
@@ -85,18 +87,22 @@ export default function ProfileSettings() {
           fullName: user?.fullName || '',
         })
 
-        // setting onboarding values
-        // setOnboardingData({
-        //   website: data?.website || '',
-        //   industry: data?.industry || '',  
-        //   companySize: data?.companySize || '',
-        //   phoneNumber: data?.phoneNumber || '',
-        //   businessType: data?.businessType || '',
-        //   targetAudience: data?.targetAudience || [],
-        //   goals: data?.goals || '',
-        //   billingEmail: data.billingEmail || '',
-        //   billingAddress: data?.billingAddress || '',
-        // })
+
+        // setting onboaring data
+
+        setOnboardingData({
+          location: user?.location || '',
+          platforms: user?.platforms || [],
+          followersCount: user?.followersCount || '',
+          engagementRate: user?.engagementRate || '',
+          audienceAge: user?.audienceAge || '',
+          audienceInterests: user?.audienceInterests || [],
+          contentTypes: user?.contentTypes || [],
+          paymentMethod: user?.paymentMethod || '',
+          accountDetails: user?.accountDetails || ''
+        })
+
+
       } catch (error: any) {
         console.error('Error fetching profile data:', error)
       } finally {
@@ -305,156 +311,178 @@ export default function ProfileSettings() {
         </div>
 
         {/* Onboarding Settings */}
-        {/* <Card className="p-6">
+        <Card className="p-6 relative">
           <h2 className="text-xl font-semibold mb-6">Onboarding</h2>
-          <form className="space-y-4" onSubmit={onSubmitOnBoardingHandler}>
+          <form className="space-y-4" onSubmit={onSubmitOnboardingHandler}>
             <div>
-              <Label htmlFor='companyWebsite' className="block text-sm font-medium text-gray-700">Website</Label>
+              <Label htmlFor="location">Location</Label>
               <Input
-                id='companyWebsite'
-                type="text"
-                name="website"
-                value={onboardingData.website}
-                onChange={(event) => onChangeOnboardingHandler('website', event.target.value)}
-                placeholder="Enter your company website"
+                id="location"
+                value={onboardingData.location}
+                placeholder="City, Country"
+                onChange={(e) => onChangeOnboardingHandler('location', e.target.value)}
               />
             </div>
             <div>
-              <label htmlFor='industry' className="block text-sm font-medium text-gray-700">Industry</label>
-              <Select
-                value={onboardingData.industry}
-                onValueChange={(value) => onChangeOnboardingHandler('industry', value)}
+              <Label>Social Media Platforms</Label>
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                {socialPlatforms.map((platform) => (
+                  <Button
+                    key={platform.value}
+                    type="button"
+                    variant={onboardingData.platforms.includes(platform.value) ? "default" : "outline"}
+                    className={`justify-start ${onboardingData.platforms.includes(platform.value)
+                      ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                      : ""
+                      }`}
+                    onClick={() => {
+                      const newPlatforms = onboardingData.platforms.includes(platform.value)
+                        ? onboardingData.platforms.filter(p => p !== platform.value)
+                        : [...onboardingData.platforms, platform.value]
+                      onChangeOnboardingHandler('platforms', newPlatforms)
+                    }}
+                  >
+                    {platform.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="followersCount">Total Followers</Label>
+              <Input
+                id="followersCount"
+                value={onboardingData.followersCount}
+                onChange={(e) => onChangeOnboardingHandler('followersCount', e.target.value)}
+                placeholder="e.g. 10000"
+              />
+            </div>
+            <div>
+              <Label htmlFor="engagementRate">Average Engagement Rate</Label>
+              <Input
+                id="engagementRate"
+                value={onboardingData.engagementRate}
+                onChange={(e) => onChangeOnboardingHandler('engagementRate', e.target.value)}
+                placeholder="e.g. 3.5%"
+              />
+            </div>
+            <div>
+              <Label htmlFor="audienceAge">Primary Audience Age Range</Label>
+              <ShadcnSelect
+                value={onboardingData.audienceAge}
+                onValueChange={(value) => onChangeOnboardingHandler('audienceAge', value)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your industry" />
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select age range" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="tech">Technology</SelectItem>
-                  <SelectItem value="retail">Retail</SelectItem>
-                  <SelectItem value="finance">Finance</SelectItem>
-                  <SelectItem value="healthcare">Healthcare</SelectItem>
-                  <SelectItem value="education">Education</SelectItem>
+                  <SelectItem value="13-17">13-17 years</SelectItem>
+                  <SelectItem value="18-24">18-24 years</SelectItem>
+                  <SelectItem value="25-34">25-34 years</SelectItem>
+                  <SelectItem value="35-44">35-44 years</SelectItem>
+                  <SelectItem value="45+">45+ years</SelectItem>
                 </SelectContent>
-              </Select>
+              </ShadcnSelect>
             </div>
-
             <div>
-              <Label htmlFor="companySize">Company Size</Label>
+              <Label>Audience Interests</Label>
               <Select
-                value={onboardingData.companySize}
-                onValueChange={(value) => onChangeOnboardingHandler('companySize', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select company size">
-                    {onboardingData.companySize
-                      ? `${onboardingData.companySize} employees`
-                      : "Select company size"}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1-10">1-10 employees</SelectItem>
-                  <SelectItem value="11-50">11-50 employees</SelectItem>
-                  <SelectItem value="51-200">51-200 employees</SelectItem>
-                  <SelectItem value="201-500">201-500 employees</SelectItem>
-                  <SelectItem value="500+">500+ employees</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="targetAudience">Target Audience</Label>
-              <ReactSelect
                 isMulti
-                value={onboardingData.targetAudience}
-                onChange={(newValue) => onChangeOnboardingHandler('targetAudience', newValue || [])}
                 options={[
-                  { label: 'Gen Z (Under 25)', value: 'Gen Z' },
-                  { label: 'Millennials (25-40)', value: 'Millennials' },
-                  { label: 'Gen X (41-56)', value: 'Gen X' },
-                  { label: 'Baby Boomers (57-75)', value: 'Baby Boomers' },
-                  { label: 'Students', value: 'Students' },
-                  { label: 'Young Professionals', value: 'Young Professionals' },
-                  { label: 'Parents', value: 'Parents' },
-                  { label: 'Business Decision Makers', value: 'Business Decision Makers' },
-                  { label: 'Tech Enthusiasts', value: 'Tech Enthusiasts' },
-                  { label: 'Fashion & Beauty', value: 'Fashion & Beauty' },
-                  { label: 'Health & Fitness', value: 'Health & Fitness' },
-                  { label: 'Gamers', value: 'Gamers' },
-                  { label: 'Travelers', value: 'Travelers' },
-                  { label: 'Foodies', value: 'Foodies' }
+                  { value: 'fashion', label: 'Fashion & Style' },
+                  { value: 'tech', label: 'Technology' },
+                  { value: 'gaming', label: 'Gaming' },
+                  { value: 'beauty', label: 'Beauty & Cosmetics' },
+                  { value: 'fitness', label: 'Fitness & Health' },
+                  { value: 'food', label: 'Food & Cooking' },
+                  { value: 'travel', label: 'Travel' },
+                  { value: 'music', label: 'Music' },
+                  { value: 'art', label: 'Art & Design' },
+                  { value: 'business', label: 'Business & Entrepreneurship' },
+                  { value: 'education', label: 'Education' },
+                  { value: 'entertainment', label: 'Entertainment' },
                 ]}
-                placeholder="Select target audiences"
+                value={onboardingData.audienceInterests.map(interest => ({
+                  value: interest,
+                  label: interest.charAt(0).toUpperCase() + interest.slice(1),
+                }))}
+                onChange={(newValue, actionMeta) => {
+                  onChangeOnboardingHandler(
+                    'audienceInterests',
+                    newValue ? newValue.map(option => option.value) : []
+                  );
+                }}
                 className="w-full"
+                placeholder="Select audience interests..."
                 classNamePrefix="select"
               />
             </div>
-
             <div>
-              <Label htmlFor="businessType">Type of Business</Label>
+              <Label>Content Types</Label>
               <Select
-                value={onboardingData.businessType}
-                onValueChange={(value) => onChangeOnboardingHandler('businessType', value)}
+                isMulti
+                options={[
+                  { value: 'photos', label: 'Photos & Images' },
+                  { value: 'videos', label: 'Videos' },
+                  { value: 'reels', label: 'Reels & Short Videos' },
+                  { value: 'stories', label: 'Stories' },
+                  { value: 'live', label: 'Live Streaming' },
+                  { value: 'blogs', label: 'Blog Posts' },
+                  { value: 'reviews', label: 'Product Reviews' },
+                  { value: 'tutorials', label: 'Tutorials & How-tos' },
+                  { value: 'podcasts', label: 'Podcasts' },
+                ]}
+                value={onboardingData.contentTypes.map(type => ({
+                  value: type,
+                  label: type.charAt(0).toUpperCase() + type.slice(1)
+                }))}
+                onChange={(selected) => {
+                  onChangeOnboardingHandler('contentTypes', selected ? selected.map(option => option.value) : []);
+                }}
+                className="w-full"
+                placeholder="Select content types..."
+                classNamePrefix="select"
+              />
+            </div>
+            <div>
+              <Label htmlFor="paymentMethod">Preferred Payment Method</Label>
+              <ShadcnSelect
+                value={onboardingData.paymentMethod}
+                onValueChange={(value) => onChangeOnboardingHandler('paymentMethod', value)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select business type" />
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select payment method" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="b2b">B2B</SelectItem>
-                  <SelectItem value="b2c">B2C</SelectItem>
-                  <SelectItem value="both">Both B2B and B2C</SelectItem>
+                  <SelectItem value="bank">Bank Transfer</SelectItem>
+                  <SelectItem value="paypal">PayPal</SelectItem>
+                  <SelectItem value="crypto">Cryptocurrency</SelectItem>
                 </SelectContent>
-              </Select>
+              </ShadcnSelect>
             </div>
-
             <div>
-              <Label htmlFor="goals">Marketing Goals</Label>
+              <Label htmlFor="accountDetails">Account Details</Label>
               <Textarea
-                id="goals"
-                value={onboardingData.goals}
-                onChange={(e) => onChangeOnboardingHandler('goals', e.target.value)}
-                placeholder="What are your main marketing objectives?"
+                id="accountDetails"
+                value={onboardingData.accountDetails}
+                onChange={(e) => onChangeOnboardingHandler('accountDetails', e.target.value)}
+                placeholder="Enter your payment account details"
                 rows={3}
               />
             </div>
-
-            <div>
-              <Label htmlFor="billingEmail">Billing Email</Label>
-              <Input
-                id="billingEmail"
-                value={onboardingData.billingEmail}
-                onChange={(e) => onChangeOnboardingHandler('billingEmail', e.target.value)}
-                type="email"
-                placeholder="billing@company.com"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="billingAddress">Billing Address</Label>
-              <Textarea
-                id="billingAddress"
-                value={onboardingData.billingAddress}
-                onChange={(e) => onChangeOnboardingHandler('billingAddress', e.target.value)}
-                placeholder="Enter your billing address"
-                rows={3}
-              />
-            </div>
-            {isOnboardingProessError && <p className="text-red-500 text-sm">{isOnboardingProessError}</p>}
-
             <Button
-              disabled={isOnboardingProcessLoading}
+              className="absolute top-[5px] right-[20px]"
+              disabled={isUpdatingRecord}
             >
-              {isOnboardingProcessLoading ? 'Updating Records' : 'Save Changes'}
+              {isUpdatingRecord ? 'Updating record' : 'Update record'}
             </Button>
           </form>
-        </Card> */}
+        </Card>
 
-
-        {/* Social Media Card */}
-        {/* <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-6">Social Media Accounts</h2>
-  
-      </Card> */}
-      </div>
+        {/* SOCIAL MEDIA PLATFORMS */}
+        <Card className="p-6 relative">
+          <h2 className="text-xl font-semibold mb-6">Social Media Management</h2>
+        </Card>
+      </div >
     </>
-  )
+  );
 }

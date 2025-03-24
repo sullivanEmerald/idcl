@@ -182,87 +182,60 @@ export const usePromoterUpdatePasswordHandler = () => {
     }
 }
 
-// interface Option {
-//     value: string
-//     label: string
-// }
+export const usePromoterOnboardingHandler = () => {
+    const [isUpdatingRecord, setIsUpdatingRecord] = useState(false)
+    const [isUpdatingRecordSuccessful, setIsUpdatingRecordSuccessful] = useState(false)
+    const [onboardingData, setOnboardingData] = useState({
+        location: '',
+        platforms: [] as string[],
+        followersCount: '',
+        engagementRate: '',
+        audienceAge: '',
+        audienceInterests: [] as string[],
+        contentTypes: [] as string[],
+        paymentMethod: '',
+        accountDetails: ''
+    })
 
-// interface onboardingUserDto {
-//     website: string
-//     industry: string
-//     companySize: string
-//     phoneNumber: string
-//     businessType: string
-//     targetAudience: Option[]
-//     goals: string
-//     billingEmail: string
-//     billingAddress: string,
-// }
+    // promoter onboarding handler
+    const onChangeOnboardingHandler = (field: string, value: string | string[] | null) => {
+        setOnboardingData((prev) => ({
+            ...prev,
+            [field]: value
+        }))
+    }
+
+    const onSubmitOnboardingHandler = async (e: any) => {
+        e.preventDefault();
+        setIsUpdatingRecord(true)
+
+        try {
+
+            const userId = localStorage.getItem('userId')
+            if (!userId) {
+                throw new Error('User ID not found. Please log in again.')
+            }
+
+            await onboardingService.updatePromoterProfile(userId, onboardingData)
+
+            setIsUpdatingRecordSuccessful(true)
+
+        } catch (error) {
+            console.error('error', error)
+        } finally {
+            setIsUpdatingRecord(false)
+        }
 
 
-// const onboardingUserDefaultValues: onboardingUserDto = {
-//     website: '',
-//     industry: '',
-//     companySize: '',
-//     phoneNumber: '',
-//     businessType: '',
-//     targetAudience: [],
-//     goals: '',
-//     billingEmail: '',
-//     billingAddress: ''
-// }
-
-// export const useOnBoardingHandler = () => {
-//     const [isOnboardingProcessLoading, setIsOnboardingProcessLoading] = useState(false)
-//     const [isOnboardingProessError, setIsOnboardingProessError] = useState('')
-//     const [isOnboardingProessSuccessful, setIsOnboardingProessSuccessful] = useState(false)
-//     const [onboardingData, setOnboardingData] = useState<onboardingUserDto>(onboardingUserDefaultValues)
+    }
 
 
-
-//     const onChangeOnboardingHandler = (field: string, value: any) => {
-//         setOnboardingData((prev) => ({
-//             ...prev,
-//             [field]: value
-//         }))
-//     }
-
-//     const onSubmitOnBoardingHandler = async (event: any) => {
-//         event.preventDefault();
-//         setIsOnboardingProcessLoading(true);
-//         setIsOnboardingProessError('');
-
-//         try {
-
-//             const userId = localStorage.getItem('userId')
-//             if (!userId) {
-//                 throw new Error('User ID not found. Please log in again.')
-//             }
-
-//             await onboardingService.updateAdvertiserProfile(userId, {
-//                 ...onboardingData,
-//                 targetAudience: onboardingData.targetAudience.map((item) => item.value)
-//             })
-
-//             setIsOnboardingProessSuccessful(true);
-
-//             window.location.reload();
-
-//         } catch (error: any) {
-//             const responseError = error.response?.data?.message || 'An error occured. Try again!!'
-//             setIsOnboardingProessError(responseError)
-//         } finally {
-//             setIsOnboardingProcessLoading(false)
-//         }
-//     }
-
-//     return {
-//         onChangeOnboardingHandler,
-//         onboardingData,
-//         setOnboardingData,
-//         onSubmitOnBoardingHandler,
-//         isOnboardingProcessLoading,
-//         isOnboardingProessSuccessful,
-//         isOnboardingProessError
-//     }
-// }
+    return {
+        onboardingData,
+        setOnboardingData,
+        onChangeOnboardingHandler,
+        onSubmitOnboardingHandler,
+        isUpdatingRecord,
+        isUpdatingRecordSuccessful
+    }
+}
