@@ -79,6 +79,7 @@ export default function ProfileSettings() {
         // Fetching Promoter profile informations
         const { user } = await promoterService.getProfile();
 
+        console.log(user)
 
         // Set user state with fetched data
         setUserData({
@@ -87,9 +88,7 @@ export default function ProfileSettings() {
           fullName: user?.fullName || '',
         })
 
-
         // setting onboaring data
-
         setOnboardingData({
           location: user?.location || '',
           platforms: user?.platforms || [],
@@ -102,7 +101,6 @@ export default function ProfileSettings() {
           accountDetails: user?.accountDetails || ''
         })
 
-
       } catch (error: any) {
         console.error('Error fetching profile data:', error)
       } finally {
@@ -111,6 +109,10 @@ export default function ProfileSettings() {
     }
     getProfile()
   }, [])
+
+  useEffect(() => {
+    console.log('Updated onboardingData:', onboardingData);
+  }, [onboardingData]);
 
 
   if (isFetching) {

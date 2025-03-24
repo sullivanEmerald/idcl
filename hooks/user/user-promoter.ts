@@ -208,18 +208,30 @@ export const usePromoterOnboardingHandler = () => {
     const onSubmitOnboardingHandler = async (e: any) => {
         e.preventDefault();
         setIsUpdatingRecord(true)
-
         try {
 
             const userId = localStorage.getItem('userId')
             if (!userId) {
                 throw new Error('User ID not found. Please log in again.')
             }
+            const { user } = await onboardingService.updatePromoterProfile(userId, onboardingData)
 
-            await onboardingService.updatePromoterProfile(userId, onboardingData)
+            console.log(user)
+
+            // re-rendering the UI
+            setOnboardingData({
+                location: user?.location || '',
+                platforms: user?.platforms || [],
+                followersCount: user?.followersCount || '',
+                engagementRate: user?.engagementRate || '',
+                audienceAge: user?.audienceAge || '',
+                audienceInterests: user?.audienceInterests || [],
+                contentTypes: user?.contentTypes || [],
+                paymentMethod: user?.paymentMethod || '',
+                accountDetails: user?.accountDetails || ''
+            })
 
             setIsUpdatingRecordSuccessful(true)
-
         } catch (error) {
             console.error('error', error)
         } finally {
