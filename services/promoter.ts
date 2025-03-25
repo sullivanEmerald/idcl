@@ -175,10 +175,14 @@ const promoterService = {
   },
 
   async upatePromoterPassword(data: PasswordResetDto) {
-    console.log(data)
     const response = await axiosInstance.put('/promoter/update/password', data)
     return response.data;
-  }
+  },
+  async updatePromoterPreference(data: { [key: string]: boolean }) {
+    console.log(data)
+    const response = await axiosInstance.put('/settings/promoter/preference', data)
+    return response.data;
+  },
 };
 
 export default promoterService;

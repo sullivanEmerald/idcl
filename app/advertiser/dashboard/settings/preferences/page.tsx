@@ -17,7 +17,7 @@ export default function PreferencesSettings() {
     })
 
     useEffect(() => {
-        // declaring function to get user notication prompts and campaign prompts
+        // declaring function to get Advertiser notifications and campaign preferences
         const fetchData = async () => {
 
             try {
@@ -47,6 +47,28 @@ export default function PreferencesSettings() {
         fetchData();
 
     }, [])
+
+    // handler for all adveristers preferences(refactored)
+    const updateUserPreferenceHandler = (handler: string) => async (checked: boolean) => {
+        try {
+            const key = `is${handler.charAt(0).toUpperCase() + handler.slice(1)}NotificationEnabled`;
+            const data = await advertiserService.updatePreference({
+                [key]: checked,
+            } as { [key: string]: boolean; });
+
+            if (data) {
+                setUserNotificationPreferences((prev) => ({
+                    ...prev,
+                    [key]: checked
+                }))
+            }
+            toast.success(checked ? `${handler} notification enabled` : `${handler} notification disabled`)
+            console.log(data)
+        } catch (error: any) {
+            const responseError = error.response?.data?.message || 'An Error occured'
+            toast.error(responseError)
+        }
+    }
 
     if (isFetching) {
         return (
@@ -90,30 +112,6 @@ export default function PreferencesSettings() {
                 </div>
             </div>
         )
-    }
-
-    // handler for all adveristers preferences(refactored)
-    const updateUserPreferenceHandler = (handler: string) => async (checked: boolean) => {
-        console.log(checked)
-        console.log(handler)
-        try {
-            const key = `is${handler.charAt(0).toUpperCase() + handler.slice(1)}NotificationEnabled`;
-            const data = await advertiserService.updatePreference({
-                [key]: checked,
-            } as { [key: string]: boolean; });
-
-            if (data) {
-                setUserNotificationPreferences((prev) => ({
-                    ...prev,
-                    [key]: checked
-                }))
-            }
-            toast.success(checked ? `${handler} notification enabled` : `${handler} notification disabled`)
-            console.log(data)
-        } catch (error: any) {
-            const responseError = error.response?.data?.message || 'An Error occured'
-            toast.error(responseError)
-        }
     }
 
     return (
