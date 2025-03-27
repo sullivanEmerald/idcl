@@ -171,7 +171,7 @@ export const advertiserService = {
 
 
   getProfile: async () => {
-    const response = await axiosInstance.get(`/api/users/me`);
+    const response = await axiosInstance.get(`/advertiser/me`);
     return response.data;
   },
 

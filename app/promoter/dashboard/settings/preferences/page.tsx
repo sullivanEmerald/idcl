@@ -6,10 +6,11 @@ import { Switch } from '@/components/ui/switch'
 import promoterService from '@/services/promoter'
 import { useEffect, useState } from 'react'
 import { Toaster, toast } from 'sonner'
+import { Skeleton } from '@/components/ui/skeleton'
 
 
 export default function PreferencesSettings() {
-
+  const [isFetching, setIsFetching] = useState(true)
   const [promoterNotificationPreferences, setPromoterNotification] = useState({
     isEmailNotificationEnabled: true,
     isSmsNotificationEnabled: true,
@@ -25,7 +26,6 @@ export default function PreferencesSettings() {
           () => { },
         ])
 
-
         // setting the preferences to the UI
         setPromoterNotification({
           isEmailNotificationEnabled: promoterNotificationPreferences?.user?.isEmailNotificationEnabled,
@@ -34,6 +34,8 @@ export default function PreferencesSettings() {
         })
       } catch (error) {
         console.error('error', error)
+      } finally {
+        setIsFetching(false)
       }
     }
 
@@ -65,6 +67,43 @@ export default function PreferencesSettings() {
     }
   }
 
+  if (isFetching) {
+    return (
+      <>
+        <div className="space-y-8 p-8">
+          <div>
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-64 mt-2" />
+          </div>
+
+          <div className="grid gap-6">
+            <Card className="p-6">
+              <Skeleton className="h-6 w-40 mb-6" />
+              <div className="space-y-4">
+                {[...Array(3)].map((_, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div>
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-48 mt-1" />
+                    </div>
+                    <Skeleton className="h-6 w-12 rounded-full" />
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <Skeleton className="h-6 w-40 mb-6" />
+              <div className="space-y-4">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-48" />
+              </div>
+            </Card>
+          </div>
+        </div>
+      </>
+    )
+  }
 
 
   return (

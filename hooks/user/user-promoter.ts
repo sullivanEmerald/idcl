@@ -216,7 +216,6 @@ export const usePromoterOnboardingHandler = () => {
             }
             const { user } = await onboardingService.updatePromoterProfile(userId, onboardingData)
 
-            console.log(user)
 
             // re-rendering the UI
             setOnboardingData({
