@@ -169,7 +169,10 @@ export default function ProfileSettings() {
 
                     {/* Personal Information Card */}
                     <Card className="p-6 relative">
-                        <h2 className="text-xl font-semibold mb-6">Personal Information</h2>
+                        <div className='flex justify-start items-center gap-[10px]'>
+                            <h2 className="text-xl font-semibold mb-6">Personal Information</h2>
+                            {errors.responseError && <p className="text-red-500 text-sm">{errors.responseError}</p>}
+                        </div>
                         <form className="space-y-4" onSubmit={onSubmitUserHandler}>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">First name</label>

@@ -165,7 +165,7 @@ export const advertiserService = {
   },
 
   updateProfile: async (data: updatePersonalDto) => {
-    const response = await axiosInstance.put('/api/settings/me', data)
+    const response = await axiosInstance.put('/advertiser/update', data)
     return response.data
   },
 

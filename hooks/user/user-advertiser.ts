@@ -14,6 +14,7 @@ interface Errors {
     lastName?: string;
     phone?: string;
     companyName?: string;
+    responseError?: string
 }
 
 export const useAccountSettingHandler = () => {
@@ -51,12 +52,18 @@ export const useAccountSettingHandler = () => {
                 abortEarly: false
             })
 
-            await advertiserService.updateProfile(userData)
+            const { user } = await advertiserService.updateProfile(userData)
 
+            console.log(user)
+
+            // resetting the UI with updated advertiser record
+            setUserData({
+                firstName: user?.fullName.split(' ')[0] || '',
+                lastName: user?.fullName.split(' ')[1] || '',
+                companyName: user?.companyName || '',
+                phone: user?.phoneNumber,
+            })
             setIsSuccessful(true)
-
-            // refreshing user informations 
-            window.location.reload();
 
         } catch (error: any) {
             const newErrors: Errors = {};
@@ -64,8 +71,14 @@ export const useAccountSettingHandler = () => {
                 error.inner.forEach((err: yup.ValidationError) => {
                     newErrors[err.path as keyof Errors] = err.message;
                 });
+                setErrors(newErrors);
             }
-            setErrors(newErrors);
+
+            if (error.response?.data?.message) {
+                setErrors({
+                    responseError: error.response?.data?.message
+                })
+            }
         } finally {
             setIsLoading(false)
         }
@@ -135,7 +148,6 @@ export const useUpdatePasswordHandler = () => {
                 });
                 setPasswordErrors(newErrors);
             }
-            console.log(error.response.data)
             if (error.response?.data?.message) {
                 const responseError = error.response?.data?.message || 'An error occured during password reset'
                 setPasswordErrors((prev) => ({
