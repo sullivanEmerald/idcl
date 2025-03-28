@@ -169,7 +169,7 @@ export default function ProfileSettings() {
 
                     {/* Personal Information Card */}
                     <Card className="p-6 relative">
-                        <div className='flex justify-start items-center gap-[10px]'>
+                        <div className='flex justify-start items-center align-center gap-[5px]'>
                             <h2 className="text-xl font-semibold mb-6">Personal Information</h2>
                             {errors.responseError && <p className="text-red-500 text-sm">{errors.responseError}</p>}
                         </div>
@@ -223,18 +223,22 @@ export default function ProfileSettings() {
                                 className="absolute top-[5px] right-[20px]"
                                 title={isEmpty() ? 'Fill all form fields' : 'click to save'}
                             >
-                                {isLoading ? 'Saving Changes...' : 'Save Changes'}
+                                {isLoading ?
+                                    <div className="flex items-center justify-center">
+                                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                        <span className="ml-2">Saving Changes...</span>
+                                    </div>
+                                    :
+                                    'Save Changes'}
                             </Button>
                         </form>
                     </Card>
 
                     {/* Password Management Card */}
                     <Card className="p-6 relative">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-10 mb-6">
-                            <h2 className="text-xl font-semibold">Password Management</h2>
-                            {passwordErrors.responseError && (
-                                <p className="text-red-500 text-sm">{passwordErrors.responseError}</p>
-                            )}
+                        <div className='flex justify-start items-center align-center gap-[5px]'>
+                            <h2 className="text-xl font-semibold mb-6">Password Management</h2>
+                            {passwordErrors.responseError && <p className="text-red-500 text-sm">{passwordErrors.responseError}</p>}
                         </div>
                         <form className="space-y-4" onSubmit={onSubmitPasswordHandler}>
                             <div>
@@ -315,14 +319,19 @@ export default function ProfileSettings() {
                                 className='absolute top-[5px] right-[20px]'
                                 disabled={isPasswordLoading}
                             >
-                                {isPasswordLoading ? 'Saving password' : 'Save Password'}
+                                {isPasswordLoading ?
+                                    <div className="flex items-center justify-center">
+                                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                        <span className="ml-2">Saving Password...</span>
+                                    </div>
+                                    : 'Save Password'}
                             </Button>
                         </form>
                     </Card>
                 </div>
 
                 {/* Onboarding Settings */}
-                <Card className="p-6">
+                <Card className=" relative p-6">
                     <h2 className="text-xl font-semibold mb-6">Onboarding</h2>
                     <form className="space-y-4" onSubmit={onSubmitOnBoardingHandler}>
                         <div>
@@ -459,8 +468,13 @@ export default function ProfileSettings() {
 
                         <Button
                             disabled={isOnboardingProcessLoading}
+                            className="absolute top-[5px] right-[20px]"
                         >
-                            {isOnboardingProcessLoading ? 'Updating Records' : 'Save Changes'}
+                            {isOnboardingProcessLoading ?
+                                <div className="flex items-center justify-center">
+                                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                    <span className="ml-2">Updating...</span>
+                                </div> : 'Save Changes'}
                         </Button>
                     </form>
                 </Card>

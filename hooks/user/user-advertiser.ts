@@ -111,6 +111,7 @@ interface PasswordErrors {
 }
 
 export const useUpdatePasswordHandler = () => {
+    const router = useRouter()
     const [isPasswordLoading, setIsPasswordLoading] = useState(false)
     const [isPasswordResetSuccessful, setIsPasswordResetSuccessful] = useState(false)
     const [passwordErrors, setPasswordErrors] = useState<PasswordErrors>({})
@@ -148,11 +149,22 @@ export const useUpdatePasswordHandler = () => {
                 });
                 setPasswordErrors(newErrors);
             }
-            if (error.response?.data?.message) {
+            if (error.response?.data?.message && error.response?.data?.redirect) {
                 const responseError = error.response?.data?.message || 'An error occured during password reset'
                 setPasswordErrors((prev) => ({
                     ...prev,
                     responseError: responseError
+                }))
+
+                setTimeout(() => {
+                    localStorage.clear();
+                    router.push('/auth/login')
+                }, 1500);
+            } else {
+                const responseError = error.response?.data?.message || 'An error occured during password reset'
+                setPasswordErrors((prev) => ({
+                    ...prev,
+                    responseError: responseError || 'An error occured. Check the internet'
                 }))
             }
         } finally {

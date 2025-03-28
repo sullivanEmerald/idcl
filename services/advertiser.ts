@@ -177,7 +177,7 @@ export const advertiserService = {
 
   updateUserPassword: async (data: PasswordResetDto) => {
     const { confirmNewPassword, ...rest } = data;
-    const response = await axiosInstance.put('/api/users/me/change-password', rest)
+    const response = await axiosInstance.put('/advertiser/change-password', rest)
     return response.data;
   },
 
