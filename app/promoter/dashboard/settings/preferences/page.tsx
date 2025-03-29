@@ -7,10 +7,16 @@ import promoterService from '@/services/promoter'
 import { useEffect, useState } from 'react'
 import { Toaster, toast } from 'sonner'
 import { Skeleton } from '@/components/ui/skeleton'
+import Loader from '@/components/layout/Loader'
 
 
 export default function PreferencesSettings() {
   const [isFetching, setIsFetching] = useState(true)
+  const [isloading, setIsLoading] = useState({
+    isEmailNotificationEnabled: false,
+    isSmsNotificationEnabled: false,
+    isPushNotificationEnabled: false
+  })
   const [promoterNotificationPreferences, setPromoterNotification] = useState({
     isEmailNotificationEnabled: true,
     isSmsNotificationEnabled: true,
@@ -46,8 +52,16 @@ export default function PreferencesSettings() {
 
   // Handler to change promoter preference(s)
   const updatePromoterPreferenceHandler = (handler: string) => async (checked: boolean) => {
+
+    const key = `is${handler.charAt(0).toUpperCase() + handler.slice(1)}NotificationEnabled`;
+
+    setIsLoading((prev) => ({
+      ...prev,
+      [key]: true
+    }))
+
     try {
-      const key = `is${handler.charAt(0).toUpperCase() + handler.slice(1)}NotificationEnabled`;
+
 
       const data = await promoterService.updatePromoterPreference({
         [key]: checked
@@ -64,6 +78,11 @@ export default function PreferencesSettings() {
       toast.success(checked ? `${handler} is enabled` : `${handler} is disabled`)
     } catch (error) {
       console.error('error', error)
+    } finally {
+      setIsLoading((prev) => ({
+        ...prev,
+        [key]: false
+      }))
     }
   }
 
@@ -124,30 +143,44 @@ export default function PreferencesSettings() {
                   <p className="font-medium">Email Notifications</p>
                   <p className="text-sm text-gray-600">Receive campaign updates via email</p>
                 </div>
-                <Switch
-                  checked={promoterNotificationPreferences.isEmailNotificationEnabled}
-                  onCheckedChange={updatePromoterPreferenceHandler('email')}
-                />
+
+                {isloading.isEmailNotificationEnabled ? (
+                  <Loader />
+                ) : (
+                  <Switch
+                    checked={promoterNotificationPreferences.isEmailNotificationEnabled}
+                    onCheckedChange={updatePromoterPreferenceHandler('email')}
+                  />
+                )}
+
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Sms Notifications</p>
                   <p className="text-sm text-gray-600">Receive campaign updates via sms</p>
                 </div>
-                <Switch
-                  checked={promoterNotificationPreferences.isSmsNotificationEnabled}
-                  onCheckedChange={updatePromoterPreferenceHandler('sms')}
-                />
+                {isloading.isSmsNotificationEnabled ? (
+                  <Loader />
+                ) : (
+                  <Switch
+                    checked={promoterNotificationPreferences.isSmsNotificationEnabled}
+                    onCheckedChange={updatePromoterPreferenceHandler('sms')}
+                  />
+                )}
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Push Notifications</p>
                   <p className="text-sm text-gray-600">Receive updates on your device</p>
                 </div>
-                <Switch
-                  checked={promoterNotificationPreferences.isPushNotificationEnabled}
-                  onCheckedChange={updatePromoterPreferenceHandler('push')}
-                />
+                {isloading.isPushNotificationEnabled ? (
+                  <Loader />
+                ) : (
+                  <Switch
+                    checked={promoterNotificationPreferences.isPushNotificationEnabled}
+                    onCheckedChange={updatePromoterPreferenceHandler('push')}
+                  />
+                )}
               </div>
             </div>
           </Card>

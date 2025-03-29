@@ -236,9 +236,11 @@ export default function ProfileSettings() {
 
                     {/* Password Management Card */}
                     <Card className="p-6 relative">
-                        <div className='flex justify-start items-center align-center gap-[5px]'>
-                            <h2 className="text-xl font-semibold mb-6">Password Management</h2>
-                            {passwordErrors.responseError && <p className="text-red-500 text-sm">{passwordErrors.responseError}</p>}
+                        <div className='flex items-center gap-[15px] mb-6'>
+                            <h2 className="text-xl font-semibold leading-none">Password Management</h2>
+                            {passwordErrors.responseError && (
+                                <p className="text-red-500 text-sm leading-none">{passwordErrors.responseError}</p>
+                            )}
                         </div>
                         <form className="space-y-4" onSubmit={onSubmitPasswordHandler}>
                             <div>
