@@ -141,12 +141,12 @@ export default function Profile() {
                         <div className="">
                             <div className="flex items-center gap-1">
                                 <CardTitle className="flex items-center justify-center gap-1">
-                                    {advertiser.fullname.split(' ')[0]}
+                                    {advertiser.fullname.split(' ')[0].charAt(0).toUpperCase() + advertiser.fullname.split(' ')[0].slice(1)}
                                     <Verified className="text-amber-500 h-[1em] w-[1em] relative top-[0.1em]" />
                                 </CardTitle>
                             </div>
                             <div>
-                                <CardDescription className="font-medium">{advertiser.industry}</CardDescription>
+                                <CardDescription className="font-medium">{advertiser.industry.charAt(0).toUpperCase() + advertiser.industry.slice(1)}</CardDescription>
                             </div>
                         </div>
                     </div>
