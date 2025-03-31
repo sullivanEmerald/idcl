@@ -26,7 +26,8 @@ interface SidebarItem {
 }
 
 interface SidebarProps {
-  items: SidebarItem[]
+  items: SidebarItem[],
+  role: 'advertiser' | 'promoter'
 }
 
 function getIcon(iconName: string) {
@@ -49,7 +50,7 @@ function getIcon(iconName: string) {
   }
 }
 
-export function Sidebar({ items }: SidebarProps) {
+export function Sidebar({ items, role }: SidebarProps) {
   const pathname = usePathname()
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-white">
@@ -95,7 +96,7 @@ export function Sidebar({ items }: SidebarProps) {
       </nav>
       <div className="border-t p-4 space-y-2">
         <Link
-          href="/advertiser/dashboard/profile"
+          href={role === 'advertiser' ? '/advertiser/dashboard/profile' : '/promoter/dashboard/profile'}
           className="flex items-center rounded-lg px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-150"
         >
           <UserCircle2 className="h-5 w-5" />

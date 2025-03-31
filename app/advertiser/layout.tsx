@@ -72,7 +72,8 @@ const sidebarItems = [
         href: '/advertiser/dashboard/settings/preferences'
       }
     ]
-  }
+  },
+
 ]
 
 export default function AdvertiserLayout({
@@ -83,7 +84,7 @@ export default function AdvertiserLayout({
   return (
     <RoleGuard role="advertiser">
       <div className="flex h-screen">
-        <Sidebar items={sidebarItems} />
+        <Sidebar items={sidebarItems} role='advertiser' />
         <main className="flex-1 overflow-y-auto bg-gray-50 p-8">
           {children}
         </main>

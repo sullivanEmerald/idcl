@@ -9,6 +9,7 @@ import { Calendar, DollarSign, Users, Pencil, Badge } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ActiveCampaignList } from '@/components/campaigns/active-campaigns'
 import ProfileField from "@/components/advertiser/profile-field";
+import ProfileSkeleton from "@/components/advertiser/skeleton";
 import Link from 'next/link'
 
 
@@ -49,6 +50,7 @@ interface Advertiser {
 
 
 export default function Profile() {
+    const [isfetching, setIsFetching] = useState(true)
     const [Advertisercampaigns, setCampaigns] = useState<Campaign[]>([])
     const [advertiser, setAdvertiser] = useState<Advertiser>({
         fullname: '',
@@ -64,40 +66,45 @@ export default function Profile() {
         targetAudience: [],
         website: ''
     });
+
     useEffect(() => {
         const getAdvertiserData = async () => {
+            try {
+                // getting advertiser profile and campaigns
+                const [advertiserData, { campaigns }] = await Promise.all([
+                    advertiserService.getProfile(),
+                    advertiserService.getCampaigns()
+                ])
 
-            // getting advertiser profile and campaigns
-            const [advertiserData, { campaigns }] = await Promise.all([
-                advertiserService.getProfile(),
-                advertiserService.getCampaigns()
-            ])
+                // setting profile informations
+                setAdvertiser({
+                    fullname: advertiserData?.fullName,
+                    email: advertiserData?.email,
+                    phoneNumber: advertiserData?.phoneNumber,
+                    companyName: advertiserData?.companyName,
+                    billingAddress: advertiserData?.billingAddress,
+                    billingEmail: advertiserData?.billingEmail,
+                    businessType: advertiserData?.businessType,
+                    companySize: advertiserData?.companySize,
+                    goals: advertiserData?.goals,
+                    industry: advertiserData?.industry,
+                    targetAudience: advertiserData?.targetAudience.map((item: TargetAudience) => item.value),
+                    website: advertiserData?.website
+                })
 
-            // setting profile informations
-            setAdvertiser({
-                fullname: advertiserData?.fullName,
-                email: advertiserData?.email,
-                phoneNumber: advertiserData?.phoneNumber,
-                companyName: advertiserData?.companyName,
-                billingAddress: advertiserData?.billingAddress,
-                billingEmail: advertiserData?.billingEmail,
-                businessType: advertiserData?.businessType,
-                companySize: advertiserData?.companySize,
-                goals: advertiserData?.goals,
-                industry: advertiserData?.industry,
-                targetAudience: advertiserData?.targetAudience.map((item: TargetAudience) => item.value),
-                website: advertiserData?.website
-            })
-
-            // setting campaigns
-            setCampaigns(campaigns)
+                // setting campaigns
+                setCampaigns(campaigns)
+            } catch (error) {
+                console.error('error', error)
+            } finally {
+                setIsFetching(false)
+            }
         }
 
         getAdvertiserData();
     }, [])
 
-
-    console.log(advertiser.targetAudience)
+    if (isfetching) return <ProfileSkeleton />;
 
     const activeCampaigns = Advertisercampaigns.filter((item) => item.status === 'active')
     const isActive = Advertisercampaigns.some((item) => item.status.trim() === 'active')
