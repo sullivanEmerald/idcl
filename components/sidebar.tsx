@@ -95,7 +95,7 @@ export function Sidebar({ items }: SidebarProps) {
       </nav>
       <div className="border-t p-4 space-y-2">
         <Link
-          href="/settings/profile"
+          href="/advertiser/dashboard/profile"
           className="flex items-center rounded-lg px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-150"
         >
           <UserCircle2 className="h-5 w-5" />

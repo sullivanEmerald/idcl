@@ -121,8 +121,8 @@ export default function CampaignsOverview() {
           ) : (
             <div className="space-y-6">
               {activeCampaigns.map(campaign => (
-                <Link 
-                  key={campaign._id} 
+                <Link
+                  key={campaign._id}
                   href={`/advertiser/dashboard/campaigns/${campaign._id}`}
                   className="block hover:bg-gray-50 rounded-lg transition-colors"
                 >
@@ -143,8 +143,8 @@ export default function CampaignsOverview() {
                           {(campaign.metrics.averageEngagementRate * 100).toFixed(1)}%
                         </span>
                       </div>
-                      <Progress 
-                        value={campaign.metrics.averageEngagementRate * 100} 
+                      <Progress
+                        value={campaign.metrics.averageEngagementRate * 100}
                         className="h-2"
                       />
                     </div>

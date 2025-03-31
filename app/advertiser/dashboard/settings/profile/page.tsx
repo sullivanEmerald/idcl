@@ -106,7 +106,7 @@ export default function ProfileSettings() {
                 setIsFetching(false)
             }
         }
-        getProfile()
+        getProfile();
     }, [])
 
 
