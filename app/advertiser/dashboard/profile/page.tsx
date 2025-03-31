@@ -67,6 +67,7 @@ export default function Profile() {
     useEffect(() => {
         const getAdvertiserData = async () => {
 
+            // getting advertiser profile and campaigns
             const [advertiserData, { campaigns }] = await Promise.all([
                 advertiserService.getProfile(),
                 advertiserService.getCampaigns()
@@ -103,7 +104,6 @@ export default function Profile() {
     const scheduledCampaigns = Advertisercampaigns.filter((item) => item.status.trim() === 'scheduled')
     const totalReach = Advertisercampaigns.reduce((acc, c) => acc + c.metrics.totalReach, 0)
     const totalBudget = Advertisercampaigns.reduce((acc, c) => acc + c.budget, 0)
-    const totalEngagements = Advertisercampaigns.reduce((acc, c) => acc + c.metrics.totalEngagements, 0)
     const averageEngagementRate = activeCampaigns.length
         ? activeCampaigns.reduce((sum, c) => sum + c.metrics.averageEngagementRate, 0) / activeCampaigns.length
         : 0
@@ -151,10 +151,13 @@ export default function Profile() {
                             <CardTitle>Profile overview</CardTitle>
                             <CardDescription>Advertiser basic information</CardDescription>
                         </div>
-                        <Button variant="link" size="sm" onClick={() => {/* Edit handler */ }}>
-                            <Pencil className="w-4 h-4 mr-2" />
-                            Edit Profile
-                        </Button>
+                        <Link href="/advertiser/dashboard/settings/profile">
+                            <Button variant="link" size="sm">
+                                <Pencil className="w-4 h-4 mr-2" />
+                                Edit Profile
+                            </Button>
+                        </Link>
+
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
 
@@ -194,11 +197,13 @@ export default function Profile() {
                             <h3 className="text-sm font-medium text-gray-500">Target Audience</h3>
                             <div className="flex flex-wrap gap-2">
                                 {advertiser.targetAudience?.length > 0 ? (
-                                    advertiser.targetAudience.map((audience, index) => (
-                                        <>
-                                            <p>{audience}</p>
-                                        </>
-                                    ))
+                                    <ul className="flex flex-wrap gap-2">
+                                        {advertiser.targetAudience.map((audience, index) => (
+                                            <li key={index}>
+                                                {audience}
+                                            </li>
+                                        ))}
+                                    </ul>
                                 ) : (
                                     <p className="text-sm text-gray-400">No target audience specified</p>
                                 )}
