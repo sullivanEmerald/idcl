@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { campaignService } from '@/services/campaign'
 
 interface Campaign {
-  _id: string
+  id: string
   title: string
   status: string
   budget: number
@@ -26,6 +26,7 @@ interface Campaign {
 export default function CampaignsOverview() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [loading, setLoading] = useState(true)
+
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -122,8 +123,8 @@ export default function CampaignsOverview() {
             <div className="space-y-6">
               {activeCampaigns.map(campaign => (
                 <Link
-                  key={campaign._id}
-                  href={`/advertiser/dashboard/campaigns/${campaign._id}`}
+                  key={campaign.id}
+                  href={`/advertiser/dashboard/campaigns/${campaign.id}`}
                   className="block hover:bg-gray-50 rounded-lg transition-colors"
                 >
                   <div className="border rounded-lg p-4">

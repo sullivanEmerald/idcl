@@ -2,8 +2,10 @@ import { axiosInstance } from '@/lib/utils';
 
 export interface UserBasicInfo {
   id: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
+  fullName?: string;
+
 }
 
 export interface PromoterInfo extends UserBasicInfo {
@@ -40,6 +42,7 @@ export interface ContentAsset {
 
 export interface Campaign {
   id: string;
+  fullName?: string;
   title: string;
   description: string;
   advertiser: UserBasicInfo;

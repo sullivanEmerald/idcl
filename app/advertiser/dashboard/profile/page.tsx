@@ -1,19 +1,32 @@
 "use client"
-import advertiserService from "@/services/advertiser";
+import advertiserService, { Campaign } from "@/services/advertiser";
 import { useEffect, useState } from "react"
 import { Card, CardTitle, CardDescription, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Verified, Plus } from "lucide-react";
-import { Calendar, DollarSign, Users, Pencil, Badge } from 'lucide-react'
+import { Calendar, DollarSign, Users, Pencil, Badge, Bell } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ActiveCampaignList } from '@/components/campaigns/active-campaigns'
 import ProfileField from "@/components/advertiser/profile-field";
 import ProfileSkeleton from "@/components/advertiser/skeleton";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+
 import Link from 'next/link'
 
+interface ApprovedPromoter {
+    id: string
+    fullName: string
+    engagementRate: number
+    followersCount: number
+}
 
-interface Campaign {
+
+interface AdvertiserCampaigns {
     id: string
     title: string
     status: string
@@ -26,6 +39,7 @@ interface Campaign {
     }
     startDate: Date
     endDate: Date
+    approvedPromoters: ApprovedPromoter[]
 }
 
 interface TargetAudience {
@@ -76,6 +90,8 @@ export default function Profile() {
                     advertiserService.getCampaigns()
                 ])
 
+                console.log(campaigns)
+
                 // setting profile informations
                 setAdvertiser({
                     fullname: advertiserData?.fullName,
@@ -106,8 +122,10 @@ export default function Profile() {
 
     if (isfetching) return <ProfileSkeleton />;
 
+
+
     const activeCampaigns = Advertisercampaigns.filter((item) => item.status === 'active')
-    const isActive = Advertisercampaigns.some((item) => item.status.trim() === 'active')
+    const isActive = Advertisercampaigns.length ? Advertisercampaigns.some((item) => item.status.trim() === 'active') : true
     const scheduledCampaigns = Advertisercampaigns.filter((item) => item.status.trim() === 'scheduled')
     const totalReach = Advertisercampaigns.reduce((acc, c) => acc + c.metrics.totalReach, 0)
     const totalBudget = Advertisercampaigns.reduce((acc, c) => acc + c.budget, 0)
@@ -126,18 +144,66 @@ export default function Profile() {
                         <Button variant="outline">Manage Billing</Button>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div>
-                            <Button variant='success' className="flex gap-2 items-center justify-start ">
-                                <Plus strokeWidth={2.5} />
-                                <span>Add Funds</span>
+                        <div className="relative">
+                            <Button variant="outline" size="icon" className="rounded-full">
+                                <Bell className="h-5 w-5" />
+                                <span className="absolute top-0 right-0 h-3 w-3 rounded-full bg-red-500"></span>
                             </Button>
                         </div>
-                        <Avatar>
-                            <AvatarImage />
-                            <AvatarFallback>
-                                {advertiser.fullname.split(' ').filter(Boolean).map((item) => item.charAt(0).toUpperCase()).join('.')}
-                            </AvatarFallback>
-                        </Avatar>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant="ghost" className="p-0 rounded-full hover:bg-transparent">
+                                    <div className="p-0.5 rounded-full" style={{ background: 'linear-gradient(to right, #8637e9, #f6627e)' }}>
+                                        <Avatar className="cursor-pointer h-10 w-10 border-2 border-white">
+                                            <AvatarImage />
+                                            <AvatarFallback>
+                                                {advertiser.fullname.split(' ').filter(Boolean).map((item) => item.charAt(0).toUpperCase()).join('.')}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    </div>
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-64 p-4" align="end">
+                                <div className="flex flex-col items-center space-y-3">
+                                    <div className="p-0.5 rounded-full" style={{ background: 'linear-gradient(to right, #8637e9, #f6627e)' }}>
+                                        <Avatar className="h-16 w-16 border-2 border-white">
+                                            <AvatarImage />
+                                            <AvatarFallback className="text-xl">
+                                                {advertiser.fullname.split(' ').filter(Boolean).map((item) => item.charAt(0).toUpperCase()).join('')}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    </div>
+
+                                    <div className="text-center">
+                                        <p className="text-sm text-gray-500">Hello,</p>
+                                        <p className="font-medium">{advertiser.fullname}</p>
+                                    </div>
+
+                                    <div className="w-full border-t"></div>
+
+                                    <div className="w-full space-y-1">
+                                        <Link href="/advertiser/dashboard/settings/profile" className="w-full">
+                                            <Button variant="ghost" className="w-full justify-start">
+                                                <Pencil className="w-4 h-4 mr-2" />
+                                                Edit Profile
+                                            </Button>
+                                        </Link>
+                                        <Button variant="ghost" className="w-full justify-start">
+                                            <Badge className="w-4 h-4 mr-2" />
+                                            Account Settings
+                                        </Button>
+                                        <Button variant="ghost" className="w-full justify-start">
+                                            <DollarSign className="w-4 h-4 mr-2" />
+                                            Billing
+                                        </Button>
+                                        <div className="w-full border-t pt-1"></div>
+                                        <Button variant="ghost" className="w-full justify-start text-red-500 hover:text-red-500">
+                                            Sign Out
+                                        </Button>
+                                    </div>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
                         <div className="">
                             <div className="flex items-center gap-1">
                                 <CardTitle className="flex items-center justify-center gap-1">
