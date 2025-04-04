@@ -2,14 +2,16 @@
 import advertiserService, { Campaign } from "@/services/advertiser";
 import { useEffect, useState } from "react"
 import { Card, CardTitle, CardDescription, CardHeader, CardContent } from "@/components/ui/card";
+import { Progress } from '@/components/ui/progress'
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Verified, Plus } from "lucide-react";
-import { Calendar, DollarSign, Users, Pencil, Badge, Bell } from 'lucide-react'
+import { Calendar, DollarSign, Users, Pencil, Badge, Bell, BookmarkCheck } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ActiveCampaignList } from '@/components/campaigns/active-campaigns'
 import ProfileField from "@/components/advertiser/profile-field";
 import ProfileSkeleton from "@/components/advertiser/skeleton";
+import { ProfileCompletionPie } from "@/components/charts/profile-chart";
 import {
     Popover,
     PopoverContent,
@@ -18,29 +20,7 @@ import {
 
 import Link from 'next/link'
 
-interface ApprovedPromoter {
-    id: string
-    fullName: string
-    engagementRate: number
-    followersCount: number
-}
 
-
-interface AdvertiserCampaigns {
-    id: string
-    title: string
-    status: string
-    budget: number
-    metrics: {
-        totalReach: number
-        totalEngagements: number
-        totalPosts: number
-        averageEngagementRate: number
-    }
-    startDate: Date
-    endDate: Date
-    approvedPromoters: ApprovedPromoter[]
-}
 
 interface TargetAudience {
     value: string;
@@ -60,6 +40,7 @@ interface Advertiser {
     industry: string;
     targetAudience: string[];
     website: string;
+    profilePercentage: number
 }
 
 
@@ -78,7 +59,8 @@ export default function Profile() {
         goals: '',
         industry: '',
         targetAudience: [],
-        website: ''
+        website: '',
+        profilePercentage: 0
     });
 
     useEffect(() => {
@@ -90,7 +72,7 @@ export default function Profile() {
                     advertiserService.getCampaigns()
                 ])
 
-                console.log(campaigns)
+                console.log(advertiserData.profileCompletedPercentage)
 
                 // setting profile informations
                 setAdvertiser({
@@ -105,7 +87,8 @@ export default function Profile() {
                     goals: advertiserData?.goals,
                     industry: advertiserData?.industry,
                     targetAudience: advertiserData?.targetAudience.map((item: TargetAudience) => item.value),
-                    website: advertiserData?.website
+                    website: advertiserData?.website,
+                    profilePercentage: advertiserData?.profileCompletedPercentage
                 })
 
                 // setting campaigns
@@ -121,6 +104,7 @@ export default function Profile() {
     }, [])
 
     if (isfetching) return <ProfileSkeleton />;
+    if (!Advertisercampaigns || !advertiser) return <p className="text-crimson-500">No Data found</p>
 
 
 
@@ -265,7 +249,6 @@ export default function Profile() {
                             </div>
                         </div>
 
-
                         <div className="col-span-full space-y-4">
                             <h3 className="text-sm font-medium text-gray-500">Target Audience</h3>
                             <div className="flex flex-wrap gap-2">
@@ -284,7 +267,9 @@ export default function Profile() {
                         </div>
                     </CardContent>
                 </Card>
-
+                <div>
+                    <ProfileCompletionPie percentage={advertiser.profilePercentage} />
+                </div>
                 <Card className="space-y-6 p-4">
                     <CardHeader>
                         <CardTitle>Campaign overview</CardTitle>

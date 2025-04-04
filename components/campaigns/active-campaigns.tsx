@@ -124,7 +124,7 @@ export function ActiveCampaignList({ campaigns, isActive }: CampaignList) {
                                                 <DialogHeader>
                                                     <DialogTitle>Campaign Promoters</DialogTitle>
                                                 </DialogHeader>
-                                                {!promoterSample || promoterSample.length === 0 ? (
+                                                {!campaign.approvedPromoters || campaign.approvedPromoters.length === 0 ? (
                                                     <p>There are no promoters for this Campaign</p>
                                                 ) : (
                                                     <div className="space-y-4">
@@ -133,7 +133,7 @@ export function ActiveCampaignList({ campaigns, isActive }: CampaignList) {
                                                             <p className="text-sm font-medium">{`${campaign.promoterCount} promoters working on this campaign`}</p>
                                                         </div>
                                                         <div className="space-y-2">
-                                                            {promoterSample.map((promoter, index) => (
+                                                            {campaign.approvedPromoters.map((promoter, index) => (
                                                                 <Popover key={promoter.id}>
                                                                     <PopoverTrigger asChild>
                                                                         <div className="p-2 border rounded flex items-center justify-between">
