@@ -151,16 +151,26 @@ export default function BrowseCampaigns() {
               )}
 
               {/* End Date Badge */}
-              <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-sm text-right">
-                <div className="text-xs font-medium text-gray-600 uppercase">
-                  Ends
+              <div className="absolute flex items-center w-full justify-between bottom-4 right-0 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-none shadow-sm text-right space-y-1">
+                <div>
+                  <div className="text-xs font-medium text-gray-600 uppercase">Starts</div>
+                  <div className="text-sm font-semibold text-gray-900">
+                    {new Date(campaign.startDate).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </div>
                 </div>
-                <div className="text-sm font-semibold text-gray-900">
-                  {new Date(campaign.endDate).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
+                <div>
+                  <div className="text-xs font-medium text-gray-600 uppercase">Ends</div>
+                  <div className="text-sm font-semibold text-gray-900">
+                    {new Date(campaign.endDate).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
@@ -191,6 +201,46 @@ export default function BrowseCampaigns() {
                 <div className="absolute bottom-0 right-0 bg-gradient-to-l from-white via-white to-transparent pl-10 pr-2 text-xs text-blue-600 font-medium">
                   Read more →
                 </div>
+              </div>
+
+              {/* Campaign Metrics */}
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+                <div className="text-left">
+                  <div className="text-lg font-semibold text-blue-600">
+                    ₦{campaign.pricePerPost}
+                  </div>
+                  <div className="text-xs text-gray-500">Per Post</div>
+                </div>
+                {campaign.campaignGoal === "engagement" ? (
+                  <div className="text-left">
+                    <div className="text-lg font-semibold text-green-600">
+                      {(campaign.metrics?.averageEngagementRate * 100).toFixed(1)}%
+                    </div>
+                    <div className="text-xs text-gray-500">Engagement Rate</div>
+                  </div>
+                ) : (
+                  <div className="text-left">
+                    <div className="text-lg font-semibold text-green-600">
+                      {campaign.metrics?.totalReach?.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-gray-500">Total Reach</div>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-left">
+                  <div className="text-sm font-medium text-gray-900">
+                    {campaign.metrics?.totalEngagements?.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-gray-500">Engagements</div>
+                </div>
+                {/* <div className="text-center">
+                  <div className="text-sm font-medium text-gray-900">
+                    {campaign.targetPromotions}
+                  </div>
+                  <div className="text-xs text-gray-500">Target Promoters</div>
+                </div> */}
               </div>
 
               {/* Tags */}

@@ -165,16 +165,20 @@ export default function CampaignPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Engagement Rate
+              {campaign.campaignGoal === 'engagement' ? 'Engagement Rate' : 'Impressions'}
             </CardTitle>
             <ChartBar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {(campaign.metrics.averageEngagementRate * 100).toFixed(2)}%
+              {campaign.campaignGoal === 'engagement' 
+                ? `${(campaign.metrics.averageEngagementRate * 100).toFixed(2)}%`
+                : campaign.metrics.totalViews.toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              {campaign.metrics.totalEngagements} total engagements
+              {campaign.campaignGoal === 'engagement'
+                ? `${campaign.metrics.totalEngagements} total engagements`
+                : `${campaign.metrics.totalReach} unique views`}
             </p>
           </CardContent>
         </Card>
@@ -458,65 +462,107 @@ export default function CampaignPage() {
             <CardContent>
               <div className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* <div className="p-4 border rounded-lg">
+                    <h3 className="text-gray-600 mb-2">Social Media Engagement</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Likes</span>
+                        <span>{campaign.metrics.totalEngagements?.toLocaleString() || '0'}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Views</span>
+                        <span>{campaign.metrics.totalViews?.toLocaleString() || '0'}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Shares</span>
+                        <span>{campaign.metrics.totalSharesByPlatform?.total?.toLocaleString() || '0'}</span>
+                      </div>
+                    </div>
+                  </div> */}
                   <div className="p-4 border rounded-lg">
-                    <h3 className="text-gray-600 mb-2">Device Breakdown</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Mobile</span>
-                          <span>{campaign.metrics.byDevice.mobile.uniqueViews.toLocaleString()}</span>
-                        </div>
-                        <Progress value={(campaign.metrics.byDevice.mobile.uniqueViews / campaign.metrics.totalReach) * 100} />
+                    <h3 className="text-gray-600 mb-2">Platform Performance</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Instagram</span>
+                        <span>{campaign.metrics.bySocialPlatform?.instagram?.count?.toLocaleString() || '0'}</span>
                       </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Desktop</span>
-                          <span>{campaign.metrics.byDevice.desktop.uniqueViews.toLocaleString()}</span>
-                        </div>
-                        <Progress value={(campaign.metrics.byDevice.desktop.uniqueViews / campaign.metrics.totalReach) * 100} />
+                      <div className="flex justify-between text-sm">
+                        <span>Twitter</span>
+                        <span>{campaign.metrics.bySocialPlatform?.twitter?.count?.toLocaleString() || '0'}</span>
                       </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Tablet</span>
-                          <span>{campaign.metrics.byDevice.tablet.uniqueViews.toLocaleString()}</span>
-                        </div>
-                        <Progress value={(campaign.metrics.byDevice.tablet.uniqueViews / campaign.metrics.totalReach) * 100} />
+                      <div className="flex justify-between text-sm">
+                        <span>Facebook</span>
+                        <span>{campaign.metrics.bySocialPlatform?.facebook?.count?.toLocaleString() || '0'}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {/* <div className="p-4 border rounded-lg">
+                    <h3 className="text-gray-600 mb-2">Engagement Rate</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Average</span>
+                        <span>{(campaign.metrics.averageEngagementRate * 100).toFixed(2)}%</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Peak Engagement Rate</span>
+                        <span>{(campaign.metrics.averageEngagementRate * 100).toFixed(1)}%</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Total Interactions</span>
+                        <span>{campaign.metrics.totalEngagements?.toLocaleString() || '0'}</span>
+                      </div>
+                    </div>
+                  </div> */}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="text-gray-600 mb-2">Mobile Devices</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Android</span>
+                        <span>{campaign.metrics.byDevice.mobile.byOS.android}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>iOS</span>
+                        <span>{campaign.metrics.byDevice.mobile.byOS.ios}</span>
+                      </div>
+                      <div className="flex justify-between text-sm text-muted-foreground mt-2">
+                        <span>Total Views</span>
+                        <span>{campaign.metrics.byDevice.mobile.uniqueViews}</span>
                       </div>
                     </div>
                   </div>
                   <div className="p-4 border rounded-lg">
-                    <h3 className="text-gray-600 mb-2">Engagement Metrics</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-2xl font-bold">{campaign.metrics.totalEngagements.toLocaleString()}</p>
-                        <p className="text-sm text-gray-600">Total Engagements</p>
+                    <h3 className="text-gray-600 mb-2">Desktop</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Windows</span>
+                        <span>{campaign.metrics.byDevice.desktop.byOS.windows}</span>
                       </div>
-                      <div>
-                        <p className="text-2xl font-bold">{campaign.metrics.totalPosts.toLocaleString()}</p>
-                        <p className="text-sm text-gray-600">Total Posts</p>
+                      <div className="flex justify-between text-sm">
+                        <span>macOS</span>
+                        <span>{campaign.metrics.byDevice.desktop.byOS.macos}</span>
                       </div>
-                      <div>
-                        <p className="text-2xl font-bold">{(campaign.metrics.averageEngagementRate * 100).toFixed(2)}%</p>
-                        <p className="text-sm text-gray-600">Average Engagement Rate</p>
+                      <div className="flex justify-between text-sm text-muted-foreground mt-2">
+                        <span>Total Views</span>
+                        <span>{campaign.metrics.byDevice.desktop.uniqueViews}</span>
                       </div>
                     </div>
                   </div>
                   <div className="p-4 border rounded-lg">
-                    <h3 className="text-gray-600 mb-2">Reach & Conversions</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-2xl font-bold">{campaign.metrics.totalReach.toLocaleString()}</p>
-                        <p className="text-sm text-gray-600">Total Reach</p>
+                    <h3 className="text-gray-600 mb-2">Tablet</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Android</span>
+                        <span>{campaign.metrics.byDevice.tablet.byOS.android}</span>
                       </div>
-                      <div>
-                        <p className="text-2xl font-bold">{campaign.metrics.totalConversions.toLocaleString()}</p>
-                        <p className="text-sm text-gray-600">Total Conversions</p>
+                      <div className="flex justify-between text-sm">
+                        <span>iOS</span>
+                        <span>{campaign.metrics.byDevice.tablet.byOS.ios}</span>
                       </div>
-                      <div>
-                        <p className="text-2xl font-bold">
-                          {((campaign.metrics.totalConversions / campaign.metrics.totalReach) * 100).toFixed(2)}%
-                        </p>
-                        <p className="text-sm text-gray-600">Conversion Rate</p>
+                      <div className="flex justify-between text-sm text-muted-foreground mt-2">
+                        <span>Total Views</span>
+                        <span>{campaign.metrics.byDevice.tablet.uniqueViews}</span>
                       </div>
                     </div>
                   </div>

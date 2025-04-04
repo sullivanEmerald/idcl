@@ -629,6 +629,29 @@ export default function CampaignDetails() {
         {/* Promotional Tools */}
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-6">Promotional Tools</h2>
+          {/* Social Share Section */}
+          {/* <Card className="p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-6">Share Campaign</h2>
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                className="w-full flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white border-none"
+                onClick={() => {
+                  const url = `${window.location.href}?utm_source=copy&utm_medium=share&utm_campaign=campaign_share`;
+                  navigator.clipboard.writeText(url).then(() => {
+                    toast({
+                      title: "Link copied!",
+                      description: "Campaign link has been copied to your clipboard"
+                    });
+                  });
+                }}
+              >
+                <Share2 className="h-4 w-4" />
+                Copy Campaign Link
+              </Button>
+            </div>
+          </Card> */}
+
           <Tabs defaultValue="link" className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="link">
@@ -648,27 +671,59 @@ export default function CampaignDetails() {
 
             <TabsContent value="link">
               <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={campaign.promotionalLink}
-                    readOnly
-                    className="flex-1 px-3 py-2 border rounded-md bg-gray-50"
-                  />
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      navigator.clipboard.writeText(
-                        campaign.promotionalLink as string
-                      );
-                      toast({
-                        title: "Link Copied",
-                        description: "Promotional link copied to clipboard",
-                      });
-                    }}
-                  >
-                    Copy
-                  </Button>
+                <div className="flex flex-col gap-4">
+                  {/* Original Promotional Link */}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={`${campaign.promotionalLink}?utm_source=direct&utm_medium=share&utm_campaign=${campaign.id}`}
+                      readOnly
+                      className="flex-1 px-3 py-2 border rounded-md bg-gray-50"
+                    />
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          `${campaign.promotionalLink}?utm_source=direct&utm_medium=share&utm_campaign=${campaign.id}`
+                        );
+                        toast({
+                          title: "Link Copied",
+                          description: "Promotional link copied to clipboard",
+                        });
+                      }}
+                    >
+                      Copy
+                    </Button>
+                  </div>
+                  
+                  {/* Platform-specific Links */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-gray-600">Platform-specific Links</h3>
+                    {campaign.requiredPlatforms.map((platform) => (
+                      <div key={platform} className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={`${campaign.promotionalLink}?utm_source=${platform.toLowerCase()}&utm_medium=social&utm_campaign=${campaign.id}`}
+                          readOnly
+                          className="flex-1 px-3 py-2 border rounded-md bg-gray-50"
+                        />
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              `${campaign.promotionalLink}?utm_source=${platform.toLowerCase()}&utm_medium=social&utm_campaign=${campaign.id}`
+                            );
+                            toast({
+                              title: "Link Copied",
+                              description: `${platform} promotional link copied to clipboard`,
+                            });
+                          }}
+                        >
+                          Copy {platform}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </TabsContent>

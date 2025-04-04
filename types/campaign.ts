@@ -40,6 +40,17 @@ export interface DeviceMetrics {
   uniqueViews: number;
   clicks: number;
   conversions: number;
+  byOS: {
+    android: number;
+    ios: number;
+    windows: number;
+    macos: number;
+    other: number;
+  };
+}
+
+export interface SocialPlatformMetrics {
+  count: number;
 }
 
 export interface CampaignMetrics {
@@ -51,6 +62,7 @@ export interface CampaignMetrics {
   totalPosts: number;
   totalConversions: number;
   averageEngagementRate: number;
+  totalViews: number;
   byDevice: {
     mobile: DeviceMetrics;
     desktop: DeviceMetrics;
@@ -58,6 +70,17 @@ export interface CampaignMetrics {
   };
   byRegion: Record<string, number>;
   byChannel: Record<string, number>;
+  bySocialPlatform: {
+    instagram: SocialPlatformMetrics;
+    tiktok: SocialPlatformMetrics;
+    twitter: SocialPlatformMetrics;
+    facebook: SocialPlatformMetrics;
+    youtube: SocialPlatformMetrics;
+    linkedin: SocialPlatformMetrics;
+  };
+  totalViewsByPlatform: Record<string, number>;
+  totalClicksByPlatform: Record<string, number>;
+  totalSharesByPlatform: Record<string, number>;
   linkMetrics?: {
     clicks: number;
     uniqueClicks: number;

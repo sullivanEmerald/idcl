@@ -31,12 +31,41 @@ class AnalyticsService {
   constructor() {
     this.sessionStartTime = Date.now();
     this.lastEventTime = this.sessionStartTime;
-    // Store referrer immediately when service is instantiated
+    // Store and categorize referrer when service is instantiated
     if (typeof window !== "undefined") {
-      this.pageReferrer = window.location.search.includes("ref=")
+      const rawReferrer = window.location.search.includes("ref=")
         ? new URLSearchParams(window.location.search).get("ref") ||
           document.referrer
         : document.referrer;
+
+      // Categorize the referrer
+      const referrerUrl = rawReferrer ? new URL(rawReferrer) : null;
+      if (referrerUrl) {
+        const hostname = referrerUrl.hostname.toLowerCase();
+        if (hostname.includes("facebook.com") || hostname.includes("fb.com")) {
+          this.pageReferrer = "facebook";
+        } else if (hostname.includes("instagram.com")) {
+          this.pageReferrer = "instagram";
+        } else if (
+          hostname.includes("twitter.com") ||
+          hostname.includes("x.com")
+        ) {
+          this.pageReferrer = "twitter";
+        } else if (hostname.includes("linkedin.com")) {
+          this.pageReferrer = "linkedin";
+        } else if (hostname.includes("tiktok.com")) {
+          this.pageReferrer = "tiktok";
+        } else if (
+          hostname.includes("youtube.com") ||
+          hostname.includes("youtu.be")
+        ) {
+          this.pageReferrer = "youtube";
+        } else {
+          this.pageReferrer = rawReferrer;
+        }
+      } else {
+        this.pageReferrer = "direct";
+      }
     } else {
       this.pageReferrer = "";
     }
@@ -108,6 +137,7 @@ class AnalyticsService {
       "view",
       {
         interactionType: "campaign_view",
+        channel: this.pageReferrer,
       },
       promoterId
     );
