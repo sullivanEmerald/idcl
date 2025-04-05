@@ -27,9 +27,9 @@ export function ProfileCompletionPie({ percentage = 0 }) {
     ]
 
     return (
-        <Card className="flex flex-col">
+        <Card className="flex flex-col gap-4">
             <CardHeader className="items-center pb-0">
-                <CardTitle>Profile Completion</CardTitle>
+                <CardTitle className="text-xl">Profile Completion</CardTitle>
                 <CardDescription>Your Profile Status</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
@@ -97,9 +97,12 @@ export function ProfileCompletionPie({ percentage = 0 }) {
                         <span>Optimize your profile to enjoy all features</span>
                     ) : (
                         <span className="flex items-center gap-3">
-                            <p className="">Your profile is well optimized. congratulations</p>
-                            <div className="bg-green-500 rounded-full p-2">
-                                <PartyPopper className="text-green-700" />
+                            <div className="space-y-4">
+                                <p className="">Your profile is well optimized.</p>
+                                <span className="flex items-center justify-between">
+                                    Congratulations
+                                    <PartyPopper className="text-red-700" />
+                                </span>
                             </div>
                         </span>
                     )}

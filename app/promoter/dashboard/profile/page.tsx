@@ -23,6 +23,8 @@ interface Promoter {
     paymentMethod: string;
     phoneNumber: string;
     platforms: string[];
+    bio: string,
+    companySize: string,
 }
 
 export default function PromoterProfile() {
@@ -38,7 +40,9 @@ export default function PromoterProfile() {
         location: '',
         paymentMethod: '',
         phoneNumber: '',
-        platforms: []
+        platforms: [],
+        bio: '',
+        companySize: ''
     })
 
     useEffect(() => {
@@ -61,7 +65,9 @@ export default function PromoterProfile() {
                     location: profileData?.location || '',
                     paymentMethod: profileData?.paymentMethod || '',
                     phoneNumber: profileData?.phoneNumber || '',
-                    platforms: profileData?.platforms || []
+                    platforms: profileData?.platforms || [],
+                    bio: profileData?.bio,
+                    companySize: profileData?.companySize
                 })
             } catch (error) {
                 console.error('Error fetching promoter data:', error)

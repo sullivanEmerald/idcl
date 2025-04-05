@@ -2,7 +2,6 @@
 import advertiserService, { Campaign } from "@/services/advertiser";
 import { useEffect, useState } from "react"
 import { Card, CardTitle, CardDescription, CardHeader, CardContent } from "@/components/ui/card";
-import { Progress } from '@/components/ui/progress'
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Verified, Plus } from "lucide-react";
@@ -109,14 +108,12 @@ export default function Profile() {
 
 
     const activeCampaigns = Advertisercampaigns.filter((item) => item.status === 'active')
-    const isActive = Advertisercampaigns.length ? Advertisercampaigns.some((item) => item.status.trim() === 'active') : true
     const scheduledCampaigns = Advertisercampaigns.filter((item) => item.status.trim() === 'scheduled')
     const totalReach = Advertisercampaigns.reduce((acc, c) => acc + c.metrics.totalReach, 0)
     const totalBudget = Advertisercampaigns.reduce((acc, c) => acc + c.budget, 0)
     const averageEngagementRate = activeCampaigns.length
         ? activeCampaigns.reduce((sum, c) => sum + c.metrics.averageEngagementRate, 0) / activeCampaigns.length
         : 0
-
     return (
         <>
             <div className="space-y-8 p-8">
@@ -201,75 +198,80 @@ export default function Profile() {
                         </div>
                     </div>
                 </div>
-
-                <Card className="p-4">
-                    <CardHeader className="flex flex-row justify-between items-start space-y-0">
-                        <div>
-                            <CardTitle>Profile overview</CardTitle>
-                            <CardDescription>Advertiser basic information</CardDescription>
-                        </div>
-                        <Link href="/advertiser/dashboard/settings/profile">
-                            <Button variant="link" size="sm">
-                                <Pencil className="w-4 h-4 mr-2" />
-                                Edit Profile
-                            </Button>
-                        </Link>
-
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-medium text-gray-500">Personal Information</h3>
-                            <div className="space-y-2">
-                                <ProfileField label="Full Name" value={advertiser.fullname} />
-                                <ProfileField label="Email" value={advertiser.email} />
-                                <ProfileField label="Phone" value={advertiser.phoneNumber} />
+                <div className="flex flex-col md:flex-row gap-4">
+                    <div className="w-full md:w-60 flex">
+                        <ProfileCompletionPie percentage={advertiser.profilePercentage} />
+                    </div>
+                    <Card className="p-4">
+                        <CardHeader className="flex flex-row justify-between items-start space-y-0">
+                            <div>
+                                <CardTitle>Profile overview</CardTitle>
+                                <CardDescription>Advertiser basic information</CardDescription>
                             </div>
-                        </div>
+                            <Link href="/advertiser/dashboard/settings/profile">
+                                <Button variant="link" size="sm">
+                                    <Pencil className="w-4 h-4 mr-2" />
+                                    Edit Profile
+                                </Button>
+                            </Link>
 
+                        </CardHeader>
+                        <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
 
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-medium text-gray-500">Company Information</h3>
-                            <div className="space-y-2">
-                                <ProfileField label="Company Name" value={advertiser.companyName} />
-                                <ProfileField label="Business Type" value={advertiser.businessType} />
-                                <ProfileField label="Company Size" value={advertiser.companySize} />
-                                <ProfileField label="Industry" value={advertiser.industry} />
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-medium text-gray-500">Personal Information</h3>
+                                <div className="space-y-2">
+                                    <ProfileField label="Full Name" value={advertiser.fullname} />
+                                    <ProfileField label="Email" value={advertiser.email} />
+                                    <ProfileField label="Phone" value={advertiser.phoneNumber} />
+                                </div>
                             </div>
-                        </div>
 
 
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-medium text-gray-500">Billing & Goals</h3>
-                            <div className="space-y-2">
-                                <ProfileField label="Billing Address" value={advertiser.billingAddress} />
-                                <ProfileField label="Billing Email" value={advertiser.billingEmail} />
-                                <ProfileField label="Website" value={advertiser.website} />
-                                <ProfileField label="Goals" value={advertiser.goals} />
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-medium text-gray-500">Company Information</h3>
+                                <div className="space-y-2">
+                                    <ProfileField label="Company Name" value={advertiser.companyName} />
+                                    <ProfileField label="Business Type" value={advertiser.businessType} />
+                                    <ProfileField label="Company Size" value={advertiser.companySize} />
+                                    <ProfileField label="Industry" value={advertiser.industry} />
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="col-span-full space-y-4">
-                            <h3 className="text-sm font-medium text-gray-500">Target Audience</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {advertiser.targetAudience?.length > 0 ? (
-                                    <ul className="flex flex-wrap gap-2">
-                                        {advertiser.targetAudience.map((audience, index) => (
-                                            <li key={index}>
-                                                {audience}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p className="text-sm text-gray-400">No target audience specified</p>
-                                )}
+
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-medium text-gray-500">Billing & Goals</h3>
+                                <div className="space-y-2">
+                                    <ProfileField label="Billing Address" value={advertiser.billingAddress} />
+                                    <ProfileField label="Billing Email" value={advertiser.billingEmail} />
+                                    <ProfileField label="Website" value={advertiser.website} />
+                                    <ProfileField label="Goals" value={advertiser.goals} />
+                                </div>
                             </div>
-                        </div>
-                    </CardContent>
-                </Card>
-                <div>
-                    <ProfileCompletionPie percentage={advertiser.profilePercentage} />
+
+                            <div className="col-span-full space-y-4">
+                                <h3 className="text-sm font-medium text-gray-500">Target Audience</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {advertiser.targetAudience?.length > 0 ? (
+                                        <ul className="flex flex-wrap gap-2">
+                                            {advertiser.targetAudience.map((audience, index) => (
+                                                <li key={index}>
+                                                    {audience}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className="text-sm text-gray-400">No target audience specified</p>
+                                    )}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
+
+
+
+
                 <Card className="space-y-6 p-4">
                     <CardHeader>
                         <CardTitle>Campaign overview</CardTitle>
@@ -334,9 +336,17 @@ export default function Profile() {
                                         <h2 className="text-xl font-semibold">Active Campaigns</h2>
                                         <p className="mt-1 text-sm text-gray-600">Your active campaigns</p>
                                     </div>
-                                    <div className="p-6">
-                                        <ActiveCampaignList campaigns={activeCampaigns} isActive={isActive} />
-                                    </div>
+                                    {!activeCampaigns || activeCampaigns.length === 0 ? (
+                                        <p>There are no active campaigns</p>
+                                    ) : (
+                                        activeCampaigns.map((activeCampaign) => (
+                                            <ActiveCampaignList
+                                                key={activeCampaign.id}
+                                                campaign={activeCampaign}
+                                                isActive={true}
+                                            />
+                                        ))
+                                    )}
                                 </Card>
                             </TabsContent>
                             <TabsContent value="scheduled">
@@ -346,7 +356,17 @@ export default function Profile() {
                                         <p className="mt-1 text-sm text-gray-600">Your scheduled campaigns</p>
                                     </div>
                                     <div className="p-6">
-                                        <ActiveCampaignList campaigns={scheduledCampaigns} isActive={!isActive} />
+                                        {!scheduledCampaigns || scheduledCampaigns.length === 0 ? (
+                                            <p>There is no scheduled campaign</p>
+                                        ) : (
+                                            scheduledCampaigns.map((scheduledCampaign) => (
+                                                <ActiveCampaignList
+                                                    key={scheduledCampaign.id}
+                                                    campaign={scheduledCampaign}
+                                                    isActive={false}
+                                                />
+                                            ))
+                                        )}
                                     </div>
                                 </Card>
                             </TabsContent>
