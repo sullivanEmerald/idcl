@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ActiveCampaignList } from '@/components/campaigns/active-campaigns'
 import ProfileField from "@/components/advertiser/profile-field";
 import ProfileSkeleton from "@/components/advertiser/skeleton";
-import { ProfileCompletionPie } from "@/components/charts/profile-chart";
+import { ProfileCompletionPie } from "@/components/charts/advertiser-chart";
 import {
     Popover,
     PopoverContent,
@@ -26,8 +26,8 @@ interface TargetAudience {
     label?: string
 }
 
-interface Advertiser {
-    fullname: string;
+export interface Advertiser {
+    fullName: string;
     email: string;
     phoneNumber: string;
     companyName: string;
@@ -47,7 +47,7 @@ export default function Profile() {
     const [isfetching, setIsFetching] = useState(true)
     const [Advertisercampaigns, setCampaigns] = useState<Campaign[]>([])
     const [advertiser, setAdvertiser] = useState<Advertiser>({
-        fullname: '',
+        fullName: '',
         email: '',
         phoneNumber: '',
         companyName: '',
@@ -75,7 +75,7 @@ export default function Profile() {
 
                 // setting profile informations
                 setAdvertiser({
-                    fullname: advertiserData?.fullName,
+                    fullName: advertiserData?.fullName,
                     email: advertiserData?.email,
                     phoneNumber: advertiserData?.phoneNumber,
                     companyName: advertiserData?.companyName,
@@ -138,7 +138,7 @@ export default function Profile() {
                                         <Avatar className="cursor-pointer h-10 w-10 border-2 border-white">
                                             <AvatarImage />
                                             <AvatarFallback>
-                                                {advertiser.fullname.split(' ').filter(Boolean).map((item) => item.charAt(0).toUpperCase()).join('.')}
+                                                {advertiser.fullName.split(' ').filter(Boolean).map((item) => item.charAt(0).toUpperCase()).join('.')}
                                             </AvatarFallback>
                                         </Avatar>
                                     </div>
@@ -150,14 +150,14 @@ export default function Profile() {
                                         <Avatar className="h-16 w-16 border-2 border-white">
                                             <AvatarImage />
                                             <AvatarFallback className="text-xl">
-                                                {advertiser.fullname.split(' ').filter(Boolean).map((item) => item.charAt(0).toUpperCase()).join('')}
+                                                {advertiser.fullName.split(' ').filter(Boolean).map((item) => item.charAt(0).toUpperCase()).join('')}
                                             </AvatarFallback>
                                         </Avatar>
                                     </div>
 
                                     <div className="text-center">
                                         <p className="text-sm text-gray-500">Hello,</p>
-                                        <p className="font-medium">{advertiser.fullname}</p>
+                                        <p className="font-medium">{advertiser.fullName}</p>
                                     </div>
 
                                     <div className="w-full border-t"></div>
@@ -188,7 +188,7 @@ export default function Profile() {
                         <div className="">
                             <div className="flex items-center gap-1">
                                 <CardTitle className="flex items-center justify-center gap-1">
-                                    {advertiser.fullname.split(' ')[0].charAt(0).toUpperCase() + advertiser.fullname.split(' ')[0].slice(1)}
+                                    {advertiser.fullName.split(' ')[0].charAt(0).toUpperCase() + advertiser.fullName.split(' ')[0].slice(1)}
                                     <Verified className="text-amber-500 h-[1em] w-[1em] relative top-[0.1em]" />
                                 </CardTitle>
                             </div>
@@ -198,11 +198,14 @@ export default function Profile() {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col md:flex-row gap-4">
-                    <div className="w-full md:w-60 flex">
-                        <ProfileCompletionPie percentage={advertiser.profilePercentage} />
+                <div className="flex flex-col md:flex-row gap-4 min-h-[600px]"> {/* Added min-height */}
+                    {/* Profile Completion Pie */}
+                    <div className="w-full md:w-60 flex-shrink-0"> {/* Prevent shrinking */}
+                        <ProfileCompletionPie percentage={advertiser.profilePercentage} userData={advertiser} />
                     </div>
-                    <Card className="p-4">
+
+                    {/* Profile Card */}
+                    <Card className="p-4 flex-1 min-w-0"> {/* Allow growth but prevent overflow */}
                         <CardHeader className="flex flex-row justify-between items-start space-y-0">
                             <div>
                                 <CardTitle>Profile overview</CardTitle>
@@ -214,20 +217,20 @@ export default function Profile() {
                                     Edit Profile
                                 </Button>
                             </Link>
-
                         </CardHeader>
-                        <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
 
+                        <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 overflow-auto"> {/* Added overflow */}
+                            {/* Personal Information */}
                             <div className="space-y-4">
                                 <h3 className="text-sm font-medium text-gray-500">Personal Information</h3>
                                 <div className="space-y-2">
-                                    <ProfileField label="Full Name" value={advertiser.fullname} />
+                                    <ProfileField label="Full Name" value={advertiser.fullName} />
                                     <ProfileField label="Email" value={advertiser.email} />
                                     <ProfileField label="Phone" value={advertiser.phoneNumber} />
                                 </div>
                             </div>
 
-
+                            {/* Company Information */}
                             <div className="space-y-4">
                                 <h3 className="text-sm font-medium text-gray-500">Company Information</h3>
                                 <div className="space-y-2">
@@ -238,7 +241,7 @@ export default function Profile() {
                                 </div>
                             </div>
 
-
+                            {/* Billing & Goals */}
                             <div className="space-y-4">
                                 <h3 className="text-sm font-medium text-gray-500">Billing & Goals</h3>
                                 <div className="space-y-2">
@@ -249,17 +252,16 @@ export default function Profile() {
                                 </div>
                             </div>
 
+                            {/* Target Audience - full width */}
                             <div className="col-span-full space-y-4">
                                 <h3 className="text-sm font-medium text-gray-500">Target Audience</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {advertiser.targetAudience?.length > 0 ? (
-                                        <ul className="flex flex-wrap gap-2">
-                                            {advertiser.targetAudience.map((audience, index) => (
-                                                <li key={index}>
-                                                    {audience}
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        advertiser.targetAudience.map((audience, index) => (
+                                            <span key={index} className="px-3 py-1 text-sm rounded-full bg-gray-100">
+                                                {audience}
+                                            </span>
+                                        ))
                                     ) : (
                                         <p className="text-sm text-gray-400">No target audience specified</p>
                                     )}
@@ -268,9 +270,6 @@ export default function Profile() {
                         </CardContent>
                     </Card>
                 </div>
-
-
-
 
                 <Card className="space-y-6 p-4">
                     <CardHeader>
