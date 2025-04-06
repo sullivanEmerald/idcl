@@ -2,6 +2,7 @@ export interface Advertiser {
   id: string;
   companyName: string;
   logo?: string;
+  isFollowing?: boolean;
 }
 
 export interface ContentAsset {
@@ -88,6 +89,17 @@ export interface CampaignMetrics {
   };
 }
 
+export interface Comment {
+  id: string;
+  text: string;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
+}
+
 export interface Campaign {
   id: string;
   title: string;
@@ -98,6 +110,9 @@ export interface Campaign {
   requiredPlatforms: string[];
   targetedNiches: string[];
   campaignGoal: 'awareness' | 'engagement' | 'conversion';
+  likes?: number;
+  isLikedByCurrentUser?: boolean;
+  comments?: Comment[];
   targetLocation?: string;
   targetGender?: 'male' | 'female' | 'all';
   targetPromotions: number;

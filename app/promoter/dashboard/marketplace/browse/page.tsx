@@ -14,13 +14,16 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Campaign } from "@/types/campaign";
 import promoterService from "@/services/promoter";
-import { Search } from "lucide-react";
+import { Search, Heart, MessageCircle, Share2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { brandService } from "@/services/brand";
+import { useToast } from "@/hooks/use-toast";
 
 export default function BrowseCampaigns() {
   const router = useRouter();
+  const { toast } = useToast();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -29,6 +32,43 @@ export default function BrowseCampaigns() {
   const [totalPages, setTotalPages] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [totalCampaigns, setTotalCampaigns] = useState(0);
+  const [likedCampaigns, setLikedCampaigns] = useState<Set<string>>(new Set());
+
+  const handleFollowBrand = async (brandId: string, isFollowing: boolean | undefined) => {
+    try {
+      if (isFollowing) {
+        await brandService.unfollowBrand(brandId);
+        toast({
+          title: "Brand unfollowed successfully",
+        });
+      } else {
+        await brandService.followBrand(brandId);
+        toast({
+          title: "Brand followed successfully",
+        });
+      }
+
+      // Update the campaigns state to reflect the new following status
+      setCampaigns(campaigns.map(campaign => {
+        if (campaign.advertiser.id === brandId) {
+          return {
+            ...campaign,
+            advertiser: {
+              ...campaign.advertiser,
+              isFollowing: !isFollowing
+            }
+          };
+        }
+        return campaign;
+      }));
+    } catch (error) {
+      console.error(`Failed to ${isFollowing ? 'unfollow' : 'follow'} brand:`, error);
+      toast({
+        title: `Failed to ${isFollowing ? 'unfollow' : 'follow'} brand`,
+        variant: "destructive",
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -184,7 +224,7 @@ export default function BrowseCampaigns() {
                     {campaign.advertiser.companyName.charAt(0)}
                   </span>
                 </div>
-                <div>
+                <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
                     {campaign.title}
                   </h3>
@@ -192,6 +232,17 @@ export default function BrowseCampaigns() {
                     {campaign.advertiser.companyName}
                   </p>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="ml-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFollowBrand(campaign.advertiser.id, campaign.advertiser.isFollowing);
+                  }}
+                >
+                  {campaign.advertiser.isFollowing ? "Following" : "Follow"}
+                </Button>
               </div>
 
               <div className="relative">
@@ -228,19 +279,57 @@ export default function BrowseCampaigns() {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-left">
-                  <div className="text-sm font-medium text-gray-900">
-                    {campaign.metrics?.totalEngagements?.toLocaleString()}
-                  </div>
-                  <div className="text-xs text-gray-500">Engagements</div>
+              <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                <div className="flex space-x-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`flex items-center space-x-1 ${likedCampaigns.has(campaign.id) ? 'text-red-500' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLikedCampaigns(prev => {
+                        const newSet = new Set(prev);
+                        if (prev.has(campaign.id)) {
+                          newSet.delete(campaign.id);
+                        } else {
+                          newSet.add(campaign.id);
+                        }
+                        return newSet;
+                      });
+                    }}
+                  >
+                    <Heart className={`h-4 w-4 ${likedCampaigns.has(campaign.id) ? 'fill-current' : ''}`} />
+                    <span>{campaign.metrics?.totalEngagements || 0}</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center space-x-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/promoter/dashboard/marketplace/campaign/${campaign.id}#comments`);
+                    }}
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span>{campaign.metrics?.totalPosts || 0}</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center space-x-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Implement share functionality
+                      navigator.share({
+                        title: campaign.title,
+                        text: campaign.description,
+                        url: window.location.href
+                      }).catch(console.error);
+                    }}
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </Button>
                 </div>
-                {/* <div className="text-center">
-                  <div className="text-sm font-medium text-gray-900">
-                    {campaign.targetPromotions}
-                  </div>
-                  <div className="text-xs text-gray-500">Target Promoters</div>
-                </div> */}
               </div>
 
               {/* Tags */}

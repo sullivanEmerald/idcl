@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/carousel";
 
 import { cn } from "@/lib/utils";
+import { CampaignSocialInteractions } from "@/components/campaigns/campaign-social-interactions";
 
 export default function CampaignDetails() {
   const params = useParams();
@@ -137,6 +138,23 @@ export default function CampaignDetails() {
 
       {/* Main Content */}
       <div className="space-y-8">
+        {/* Social Interactions */}
+        <div className="border-b pb-4">
+          <CampaignSocialInteractions
+            campaignId={campaign.id}
+            initialLikes={0}
+            initialComments={[]}
+            onLike={async () => {
+              // TODO: Implement like functionality
+              console.log('Like clicked');
+            }}
+            onComment={async (comment) => {
+              // TODO: Implement comment functionality
+              console.log('New comment:', comment);
+            }}
+          />
+        </div>
+
         {/* Campaign Stats */}
         <div className="grid gap-6 md:grid-cols-3">
           <Card className="p-6">
