@@ -5,7 +5,7 @@ import { Card, CardTitle, CardDescription, CardHeader, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Verified, Plus } from "lucide-react";
-import { Calendar, DollarSign, Users, Pencil, Badge, Bell, BookmarkCheck } from 'lucide-react'
+import { Calendar, DollarSign, Users, Pencil, Badge, Bell, BookmarkCheck, ArrowLeftRight } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ActiveCampaignList } from '@/components/campaigns/active-campaigns'
 import ProfileField from "@/components/advertiser/profile-field";
@@ -15,12 +15,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-
-
 import Link from "next/link"
 import promoterService from "@/services/promoter"
-
-
 
 
 
@@ -44,6 +40,7 @@ export interface Promoter {
 }
 
 export default function PromoterProfile() {
+    const [isLoading, setIsLoading] = useState(true)
     const [promoter, setPromoter] = useState<Promoter>({
         accountDetails: '',
         audienceAge: '',
@@ -90,13 +87,15 @@ export default function PromoterProfile() {
                 })
             } catch (error) {
                 console.error('Error fetching promoter data:', error)
+            } finally {
+                setIsLoading(false)
             }
         }
 
         fetchPromoterData()
     }, [])
 
-
+    if (isLoading) return <p>Fetching profile data</p>
     return (
         <>
             <div className="space-y-8 p-8">
@@ -157,8 +156,8 @@ export default function PromoterProfile() {
                                             Account Settings
                                         </Button>
                                         <Button variant="ghost" className="w-full justify-start">
-                                            <DollarSign className="w-4 h-4 mr-2" />
-                                            Billing
+                                            <ArrowLeftRight className="w-4 h-4 mr-2" />
+                                            Transactions
                                         </Button>
                                         <div className="w-full border-t pt-1"></div>
                                         <Button variant="ghost" className="w-full justify-start text-red-500 hover:text-red-500">
