@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Toaster, toast } from 'sonner'
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, CheckCircle } from "lucide-react";
 import { Select as ShadcnSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePromoterAccountSettingHandler, usePromoterUpdatePasswordHandler } from '@/hooks/user/user-promoter'
 import ReactSelect from 'react-select'
@@ -20,6 +20,7 @@ import Select from 'react-select'
 
 export default function ProfileSettings() {
   const [isFetching, setIsFetching] = useState(true)
+  const [isConnected, setIsConnected] = useState(false);
   const [passwordVisible, setIsPasswordVisible] = useState({
     isOldPasswordVisible: false,
     isNewPasswordVisible: false,
@@ -110,9 +111,7 @@ export default function ProfileSettings() {
     getProfile()
   }, [])
 
-  useEffect(() => {
-    console.log('Updated onboardingData:', onboardingData);
-  }, [onboardingData]);
+
 
 
   if (isFetching) {
@@ -483,6 +482,56 @@ export default function ProfileSettings() {
         {/* SOCIAL MEDIA PLATFORMS */}
         <Card className="p-6 relative">
           <h2 className="text-xl font-semibold mb-6">Social Media Management</h2>
+          <div className="space-y-4"> {/* Added container for consistent spacing */}
+            {onboardingData.platforms.map((item, index) => {
+              const platform = item.charAt(0).toUpperCase() + item.slice(1);
+              // State for connection status
+
+              const handleConnect = () => {
+                // Add your connection logic here (OAuth, API call, etc.)
+                console.log(`Connecting to ${platform}...`);
+
+                // Simulate connection
+                setIsConnected(true);
+
+                // In a real app, you would:
+                // 1. Open OAuth popup
+                // 2. Wait for callback
+                // 3. Update state based on success
+              };
+
+              return (
+                <div
+                  key={index}
+                  className="flex items-center justify-between py-3" // Improved spacing
+                >
+                  <div className="flex items-center">
+                    {/* Platform icon would go here */}
+                    <span className="ml-2 font-medium">{platform}</span>
+                  </div>
+
+                  <Button
+                    onClick={handleConnect}
+                    variant={isConnected ? "default" : "outline"}
+                    className={`${isConnected
+                      ? "bg-[#6540e6] text-white"
+                      : "bg-transparent text-[#6540e6] border-dashed border-[#6540e6] hover:bg-[#6540e6]/10"
+                      } transition-colors`}
+                    disabled={isConnected}
+                  >
+                    {isConnected ? (
+                      <>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Connected
+                      </>
+                    ) : (
+                      `Connect ${platform}`
+                    )}
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
         </Card>
       </div >
     </>

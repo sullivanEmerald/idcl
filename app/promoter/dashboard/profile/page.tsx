@@ -102,9 +102,9 @@ export default function PromoterProfile() {
             <div className="space-y-8 p-8">
                 <Card className="shadow-md rounded-lg p-6 flex items-center justify-between gap-6">
                     <div className="flex gap-4">
-                        <Link href="/advertiser/dashboard/campaigns/create">
-                            <Button>Create Campaign</Button>
-                        </Link>
+
+                        <Button>Promotions</Button>
+
                         <Button variant="outline">Manage Billing</Button>
                     </div>
                     <div className="flex items-center gap-4">
