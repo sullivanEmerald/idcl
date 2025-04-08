@@ -13,12 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import {
-  Calendar,
-  ChartBar,
-  Clock,
-  Eye,
-} from "lucide-react";
+import { Calendar, ChartBar, Clock } from "lucide-react";
+import { CampaignMetrics } from "@/components/metrics/campaign-metrics";
 import { campaignService } from "@/services/campaign";
 import {
   Carousel,
@@ -73,6 +69,13 @@ export default function CampaignPage() {
           <p className="text-muted-foreground">{campaign.description}</p>
         </div>
         <div className="flex items-center gap-4">
+          <Badge
+            variant="outline"
+            className="bg-blue-100 text-blue-800 hover:bg-blue-100"
+          >
+            {campaign.campaignGoal.charAt(0).toUpperCase() +
+              campaign.campaignGoal.slice(1)}
+          </Badge>
           <Badge
             variant={
               campaign?.status === "active"
@@ -131,6 +134,8 @@ export default function CampaignPage() {
         </div>
       </div>
 
+      <CampaignMetrics campaign={campaign} />
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -138,14 +143,16 @@ export default function CampaignPage() {
             {/* <DollarSign className="h-4 w-4 text-muted-foreground" /> */}
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₦{spentAmount.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              ₦{spentAmount.toLocaleString()}
+            </div>
             <Progress value={spentPercentage} className="mt-2" />
             <p className="text-xs text-muted-foreground mt-2">
               ₦{(campaign.budget - spentAmount).toLocaleString()} remaining
             </p>
           </CardContent>
         </Card>
-        <Card>
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Reach</CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
@@ -161,22 +168,24 @@ export default function CampaignPage() {
               unique views
             </p>
           </CardContent>
-        </Card>
+        </Card> */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {campaign.campaignGoal === 'engagement' ? 'Engagement Rate' : 'Impressions'}
+              {campaign.campaignGoal === "engagement"
+                ? "Engagement Rate"
+                : "Impressions"}
             </CardTitle>
             <ChartBar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {campaign.campaignGoal === 'engagement' 
+              {campaign.campaignGoal === "engagement"
                 ? `${(campaign.metrics.averageEngagementRate * 100).toFixed(2)}%`
                 : campaign.metrics.totalViews.toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              {campaign.campaignGoal === 'engagement'
+              {campaign.campaignGoal === "engagement"
                 ? `${campaign.metrics.totalEngagements} total engagements`
                 : `${campaign.metrics.totalReach} unique views`}
             </p>
@@ -384,10 +393,13 @@ export default function CampaignPage() {
           <Card>
             <CardHeader>
               <CardTitle>Campaign Promoters</CardTitle>
-              <CardDescription>View and manage campaign promoters</CardDescription>
+              <CardDescription>
+                View and manage campaign promoters
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
+                <CampaignMetrics campaign={campaign} />
                 {campaign.activePromoters?.length > 0 ? (
                   <div className="rounded-md border">
                     <div className="grid grid-cols-7 gap-6 p-6 font-medium border-b bg-muted/50">
@@ -401,43 +413,94 @@ export default function CampaignPage() {
                     </div>
                     <div className="divide-y">
                       {campaign.activePromoters.map((item) => (
-                        <div key={item._id} className="grid grid-cols-7 gap-6 p-6 items-center hover:bg-muted/50">
+                        <div
+                          key={item._id}
+                          className="grid grid-cols-7 gap-6 p-6 items-center hover:bg-muted/50"
+                        >
                           <div>
-                            <p className="font-medium">{item.promoter.fullName || item.promoter.email}</p>
-                            <p className="text-sm text-muted-foreground">{item.promoter.location || 'Location not set'}</p>
+                            <p className="font-medium">
+                              {item.promoter.fullName || item.promoter.email}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {item.promoter.location || "Location not set"}
+                            </p>
                           </div>
                           <div className="flex gap-2 flex-wrap">
                             {(item.promoter.platforms || []).map((platform) => (
-                              <Badge key={platform} variant="secondary" className="capitalize">
+                              <Badge
+                                key={platform}
+                                variant="secondary"
+                                className="capitalize"
+                              >
                                 {platform}
                               </Badge>
                             ))}
                           </div>
                           <div>
-                            <p className="font-medium">{item.promoter.followersCount ? Number(item.promoter.followersCount).toLocaleString() : '0'}</p>
-                            <p className="text-sm text-muted-foreground">followers</p>
+                            <p className="font-medium">
+                              {item.promoter.followersCount
+                                ? Number(
+                                    item.promoter.followersCount
+                                  ).toLocaleString()
+                                : "0"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              followers
+                            </p>
                           </div>
                           <div>
-                            <p className="font-medium">{item.promoter.engagementRate ? (Number(item.promoter.engagementRate) / 100).toFixed(2).toLocaleString() : '0.00'}%</p>
-                            <p className="text-sm text-muted-foreground">avg. engagement</p>
+                            <p className="font-medium">
+                              {item.promoter.engagementRate
+                                ? (Number(item.promoter.engagementRate) / 100)
+                                    .toFixed(2)
+                                    .toLocaleString()
+                                : "0.00"}
+                              %
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              avg. engagement
+                            </p>
                           </div>
                           <div className="flex gap-2 flex-wrap">
                             {(item.promoter.contentTypes || []).map((type) => (
-                              <Badge key={type} variant="outline" className="capitalize">
+                              <Badge
+                                key={type}
+                                variant="outline"
+                                className="capitalize"
+                              >
                                 {type}
                               </Badge>
                             ))}
                           </div>
                           <div>
-                            <p className="font-medium">{item.lastActivity ? new Date(item.lastActivity).toLocaleDateString() : 'No activity'}</p>
-                            <p className="text-sm text-muted-foreground">{item.totalEvents || 0} events</p>
+                            <p className="font-medium">
+                              {item.lastActivity
+                                ? new Date(
+                                    item.lastActivity
+                                  ).toLocaleDateString()
+                                : "No activity"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {item.totalEvents || 0} events
+                            </p>
                           </div>
                           <div>
                             <Badge
-                              variant={item.promoter.status === 'active' ? 'success' : 'secondary'}
-                              className={item.promoter.status === 'active' ? 'bg-green-100 text-green-800' : ''}
+                              variant={
+                                item.promoter.status === "active"
+                                  ? "success"
+                                  : "secondary"
+                              }
+                              className={
+                                item.promoter.status === "active"
+                                  ? "bg-green-100 text-green-800"
+                                  : ""
+                              }
                             >
-                              {(item.promoter.status || 'inactive').charAt(0).toUpperCase() + (item.promoter.status || 'inactive').slice(1)}
+                              {(item.promoter.status || "inactive")
+                                .charAt(0)
+                                .toUpperCase() +
+                                (item.promoter.status || "inactive").slice(1)}
                             </Badge>
                           </div>
                         </div>
@@ -484,15 +547,24 @@ export default function CampaignPage() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Instagram</span>
-                        <span>{campaign.metrics.bySocialPlatform?.instagram?.count?.toLocaleString() || '0'}</span>
+                        <span>
+                          {campaign.metrics.bySocialPlatform?.instagram?.count?.toLocaleString() ||
+                            "0"}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Twitter</span>
-                        <span>{campaign.metrics.bySocialPlatform?.twitter?.count?.toLocaleString() || '0'}</span>
+                        <span>
+                          {campaign.metrics.bySocialPlatform?.twitter?.count?.toLocaleString() ||
+                            "0"}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Facebook</span>
-                        <span>{campaign.metrics.bySocialPlatform?.facebook?.count?.toLocaleString() || '0'}</span>
+                        <span>
+                          {campaign.metrics.bySocialPlatform?.facebook?.count?.toLocaleString() ||
+                            "0"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -520,7 +592,9 @@ export default function CampaignPage() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Android</span>
-                        <span>{campaign.metrics.byDevice.mobile.byOS.android}</span>
+                        <span>
+                          {campaign.metrics.byDevice.mobile.byOS.android}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>iOS</span>
@@ -528,7 +602,9 @@ export default function CampaignPage() {
                       </div>
                       <div className="flex justify-between text-sm text-muted-foreground mt-2">
                         <span>Total Views</span>
-                        <span>{campaign.metrics.byDevice.mobile.uniqueViews}</span>
+                        <span>
+                          {campaign.metrics.byDevice.mobile.uniqueViews}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -537,15 +613,21 @@ export default function CampaignPage() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Windows</span>
-                        <span>{campaign.metrics.byDevice.desktop.byOS.windows}</span>
+                        <span>
+                          {campaign.metrics.byDevice.desktop.byOS.windows}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>macOS</span>
-                        <span>{campaign.metrics.byDevice.desktop.byOS.macos}</span>
+                        <span>
+                          {campaign.metrics.byDevice.desktop.byOS.macos}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm text-muted-foreground mt-2">
                         <span>Total Views</span>
-                        <span>{campaign.metrics.byDevice.desktop.uniqueViews}</span>
+                        <span>
+                          {campaign.metrics.byDevice.desktop.uniqueViews}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -554,7 +636,9 @@ export default function CampaignPage() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Android</span>
-                        <span>{campaign.metrics.byDevice.tablet.byOS.android}</span>
+                        <span>
+                          {campaign.metrics.byDevice.tablet.byOS.android}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>iOS</span>
@@ -562,7 +646,9 @@ export default function CampaignPage() {
                       </div>
                       <div className="flex justify-between text-sm text-muted-foreground mt-2">
                         <span>Total Views</span>
-                        <span>{campaign.metrics.byDevice.tablet.uniqueViews}</span>
+                        <span>
+                          {campaign.metrics.byDevice.tablet.uniqueViews}
+                        </span>
                       </div>
                     </div>
                   </div>

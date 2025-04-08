@@ -6,14 +6,6 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-
-const MediaUpload = dynamic(
-  () =>
-    import("@/app/components/campaign/MediaUpload").then(
-      (mod) => mod.MediaUpload
-    ),
-  { ssr: false }
-);
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";

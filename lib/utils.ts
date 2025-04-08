@@ -26,3 +26,10 @@ axiosInstance.interceptors.request.use((config) => {
   }
   return config;
 });
+
+export function formatNumber(value: number): string {
+  return new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0
+  }).format(value);
+}

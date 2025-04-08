@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { analyticsService } from "@/services/analytics";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -37,6 +38,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { CampaignSocialInteractions } from "@/components/campaigns/campaign-social-interactions";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function CampaignDetails() {
   const params = useParams();
@@ -47,13 +49,19 @@ export default function CampaignDetails() {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [applicationNote, setApplicationNote] = useState("");
   const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const hasTracked = useRef(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
         const response = await promoterService.getCampaign(params.id as string);
         setCampaign(response);
+        if (!hasTracked.current && user?.id) {
+          await analyticsService.trackPageView(params.id as string, user.id);
+          hasTracked.current = true;
+        }
       } catch (error) {
         console.error("Error fetching campaign:", error);
       } finally {
@@ -64,7 +72,7 @@ export default function CampaignDetails() {
     if (params.id) {
       fetchCampaign();
     }
-  }, [params.id]);
+  }, [params.id, user?.id]);
 
   if (isLoading) {
     return (
@@ -145,12 +153,25 @@ export default function CampaignDetails() {
             initialLikes={0}
             initialComments={[]}
             onLike={async () => {
-              // TODO: Implement like functionality
-              console.log('Like clicked');
+              await analyticsService.trackEvent(
+                campaign.id,
+                "click",
+                {
+                  interactionType: "campaign_view",
+                  action: "like"
+                }
+              );
             }}
             onComment={async (comment) => {
-              // TODO: Implement comment functionality
-              console.log('New comment:', comment);
+              await analyticsService.trackEvent(
+                campaign.id,
+                "click",
+                {
+                  interactionType: "campaign_view",
+                  action: "comment",
+                  content: comment
+                }
+              );
             }}
           />
         </div>
@@ -278,7 +299,9 @@ export default function CampaignDetails() {
             {campaign?.contentAssets?.[0]?.type === "carousel" ? (
               // Carousel View
               <div className="relative px-4">
-                <Carousel>
+                <Carousel onSelect={(index) => {
+                  analyticsService.trackCarouselSlide(campaign.id, index);
+                }}>
                   <CarouselContent>
                     {campaign.contentAssets
                       .filter((asset) => asset.type === "carousel")
@@ -319,7 +342,8 @@ export default function CampaignDetails() {
                   src={campaign.contentAssets[0].url}
                   controls
                   className="w-full h-full"
-                  // poster={campaign?.contentAssets[0]?.thumbnail}
+                  onPlay={() => analyticsService.trackVideoPlay(campaign.id)}
+                  onEnded={() => analyticsService.trackVideoComplete(campaign.id)}
                 >
                   Your browser does not support the video tag.
                 </video>
@@ -513,7 +537,7 @@ export default function CampaignDetails() {
         </Card>
 
         {/* Campaign Metrics */}
-        <Card className="p-6">
+        {/* <Card className="p-6">
           <h2 className="text-xl font-semibold mb-6">Campaign Performance</h2>
           <div className="grid grid-cols-4 gap-4">
             <div className="p-4 bg-gray-50 rounded-lg">
@@ -541,7 +565,7 @@ export default function CampaignDetails() {
               </p>
             </div>
           </div>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Right Column */}
@@ -802,7 +826,7 @@ export default function CampaignDetails() {
               </div>
             </TabsContent>
 
-            <TabsContent value="metrics">
+            {/* <TabsContent value="metrics">
               <div className="grid grid-cols-2 gap-4">
                 <Card className="p-4">
                   <p className="text-sm text-gray-600">Total Clicks</p>
@@ -829,7 +853,7 @@ export default function CampaignDetails() {
                   </p>
                 </Card>
               </div>
-            </TabsContent>
+            </TabsContent> */}
           </Tabs>
         </Card>
 

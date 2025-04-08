@@ -165,28 +165,37 @@ export default function BrowseCampaigns() {
               )
             }
           >
-            {/* Cover Image */}
-            <div className="relative aspect-video w-full overflow-hidden">
+            {/* Cover Image or Video */}
+            <div className="relative aspect-video w-full overflow-hidden group">
               <Image
                 src={campaign.coverImage}
                 alt={campaign.title}
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
               />
+              {campaign.contentAssets?.some(asset => asset.type === 'video') && (
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <video
+                    src={campaign.contentAssets.find(asset => asset.type === 'video')?.url}
+                    poster={campaign.coverImage}
+                    preload="none"
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-cover"
+                    onMouseEnter={(e) => e.currentTarget.play()}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.pause();
+                      e.currentTarget.currentTime = 0;
+                    }}
+                  />
+                </div>
+              )}
               {campaign.applicationStatus && (
                 <span
-                  className={`absolute top-4 right-4 px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap ${
-                    campaign.applicationStatus === "approved"
-                      ? "bg-green-500/90 text-white"
-                      : campaign.applicationStatus === "pending"
-                        ? "bg-yellow-500/90 text-white"
-                        : campaign.applicationStatus === "rejected"
-                          ? "bg-red-500/90 text-white"
-                          : "bg-blue-500/90 text-white"
-                  }`}
+                  className={`absolute top-4 right-4 px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap ${campaign.applicationStatus === "approved" ? "bg-green-500/90 text-white" : campaign.applicationStatus === "pending" ? "bg-yellow-500/90 text-white" : campaign.applicationStatus === "rejected" ? "bg-red-500/90 text-white" : "bg-blue-500/90 text-white"}`}
                 >
-                  {campaign.applicationStatus.charAt(0).toUpperCase() +
-                    campaign.applicationStatus.slice(1)}
+                  {campaign.applicationStatus.charAt(0).toUpperCase() + campaign.applicationStatus.slice(1)}
                 </span>
               )}
 

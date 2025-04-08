@@ -151,27 +151,6 @@ class CampaignService {
 
   async createCampaign(data: CampaignFormData): Promise<any> {
     try {
-      // // Calculate pricing based on campaign goal
-      // let pricePerImpression = 0;
-      // let pricePerPost = 0;
-      // switch(data.goal) {
-      //   case "awareness":
-      //     pricePerImpression = 6; // ₦6,000 per 1,000 impressions
-      //     pricePerPost = data.pricePerPost || 30; // Use provided price or default
-      //     break;
-      //   case "engagement":
-      //     pricePerImpression = 0.3; // ₦300 per click
-      //     pricePerPost = data.pricePerPost || 50; // Use provided price or default
-      //     break;
-      //   case "conversion":
-      //     pricePerImpression = 1; // ₦1,000 per action
-      //     pricePerPost = data.pricePerPost || 600; // Use provided price or default
-      //     break;
-      // }
-
-      // const estimatedBudget = (data.targetImpressions || 0) * pricePerImpression;
-
-      // Process media files
       const contentAssetsPromises = data.mediaFiles.map((media, index) =>
         this.processMediaFile(media.file).then((asset) => ({
           ...asset,
@@ -181,26 +160,26 @@ class CampaignService {
       );
 
       const contentAssets = await Promise.all(contentAssetsPromises);
-
+      const pricePerPost = data.goal === 'awareness' ? 30 : data.goal === 'engagement' ? 200 : 400;
       // Prepare campaign data
       const campaignData: any = {
         title: data.name,
         description: data.description,
         coverImage: data.coverImage,
         budget: data.estimatedBudget,
-        pricePerPost: data.pricePerPost,
+        pricePerPost,
         pricePerImpression: data.pricePerImpression,
         targetImpressions: data.targetImpressions,
         estimatedBudget: data.estimatedBudget,
-        targetPromotions: Math.ceil((data.estimatedBudget || 0) / data.pricePerPost),
+        targetPromotions: Math.ceil((data.estimatedBudget || 0) / pricePerPost),
         requiredPlatforms: data.platforms,
         targetedNiches: data.niches,
         campaignGoal: data.goal,
         targetLocation: data.location.join(","),
         targetGender: data.gender,
         promotionLink: data.promotionLink,
-        minFollowers: 1000, // Default value
-        minEngagementRate: 0.02, // Default value
+        minFollowers: 1000,
+        minEngagementRate: 0.02,
         startDate: data.startDate,
         endDate: data.endDate,
         contentAssets,
@@ -219,10 +198,10 @@ class CampaignService {
         }
       };
 
-      console.log(data.estimatedBudget)
-      // Initialize payment with Paystack
+      console.log(pricePerPost);
+      
       const paymentResponse = await axiosInstance.post('/payments/initialize', {
-        amount: data.budget * 100,
+        amount: Math.round((data.estimatedBudget || 0) * 100),
         email: localStorage.getItem('userEmail') || '',
         metadata: {
           campaignData: {
@@ -232,9 +211,16 @@ class CampaignService {
           }
         }
       });
+      console.log(paymentResponse?.data?.data);
+      
+      if (!paymentResponse?.data?.data?.reference) {
+        throw new Error('Payment initialization failed: Invalid response from payment service');
+      }
+      
+      const paymentRef = String(paymentResponse?.data.data.reference);
+      console.log('Payment Reference:', paymentRef);
       
       return new Promise((resolve, reject) => {
-        // Ensure Paystack script is loaded
         const loadPaystackScript = () => {
           return new Promise<void>((scriptResolve, scriptReject) => {
             if (window.PaystackPop) {
@@ -243,11 +229,15 @@ class CampaignService {
             }
 
             const script = document.createElement('script');
-            script.src = 'https://js.paystack.co/v1/inline.js';
+            script.src = 'https://js.paystack.co/v2/inline.js';
+            script.crossOrigin = 'anonymous';
             script.async = true;
             script.onload = () => scriptResolve();
-            script.onerror = () => scriptReject(new Error('Failed to load Paystack script'));
-            document.body.appendChild(script);
+            script.onerror = (error) => {
+              console.error('Failed to load Paystack script:', error);
+              scriptReject(new Error('Failed to load Paystack script. Please check your internet connection and try again.'));
+            };
+            document.head.appendChild(script);
           });
         };
 
@@ -256,10 +246,13 @@ class CampaignService {
             const handler = window.PaystackPop.setup({
               key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
               email: localStorage.getItem('userEmail') || '',
-              amount: (data.estimatedBudget || 0) * 100,
-              ref: paymentResponse?.data.reference,
-              callback: function(response) {
-                console.log(campaignData);
+              amount: Math.round((data.estimatedBudget || 0) * 100),
+              ref: paymentResponse?.data.data.reference,
+              onClose: () => {
+                console.log('Payment window closed');
+                reject(new Error('Payment cancelled by user'));
+              },
+              callback: function(response: any) {
                 if (response.status === 'success') {
                   axiosInstance.post(`/campaigns`, {
                     ...campaignData,
@@ -273,20 +266,19 @@ class CampaignService {
                     resolve(campaignResponse.data);
                   })
                   .catch((error) => {
-                    reject(error);
-                  }); 
+                    console.error('Error creating campaign:', error);
+                    reject(new Error('Failed to create campaign after successful payment'));
+                  });
                 } else {
-                  reject(new Error('Payment failed'));
+                  reject(new Error('Payment failed: ' + (response.message || 'Unknown error')));
                 }
-              },
-              onClose: () => {
-                console.log('Payment window closed');
               }
             });
 
             handler.openIframe();
           })
           .catch((error) => {
+            console.error('Payment initialization error:', error);
             reject(error);
           });
       });

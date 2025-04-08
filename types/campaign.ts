@@ -55,22 +55,47 @@ export interface SocialPlatformMetrics {
 }
 
 export interface CampaignMetrics {
-  clicks: number;
-  uniqueClicks: number;
-  conversions: number;
+  // Core metrics
   totalReach: number;
+  totalViews: number;
+  uniqueViews: number;
   totalEngagements: number;
   totalPosts: number;
   totalConversions: number;
   averageEngagementRate: number;
-  totalViews: number;
+  dwellTime: number; // Average time spent on campaign
+  adRating: number; // Average rating given by promoters (1-5)
+  
+  // View Duration Metrics
+  viewDuration: {
+    threeSeconds: number; // Views lasting 3+ seconds
+    thirtySeconds: number; // Views lasting 30+ seconds
+    oneMinute: number; // Views lasting 60+ seconds
+  };
+  
+  // Promoter metrics
+  promoterViews: number; // Number of times promoters viewed the campaign
+  uniquePromoterViews: number; // Number of unique promoters who viewed
+  promoterFollows: number; // Number of promoters who followed the brand
+  activePromoterCount: number; // Number of active promoters
+  promoterEngagement: {
+    ratings: number; // Number of promoter ratings submitted
+    averageRating: number; // Average promoter rating (1-5)
+    views: number; // Number of times promoters viewed the campaign
+  }
+
+  // Device-specific metrics
   byDevice: {
     mobile: DeviceMetrics;
     desktop: DeviceMetrics;
     tablet: DeviceMetrics;
   };
+
+  // Geographic and channel metrics
   byRegion: Record<string, number>;
   byChannel: Record<string, number>;
+
+  // Social platform metrics
   bySocialPlatform: {
     instagram: SocialPlatformMetrics;
     tiktok: SocialPlatformMetrics;
@@ -79,14 +104,19 @@ export interface CampaignMetrics {
     youtube: SocialPlatformMetrics;
     linkedin: SocialPlatformMetrics;
   };
+
+  // Platform-specific totals
   totalViewsByPlatform: Record<string, number>;
   totalClicksByPlatform: Record<string, number>;
   totalSharesByPlatform: Record<string, number>;
-  linkMetrics?: {
-    clicks: number;
-    uniqueClicks: number;
-    conversions: number;
-  };
+  totalLikesByPlatform: Record<string, number>;
+  totalCommentsByPlatform: Record<string, number>;
+
+  // Budget metrics
+  budgetSpent: number;
+  costPerView: number;
+  costPerEngagement: number;
+  costPerConversion: number;
 }
 
 export interface Comment {

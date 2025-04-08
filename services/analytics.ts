@@ -138,6 +138,7 @@ class AnalyticsService {
       {
         interactionType: "campaign_view",
         channel: this.pageReferrer,
+        campaignId: shortId
       },
       promoterId
     );
