@@ -94,6 +94,8 @@ export interface CampaignData {
 }
 
 class CampaignService {
+  private paymentInitializationInProgress = false;
+
   private async uploadFile(file: File): Promise<ContentAsset> {
     const formData = new FormData();
     formData.append("file", file);
@@ -150,6 +152,11 @@ class CampaignService {
   }
 
   async createCampaign(data: CampaignFormData): Promise<any> {
+    if (this.paymentInitializationInProgress) {
+      throw new Error("Payment initialization already in progress");
+    }
+
+    this.paymentInitializationInProgress = true;
     try {
       const contentAssetsPromises = data.mediaFiles.map((media, index) =>
         this.processMediaFile(media.file).then((asset) => ({
@@ -160,7 +167,8 @@ class CampaignService {
       );
 
       const contentAssets = await Promise.all(contentAssetsPromises);
-      const pricePerPost = data.goal === 'awareness' ? 30 : data.goal === 'engagement' ? 200 : 400;
+      const pricePerPost =
+        data.goal === "awareness" ? 30 : data.goal === "engagement" ? 200 : 400;
       // Prepare campaign data
       const campaignData: any = {
         title: data.name,
@@ -195,97 +203,120 @@ class CampaignService {
             ? data.mentions.split(",").map((mention) => mention.trim())
             : [],
           brandAssetLinks: data.brandAssetLinks ? [data.brandAssetLinks] : [],
-        }
+        },
       };
 
       console.log(pricePerPost);
-      
-      const paymentResponse = await axiosInstance.post('/payments/initialize', {
-        amount: Math.round((data.estimatedBudget || 0) * 100),
-        email: localStorage.getItem('userEmail') || '',
-        metadata: {
-          campaignData: {
-            title: data.name,
-            budget: data.estimatedBudget,
-            goal: data.goal
-          }
+
+      const res = await axiosInstance.post(
+        `/campaigns`,
+        {
+          ...campaignData,
+          paymentReference: "",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      });
-      console.log(paymentResponse?.data?.data);
-      
-      if (!paymentResponse?.data?.data?.reference) {
-        throw new Error('Payment initialization failed: Invalid response from payment service');
-      }
-      
-      const paymentRef = String(paymentResponse?.data.data.reference);
-      console.log('Payment Reference:', paymentRef);
-      
-      return new Promise((resolve, reject) => {
-        const loadPaystackScript = () => {
-          return new Promise<void>((scriptResolve, scriptReject) => {
-            if (window.PaystackPop) {
-              scriptResolve();
-              return;
-            }
+      );
+      console.log(res)
 
-            const script = document.createElement('script');
-            script.src = 'https://js.paystack.co/v2/inline.js';
-            script.crossOrigin = 'anonymous';
-            script.async = true;
-            script.onload = () => scriptResolve();
-            script.onerror = (error) => {
-              console.error('Failed to load Paystack script:', error);
-              scriptReject(new Error('Failed to load Paystack script. Please check your internet connection and try again.'));
-            };
-            document.head.appendChild(script);
-          });
-        };
+      return res.data
 
-        loadPaystackScript()
-          .then(() => {
-            const handler = window.PaystackPop.setup({
-              key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
-              email: localStorage.getItem('userEmail') || '',
-              amount: Math.round((data.estimatedBudget || 0) * 100),
-              ref: paymentResponse?.data.data.reference,
-              onClose: () => {
-                console.log('Payment window closed');
-                reject(new Error('Payment cancelled by user'));
-              },
-              callback: function(response: any) {
-                if (response.status === 'success') {
-                  axiosInstance.post(`/campaigns`, {
-                    ...campaignData,
-                    paymentReference: response.reference
-                  }, {
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                  })
-                  .then((campaignResponse) => {
-                    resolve(campaignResponse.data);
-                  })
-                  .catch((error) => {
-                    console.error('Error creating campaign:', error);
-                    reject(new Error('Failed to create campaign after successful payment'));
-                  });
-                } else {
-                  reject(new Error('Payment failed: ' + (response.message || 'Unknown error')));
-                }
-              }
-            });
+      // const idempotencyKey = `campaign_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 
-            handler.openIframe();
-          })
-          .catch((error) => {
-            console.error('Payment initialization error:', error);
-            reject(error);
-          });
-      });
+      // const paymentResponse = await axiosInstance.post(
+      //   "/payments/initialize",
+      //   {
+      //     amount: Math.round((data.estimatedBudget || 0) * 100),
+      //     email: localStorage.getItem("userEmail") || "",
+      //     metadata: {
+      //       campaignData: {
+      //         title: data.name,
+      //         budget: data.estimatedBudget,
+      //         goal: data.goal,
+      //       },
+      //     },
+      //   },
+      //   {
+      //     headers: {
+      //       "X-Idempotency-Key": idempotencyKey,
+      //       "Cache-Control": "no-cache",
+      //     },
+      //   }
+      // );
 
+      // if (!paymentResponse?.data?.reference) {
+      //   throw new Error(
+      //     "Payment initialization failed: Invalid response from payment service"
+      //   );
+      // }
+
+      // const paymentRef = paymentResponse.data.reference;
+      // console.log("Payment Reference:", paymentRef);
+
+      // return new Promise((resolve, reject) => {
+      //   const loadPaystackScript = () => {
+      //     return new Promise<void>((scriptResolve, scriptReject) => {
+      //       if (window.PaystackPop) {
+      //         scriptResolve();
+      //         return;
+      //       }
+
+      //       const script = document.createElement("script");
+      //       script.src = "https://js.paystack.co/v2/inline.js";
+      //       script.crossOrigin = "anonymous";
+      //       script.async = true;
+      //       script.onload = () => scriptResolve();
+      //       script.onerror = (error) => {
+      //         console.error("Failed to load Paystack script:", error);
+      //         scriptReject(
+      //           new Error(
+      //             "Failed to load Paystack script. Please check your internet connection and try again."
+      //           )
+      //         );
+      //       };
+      //       document.head.appendChild(script);
+      //     });
+      //   };
+
+      //   loadPaystackScript()
+      //     .then(() => {
+      //       const handler = window.PaystackPop.setup({
+      //         key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
+      //         email: localStorage.getItem("userEmail") || "",
+      //         amount: Math.round((data.estimatedBudget || 0) * 100),
+      //         ref: paymentRef,
+      //         onClose: () => {
+      //           console.log("Payment window closed");
+      //           reject(new Error("Payment cancelled by user"));
+      //         },
+      //         callback: function (response: any) {
+      //           if (response.status === "success") {
+
+      //           } else {
+      //             reject(
+      //               new Error(
+      //                 "Payment failed: " + (response.message || "Unknown error")
+      //               )
+      //             );
+      //           }
+      //         },
+      //       });
+
+      //       handler.openIframe();
+      //     })
+      //     .catch((error) => {
+      //       console.error("Payment initialization error:", error);
+      //       reject(error);
+      //     });
+      // });
     } catch (error) {
-      console.error('Error creating campaign:', error);
+      console.error("Error creating campaign:", error);
       throw error;
+    } finally {
+      this.paymentInitializationInProgress = false;
     }
   }
 
@@ -315,28 +346,56 @@ class CampaignService {
       const campaignData: Partial<CampaignData> = {
         ...(formData.name && { title: formData.name }),
         ...(formData.description && { description: formData.description }),
-        ...(formData.targetImpressions && { targetImpressions: formData.targetImpressions }),
-        ...(formData.pricePerImpression && { pricePerImpression: formData.pricePerImpression }),
-        ...(formData.estimatedBudget && { estimatedBudget: formData.estimatedBudget }),
+        ...(formData.targetImpressions && {
+          targetImpressions: formData.targetImpressions,
+        }),
+        ...(formData.pricePerImpression && {
+          pricePerImpression: formData.pricePerImpression,
+        }),
+        ...(formData.estimatedBudget && {
+          estimatedBudget: formData.estimatedBudget,
+        }),
         ...(formData.platforms && { requiredPlatforms: formData.platforms }),
         ...(formData.niches && { targetedNiches: formData.niches }),
         ...(formData.goal && { campaignGoal: formData.goal }),
-        ...(formData.location && { targetLocation: formData.location.join(",") }),
+        ...(formData.location && {
+          targetLocation: formData.location.join(","),
+        }),
         ...(formData.gender && { targetGender: formData.gender }),
-        ...(formData.promotionLink && { promotionLink: formData.promotionLink }),
+        ...(formData.promotionLink && {
+          promotionLink: formData.promotionLink,
+        }),
         ...(formData.startDate && { startDate: formData.startDate }),
         ...(formData.endDate && { endDate: formData.endDate }),
         ...(contentAssets.length > 0 && { contentAssets }),
         // Only include requirements if any of the fields are present
-        ...(formData.contentGuidelines || formData.postingSchedule || formData.hashtags || formData.mentions || formData.brandAssetLinks ? {
-          requirements: {
-            contentGuidelines: formData.contentGuidelines || '',
-            postingSchedule: formData.postingSchedule || { startTime: '', endTime: '', days: [] },
-            hashtags: formData.hashtags ? formData.hashtags.split(',').map(tag => tag.trim()) : [],
-            mentions: formData.mentions ? formData.mentions.split(',').map(mention => mention.trim()) : [],
-            ...(formData.brandAssetLinks && { brandAssetLinks: [formData.brandAssetLinks] }),
-          }
-        } : undefined),
+        ...(formData.contentGuidelines ||
+        formData.postingSchedule ||
+        formData.hashtags ||
+        formData.mentions ||
+        formData.brandAssetLinks
+          ? {
+              requirements: {
+                contentGuidelines: formData.contentGuidelines || "",
+                postingSchedule: formData.postingSchedule || {
+                  startTime: "",
+                  endTime: "",
+                  days: [],
+                },
+                hashtags: formData.hashtags
+                  ? formData.hashtags.split(",").map((tag) => tag.trim())
+                  : [],
+                mentions: formData.mentions
+                  ? formData.mentions
+                      .split(",")
+                      .map((mention) => mention.trim())
+                  : [],
+                ...(formData.brandAssetLinks && {
+                  brandAssetLinks: [formData.brandAssetLinks],
+                }),
+              },
+            }
+          : undefined),
       };
 
       const response = await axiosInstance.patch(

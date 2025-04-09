@@ -44,13 +44,10 @@ import {
 import { cn } from "@/lib/utils";
 import { campaignService, MediaFileClient } from "@/services/campaign";
 import { axiosInstance } from "@/lib/utils";
-// Import the type from campaign service
 import type { CampaignFormData } from "@/services/campaign";
-// Ensure the schema output matches CampaignFormData
+import { usePaystackPayment } from "react-paystack";
+
 type CampaignSchemaOutput = z.infer<typeof campaignSchema>;
-type SchemaTypeCheck = CampaignSchemaOutput extends CampaignFormData
-  ? true
-  : false;
 
 const STEPS = ["details", "targeting", "content"] as const;
 
@@ -147,9 +144,18 @@ const campaignSchema = z.object({
   coverImage: z.string().url("Please upload a valid cover image").optional(),
   budget: z.number().min(1, "Budget must be at least 1"),
   pricePerPost: z.number().min(1, "Price per post must be at least 1"),
-  targetImpressions: z.number().min(1, "Target impressions must be at least 1").optional(),
-  pricePerImpression: z.number().min(0.001, "Price per impression must be greater than 0").optional(),
-  estimatedBudget: z.number().min(1, "Estimated budget must be greater than 0").optional(),
+  targetImpressions: z
+    .number()
+    .min(1, "Target impressions must be at least 1")
+    .optional(),
+  pricePerImpression: z
+    .number()
+    .min(0.001, "Price per impression must be greater than 0")
+    .optional(),
+  estimatedBudget: z
+    .number()
+    .min(1, "Estimated budget must be greater than 0")
+    .optional(),
   startDate: z.date({
     required_error: "Start date is required",
   }),
@@ -165,8 +171,12 @@ const campaignSchema = z.object({
   niches: z.array(z.string()).min(1, "Select at least one niche"),
   isBoosted: z.boolean().default(false),
   contentType: z.enum(["photo", "video", "carousel"]),
-  mediaFiles: z.array(mediaFileSchema).min(1, "Please upload at least one media file"),
-  contentGuidelines: z.string().min(10, "Guidelines must be at least 10 characters"),
+  mediaFiles: z
+    .array(mediaFileSchema)
+    .min(1, "Please upload at least one media file"),
+  contentGuidelines: z
+    .string()
+    .min(10, "Guidelines must be at least 10 characters"),
   hashtags: z.string().min(1, "Add at least one hashtag"),
   mentions: z.string().optional(),
   brandAssetLinks: z.string().url().optional(),
@@ -322,6 +332,47 @@ export default function Page() {
 
   const coverImage = watch("coverImage");
 
+  const config = {
+    reference: new Date().getTime().toString(),
+    email: localStorage.getItem("userEmail") || "",
+    amount: Math.round((watch("estimatedBudget") || 0) * 100),
+    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
+  };
+
+  const initializePayment = usePaystackPayment(config);
+
+  const onSuccess = async (reference: any) => {
+    // Implementation for whatever you want to do with reference and after success call.
+    console.log(reference);
+    // Create campaign with payment
+    const formData = form.getValues();
+    const response = await campaignService.createCampaign(formData);
+
+    toast.dismiss();
+    toast.success(
+      <div className="space-y-2">
+        <p className="font-medium">Congratulations 🎊!</p>
+        <p className="text-sm text-muted-foreground">
+          Your campaign was created successfully. You can view your campaign on
+          your dashboard.
+        </p>
+      </div>,
+      {
+        duration: 5000,
+      }
+    );
+
+    setTimeout(() => {
+      router.push("/advertiser/dashboard/campaigns");
+    }, 2000);
+  };
+
+  // you can call this function anything
+  const onClose = () => {
+    // implementation for  whatever you want to do when the Paystack dialog closed.
+    console.log("closed");
+  };
+
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -346,13 +397,10 @@ export default function Page() {
     try {
       // Validate all fields before submitting
       const isValid = await trigger();
-      console.log(isValid);
       if (!isValid) {
-        // Get all error messages
         const errorMessages = Object.entries(errors)
           .map(([field, error]) => {
             if (error?.message) {
-              // Convert field name to readable format
               const fieldName = field
                 .split(".")
                 .map((part) =>
@@ -386,28 +434,9 @@ export default function Page() {
       }
 
       setIsSubmitting(true);
-      toast.loading("Creating your campaign...");
+      toast.loading("Processing payment...");
 
-      const response = await campaignService.createCampaign(data);
-
-      toast.dismiss(); // Dismiss the loading toast
-      toast.success(
-        <div className="space-y-2">
-          <p className="font-medium">Congratulations 🎊!</p>
-          <p className="text-sm text-muted-foreground">
-            Your campaign was created successfully. You can view your campaign
-            on your dashboard.
-          </p>
-        </div>,
-        {
-          duration: 5000,
-        }
-      );
-
-      // Wait a bit for the user to see the success message
-      setTimeout(() => {
-        router.push("/advertiser/dashboard/campaigns");
-      }, 2000);
+      initializePayment({ onSuccess, onClose });
     } catch (error: any) {
       console.error("Error creating campaign:", error);
       toast.dismiss(); // Dismiss the loading toast
