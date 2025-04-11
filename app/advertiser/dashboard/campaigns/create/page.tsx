@@ -45,7 +45,12 @@ import { cn } from "@/lib/utils";
 import { campaignService, MediaFileClient } from "@/services/campaign";
 import { axiosInstance } from "@/lib/utils";
 import type { CampaignFormData } from "@/services/campaign";
-import { PaystackButton } from "react-paystack";
+// import dynamic from "next/dynamic";
+
+const PaystackButton = dynamic(
+  () => import("react-paystack").then((mod) => mod.PaystackButton),
+  { ssr: false }
+);
 
 type CampaignSchemaOutput = z.infer<typeof campaignSchema>;
 
@@ -356,8 +361,8 @@ export default function Page() {
   // }, [watch]);
 
   const config = {
-    reference: new Date().getTime().toString(),
-    email: "j.ogbonn@adminting.com",
+    reference: typeof window !== 'undefined' ? new Date().getTime().toString() : '',
+    email: typeof window !== 'undefined' ? localStorage?.getItem("userEmail") || "" : "",
     amount: Math.round((watch("estimatedBudget") || 0) * 100),
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
   };
@@ -403,23 +408,23 @@ export default function Page() {
     onClose,
   };
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = event.target.files;
-    if (!files?.length) return;
+  // const handleFileChange = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const files = event.target.files;
+  //   if (!files?.length) return;
 
-    const fileArray = Array.from(files);
-    const mediaFiles: MediaFileClient[] = fileArray.map((file) => ({
-      type: file.type.startsWith("video/")
-        ? ("video" as const)
-        : ("image" as const),
-      url: typeof window !== "undefined" ? URL.createObjectURL(file) : "",
-      file,
-    }));
+  //   const fileArray = Array.from(files);
+  //   const mediaFiles: MediaFileClient[] = fileArray.map((file) => ({
+  //     type: file.type.startsWith("video/")
+  //       ? ("video" as const)
+  //       : ("image" as const),
+  //     url: typeof window !== "undefined" ? URL.createObjectURL(file) : "",
+  //     file,
+  //   }));
 
-    form.setValue("mediaFiles", mediaFiles);
-  };
+  //   form.setValue("mediaFiles", mediaFiles);
+  // };
 
   const onSubmit = async (data: CampaignFormData) => {
     try {
