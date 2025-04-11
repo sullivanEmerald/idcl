@@ -1,10 +1,12 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export const runtime = 'edge';
+
+export async function GET(request: Request) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const accountNumber = searchParams.get('account_number');
-    const bankCode = searchParams.get('bank_code');
+    const url = new URL(request.url);
+    const accountNumber = url.searchParams.get('account_number');
+    const bankCode = url.searchParams.get('bank_code');
 
     if (!accountNumber || !bankCode) {
       return NextResponse.json(

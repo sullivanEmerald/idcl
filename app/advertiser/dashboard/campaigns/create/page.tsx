@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -45,7 +45,7 @@ import { cn } from "@/lib/utils";
 import { campaignService, MediaFileClient } from "@/services/campaign";
 import { axiosInstance } from "@/lib/utils";
 import type { CampaignFormData } from "@/services/campaign";
-import { usePaystackPayment } from "react-paystack";
+import { PaystackButton } from "react-paystack";
 
 type CampaignSchemaOutput = z.infer<typeof campaignSchema>;
 
@@ -187,6 +187,7 @@ export default function Page() {
   const router = useRouter();
   const [currentStep, setCurrentStep] =
     useState<(typeof STEPS)[number]>("details");
+  // const [initializePayment, setInitializePayment] = useState<ReturnType<typeof usePaystackPayment>>(() => () => {});
 
   const form = useForm<CampaignFormData>({
     resolver: zodResolver(campaignSchema),
@@ -332,14 +333,36 @@ export default function Page() {
 
   const coverImage = watch("coverImage");
 
+  const [paymentConfig, setPaymentConfig] = useState(() => ({
+    reference: "",
+    email: "",
+    amount: 0,
+    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
+  }));
+
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     setPaymentConfig({
+  //       reference: new Date().getTime().toString(),
+  //       email: localStorage?.getItem("userEmail") || "",
+  //       amount: Math.round((watch("estimatedBudget") || 0) * 100),
+  //       publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
+  //     });
+
+  //     // Initialize payment only on client side
+  //     const payment = usePaystackPayment(paymentConfig);
+  //     setInitializePayment(() => payment);
+  //   }
+  // }, [watch]);
+
   const config = {
     reference: new Date().getTime().toString(),
-    email: localStorage.getItem("userEmail") || "",
+    email: "j.ogbonn@adminting.com",
     amount: Math.round((watch("estimatedBudget") || 0) * 100),
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
   };
 
-  const initializePayment = usePaystackPayment(config);
+  // const initializePayment = usePaystackPayment(paymentConfig);
 
   const onSuccess = async (reference: any) => {
     // Implementation for whatever you want to do with reference and after success call.
@@ -373,11 +396,16 @@ export default function Page() {
     console.log("closed");
   };
 
+  const componentProps = {
+    ...config,
+    text: "Create Campaign",
+    onSuccess: (reference: string) => onSuccess(reference),
+    onClose,
+  };
+
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (typeof window === "undefined") return; // Skip in Node.js environment
-
     const files = event.target.files;
     if (!files?.length) return;
 
@@ -386,8 +414,8 @@ export default function Page() {
       type: file.type.startsWith("video/")
         ? ("video" as const)
         : ("image" as const),
-      url: URL.createObjectURL(file),
-      file, // File is required in MediaFileClient
+      url: typeof window !== "undefined" ? URL.createObjectURL(file) : "",
+      file,
     }));
 
     form.setValue("mediaFiles", mediaFiles);
@@ -436,7 +464,7 @@ export default function Page() {
       setIsSubmitting(true);
       toast.loading("Processing payment...");
 
-      initializePayment({ onSuccess, onClose });
+      // initializePayment({ onSuccess, onClose });
     } catch (error: any) {
       console.error("Error creating campaign:", error);
       toast.dismiss(); // Dismiss the loading toast
@@ -1531,35 +1559,36 @@ export default function Page() {
                   Next
                 </Button>
               ) : (
-                <Button type="submit" variant="new" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <div className="flex items-center">
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                      Creating Campaign...
-                    </div>
-                  ) : (
-                    "Create Campaign"
-                  )}
-                </Button>
+                // <Button type="submit" variant="new" disabled={isSubmitting}>
+                //   {isSubmitting ? (
+                //     <div className="flex items-center">
+                //       <svg
+                //         className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                //         xmlns="http://www.w3.org/2000/svg"
+                //         fill="none"
+                //         viewBox="0 0 24 24"
+                //       >
+                //         <circle
+                //           className="opacity-25"
+                //           cx="12"
+                //           cy="12"
+                //           r="10"
+                //           stroke="currentColor"
+                //           strokeWidth="4"
+                //         />
+                //         <path
+                //           className="opacity-75"
+                //           fill="currentColor"
+                //           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                //         />
+                //       </svg>
+                //       Creating Campaign...
+                //     </div>
+                //   ) : (
+                //     "Create Campaign"
+                //   )}
+                // </Button>
+                <PaystackButton {...componentProps} />
               )}
             </div>
           </div>
