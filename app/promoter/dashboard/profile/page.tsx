@@ -1,8 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Card, CardTitle, CardDescription, CardHeader, CardContent } from "@/components/ui/card";
+import { Card, CardTitle, CardDescription, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Verified, Plus } from "lucide-react";
 import { Calendar, DollarSign, Users, Pencil, Badge, Bell, BookmarkCheck, ArrowLeftRight } from 'lucide-react'
@@ -276,6 +278,29 @@ export default function PromoterProfile() {
                         </CardContent>
                     </Card>
                 </div>
+
+                <Tabs defaultValue="account" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3">
+                        <TabsTrigger value="promotion">Active Promotions</TabsTrigger>
+                        <TabsTrigger value="brand">Brands</TabsTrigger>
+                        <TabsTrigger value="overview">Overview</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="account">
+                        <Card>
+
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="password">
+                        <Card>
+
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="overview">
+                        <Card>
+
+                        </Card>
+                    </TabsContent>
+                </Tabs>
             </div>
         </>
     )
