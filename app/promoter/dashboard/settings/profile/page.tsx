@@ -145,8 +145,9 @@ export default function ProfileSettings() {
                 ]
               }))
               toast.success(`${social} restored`)
-            } catch (error) {
-
+            } catch (error: any) {
+              const resError = error.response?.data?.message || 'An error occured'
+              toast.error(resError)
             }
           }
         },
