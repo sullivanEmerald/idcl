@@ -183,6 +183,16 @@ const promoterService = {
     const response = await axiosInstance.put('/settings/promoter/preference', data)
     return response.data;
   },
-};
+
+  async removePromoterSocial(social: string) {
+    const response = await axiosInstance.delete(`/promoter/social?platform=${social}`)
+    return response.data;
+  },
+
+  async undoRemoval(social: string) {
+    const response = await axiosInstance.patch(`/promoter/social?platform=${social}`)
+    return response.data;
+  }
+}
 
 export default promoterService;

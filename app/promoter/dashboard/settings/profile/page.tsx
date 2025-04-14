@@ -7,16 +7,16 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Toaster, toast } from 'sonner'
-import { Eye, EyeOff, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, CheckCircle, CircleMinus } from "lucide-react";
 import { Select as ShadcnSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePromoterAccountSettingHandler, usePromoterUpdatePasswordHandler } from '@/hooks/user/user-promoter'
-import ReactSelect from 'react-select'
 import promoterService from '@/services/promoter'
 import { socialPlatforms } from '@/app/onboarding/promoter/page'
 import { usePromoterOnboardingHandler } from '@/hooks/user/user-promoter'
 import Select from 'react-select'
 
 
+type SocialPlatforms = 'facebook' | 'twitter' | 'instagram' | 'instagram' | 'tiktok' | 'youtube';
 
 export default function ProfileSettings() {
   const [isFetching, setIsFetching] = useState(true)
@@ -50,7 +50,9 @@ export default function ProfileSettings() {
     isUpdatingRecordSuccessful,
     onSubmitOnboardingHandler,
     isUpdatingRecord,
-    onChangeOnboardingHandler } = usePromoterOnboardingHandler();
+    onChangeOnboardingHandler,
+    isRemovingSocial,
+    setIsRemovingSocial } = usePromoterOnboardingHandler();
 
   useEffect(() => {
     if (isSuccessful) {
@@ -111,19 +113,63 @@ export default function ProfileSettings() {
     getProfile()
   }, [])
 
+  const removeSocialHandler = async (social: string, index: number) => {
+    try {
+      // setting loaders for each social that is being removed
+      setIsRemovingSocial((prev) => ({
+        ...prev,
+        [social]: true
+      }))
 
+      // calling API request function
+      await promoterService.removePromoterSocial(social)
 
+      // resetting the UI after successful API request
+      setOnboardingData((prev) => ({
+        ...prev,
+        platforms: prev.platforms.filter((item) => item.toLowerCase() !== social)
+      }))
+
+      toast.success(`removed ${social} from your socials`, {
+        action: {
+          label: 'Undo',
+          onClick: async () => {
+            try {
+              await promoterService.undoRemoval(social)
+              setOnboardingData((prev) => ({
+                ...prev,
+                platforms: [
+                  ...prev.platforms.slice(0, index),
+                  social,
+                  ...prev.platforms.slice(index)
+                ]
+              }))
+              toast.success(`${social} restored`)
+            } catch (error) {
+
+            }
+          }
+        },
+      })
+
+    } catch (error: any) {
+      const responseError = error.response?.data?.message || 'An error occured'
+      toast.error(responseError)
+    } finally {
+      setIsRemovingSocial((prev) => ({
+        ...prev,
+        [social]: false
+      }))
+    }
+  }
 
   if (isFetching) {
     return (
       <div className="space-y-8 p-8">
-        {/* Skeleton Header */}
         <div className="space-y-2">
           <Skeleton className="h-8 w-48" />
           <Skeleton className="h-4 w-64" />
         </div>
-
-        {/* Skeleton for Personal Information Card */}
         <Card className="p-6">
           <Skeleton className="h-6 w-40 mb-6" />
           <div className="space-y-4">
@@ -133,7 +179,6 @@ export default function ProfileSettings() {
           </div>
         </Card>
 
-        {/* Skeleton for Password Management Card */}
         <Card className="p-6">
           <Skeleton className="h-6 w-40 mb-6" />
           <div className="space-y-4">
@@ -143,7 +188,7 @@ export default function ProfileSettings() {
           </div>
         </Card>
 
-        {/* Skeleton for Onboarding Settings */}
+
         <Card className="p-6">
           <Skeleton className="h-6 w-40 mb-6" />
           <div className="space-y-4">
@@ -153,7 +198,7 @@ export default function ProfileSettings() {
           </div>
         </Card>
 
-        {/* Skeleton for Social Media Card */}
+
         <Card className="p-6">
           <Skeleton className="h-6 w-40 mb-6" />
         </Card>
@@ -171,7 +216,7 @@ export default function ProfileSettings() {
             <p className="mt-2 text-gray-600">Manage your promoter account information</p>
           </div>
 
-          {/* Personal Information Card */}
+
           <Card className="p-6 relative">
             <h2 className="text-xl font-semibold mb-6">Personal Information</h2>
             <form className="space-y-4" onSubmit={onSubmitPromoterHandler}>
@@ -218,7 +263,7 @@ export default function ProfileSettings() {
             </form>
           </Card>
 
-          {/* Password Management Card */}
+
           <Card className="p-6 relative">
             <div className="flex flex-col sm:flex-row sm:items-center sm:gap-5 mb-6">
               <h2 className="text-xl font-semibold">Password Management</h2>
@@ -311,7 +356,6 @@ export default function ProfileSettings() {
           </Card>
         </div>
 
-        {/* Onboarding Settings */}
         <Card className="p-6 relative">
           <h2 className="text-xl font-semibold mb-6">Onboarding</h2>
           <form className="space-y-4" onSubmit={onSubmitOnboardingHandler}>
@@ -482,52 +526,45 @@ export default function ProfileSettings() {
         {/* SOCIAL MEDIA PLATFORMS */}
         <Card className="p-6 relative">
           <h2 className="text-xl font-semibold mb-6">Social Media Management</h2>
-          <div className="space-y-4"> {/* Added container for consistent spacing */}
+          <div className="space-y-4">
             {onboardingData.platforms.map((item, index) => {
               const platform = item.charAt(0).toUpperCase() + item.slice(1);
-              // State for connection status
-
-              const handleConnect = () => {
-                // Add your connection logic here (OAuth, API call, etc.)
-                console.log(`Connecting to ${platform}...`);
-
-                // Simulate connection
-                setIsConnected(true);
-
-                // In a real app, you would:
-                // 1. Open OAuth popup
-                // 2. Wait for callback
-                // 3. Update state based on success
-              };
-
               return (
                 <div
                   key={index}
-                  className="flex items-center justify-between py-3" // Improved spacing
+                  className="flex items-center justify-between py-3"
                 >
                   <div className="flex items-center">
-                    {/* Platform icon would go here */}
                     <span className="ml-2 font-medium">{platform}</span>
                   </div>
 
-                  <Button
-                    onClick={handleConnect}
-                    variant={isConnected ? "default" : "outline"}
-                    className={`${isConnected
-                      ? "bg-[#6540e6] text-white"
-                      : "bg-transparent text-[#6540e6] border-dashed border-[#6540e6] hover:bg-[#6540e6]/10"
-                      } transition-colors`}
-                    disabled={isConnected}
-                  >
-                    {isConnected ? (
-                      <>
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        Connected
-                      </>
-                    ) : (
-                      `Connect ${platform}`
-                    )}
-                  </Button>
+                  {isRemovingSocial[item.toLowerCase()] ? (
+                    <div className="flex items-center justify-center">
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 !border-red-500 border-t-transparent" />
+                      <span className="ml-2 text-black-500">{`removing ${item}`}</span>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => removeSocialHandler(item.toLowerCase(), index)}
+                      className='
+                      p-2
+                      rounded
+                      bg-transparent
+                      text-red-500
+                      border
+                      border-transparent
+                      hover:border-dashed
+                      hover:border-red-500
+                      hover:bg-transparent
+                      focus:outline-none
+                      disabled:opacity-50
+                    '
+                      disabled={isRemovingSocial[item.toLowerCase()]}
+                    >
+                      <CircleMinus className='text-red-500' />
+                    </button>
+                  )}
+
                 </div>
               );
             })}

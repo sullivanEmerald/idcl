@@ -6,6 +6,7 @@ import * as yup from 'yup'
 import { PasswordResetDto } from "@/services/promoter";
 import onboardingService from "@/services/onboarding";
 import promoterService from "@/services/promoter";
+import { socialPlatforms } from '@/app/onboarding/promoter/page'
 
 
 interface Errors {
@@ -196,6 +197,12 @@ export const usePromoterOnboardingHandler = () => {
         paymentMethod: '',
         accountDetails: ''
     })
+    const [isRemovingSocial, setIsRemovingSocial] = useState<Record<string, boolean>>(
+        (onboardingData?.platforms || []).map(item => item.toLowerCase()).reduce((acc: Record<string, boolean>, platform: string) => {
+            acc[platform] = false;
+            return acc;
+        }, {} as Record<string, boolean>)
+    );
 
     // promoter onboarding handler
     const onChangeOnboardingHandler = (field: string, value: string | string[] | null) => {
@@ -247,6 +254,8 @@ export const usePromoterOnboardingHandler = () => {
         onChangeOnboardingHandler,
         onSubmitOnboardingHandler,
         isUpdatingRecord,
-        isUpdatingRecordSuccessful
+        isUpdatingRecordSuccessful,
+        setIsRemovingSocial,
+        isRemovingSocial
     }
 }
