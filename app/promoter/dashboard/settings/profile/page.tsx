@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 import React, { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
@@ -11,16 +13,22 @@ import { Eye, EyeOff, CheckCircle, CircleMinus } from "lucide-react";
 import { Select as ShadcnSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePromoterAccountSettingHandler, usePromoterUpdatePasswordHandler } from '@/hooks/user/user-promoter'
 import promoterService from '@/services/promoter'
-import { socialPlatforms } from '@/app/onboarding/promoter/page'
 import { usePromoterOnboardingHandler } from '@/hooks/user/user-promoter'
 import Select from 'react-select'
 
 
 type SocialPlatforms = 'facebook' | 'twitter' | 'instagram' | 'instagram' | 'tiktok' | 'youtube';
 
+const socialPlatforms = [
+  { value: 'instagram', label: 'Instagram' },
+  { value: 'tiktok', label: 'TikTok' },
+  { value: 'youtube', label: 'YouTube' },
+  { value: 'twitter', label: 'Twitter' },
+  { value: 'facebook', label: 'Facebook' }
+]
+
 export default function ProfileSettings() {
   const [isFetching, setIsFetching] = useState(true)
-  const [isConnected, setIsConnected] = useState(false);
   const [passwordVisible, setIsPasswordVisible] = useState({
     isOldPasswordVisible: false,
     isNewPasswordVisible: false,

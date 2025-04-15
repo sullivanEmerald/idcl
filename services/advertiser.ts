@@ -127,6 +127,30 @@ export interface AnalyticsOverview {
   topPerformers: TopPerformer[];
 }
 
+export interface CampaignPerformanceData {
+  campaigns: {
+    totalReach: number;
+    totalEngagements: number;
+    averageEngagementRate: number;
+    totalConversions: number;
+    byDevice: {
+      mobile: { uniqueViews: number };
+      desktop: { uniqueViews: number };
+      tablet: { uniqueViews: number };
+    };
+  };
+  promoters: {
+    totalCount: number;
+    activeCount: number;
+    averageEngagementRate: number;
+    topPerformers: Array<{
+      name: string;
+      engagementRate: number;
+      reach: number;
+    }>;
+  };
+}
+
 export interface updatePersonalDto {
   firstName?: string,
   lastName?: string,
@@ -160,6 +184,11 @@ export const advertiserService = {
 
   getAnalyticsOverview: async (): Promise<AnalyticsOverview> => {
     const response = await axiosInstance.get('/advertiser/analytics/overview');
+    return response.data;
+  },
+
+  getCampaignPerformance: async (): Promise<CampaignPerformanceData> => {
+    const response = await axiosInstance.get('/advertiser/analytics/performance');
     return response.data;
   },
 

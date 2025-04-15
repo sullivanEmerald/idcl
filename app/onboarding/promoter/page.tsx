@@ -13,6 +13,9 @@ import { Textarea } from '@/components/ui/textarea'
 import Select from 'react-select'
 import { UserIcon, UsersIcon, WalletIcon, GlobeIcon } from 'lucide-react'
 
+import onboardingService from '@/services/onboarding';
+import { useRouter } from 'next/navigation';
+
 const steps = [
   {
     id: 'personal',
@@ -40,7 +43,7 @@ const steps = [
   }
 ]
 
-export const socialPlatforms = [
+const socialPlatforms = [
   { value: 'instagram', label: 'Instagram' },
   { value: 'tiktok', label: 'TikTok' },
   { value: 'youtube', label: 'YouTube' },
@@ -48,8 +51,6 @@ export const socialPlatforms = [
   { value: 'facebook', label: 'Facebook' }
 ]
 
-import onboardingService from '@/services/onboarding';
-import { useRouter } from 'next/navigation';
 
 export default function PromoterOnboarding() {
   const router = useRouter();

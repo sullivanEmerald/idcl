@@ -51,8 +51,8 @@ export default function WalletPage() {
             description: `${tx.type} for campaign ${tx.campaign.title}`,
             status: tx.status,
             promoter: {
-              firstName: tx.promoter.firstName,
-              lastName: tx.promoter.lastName
+              firstName: tx.promoter.firstName as string,
+              lastName: tx.promoter.lastName as string
             },
             campaign: {
               title: tx.campaign.title

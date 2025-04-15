@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react"
 import { updatePromoterValidationSchema, updatePasswordValidationShema } from "@/validations/user/promoter";
 import { ProfileDataDto } from "@/services/promoter";
@@ -6,8 +8,6 @@ import * as yup from 'yup'
 import { PasswordResetDto } from "@/services/promoter";
 import onboardingService from "@/services/onboarding";
 import promoterService from "@/services/promoter";
-import { socialPlatforms } from '@/app/onboarding/promoter/page'
-
 
 interface Errors {
     fullName?: string;
@@ -16,7 +16,6 @@ interface Errors {
 }
 
 export const usePromoterAccountSettingHandler = () => {
-    const router = useRouter()
     const [errors, setErrors] = useState<Errors>({})
     const [isLoading, setIsLoading] = useState(false)
     const [isSuccessful, setIsSuccessful] = useState(false)
