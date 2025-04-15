@@ -48,12 +48,12 @@ export default function LoginPage() {
       localStorage.setItem('userId', data.user.id)
       localStorage.setItem('userRole', data.user.role)
       localStorage.setItem('userEmail', data.user.email)
-      localStorage.setItem('userName', `${data.user.firstName} ${data.user.lastName}`)
+      localStorage.setItem('userName', data.user.fullName)
 
       // Show success message
       setError('')
       toast.success('Login successful', {
-        description: `Welcome back, ${data.user.firstName}!`,
+        description: `Welcome back, ${data.user.fullName}!`,
       })
 
       // Redirect based on role after a short delay to show the toast

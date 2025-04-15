@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { axiosInstance } from '@/lib/utils';
 
 export interface UserBasicInfo {
   id: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
+  fullName?: string;
+
 }
 
 export interface PromoterInfo extends UserBasicInfo {
@@ -40,6 +43,7 @@ export interface ContentAsset {
 
 export interface Campaign {
   id: string;
+  fullName?: string;
   title: string;
   description: string;
   advertiser: UserBasicInfo;
@@ -103,6 +107,12 @@ export interface TopPerformer {
   };
 }
 
+export interface advertiserPreferences {
+  isEmailNotificationEnabled: boolean;
+  isSmsNotificationEnabled: boolean
+
+}
+
 export interface AnalyticsOverview {
   performanceMetrics: {
     totalReach: number;
@@ -117,31 +127,22 @@ export interface AnalyticsOverview {
   topPerformers: TopPerformer[];
 }
 
-export interface CampaignPerformanceData {
-  campaigns: {
-    totalReach: number;
-    totalEngagements: number;
-    averageEngagementRate: number;
-    totalConversions: number;
-    byDevice: {
-      mobile: { uniqueViews: number };
-      desktop: { uniqueViews: number };
-      tablet: { uniqueViews: number };
-    };
-  };
-  promoters: {
-    totalCount: number;
-    activeCount: number;
-    averageEngagementRate: number;
-    topPerformers: Array<{
-      name: string;
-      engagementRate: number;
-      reach: number;
-    }>;
-  };
+export interface updatePersonalDto {
+  firstName?: string,
+  lastName?: string,
+  companyName: string,
+  phone: string
 }
 
+export interface PasswordResetDto {
+  oldPassword: string,
+  newPassword: string,
+  confirmNewPassword?: string
+}
+
+
 export const advertiserService = {
+
   getDashboard: async (): Promise<DashboardData> => {
     const response = await axiosInstance.get('/advertiser/dashboard');
     return response.data;
@@ -162,11 +163,30 @@ export const advertiserService = {
     return response.data;
   },
 
-  getCampaignPerformance: async (): Promise<CampaignPerformanceData> => {
-    const response = await axiosInstance.get('/advertiser/analytics/performance');
+  updatePreference: async (data: { [key: string]: boolean; }) => {
+    const response = await axiosInstance.put('/settings/advertiser/preferences', data)
     return response.data;
-  }
-};
+  },
+
+  updateProfile: async (data: updatePersonalDto) => {
+    const response = await axiosInstance.put('/advertiser/update', data)
+    return response.data
+  },
+
+
+  getProfile: async () => {
+    const response = await axiosInstance.get(`/advertiser/me`);
+    return response.data;
+  },
+
+  updateUserPassword: async (data: PasswordResetDto) => {
+    const { confirmNewPassword, ...rest } = data;
+    const response = await axiosInstance.put('/advertiser/change-password', rest)
+    return response.data;
+  },
+
+
+}
 
 // export type { 
 //   UserBasicInfo,

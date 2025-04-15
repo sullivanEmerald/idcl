@@ -28,6 +28,18 @@ interface AnalyticsData {
   }[];
 }
 
+export interface ProfileDataDto {
+  fullName: string;
+  phoneNumber: string,
+  companyName: string
+}
+
+export interface PasswordResetDto {
+  oldPassword: string,
+  newPassword: string
+  confirmNewPassword?: string
+}
+
 const promoterService = {
   getDashboard: async (): Promise<DashboardData> => {
     const response = await axiosInstance.get('/promoter/dashboard');
@@ -181,7 +193,37 @@ const promoterService = {
         lastClick: null
       }
     };
+  },
+
+  async getProfile() {
+    const response = await axiosInstance.get(`/promoter/me`);
+    return response.data;
+  },
+
+  async updatePromoterProfile(data: ProfileDataDto) {
+    const response = await axiosInstance.put('/promoter/update', data)
+    return response.data;
+  },
+
+  async upatePromoterPassword(data: PasswordResetDto) {
+    const response = await axiosInstance.put('/promoter/update/password', data)
+    return response.data;
+  },
+  async updatePromoterPreference(data: { [key: string]: boolean }) {
+    console.log(data)
+    const response = await axiosInstance.put('/settings/promoter/preference', data)
+    return response.data;
+  },
+
+  async removePromoterSocial(social: string) {
+    const response = await axiosInstance.delete(`/promoter/social?platform=${social}`)
+    return response.data;
+  },
+
+  async undoRemoval(social: string) {
+    const response = await axiosInstance.patch(`/promoter/social?platform=${social}`)
+    return response.data;
   }
-};
+}
 
 export default promoterService;

@@ -36,7 +36,7 @@ export default function AdvertiserDashboard() {
       try {
         const data = await advertiserService.getDashboard()
         setMetrics(data.metrics)
-        
+
         // Transform campaigns data to match CampaignList props
         const transformedCampaigns = data.recentCampaigns.map(campaign => ({
           id: campaign.id,
@@ -97,7 +97,7 @@ export default function AdvertiserDashboard() {
           New Campaign
         </button>
       </div>
-      
+
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Metric
           title="Active Campaigns"

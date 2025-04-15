@@ -27,6 +27,7 @@ export default function CampaignsOverview() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [loading, setLoading] = useState(true)
 
+
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
@@ -143,8 +144,8 @@ export default function CampaignsOverview() {
                           {(campaign.metrics.averageEngagementRate * 100).toFixed(1)}%
                         </span>
                       </div>
-                      <Progress 
-                        value={campaign.metrics.averageEngagementRate * 100} 
+                      <Progress
+                        value={campaign.metrics.averageEngagementRate * 100}
                         className="h-2"
                       />
                     </div>
