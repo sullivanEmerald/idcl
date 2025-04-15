@@ -1,4 +1,5 @@
 import { axiosInstance } from '@/lib/utils';
+import { ZodNullDef } from 'zod';
 
 export interface LoginCredentials {
   email: string;
@@ -15,26 +16,32 @@ export interface RegisterData {
 
 const authService = {
   async login(credentials: LoginCredentials) {
-    const response = await axiosInstance.post('/auth/login', credentials);
+    const response = await axiosInstance.post('/api/auth/login', credentials);
     if (response.data.access_token) {
       localStorage.setItem('token', response.data.access_token);
     }
-    console.log(response?.data);
+    console.log(response.data)
     return response.data;
   },
 
   async register(data: RegisterData) {
-    const response = await axiosInstance.post('/auth/register', data);
+    const response = await axiosInstance.post('/api/auth/register', data);
     return response.data;
   },
 
   async forgotPassword(email: string) {
-    const response = await axiosInstance.post('/auth/forgot-password', { email });
-    return response.data;
+    try {
+      const response = await axiosInstance.post('/api/users/forgot-password', { email });
+      console.log("Response:", response);
+      return response.data;
+    } catch (error) {
+      console.error("Error in forgotPassword service:", error);
+      throw error;
+    }
   },
 
-  async resetPassword(token: string, newPassword: string) {
-    const response = await axiosInstance.post('/auth/reset-password', {
+  async resetPassword(token: string | null, newPassword: string) {
+    const response = await axiosInstance.post('/api/users/reset-password', {
       token,
       newPassword,
     });
@@ -42,7 +49,7 @@ const authService = {
   },
 
   async verifyEmail(token: string) {
-    const response = await axiosInstance.get(`/auth/verify?token=${token}`);
+    const response = await axiosInstance.get(`/api/auth/verify?token=${token}`);
     return response.data;
   },
 
