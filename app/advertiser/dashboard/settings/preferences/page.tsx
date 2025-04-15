@@ -7,7 +7,7 @@ import advertiserService from '@/services/advertiser'
 import { Toaster, toast } from 'sonner'
 import { useEffect, useState } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
-import Loader from '@/components/layout/Loader'
+import Loader from '@/components/layout/loader'
 
 export default function PreferencesSettings() {
     const [isFetching, setIsFetching] = useState(true)
@@ -74,8 +74,8 @@ export default function PreferencesSettings() {
             }
             toast.success(checked ? `${handler} notification enabled` : `${handler} notification disabled`)
             console.log(data)
-        } catch (error: any) {
-            const responseError = error.response?.data?.message || 'An Error occured'
+        } catch (error: unknown) {
+            const responseError = error instanceof Error ? error.message : 'An Error occured'
             toast.error(responseError)
         } finally {
             setIsLoading((prev) => ({

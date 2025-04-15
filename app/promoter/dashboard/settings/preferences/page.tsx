@@ -7,7 +7,7 @@ import promoterService from '@/services/promoter'
 import { useEffect, useState } from 'react'
 import { Toaster, toast } from 'sonner'
 import { Skeleton } from '@/components/ui/skeleton'
-import Loader from '@/components/layout/Loader'
+import Loader from '@/components/layout/loader'
 
 
 export default function PreferencesSettings() {
