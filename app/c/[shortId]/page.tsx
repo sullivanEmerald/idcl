@@ -185,6 +185,20 @@ export default function CampaignPage({
                   onPlay={() =>
                     analyticsService.trackVideoPlay(params.shortId, promoterId)
                   }
+                  onTimeUpdate={() => {
+                    const video = videoRef.current;
+                    if (!video) return;
+                    
+                    // Track view duration at key intervals
+                    const currentTime = Math.floor(video.currentTime);
+                    if (currentTime === 3 || currentTime === 30 || currentTime === 60) {
+                      analyticsService.trackVideoProgress(
+                        params.shortId,
+                        currentTime,
+                        promoterId
+                      );
+                    }
+                  }}
                   onEnded={() =>
                     analyticsService.trackVideoComplete(
                       params.shortId,

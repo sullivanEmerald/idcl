@@ -20,6 +20,7 @@ export interface EventMetadata {
   referrer?: string;
   userAgent?: string;
   url?: string;
+  viewDuration?: number;
   [key: string]: any;
 }
 
@@ -175,6 +176,19 @@ class AnalyticsService {
       {
         interactionType: "video_complete",
         duration,
+      },
+      promoterId
+    );
+  }
+
+  trackVideoProgress(shortId: string, secondsWatched: number, promoterId?: string) {
+    return this.trackEvent(
+      shortId,
+      "view",
+      {
+        interactionType: "video_play",
+        viewDuration: secondsWatched,
+        videoProgress: secondsWatched
       },
       promoterId
     );

@@ -399,7 +399,6 @@ export default function CampaignPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <CampaignMetrics campaign={campaign} />
                 {campaign.activePromoters?.length > 0 ? (
                   <div className="rounded-md border">
                     <div className="grid grid-cols-7 gap-6 p-6 font-medium border-b bg-muted/50">
@@ -525,23 +524,6 @@ export default function CampaignPage() {
             <CardContent>
               <div className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* <div className="p-4 border rounded-lg">
-                    <h3 className="text-gray-600 mb-2">Social Media Engagement</h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Likes</span>
-                        <span>{campaign.metrics.totalEngagements?.toLocaleString() || '0'}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Views</span>
-                        <span>{campaign.metrics.totalViews?.toLocaleString() || '0'}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Shares</span>
-                        <span>{campaign.metrics.totalSharesByPlatform?.total?.toLocaleString() || '0'}</span>
-                      </div>
-                    </div>
-                  </div> */}
                   <div className="p-4 border rounded-lg">
                     <h3 className="text-gray-600 mb-2">Platform Performance</h3>
                     <div className="space-y-2">
@@ -568,6 +550,25 @@ export default function CampaignPage() {
                       </div>
                     </div>
                   </div>
+                  {campaign.contentAssets.some(asset => asset.contentType === "video") && (
+                    <div className="p-4 border rounded-lg">
+                      <h3 className="text-gray-600 mb-2">Video Metrics</h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>3-Second Views</span>
+                          <span>{campaign.metrics.viewDuration?.threeSeconds?.toLocaleString() || "0"}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>30-Second Views</span>
+                          <span>{campaign.metrics.viewDuration?.thirtySeconds?.toLocaleString() || "0"}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>1-Minute Views</span>
+                          <span>{campaign.metrics.viewDuration?.oneMinute?.toLocaleString() || "0"}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {/* <div className="p-4 border rounded-lg">
                     <h3 className="text-gray-600 mb-2">Engagement Rate</h3>
                     <div className="space-y-2">

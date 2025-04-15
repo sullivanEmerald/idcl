@@ -42,9 +42,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { campaignService, MediaFileClient } from "@/services/campaign";
+import { campaignService } from "@/services/campaign";
 import { axiosInstance } from "@/lib/utils";
-import type { CampaignFormData } from "@/services/campaign";
 // import dynamic from "next/dynamic";
 
 const PaystackButton = dynamic(
@@ -178,7 +177,7 @@ const campaignSchema = z.object({
   contentType: z.enum(["photo", "video", "carousel"]),
   mediaFiles: z
     .array(mediaFileSchema)
-    .min(1, "Please upload at least one media file"),
+    .optional(),
   contentGuidelines: z
     .string()
     .min(10, "Guidelines must be at least 10 characters"),
@@ -186,7 +185,21 @@ const campaignSchema = z.object({
   mentions: z.string().optional(),
   brandAssetLinks: z.string().url().optional(),
   promotionLink: z.string().url("Please enter a valid URL"),
+  contentAssets: z
+    .array(z.object({
+      type: z.string(),
+      contentType: z.string(),
+      url: z.string(),
+      size: z.number().optional(),
+      width: z.number().optional(),
+      height: z.number().optional(),
+    }))
+    .optional(),
+  ctaLabel: z.string().optional(),
 });
+
+// Update the form data type
+type CampaignFormData = z.infer<typeof campaignSchema>;
 
 export default function Page() {
   const router = useRouter();
@@ -230,6 +243,7 @@ export default function Page() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
 
   const validateStep = async () => {
     let fieldsToValidate: (keyof CampaignFormData)[] = [];
@@ -324,7 +338,7 @@ export default function Page() {
       );
 
       form.setValue("coverImage", response.data.url);
-      toast.success("Cover image uploaded successfully");
+      // toast.success("Cover image uploaded successfully");
     } catch (error: any) {
       console.error("Error uploading cover image:", error);
       toast.error(
@@ -373,8 +387,91 @@ export default function Page() {
     // Implementation for whatever you want to do with reference and after success call.
     console.log(reference);
     // Create campaign with payment
-    const formData = form.getValues();
-    const response = await campaignService.createCampaign(formData);
+    try {
+      const formValues = form.getValues();
+      
+      // Process media files if needed - this should happen before submitting
+      let processedContentAssets = formValues.contentAssets;
+      
+      // If we don't have pre-uploaded content assets but we do have mediaFiles, process them
+      if ((!processedContentAssets || processedContentAssets.length === 0) && formValues.mediaFiles && formValues.mediaFiles.length > 0) {
+        const mediaUploads = [];
+        for (const mediaFile of formValues.mediaFiles) {
+          if (mediaFile && mediaFile.file) {
+            try {
+              const formData = new FormData();
+              formData.append("file", mediaFile.file);
+              
+              const fileType = mediaFile.type === "video" ? "campaign-video" : "campaign-photo";
+              const response = await axiosInstance.post(
+                `/upload`,
+                formData,
+                {
+                  headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
+                }
+              );
+              
+              mediaUploads.push({
+                type: mediaFile.type === "video" ? "video" : "photo",
+                contentType: mediaFile.type,
+                url: response.data.url,
+                size: mediaFile.file.size,
+                width: response.data.width || 0,
+                height: response.data.height || 0,
+                carouselIndex: formValues.contentType === "carousel" ? mediaUploads.length : undefined,
+              });
+            } catch (error) {
+              console.error("Error uploading media file:", error);
+              toast.error("Failed to upload media files. Please try again.");
+              return;
+            }
+          }
+        }
+        
+        processedContentAssets = mediaUploads;
+      }
+
+      const pricePerPost =
+        formValues.goal === "awareness" ? 30 : formValues.goal === "engagement" ? 200 : 400;
+      
+      // Create the campaign payload with proper field mappings
+      const campaignData = {
+        title: formValues.name,
+        description: formValues.description,
+        coverImage: formValues.coverImage,
+        conversionValue: Number(formValues.pricePerImpression) || 0,
+        budget: Number(formValues.estimatedBudget),
+        pricePerPost,
+        requiredPlatforms: formValues.platforms || [],
+        targetedNiches: formValues.niches || [],
+        campaignGoal: formValues.goal,
+        targetLocation: formValues.location[0] || "",
+        targetGender: formValues.gender,
+        minFollowers: Number(formValues.targetImpressions) || 1000,
+        minEngagementRate: 1,
+        targetPromotions: 10,
+        promotionLink: formValues.promotionLink,
+        startDate: formValues.startDate,
+        endDate: formValues.endDate,
+        contentAssets: processedContentAssets || [],
+        requirements: {
+          contentGuidelines: formValues.contentGuidelines,
+          postingSchedule: {
+            startTime: formValues.postingSchedule.startTime,
+            endTime: formValues.postingSchedule.endTime,
+            days: formValues.postingSchedule.days,
+          },
+          hashtags: formValues.hashtags ? formValues.hashtags.split(',').map(tag => tag.trim()) : [],
+          mentions: formValues.mentions ? formValues.mentions.split(',').map(mention => mention.trim()) : [],
+          brandAssetLinks: formValues.brandAssetLinks ? [formValues.brandAssetLinks] : [],
+        },
+        paymentReference: reference.reference,
+      };
+      
+      // Send the campaign data directly to the API
+      const response = await axiosInstance.post('/campaigns', campaignData);
 
     toast.dismiss();
     toast.success(
@@ -393,6 +490,12 @@ export default function Page() {
     setTimeout(() => {
       router.push("/advertiser/dashboard/campaigns");
     }, 2000);
+    } catch (error: any) {
+      console.error("Error creating campaign:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to create campaign. Please try again."
+      );
+    }
   };
 
   // you can call this function anything
@@ -408,87 +511,146 @@ export default function Page() {
     onClose,
   };
 
-  // const handleFileChange = async (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const files = event.target.files;
-  //   if (!files?.length) return;
-
-  //   const fileArray = Array.from(files);
-  //   const mediaFiles: MediaFileClient[] = fileArray.map((file) => ({
-  //     type: file.type.startsWith("video/")
-  //       ? ("video" as const)
-  //       : ("image" as const),
-  //     url: typeof window !== "undefined" ? URL.createObjectURL(file) : "",
-  //     file,
-  //   }));
-
-  //   form.setValue("mediaFiles", mediaFiles);
-  // };
-
-  const onSubmit = async (data: CampaignFormData) => {
+  const handleMediaFileUpload = async (file: File, type: "image" | "video") => {
     try {
-      // Validate all fields before submitting
-      const isValid = await trigger();
-      if (!isValid) {
-        const errorMessages = Object.entries(errors)
-          .map(([field, error]) => {
-            if (error?.message) {
-              const fieldName = field
-                .split(".")
-                .map((part) =>
-                  part
-                    .replace(/([A-Z])/g, " $1")
-                    .toLowerCase()
-                    .replace(/^./, (str) => str.toUpperCase())
-                )
-                .join(" › ");
-              return `${fieldName}: ${error.message}`;
-            }
-            return null;
-          })
-          .filter(Boolean);
+      setIsUploadingMedia(true);
+      const formData = new FormData();
+      formData.append("file", file);
 
-        if (errorMessages.length > 0) {
-          toast.error(
-            <div className="max-h-[80vh] overflow-auto">
-              <p className="font-medium mb-2">
-                Please fix the following errors:
-              </p>
-              <ul className="list-disc pl-4 space-y-1">
-                {errorMessages.map((message, index) => (
-                  <li key={index}>{message}</li>
-                ))}
-              </ul>
-            </div>
-          );
-          return;
-        }
-      }
-
-      setIsSubmitting(true);
-      toast.loading("Processing payment...");
-
-      // initializePayment({ onSuccess, onClose });
-    } catch (error: any) {
-      console.error("Error creating campaign:", error);
-      toast.dismiss(); // Dismiss the loading toast
-      toast.error(
-        <div className="space-y-2">
-          <p className="font-medium">Failed to create campaign</p>
-          <p className="text-sm text-muted-foreground">
-            {error.response?.data?.message ||
-              "An unexpected error occurred. Please try again."}
-          </p>
-        </div>,
+      const response = await axiosInstance.post(
+        `/upload/`,
+        formData,
         {
-          duration: 5000,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
+
+      // Store the uploaded asset in contentAssets form field
+      const asset = {
+        type: type === "image" ? "photo" : "video",
+        contentType: type,
+        url: response.data.url,
+        size: file.size,
+        width: response.data.width || 0,
+        height: response.data.height || 0,
+      };
+      
+      form.setValue("contentAssets", [asset]);
+      toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`);
+    } catch (error: any) {
+      console.error(`Error uploading ${type} file:`, error);
+      toast.error(
+        error.response?.data?.message ||
+          `Failed to upload ${type} file. Please try again.`
+      );
     } finally {
+      setIsUploadingMedia(false);
+    }
+  };
+
+  const onSubmit = async (data: CampaignFormData) => {
+    const currentIndex = STEPS.indexOf(currentStep);
+    if (currentIndex < STEPS.length - 1) {
+      setCurrentStep(STEPS[currentIndex + 1]);
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Create the campaign payload
+      const campaignData: any = {
+        title: data.name,
+        description: data.description,
+        coverImage: data.coverImage,
+        conversionValue: Number(data.pricePerImpression) || 0,
+        budget: Number(data.budget) * 100, // Convert to kobo
+        pricePerPost: Number(data.pricePerPost),
+        requiredPlatforms: data.platforms || [],
+        targetedNiches: data.niches || [],
+        campaignGoal: data.goal,
+        targetLocation: data.location,
+        targetGender: data.gender,
+        minFollowers: Number(data.targetImpressions) || 1000,
+        minEngagementRate: Number(data.pricePerImpression) || 0.02,
+        targetPromotions: Math.floor(Number(data.budget) / Number(data.pricePerPost)),
+        promotionLink: data.promotionLink,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        requirements: {
+          contentGuidelines: data.contentGuidelines,
+          postingSchedule: {
+            startTime: data.postingSchedule.startTime,
+            endTime: data.postingSchedule.endTime,
+            days: data.postingSchedule.days,
+          },
+          hashtags: data.hashtags ? data.hashtags.split(',').map(tag => tag.trim()) : [],
+          mentions: data.mentions ? data.mentions.split(',').map(mention => mention.trim()) : [],
+          brandAssetLinks: data.brandAssetLinks ? [data.brandAssetLinks] : [],
+        },
+      };
+      
+      // Use the pre-uploaded contentAssets if available
+      if (data.contentAssets && data.contentAssets.length > 0) {
+        campaignData.contentAssets = data.contentAssets;
+      } 
+      // Otherwise, process the mediaFiles
+      else if (data.mediaFiles && data.mediaFiles.length > 0) {
+        const mediaFileUploads = [];
+        for (const mediaFile of data.mediaFiles) {
+          if (mediaFile.file) {
+            const formData = new FormData();
+            formData.append("file", mediaFile.file);
+            
+            const fileType = mediaFile.type === "video" ? "campaign-video" : "campaign-photo";
+            const response = await axiosInstance.post(
+              `/upload`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            
+            mediaFileUploads.push({
+              type: mediaFile.type === "video" ? "video" : "photo",
+              contentType: mediaFile.type,
+              url: response.data.url,
+              size: mediaFile.file.size,
+              width: response.data.width || 0,
+              height: response.data.height || 0,
+            });
+          }
+        }
+        
+        campaignData.contentAssets = mediaFileUploads;
+      } else {
+        toast.error("Please upload at least one media file for your campaign");
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Create the campaign
+      const response = await campaignService.createCampaign(campaignData);
+      
+      toast.success("Campaign created successfully!");
+      router.push(`/advertiser/dashboard/campaigns/${response._id}`);
+    } catch (error: any) {
+      console.error("Error creating campaign:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to create campaign. Please try again."
+      );
       setIsSubmitting(false);
     }
   };
+
+  // Safely check for media files existence first
+  const mediaFiles = form.watch("mediaFiles");
+  const mediaFilesExist = Array.isArray(mediaFiles) && mediaFiles.length > 0;
+  const multipleMediaFiles = Array.isArray(mediaFiles) && mediaFiles.length > 1;
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 p-8">
@@ -1104,6 +1266,7 @@ export default function Page() {
                         onDrop={(files) => {
                           const file = files[0];
                           if (file) {
+                            // Set the mediaFiles for UI preview
                             form.setValue("mediaFiles", [
                               {
                                 type: "image" as const,
@@ -1111,25 +1274,37 @@ export default function Page() {
                                 file,
                               },
                             ]);
+                            
+                            // Upload the image asynchronously
+                            handleMediaFileUpload(file, "image");
                           }
                         }}
                       />
                       {form.watch("mediaFiles")?.[0] && (
                         <div className="relative aspect-square w-full overflow-hidden rounded-lg border">
                           <img
-                            src={form.watch("mediaFiles")[0].url}
+                            src={form.watch("mediaFiles")?.[0]?.url || ''}
                             alt="Preview"
                             className="object-cover"
                           />
+                          {isUploadingMedia ? (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                            </div>
+                          ) : (
                           <Button
                             type="button"
                             variant="destructive"
                             size="icon"
                             className="absolute right-2 top-2"
-                            onClick={() => form.setValue("mediaFiles", [])}
+                              onClick={() => {
+                                form.setValue("mediaFiles", []);
+                                form.setValue("contentAssets", []);
+                              }}
                           >
                             ×
                           </Button>
+                          )}
                         </div>
                       )}
                     </div>
@@ -1152,6 +1327,8 @@ export default function Page() {
                                 return;
                               }
                               form.clearErrors("mediaFiles");
+                              
+                              // Set the mediaFiles for UI preview
                               form.setValue("mediaFiles", [
                                 {
                                   type: "video" as const,
@@ -1159,6 +1336,9 @@ export default function Page() {
                                   file,
                                 },
                               ]);
+                              
+                              // Upload the video asynchronously
+                              handleMediaFileUpload(file, "video");
                             }
                           }}
                         />
@@ -1172,21 +1352,30 @@ export default function Page() {
                         <div className="relative mx-auto max-w-md overflow-hidden rounded-lg border">
                           <div className="relative aspect-video bg-black flex items-center justify-center">
                             <video
-                              src={form.watch("mediaFiles")[0].url}
+                              src={form.watch("mediaFiles")?.[0]?.url || ''}
                               controls
                               playsInline
                               className="max-h-full max-w-full"
                             />
                           </div>
+                          {isUploadingMedia ? (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                            </div>
+                          ) : (
                           <Button
                             type="button"
                             variant="destructive"
                             size="icon"
                             className="absolute right-2 top-2 z-10"
-                            onClick={() => form.setValue("mediaFiles", [])}
+                              onClick={() => {
+                                form.setValue("mediaFiles", []);
+                                form.setValue("contentAssets", []);
+                              }}
                           >
                             ×
                           </Button>
+                          )}
                         </div>
                       )}
                     </div>
@@ -1216,11 +1405,11 @@ export default function Page() {
                           ]);
                         }}
                       />
-                      {form.watch("mediaFiles")?.length > 0 && (
+                      {mediaFilesExist && (
                         <div className="relative mx-auto max-w-md">
                           <div className="overflow-hidden rounded-lg border bg-background">
                             <div className="relative aspect-video">
-                              {form.watch("mediaFiles").map((media, index) => (
+                              {(mediaFiles || []).map((media, index) => (
                                 <div
                                   key={index}
                                   className={cn(
@@ -1256,24 +1445,24 @@ export default function Page() {
                                   )}
                                 </div>
                               ))}
-                              <Button
+                              <button
                                 type="button"
-                                variant="destructive"
-                                size="icon"
-                                className="absolute right-2 top-2 z-10"
+                                className="absolute right-2 top-2 z-10 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
                                 onClick={() => {
-                                  const files = form.watch("mediaFiles");
+                                  const files = form.watch("mediaFiles") || [];
+                                  if (files.length > 0) {
                                   files.splice(currentSlide, 1);
                                   form.setValue("mediaFiles", [...files]);
                                   if (currentSlide > 0)
                                     setCurrentSlide(currentSlide - 1);
+                                  }
                                 }}
                               >
                                 ×
-                              </Button>
+                              </button>
                             </div>
                             <div className="flex items-center justify-center gap-2 p-2">
-                              {form.watch("mediaFiles").map((_, index) => (
+                              {(mediaFiles || []).map((_, index) => (
                                 <button
                                   key={index}
                                   type="button"
@@ -1288,22 +1477,18 @@ export default function Page() {
                               ))}
                             </div>
                           </div>
-                          {form.watch("mediaFiles").length > 1 && (
+                          {multipleMediaFiles && (
                             <>
                               <Button
                                 type="button"
                                 variant="outline"
                                 size="icon"
                                 className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full"
-                                onClick={() =>
-                                  setCurrentSlide(
-                                    (prev) =>
-                                      (prev -
-                                        1 +
-                                        form.watch("mediaFiles").length) %
-                                      form.watch("mediaFiles").length
-                                  )
-                                }
+                                onClick={() => {
+                                  const files = mediaFiles || [];
+                                  const length = files.length || 1;
+                                  setCurrentSlide((prev) => (prev - 1 + length) % length);
+                                }}
                               >
                                 <ChevronLeft className="h-4 w-4" />
                               </Button>
@@ -1312,13 +1497,11 @@ export default function Page() {
                                 variant="outline"
                                 size="icon"
                                 className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full"
-                                onClick={() =>
-                                  setCurrentSlide(
-                                    (prev) =>
-                                      (prev + 1) %
-                                      form.watch("mediaFiles").length
-                                  )
-                                }
+                                onClick={() => {
+                                  const files = mediaFiles || [];
+                                  const length = files.length || 1;
+                                  setCurrentSlide((prev) => (prev + 1) % length);
+                                }}
                               >
                                 <ChevronRight className="h-4 w-4" />
                               </Button>
@@ -1564,35 +1747,6 @@ export default function Page() {
                   Next
                 </Button>
               ) : (
-                // <Button type="submit" variant="new" disabled={isSubmitting}>
-                //   {isSubmitting ? (
-                //     <div className="flex items-center">
-                //       <svg
-                //         className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                //         xmlns="http://www.w3.org/2000/svg"
-                //         fill="none"
-                //         viewBox="0 0 24 24"
-                //       >
-                //         <circle
-                //           className="opacity-25"
-                //           cx="12"
-                //           cy="12"
-                //           r="10"
-                //           stroke="currentColor"
-                //           strokeWidth="4"
-                //         />
-                //         <path
-                //           className="opacity-75"
-                //           fill="currentColor"
-                //           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                //         />
-                //       </svg>
-                //       Creating Campaign...
-                //     </div>
-                //   ) : (
-                //     "Create Campaign"
-                //   )}
-                // </Button>
                 <PaystackButton {...componentProps} />
               )}
             </div>
