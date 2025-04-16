@@ -71,7 +71,7 @@ export default function CampaignPage({
         setCampaign(response.data);
 
         // Track page view after campaign loads
-        analyticsService.trackPageView(params.shortId, promoterId);
+        analyticsService.trackUserView(params.shortId, promoterId);
       } catch (error) {
         console.error("Failed to fetch campaign:", error);
         // router.push('/404');

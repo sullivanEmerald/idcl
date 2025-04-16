@@ -9,6 +9,7 @@ export type InteractionType =
   | "video_complete"
   | "carousel_slide"
   | "cta_click"
+  | "user_view"
   | "url_shortener_click";
 
 export interface EventMetadata {
@@ -138,6 +139,19 @@ class AnalyticsService {
       "view",
       {
         interactionType: "campaign_view",
+        channel: this.pageReferrer,
+        campaignId: shortId
+      },
+      promoterId
+    );
+  }
+
+  trackUserView(shortId: string, promoterId?: string) {
+    return this.trackEvent(
+      shortId,
+      "view",
+      {
+        interactionType: "user_view",
         channel: this.pageReferrer,
         campaignId: shortId
       },
