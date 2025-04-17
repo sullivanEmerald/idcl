@@ -16,7 +16,8 @@ export default function AdvertiserDashboard() {
     pausedCampaigns: 0,
     totalBudget: 0,
     activePromoters: 0,
-    totalReach: 0
+    totalReach: 0,
+    availableBudget: 0
   })
   const [recentCampaigns, setRecentCampaigns] = useState<{
     id: string
@@ -111,7 +112,7 @@ export default function AdvertiserDashboard() {
           title="Active Campaigns"
           value={metrics.activeCampaigns}
           description="Live campaigns"
-          trend="+2.5%"
+          trend=""
           icon={<Megaphone className="h-4 w-4 sm:h-5 sm:w-5" />}
           className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200"
         />
@@ -134,8 +135,8 @@ export default function AdvertiserDashboard() {
         <Metric
           title="Total Budget"
           value={`₦${metrics.totalBudget.toLocaleString()}`}
-          description="Available funds"
-          trend="+12.3%"
+          description={`Available: ₦${metrics.availableBudget.toLocaleString()}`}
+          trend=""
           icon={<DollarSign className="h-4 w-4 sm:h-5 sm:w-5" />}
           className="bg-gradient-to-br from-green-50 to-green-100 border-green-200"
         />
@@ -143,7 +144,7 @@ export default function AdvertiserDashboard() {
           title="Active Promoters"
           value={metrics.activePromoters}
           description="Working with you"
-          trend="+5.1%"
+          trend=""
           icon={<Users className="h-4 w-4 sm:h-5 sm:w-5" />}
           className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200"
         />
@@ -151,7 +152,7 @@ export default function AdvertiserDashboard() {
           title="Total Reach"
           value={metrics.totalReach.toLocaleString()}
           description="Audience size"
-          trend="+18.7%"
+          trend=""
           icon={<TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />}
           className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200"
         />

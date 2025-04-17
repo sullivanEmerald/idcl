@@ -21,6 +21,7 @@ export interface DashboardMetrics {
   totalBudget: number;
   activePromoters: number;
   totalReach: number;
+  availableBudget: number;
 }
 
 export interface CampaignRequirements {
