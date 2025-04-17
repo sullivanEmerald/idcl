@@ -40,11 +40,13 @@ import {
   LayoutIcon,
   ChevronLeft,
   ChevronRight,
+  AlertCircle,
+  Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { campaignService } from "@/services/campaign";
 import { axiosInstance } from "@/lib/utils";
-// import dynamic from "next/dynamic";
+import { Alert, AlertDescription, AlertTitle } from "../../../../../components/ui/alert";
 
 const PaystackButton = dynamic(
   () => import("react-paystack").then((mod) => mod.PaystackButton),
@@ -436,7 +438,6 @@ export default function Page() {
       const pricePerPost =
         formValues.goal === "awareness" ? 30 : formValues.goal === "engagement" ? 200 : 400;
       
-      // Create the campaign payload with proper field mappings
       const campaignData = {
         title: formValues.name,
         description: formValues.description,
@@ -470,7 +471,6 @@ export default function Page() {
         paymentReference: reference.reference,
       };
       
-      // Send the campaign data directly to the API
       const response = await axiosInstance.post('/campaigns', campaignData);
 
     toast.dismiss();
@@ -514,35 +514,81 @@ export default function Page() {
   const handleMediaFileUpload = async (file: File, type: "image" | "video") => {
     try {
       setIsUploadingMedia(true);
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await axiosInstance.post(
-        `/upload/`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      // Store the uploaded asset in contentAssets form field
-      const asset = {
-        type: type === "image" ? "photo" : "video",
-        contentType: type,
-        url: response.data.url,
-        size: file.size,
-        width: response.data.width || 0,
-        height: response.data.height || 0,
-      };
       
-      form.setValue("contentAssets", [asset]);
-      toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`);
+      // Always use Cloudinary for videos
+      if (type === "video") { 
+        toast.info("Uploading video to cloud storage...");
+        
+        // Cloudinary direct upload
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = 'adminting'
+        
+        if (!cloudName || !uploadPreset) {
+          throw new Error("Cloudinary configuration is missing");
+        }
+        
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+        formData.append("resource_type", "video");
+        formData.append("max_file_size", "100000000"); // 100MB in bytes
+        
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/upload`, {
+          method: "POST",
+          body: formData,
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error?.message || "Error uploading to Cloudinary");
+        }
+        
+        // Store the uploaded asset in contentAssets form field
+        const asset = {
+          type: "video",
+          contentType: "video",
+          url: data.secure_url,
+          thumbnailUrl: data.secure_url.replace("/video/upload/", "/video/upload/c_thumb,w_640,g_face/"),
+          size: file.size,
+          width: data.width || 0,
+          height: data.height || 0,
+        };
+        
+        form.setValue("contentAssets", [asset]);
+        toast.success("Video uploaded successfully");
+      } else {
+        // Regular upload through your backend for images
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await axiosInstance.post(
+          `/upload/`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        // Store the uploaded asset in contentAssets form field
+        const asset = {
+          type: type === "image" ? "photo" : "video",
+          contentType: type,
+          url: response.data.url,
+          size: file.size,
+          width: response.data.width || 0,
+          height: response.data.height || 0,
+        };
+        
+        form.setValue("contentAssets", [asset]);
+        toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`);
+      }
     } catch (error: any) {
       console.error(`Error uploading ${type} file:`, error);
       toast.error(
-        error.response?.data?.message ||
+        error.response?.data?.message || error.message ||
           `Failed to upload ${type} file. Please try again.`
       );
     } finally {
@@ -649,6 +695,10 @@ export default function Page() {
   const mediaFiles = form.watch("mediaFiles");
   const mediaFilesExist = Array.isArray(mediaFiles) && mediaFiles.length > 0;
   const multipleMediaFiles = Array.isArray(mediaFiles) && mediaFiles.length > 1;
+
+  // Use a more specific check to prevent TypeScript errors
+  const contentAssets = form.watch("contentAssets");
+  const hasContentAssets = Array.isArray(contentAssets) && contentAssets.length > 0;
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 p-8">
@@ -1311,71 +1361,105 @@ export default function Page() {
                   {contentType === "video" && (
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <FileUploader
-                          accept="video/mp4,video/quicktime"
-                          maxSize={104857600} // 100MB
-                          onDrop={(files) => {
-                            const file = files[0];
-                            if (file) {
-                              if (file.size > 104857600) {
-                                form.setError("mediaFiles", {
-                                  type: "size",
-                                  message: "Video size must be less than 100MB",
-                                });
-                                return;
-                              }
-                              form.clearErrors("mediaFiles");
-                              
-                              // Set the mediaFiles for UI preview
-                              form.setValue("mediaFiles", [
-                                {
-                                  type: "video" as const,
-                                  url: URL.createObjectURL(file),
-                                  file,
-                                },
-                              ]);
-                              
-                              // Upload the video asynchronously
-                              handleMediaFileUpload(file, "video");
-                            }
-                          }}
-                        />
-                        {form.formState.errors.mediaFiles?.type === "size" && (
-                          <p className="text-sm text-destructive">
-                            {form.formState.errors.mediaFiles.message}
-                          </p>
-                        )}
-                      </div>
-                      {form.watch("mediaFiles")?.[0] && (
-                        <div className="relative mx-auto max-w-md overflow-hidden rounded-lg border">
-                          <div className="relative aspect-video bg-black flex items-center justify-center">
-                            <video
-                              src={form.watch("mediaFiles")?.[0]?.url || ''}
-                              controls
-                              playsInline
-                              className="max-h-full max-w-full"
+                        <Label>Media Content</Label>
+                        <div className="grid gap-4">
+                          <div className="border border-dashed rounded-lg p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                            onClick={() => document.getElementById('file-upload')?.click()}>
+                            <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                            <p className="text-sm font-medium mb-1">Upload your campaign media</p>
+                            <p className="text-xs text-muted-foreground">
+                              Drag and drop or click to upload
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Supported formats: .jpg, .png, .mp4, .mov<br />
+                              <span className="font-medium">Videos up to 100MB supported</span>
+                            </p>
+                            
+                            <input
+                              id="file-upload"
+                              type="file"
+                              className="hidden"
+                              accept="image/jpeg,image/png,video/mp4,video/quicktime"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const fileType = file.type.startsWith("image/") ? "image" : "video";
+                                  
+                                  // Check file size for warning
+                                  if (fileType === "video" && file.size > 50 * 1024 * 1024) {
+                                    toast.warning("Large video detected. Upload may take a few minutes.");
+                                  }
+                                  
+                                  handleMediaFileUpload(file, fileType);
+                                }
+                              }}
                             />
                           </div>
-                          {isUploadingMedia ? (
-                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                          
+                          {isUploadingMedia && (
+                            <div className="space-y-2">
+                              <div className="h-2 w-full bg-muted overflow-hidden rounded-full">
+                                <div className="h-full bg-primary animate-pulse rounded-full"></div>
+                              </div>
+                              <p className="text-xs text-center text-muted-foreground">
+                                Uploading media... Please wait
+                              </p>
                             </div>
-                          ) : (
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute right-2 top-2 z-10"
-                              onClick={() => {
-                                form.setValue("mediaFiles", []);
-                                form.setValue("contentAssets", []);
-                              }}
-                          >
-                            ×
-                          </Button>
                           )}
+                          
+                          {hasContentAssets && !isUploadingMedia && (
+                            <div className="space-y-2">
+                              <div className="aspect-video relative rounded-lg overflow-hidden border">
+                                {contentAssets[0].contentType === "image" ? (
+                                  <img
+                                    src={contentAssets[0].url}
+                                    alt="Campaign media"
+                                    className="object-contain w-full h-full"
+                                  />
+                                ) : (
+                                  <div className="relative w-full h-full">
+                                    <video
+                                      src={contentAssets[0].url}
+                                      controls
+                                      className="object-contain w-full h-full"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                              
+                              <div className="flex justify-between items-center">
+                                <p className="text-xs text-muted-foreground">
+                                  {contentAssets[0].contentType === "image" 
+                                    ? "Image" 
+                                    : "Video"} uploaded ({Math.round((contentAssets[0].size || 0) / 1024 / 1024 * 10) / 10} MB)
+                                </p>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    document.getElementById('file-upload')?.click();
+                                  }}
+                                >
+                                  Replace
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                          
+                          <Alert variant="info" className="mt-2">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>File Size Information</AlertTitle>
+                            <AlertDescription>
+                              <ul className="text-xs list-disc pl-4 space-y-1 mt-2">
+                                <li>Videos under 10MB will upload through our server</li>
+                                <li>Larger videos (10-100MB) will upload directly to cloud storage</li>
+                                <li>For best performance, compress videos before uploading</li>
+                              </ul>
+                            </AlertDescription>
+                          </Alert>
                         </div>
-                      )}
+                      </div>
                     </div>
                   )}
 
