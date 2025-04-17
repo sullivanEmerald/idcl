@@ -154,7 +154,7 @@ export default function CampaignPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Promoters Reach</CardTitle>
+            <CardTitle className="text-sm font-medium">Promoters Impression</CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -162,13 +162,13 @@ export default function CampaignPage() {
               {campaign.metrics.promoterViews}
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              {campaign.metrics.uniquePromoterViews} unique promoter views
+              {campaign.metrics.uniquePromoterViews} unique promoter reach
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Reach</CardTitle>
+            <CardTitle className="text-sm font-medium">Impressions</CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -179,7 +179,7 @@ export default function CampaignPage() {
               {campaign.metrics.byDevice.desktop.uniqueViews +
                 campaign.metrics.byDevice.mobile.uniqueViews +
                 campaign.metrics.byDevice.tablet.uniqueViews}{" "}
-              unique views
+              reach
             </p>
           </CardContent>
         </Card>
@@ -548,7 +548,7 @@ export default function CampaignPage() {
                             <span className="capitalize">{platform}</span>
                             <span>
                               {typeof data === 'object' && data !== null && 'count' in data 
-                                ? data.count.toLocaleString() 
+                                ? (typeof data.count === 'number' ? data.count.toLocaleString() : String(data.count))
                                 : "0"}
                             </span>
                           </div>

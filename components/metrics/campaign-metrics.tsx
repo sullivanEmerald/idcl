@@ -135,12 +135,58 @@ export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Promoter CTR</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            Campaign Average CTR
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{calculateCTR(campaign)}%</div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Promoter Click-Through Rate
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            0%
-            {/* {(campaign.metrics.promoterEngagement?.clickthroughRate * 100 || 0).toFixed(2)}% */}
+            {calculatePromoterEngagementRate(campaign)}%
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            Promoter Clicks: {formatNumber(calculatePromoterClicks(campaign))}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Formula: Promoter Views ÷ Promoter Clicks
+          </p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Promoter Interactions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-sm space-y-2">
+            <div className="flex justify-between">
+              <span>Total Views:</span>
+              <span>{formatNumber(campaign.metrics.promoterViews || 0)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Unique Views:</span>
+              <span>
+                {formatNumber(campaign.metrics.uniquePromoterViews || 0)}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>Estimated Clicks:</span>
+              <span>{formatNumber(calculatePromoterClicks(campaign))}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Active Promoters:</span>
+              <span>{formatNumber(campaign.activePromoters?.length || 0)}</span>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -290,28 +336,71 @@ export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
 
   const getTopChannels = (campaign: Campaign): [string, number][] => {
     const channels = campaign.metrics.byChannel || {};
-    
+
     // If byChannel is empty, use data from bySocialPlatform
-    if (Object.keys(channels).length === 0 && campaign.metrics.bySocialPlatform) {
+    if (
+      Object.keys(channels).length === 0 &&
+      campaign.metrics.bySocialPlatform
+    ) {
       const socialPlatforms = campaign.metrics.bySocialPlatform;
       return Object.entries(socialPlatforms)
-        .filter(([platform, data]) => 
-          platform !== '_id' && 
-          platform !== 'id' && 
-          typeof data === 'object' && 
-          data !== null && 
-          'count' in data)
+        .filter(
+          ([platform, data]) =>
+            platform !== "_id" &&
+            platform !== "id" &&
+            typeof data === "object" &&
+            data !== null &&
+            "count" in data
+        )
         .map(([platform, data]): [string, number] => [
-          platform, 
-          typeof data === 'object' && data !== null && 'count' in data ? data.count : 0
+          platform,
+          typeof data === "object" && data !== null && "count" in data
+            ? data.count
+            : 0,
         ])
         .sort((a, b) => b[1] - a[1])
         .slice(0, 3);
     }
-    
+
     return Object.entries(channels)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3);
+  };
+
+  const calculatePromoterClicks = (campaign: Campaign): number => {
+    // Sum up clicks from active promoters
+    let promoterClicks = 0;
+
+    if (campaign.activePromoters && campaign.activePromoters.length > 0) {
+      // Count click events from promoters
+      campaign.activePromoters.forEach((promoter) => {
+        if (promoter.eventTypes && promoter.eventTypes.includes("click")) {
+          // If we have detailed event counts, use them
+          if (promoter.totalEvents) {
+            // Estimate clicks as a portion of total events if exact click count isn't available
+            const eventTypes = promoter.eventTypes.length;
+            const estimatedClicksPerPromoter =
+              eventTypes > 0
+                ? Math.round(promoter.totalEvents / eventTypes)
+                : 0;
+
+            promoterClicks += estimatedClicksPerPromoter;
+          }
+        }
+      });
+    }
+
+    return promoterClicks;
+  };
+
+  const calculatePromoterEngagementRate = (campaign: Campaign): string => {
+    const promoterImpressions = campaign.metrics.promoterViews || 0;
+    const promoterClicks = calculatePromoterClicks(campaign);
+
+    if (promoterImpressions === 0) return "0.00";
+
+    // Calculate engagement rate: (Clicks / Impressions) * 100
+    return ((promoterImpressions / promoterClicks) * 100).toFixed(2);
   };
 
   return (

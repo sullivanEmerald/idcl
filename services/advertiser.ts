@@ -121,6 +121,8 @@ export interface AnalyticsOverview {
   performanceMetrics: {
     totalReach: number;
     totalEngagements: number;
+    totalClicks: number;
+    totalVideoViews: number;
     averageEngagementRate: number;
   };
   topCampaigns: {
@@ -133,6 +135,8 @@ export interface AnalyticsOverview {
     date: string;
     views: number;
     engagements: number;
+    clicks: number;
+    videoViews: number;
   }[];
 }
 

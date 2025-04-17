@@ -29,6 +29,8 @@ interface PerformanceChartProps {
     views?: number
     reach?: number
     engagements: number
+    clicks?: number
+    videoViews?: number
   }[]
 }
 
@@ -37,6 +39,8 @@ type ChartDataPoint = {
   views?: number
   reach?: number
   engagements: number
+  clicks?: number
+  videoViews?: number
 }
 
 interface MonthlyData {
@@ -44,6 +48,8 @@ interface MonthlyData {
     dates: string[]
     views: number[]
     engagements: number[]
+    clicks: number[]
+    videoViews: number[]
   }
 }
 
@@ -52,6 +58,12 @@ export function PerformanceChart({ data }: PerformanceChartProps) {
   const [availableMonths, setAvailableMonths] = useState<string[]>([])
   const [filteredData, setFilteredData] = useState<ChartDataPoint[]>(data)
   const [monthlyData, setMonthlyData] = useState<MonthlyData>({})
+  const [visibleMetrics, setVisibleMetrics] = useState({
+    views: true,
+    engagements: true,
+    clicks: false,
+    videoViews: false
+  })
 
   // Group data by months when component mounts or data changes
   useEffect(() => {
@@ -68,13 +80,17 @@ export function PerformanceChart({ data }: PerformanceChartProps) {
         groupedByMonth[monthName] = {
           dates: [],
           views: [],
-          engagements: []
+          engagements: [],
+          clicks: [],
+          videoViews: []
         }
       }
       
       groupedByMonth[monthName].dates.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }))
       groupedByMonth[monthName].views.push(item.views || item.reach || 0)
       groupedByMonth[monthName].engagements.push(item.engagements)
+      groupedByMonth[monthName].clicks.push(item.clicks || 0)
+      groupedByMonth[monthName].videoViews.push(item.videoViews || 0)
     })
     
     setMonthlyData(groupedByMonth)
@@ -97,7 +113,9 @@ export function PerformanceChart({ data }: PerformanceChartProps) {
           return {
             date: date,
             views: monthData.views[index],
-            engagements: monthData.engagements[index]
+            engagements: monthData.engagements[index],
+            clicks: monthData.clicks[index],
+            videoViews: monthData.videoViews[index]
           }
         })
         setFilteredData(filtered)
@@ -116,23 +134,45 @@ export function PerformanceChart({ data }: PerformanceChartProps) {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   });
 
+  // Toggle visibility of metrics
+  const toggleMetric = (metric: keyof typeof visibleMetrics) => {
+    setVisibleMetrics(prev => ({
+      ...prev,
+      [metric]: !prev[metric]
+    }))
+  }
+
   const chartData: ChartData<'line'> = {
     labels: formattedDates,
     datasets: [
-      {
+      ...(visibleMetrics.views ? [{
         label: 'Views',
         data: filteredData.map((item) => item.views || item.reach || 0),
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.5)',
         tension: 0.3,
-      },
-      {
+      }] : []),
+      ...(visibleMetrics.engagements ? [{
         label: 'Engagements',
         data: filteredData.map((item) => item.engagements),
         borderColor: 'rgb(99, 102, 241)',
         backgroundColor: 'rgba(99, 102, 241, 0.5)',
         tension: 0.3,
-      },
+      }] : []),
+      ...(visibleMetrics.clicks ? [{
+        label: 'Clicks',
+        data: filteredData.map((item) => item.clicks || 0),
+        borderColor: 'rgb(236, 72, 153)',
+        backgroundColor: 'rgba(236, 72, 153, 0.5)',
+        tension: 0.3,
+      }] : []),
+      ...(visibleMetrics.videoViews ? [{
+        label: 'Video Views',
+        data: filteredData.map((item) => item.videoViews || 0),
+        borderColor: 'rgb(234, 88, 12)',
+        backgroundColor: 'rgba(234, 88, 12, 0.5)',
+        tension: 0.3,
+      }] : []),
     ],
   }
 
@@ -152,7 +192,33 @@ export function PerformanceChart({ data }: PerformanceChartProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap gap-2 justify-between items-center">
+        <div className="flex flex-wrap gap-2">
+          <button 
+            onClick={() => toggleMetric('views')} 
+            className={`px-2 py-1 text-xs rounded-md ${visibleMetrics.views ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}
+          >
+            Views
+          </button>
+          <button 
+            onClick={() => toggleMetric('engagements')}
+            className={`px-2 py-1 text-xs rounded-md ${visibleMetrics.engagements ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-800'}`}
+          >
+            Engagements
+          </button>
+          <button 
+            onClick={() => toggleMetric('clicks')}
+            className={`px-2 py-1 text-xs rounded-md ${visibleMetrics.clicks ? 'bg-pink-100 text-pink-800' : 'bg-gray-100 text-gray-800'}`}
+          >
+            Clicks
+          </button>
+          <button 
+            onClick={() => toggleMetric('videoViews')}
+            className={`px-2 py-1 text-xs rounded-md ${visibleMetrics.videoViews ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'}`}
+          >
+            Video Views
+          </button>
+        </div>
         <Select value={selectedMonth} onValueChange={setSelectedMonth}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select Month" />
