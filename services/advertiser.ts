@@ -16,6 +16,8 @@ export interface PromoterInfo extends UserBasicInfo {
 
 export interface DashboardMetrics {
   activeCampaigns: number;
+  totalCampaigns: number;
+  pausedCampaigns: number;
   totalBudget: number;
   activePromoters: number;
   totalReach: number;
@@ -33,6 +35,7 @@ export interface CampaignMetrics {
   totalEngagements: number;
   totalPosts: number;
   averageEngagementRate: number;
+  totalViews: number
 }
 
 export interface ContentAsset {

@@ -19,13 +19,13 @@ export function Metric({
 }: MetricProps) {
 
   return (
-    <Card className={cn('p-6 transition-all hover:scale-[1.02]', className)}>
+    <Card className={cn('p-4 sm:p-5 md:p-6 transition-all hover:scale-[1.02]', className)}>
       <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="mt-2 text-3xl font-semibold">{value}</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">{title}</p>
+          <p className="mt-1 sm:mt-2 text-xl sm:text-2xl md:text-3xl font-semibold truncate">{value}</p>
           {description && (
-            <p className="mt-1 text-sm text-gray-500">{description}</p>
+            <p className="mt-1 text-xs sm:text-sm text-gray-500 truncate">{description}</p>
           )}
           {/* {trend && (
             <p className={cn(
@@ -39,7 +39,7 @@ export function Metric({
           )} */}
         </div>
         {icon && (
-          <div className="rounded-full bg-white p-2 shadow-sm ring-1 ring-gray-900/5">
+          <div className="rounded-full bg-white p-1.5 sm:p-2 shadow-sm ring-1 ring-gray-900/5 flex-shrink-0 ml-2">
             {icon}
           </div>
         )}

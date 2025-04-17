@@ -12,6 +12,8 @@ import advertiserService, { DashboardMetrics } from '@/services/advertiser'
 export default function AdvertiserDashboard() {
   const [metrics, setMetrics] = useState<DashboardMetrics>({
     activeCampaigns: 0,
+    totalCampaigns: 0,
+    pausedCampaigns: 0,
     totalBudget: 0,
     activePromoters: 0,
     totalReach: 0
@@ -23,6 +25,9 @@ export default function AdvertiserDashboard() {
     budget: number
     activePromoters: number
     reach: number
+    metrics: {
+      totalViews: number
+    }
   }[]>([])
   const [topPerformers, setTopPerformers] = useState<{
     date: string
@@ -44,13 +49,16 @@ export default function AdvertiserDashboard() {
           status: campaign.status,
           budget: campaign.budget,
           activePromoters: campaign.approvedPromoters.length,
-          reach: campaign.metrics.totalReach
+          reach: campaign.metrics.totalReach,
+          metrics: {
+            totalViews: campaign.metrics.totalViews
+          }
         }))
         setRecentCampaigns(transformedCampaigns)
 
         // Transform performance data for chart
         const transformedPerformance = data.topPerformers.map(performer => ({
-          date: performer.campaign.title, // Using campaign title instead of date since we don't have time series data yet
+          date: performer.campaign.title,
           reach: performer.metrics.reach,
           engagements: performer.metrics.engagements
         }))
@@ -69,8 +77,8 @@ export default function AdvertiserDashboard() {
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-48" />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6">
+          {[...Array(6)].map((_, i) => (
             <Skeleton key={i} className="h-32" />
           ))}
         </div>
@@ -98,21 +106,37 @@ export default function AdvertiserDashboard() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6">
         <Metric
           title="Active Campaigns"
           value={metrics.activeCampaigns}
           description="Live campaigns"
           trend="+2.5%"
-          icon={<Megaphone className="h-5 w-5" />}
+          icon={<Megaphone className="h-4 w-4 sm:h-5 sm:w-5" />}
           className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200"
+        />
+        <Metric
+          title="Total Campaigns"
+          value={metrics.totalCampaigns}
+          description="All campaigns"
+          trend=""
+          icon={<Megaphone className="h-4 w-4 sm:h-5 sm:w-5" />}
+          className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200"
+        />
+        <Metric
+          title="Paused Campaigns"
+          value={metrics.pausedCampaigns}
+          description="Temporarily paused"
+          trend=""
+          icon={<Megaphone className="h-4 w-4 sm:h-5 sm:w-5" />}
+          className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200"
         />
         <Metric
           title="Total Budget"
           value={`₦${metrics.totalBudget.toLocaleString()}`}
           description="Available funds"
           trend="+12.3%"
-          icon={<DollarSign className="h-5 w-5" />}
+          icon={<DollarSign className="h-4 w-4 sm:h-5 sm:w-5" />}
           className="bg-gradient-to-br from-green-50 to-green-100 border-green-200"
         />
         <Metric
@@ -120,7 +144,7 @@ export default function AdvertiserDashboard() {
           value={metrics.activePromoters}
           description="Working with you"
           trend="+5.1%"
-          icon={<Users className="h-5 w-5" />}
+          icon={<Users className="h-4 w-4 sm:h-5 sm:w-5" />}
           className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200"
         />
         <Metric
@@ -128,7 +152,7 @@ export default function AdvertiserDashboard() {
           value={metrics.totalReach.toLocaleString()}
           description="Audience size"
           trend="+18.7%"
-          icon={<TrendingUp className="h-5 w-5" />}
+          icon={<TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />}
           className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200"
         />
       </div>
