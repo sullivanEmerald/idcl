@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
 import { NavigationBar } from "@/components/ui/navigation-bar";
@@ -14,7 +14,6 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { analyticsService } from "@/services/analytics";
-import { usePathname } from "next/navigation";
 
 interface ContentAsset {
   type: "photo" | "video" | "carousel";
@@ -47,17 +46,19 @@ interface Campaign {
 
 export default function CampaignPage({
   params,
-  searchParams,
+  searchParams: initialSearchParams,
 }: {
   params: { shortId: string };
-  searchParams: { pId?: string };
+  searchParams: { pId?: string; utm_source?: string };
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParamsHook = useSearchParams();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const promoterId = searchParams.pId;
+  const promoterId = initialSearchParams.pId;
+  const utmSource = initialSearchParams.utm_source || searchParamsHook.get('utm_source') || undefined;
   const [referrer] = useState(
     typeof document !== "undefined" ? document.referrer : ""
   );
@@ -71,8 +72,8 @@ export default function CampaignPage({
         );
         setCampaign(response.data);
 
-        // Track page view after campaign loads
-        analyticsService.trackUserView(params.shortId, promoterId);
+        // Track page view after campaign loads with utm_source as social platform
+        analyticsService.trackUserView(params.shortId, promoterId, utmSource);
       } catch (error) {
         console.error("Failed to fetch campaign:", error);
         // router.push('/404');

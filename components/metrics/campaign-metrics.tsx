@@ -9,6 +9,33 @@ interface CampaignMetricsProps {
 export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
   const renderAwarenessMetrics = () => (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {campaign.contentAssets.some(
+        (asset) => asset.contentType === "video"
+      ) && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">View Duration</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-sm space-y-2">
+              <div>
+                3s:{" "}
+                {formatNumber(campaign.metrics.viewDuration?.threeSeconds || 0)}
+              </div>
+              <div>
+                30s:{" "}
+                {formatNumber(
+                  campaign.metrics.viewDuration?.thirtySeconds || 0
+                )}
+              </div>
+              <div>
+                1m:{" "}
+                {formatNumber(campaign.metrics.viewDuration?.oneMinute || 0)}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
@@ -135,16 +162,29 @@ export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
 
   const renderConversionMetrics = () => (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {campaign.contentAssets.some(asset => asset.contentType === 'video') && (
+      {campaign.contentAssets.some(
+        (asset) => asset.contentType === "video"
+      ) && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Video Metrics</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-sm space-y-2">
-              <div>3s Views: {formatNumber(campaign.metrics.viewDuration?.threeSeconds || 0)}</div>
-              <div>30s Views: {formatNumber(campaign.metrics.viewDuration?.thirtySeconds || 0)}</div>
-              <div>1m Views: {formatNumber(campaign.metrics.viewDuration?.oneMinute || 0)}</div>
+              <div>
+                3s Views:{" "}
+                {formatNumber(campaign.metrics.viewDuration?.threeSeconds || 0)}
+              </div>
+              <div>
+                30s Views:{" "}
+                {formatNumber(
+                  campaign.metrics.viewDuration?.thirtySeconds || 0
+                )}
+              </div>
+              <div>
+                1m Views:{" "}
+                {formatNumber(campaign.metrics.viewDuration?.oneMinute || 0)}
+              </div>
               <div className="text-xs text-muted-foreground pt-1">
                 Avg Watch Time: {Math.round(campaign.metrics.dwellTime || 0)}s
               </div>
@@ -152,7 +192,7 @@ export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
           </CardContent>
         </Card>
       )}
-      
+
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
@@ -192,11 +232,13 @@ export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
           <div className="text-sm space-y-1">
             {getTopChannels(campaign).map(([channel, count]) => (
               <div key={channel}>
-                {channel || 'direct'}: {formatNumber(count)}
+                {channel || "direct"}: {formatNumber(count)}
               </div>
             ))}
             {Object.keys(campaign.metrics.byChannel || {}).length === 0 && (
-              <div className="text-muted-foreground text-xs">No channel data</div>
+              <div className="text-muted-foreground text-xs">
+                No channel data
+              </div>
             )}
           </div>
         </CardContent>
@@ -220,21 +262,20 @@ export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
   // Helper functions for metrics calculations
   const calculateCTR = (campaign: Campaign): string => {
     const totalViews = campaign.metrics.totalViews || 0;
-    const totalClicks = (
-      campaign.metrics.byDevice.mobile.clicks + 
-      campaign.metrics.byDevice.desktop.clicks + 
-      campaign.metrics.byDevice.tablet.clicks
-    );
-    
-    if (totalViews === 0) return '0.00';
+    const totalClicks =
+      campaign.metrics.byDevice.mobile.clicks +
+      campaign.metrics.byDevice.desktop.clicks +
+      campaign.metrics.byDevice.tablet.clicks;
+
+    if (totalViews === 0) return "0.00";
     return ((totalClicks / totalViews) * 100).toFixed(2);
   };
 
   const calculateLeads = (campaign: Campaign): number => {
     // For conversion campaigns, consider clicks as potential leads
     return (
-      campaign.metrics.byDevice.mobile.clicks + 
-      campaign.metrics.byDevice.desktop.clicks + 
+      campaign.metrics.byDevice.mobile.clicks +
+      campaign.metrics.byDevice.desktop.clicks +
       campaign.metrics.byDevice.tablet.clicks
     );
   };
@@ -242,8 +283,8 @@ export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
   const calculateConversionRate = (campaign: Campaign): string => {
     const totalLeads = calculateLeads(campaign);
     const totalConversions = campaign.metrics.totalConversions || 0;
-    
-    if (totalLeads === 0) return '0.00';
+
+    if (totalLeads === 0) return "0.00";
     return ((totalConversions / totalLeads) * 100).toFixed(2);
   };
 
@@ -256,9 +297,9 @@ export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
 
   return (
     <div className="space-y-4">
-      {campaign.campaignGoal === 'awareness' && renderAwarenessMetrics()}
-      {campaign.campaignGoal === 'engagement' && renderEngagementMetrics()}
-      {campaign.campaignGoal === 'conversion' && renderConversionMetrics()}
+      {campaign.campaignGoal === "awareness" && renderAwarenessMetrics()}
+      {campaign.campaignGoal === "engagement" && renderEngagementMetrics()}
+      {campaign.campaignGoal === "conversion" && renderConversionMetrics()}
     </div>
   );
 }

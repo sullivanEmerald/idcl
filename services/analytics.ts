@@ -149,14 +149,15 @@ class AnalyticsService {
     );
   }
 
-  trackUserView(shortId: string, promoterId?: string) {
+  trackUserView(shortId: string, promoterId?: string, utmSource?: string) {
     return this.trackEvent(
       shortId,
       "view",
       {
         interactionType: "user_view",
-        channel: this.pageReferrer,
+        channel: utmSource || this.pageReferrer,
         campaignId: shortId,
+        socialPlatform: utmSource || undefined
       },
       promoterId
     );

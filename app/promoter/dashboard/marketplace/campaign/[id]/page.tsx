@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -50,7 +50,6 @@ export default function CampaignDetails() {
   const [applicationNote, setApplicationNote] = useState("");
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const hasTracked = useRef(false);
-  const { toast } = useToast();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -108,8 +107,7 @@ export default function CampaignDetails() {
         note: applicationNote,
       });
 
-      toast({
-        title: "Application Submitted",
+      toast.success("Application Submitted", {
         description:
           "We'll notify you when the advertiser reviews your application.",
       });
@@ -118,10 +116,7 @@ export default function CampaignDetails() {
       setShowApplicationForm(false);
     } catch (error: any) {
       console.error("Error applying to campaign:", error?.response?.data);
-      toast({
-        title: error?.response?.data?.message || "Failed to submit application",
-        variant: "destructive",
-      });
+      toast.error(error?.response?.data?.message || "Failed to submit application");
     } finally {
       setIsSubmitting(false);
     }
@@ -153,25 +148,17 @@ export default function CampaignDetails() {
             initialLikes={0}
             initialComments={[]}
             onLike={async () => {
-              await analyticsService.trackEvent(
-                campaign.id,
-                "click",
-                {
-                  interactionType: "campaign_view",
-                  action: "like"
-                }
-              );
+              await analyticsService.trackEvent(campaign.id, "click", {
+                interactionType: "campaign_view",
+                action: "like",
+              });
             }}
             onComment={async (comment) => {
-              await analyticsService.trackEvent(
-                campaign.id,
-                "click",
-                {
-                  interactionType: "campaign_view",
-                  action: "comment",
-                  content: comment
-                }
-              );
+              await analyticsService.trackEvent(campaign.id, "click", {
+                interactionType: "campaign_view",
+                action: "comment",
+                content: comment,
+              });
             }}
           />
         </div>
@@ -299,9 +286,11 @@ export default function CampaignDetails() {
             {campaign?.contentAssets?.[0]?.type === "carousel" ? (
               // Carousel View
               <div className="relative px-4">
-                <Carousel onSelect={(index) => {
-                  analyticsService.trackCarouselSlide(campaign.id, index);
-                }}>
+                <Carousel
+                  onSelect={(index) => {
+                    analyticsService.trackCarouselSlide(campaign.id, index);
+                  }}
+                >
                   <CarouselContent>
                     {campaign.contentAssets
                       .filter((asset) => asset.type === "carousel")
@@ -343,7 +332,9 @@ export default function CampaignDetails() {
                   controls
                   className="w-full h-full"
                   onPlay={() => analyticsService.trackVideoPlay(campaign.id)}
-                  onEnded={() => analyticsService.trackVideoComplete(campaign.id)}
+                  onEnded={() =>
+                    analyticsService.trackVideoComplete(campaign.id)
+                  }
                 >
                   Your browser does not support the video tag.
                 </video>
@@ -639,19 +630,21 @@ export default function CampaignDetails() {
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-6">Device Distribution</h2>
           <div className="grid grid-cols-3 gap-4">
-            {(['mobile', 'desktop', 'tablet'] as const).map((device) => {
-              console.log('checking device:', device);
-              console.log('byDevice:', campaign?.metrics?.byDevice);
+            {(["mobile", "desktop", "tablet"] as const).map((device) => {
+              console.log("checking device:", device);
+              console.log("byDevice:", campaign?.metrics?.byDevice);
               const deviceMetrics = campaign?.metrics?.byDevice?.[device] || {
                 uniqueViews: 0,
                 clicks: 0,
-                conversions: 0
+                conversions: 0,
               };
-              console.log('deviceMetrics for ' + device + ':', deviceMetrics)
-              
+              console.log("deviceMetrics for " + device + ":", deviceMetrics);
+
               return (
                 <div key={device} className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600">{device.charAt(0).toUpperCase() + device.slice(1)}</p>
+                  <p className="text-sm text-gray-600">
+                    {device.charAt(0).toUpperCase() + device.slice(1)}
+                  </p>
                   <div>
                     <p className="text-2xl font-bold mt-1">
                       {deviceMetrics.uniqueViews}
@@ -660,7 +653,9 @@ export default function CampaignDetails() {
                   </div>
                   <div className="mt-2">
                     <p className="text-sm">{deviceMetrics.clicks} clicks</p>
-                    <p className="text-sm">{deviceMetrics.conversions} conversions</p>
+                    <p className="text-sm">
+                      {deviceMetrics.conversions} conversions
+                    </p>
                   </div>
                 </div>
               );
@@ -728,30 +723,27 @@ export default function CampaignDetails() {
                         navigator.clipboard.writeText(
                           `${campaign.promotionalLink}?utm_source=direct&utm_medium=share&utm_campaign=${campaign.id}`
                         );
-                        toast({
-                          title: "Link Copied!",
+                        toast.success("Link Copied!", {
                           description: "Promotional link copied to clipboard",
                           duration: 3000,
                         });
-                        
-                        analyticsService.trackEvent(
-                          campaign.id,
-                          "click",
-                          {
-                            interactionType: "link_copy",
-                            action: "copy",
-                            platform: "direct"
-                          }
-                        );
+
+                        analyticsService.trackEvent(campaign.id, "click", {
+                          interactionType: "link_copy",
+                          action: "copy",
+                          platform: "direct",
+                        });
                       }}
                     >
                       Copy
                     </Button>
                   </div>
-                  
+
                   {/* Platform-specific Links */}
                   <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-gray-600">Platform-specific Links</h3>
+                    <h3 className="text-sm font-medium text-gray-600">
+                      Platform-specific Links
+                    </h3>
                     {campaign.requiredPlatforms.map((platform) => (
                       <div key={platform} className="flex items-center gap-2">
                         <input
@@ -766,22 +758,17 @@ export default function CampaignDetails() {
                             navigator.clipboard.writeText(
                               `${campaign.promotionalLink}?utm_source=${platform.toLowerCase()}&utm_medium=social&utm_campaign=${campaign.id}`
                             );
-                            toast({
-                              title: "Link Copied!",
+                            toast.success("Link Copied!", {
                               description: `${platform} promotional link copied to clipboard`,
                               duration: 3000,
                             });
-                            
+
                             // Track copy event with platform
-                            analyticsService.trackEvent(
-                              campaign.id,
-                              "click",
-                              {
-                                interactionType: "link_copy", 
-                                action: "copy",
-                                platform: platform.toLowerCase()
-                              }
-                            );
+                            analyticsService.trackEvent(campaign.id, "click", {
+                              interactionType: "link_copy",
+                              action: "copy",
+                              platform: platform.toLowerCase(),
+                            });
                           }}
                         >
                           Copy {platform}
@@ -816,22 +803,17 @@ export default function CampaignDetails() {
                       a.download = `${campaign.title}-qr.png`;
                       a.href = canvas.toDataURL("image/png");
                       a.click();
-                      
-                      toast({
-                        title: "QR Code Downloaded",
+
+                      toast.success("QR Code Downloaded", {
                         description: "QR code has been saved to your downloads",
                         duration: 3000,
                       });
-                      
+
                       // Track QR code download
-                      analyticsService.trackEvent(
-                        campaign.id,
-                        "click",
-                        {
-                          interactionType: "link_copy",
-                          action: "download"
-                        }
-                      );
+                      analyticsService.trackEvent(campaign.id, "click", {
+                        interactionType: "link_copy",
+                        action: "download",
+                      });
                     };
                     img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
                   }}
@@ -898,19 +880,30 @@ export default function CampaignDetails() {
                   </p>
                 </Card>
 
-                {campaign?.metrics?.promoterEngagement?.linkCopiesByPlatform && Object.keys(campaign.metrics.promoterEngagement.linkCopiesByPlatform).length > 0 && (
-                  <Card className="p-4 col-span-2">
-                    <p className="text-sm font-medium text-gray-600 mb-2">Link Copies by Platform</p>
-                    <div className="grid grid-cols-3 gap-2">
-                      {Object.entries(campaign.metrics.promoterEngagement.linkCopiesByPlatform).map(([platform, count]) => (
-                        <div key={platform} className="flex items-center justify-between border rounded p-2">
-                          <span className="capitalize">{platform}</span>
-                          <span className="font-medium">{count}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </Card>
-                )}
+                {campaign?.metrics?.promoterEngagement?.linkCopiesByPlatform &&
+                  Object.keys(
+                    campaign.metrics.promoterEngagement.linkCopiesByPlatform
+                  ).length > 0 && (
+                    <Card className="p-4 col-span-2">
+                      <p className="text-sm font-medium text-gray-600 mb-2">
+                        Link Copies by Platform
+                      </p>
+                      <div className="grid grid-cols-3 gap-2">
+                        {Object.entries(
+                          campaign.metrics.promoterEngagement
+                            .linkCopiesByPlatform
+                        ).map(([platform, count]) => (
+                          <div
+                            key={platform}
+                            className="flex items-center justify-between border rounded p-2"
+                          >
+                            <span className="capitalize">{platform}</span>
+                            <span className="font-medium">{count}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
               </div>
             </TabsContent>
           </Tabs>
