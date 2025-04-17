@@ -143,7 +143,7 @@ class AnalyticsService {
       {
         interactionType: "campaign_view",
         channel: this.pageReferrer,
-        campaignId: shortId
+        campaignId: shortId,
       },
       promoterId
     );
@@ -156,16 +156,25 @@ class AnalyticsService {
       {
         interactionType: "user_view",
         channel: this.pageReferrer,
-        campaignId: shortId
+        campaignId: shortId,
       },
       promoterId
     );
   }
 
-  trackConversion(shortId: string, url: string, promoterId?: string) {
+  trackConversion(
+    shortId: string,
+    url: string,
+    promoterId?: string,
+    goal: "awareness" | "engagement" | "conversion" = "conversion"
+  ) {
     return this.trackEvent(
       shortId,
-      "click",
+      goal === "awareness"
+        ? "click"
+        : goal === "engagement"
+          ? "click"
+          : "conversion",
       {
         interactionType: "cta_click",
         url,
@@ -198,14 +207,18 @@ class AnalyticsService {
     );
   }
 
-  trackVideoProgress(shortId: string, secondsWatched: number, promoterId?: string) {
+  trackVideoProgress(
+    shortId: string,
+    secondsWatched: number,
+    promoterId?: string
+  ) {
     return this.trackEvent(
       shortId,
       "view",
       {
         interactionType: "video_play",
         viewDuration: secondsWatched,
-        videoProgress: secondsWatched
+        videoProgress: secondsWatched,
       },
       promoterId
     );

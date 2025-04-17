@@ -42,6 +42,7 @@ interface Campaign {
     mentions: string[];
     brandAssetLinks?: string[];
   };
+  campaignGoal: "conversion" | "awareness" | "engagement";
 }
 
 export default function CampaignPage({
@@ -230,7 +231,8 @@ export default function CampaignPage({
                 analyticsService.trackConversion(
                   params.shortId,
                   campaign.promotionLink,
-                  promoterId
+                  promoterId,
+                  campaign.campaignGoal 
                 )
               }
             >
