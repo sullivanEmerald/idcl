@@ -114,7 +114,7 @@ export default function AdvertiserDashboard() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
         <Metric
           title="Active Campaigns"
           value={metrics.activeCampaigns}
