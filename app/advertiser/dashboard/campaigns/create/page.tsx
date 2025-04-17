@@ -640,9 +640,7 @@ export default function Page() {
       router.push(`/advertiser/dashboard/campaigns/${response._id}`);
     } catch (error: any) {
       console.error("Error creating campaign:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to create campaign. Please try again."
-      );
+      
       setIsSubmitting(false);
     }
   };

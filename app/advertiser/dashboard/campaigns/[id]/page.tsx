@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Calendar, ChartBar, Clock } from "lucide-react";
+import { Calendar, Clock, Eye } from "lucide-react";
 import { CampaignMetrics } from "@/components/metrics/campaign-metrics";
 import { campaignService } from "@/services/campaign";
 import {
@@ -144,22 +144,36 @@ export default function CampaignPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ₦{spentAmount.toLocaleString()}
+              ₦{campaign.metrics.budgetSpent.toLocaleString()}
             </div>
             <Progress value={spentPercentage} className="mt-2" />
             <p className="text-xs text-muted-foreground mt-2">
-              ₦{(campaign.budget - spentAmount).toLocaleString()} remaining
+              ₦{(campaign.budget - campaign.metrics.budgetSpent).toLocaleString()} remaining
             </p>
           </CardContent>
         </Card>
-        {/* <Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Promoters Reach</CardTitle>
+            <Eye className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {campaign.metrics.promoterViews}
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              {campaign.metrics.uniquePromoterViews} unique promoter views
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Reach</CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {campaign.metrics.totalReach}
+              {campaign.metrics.totalViews}
             </div>
             <p className="text-xs text-muted-foreground mt-2">
               {campaign.metrics.byDevice.desktop.uniqueViews +
@@ -168,8 +182,8 @@ export default function CampaignPage() {
               unique views
             </p>
           </CardContent>
-        </Card> */}
-        <Card>
+        </Card>
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               {campaign.campaignGoal === "engagement"
@@ -190,7 +204,7 @@ export default function CampaignPage() {
                 : `${campaign.metrics.totalReach} unique views`}
             </p>
           </CardContent>
-        </Card>
+        </Card> */}
         {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Posts Made</CardTitle>

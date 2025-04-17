@@ -729,9 +729,20 @@ export default function CampaignDetails() {
                           `${campaign.promotionalLink}?utm_source=direct&utm_medium=share&utm_campaign=${campaign.id}`
                         );
                         toast({
-                          title: "Link Copied",
+                          title: "Link Copied!",
                           description: "Promotional link copied to clipboard",
+                          duration: 3000,
                         });
+                        
+                        analyticsService.trackEvent(
+                          campaign.id,
+                          "click",
+                          {
+                            interactionType: "link_copy",
+                            action: "copy",
+                            platform: "direct"
+                          }
+                        );
                       }}
                     >
                       Copy
@@ -756,9 +767,21 @@ export default function CampaignDetails() {
                               `${campaign.promotionalLink}?utm_source=${platform.toLowerCase()}&utm_medium=social&utm_campaign=${campaign.id}`
                             );
                             toast({
-                              title: "Link Copied",
+                              title: "Link Copied!",
                               description: `${platform} promotional link copied to clipboard`,
+                              duration: 3000,
                             });
+                            
+                            // Track copy event with platform
+                            analyticsService.trackEvent(
+                              campaign.id,
+                              "click",
+                              {
+                                interactionType: "link_copy", 
+                                action: "copy",
+                                platform: platform.toLowerCase()
+                              }
+                            );
                           }}
                         >
                           Copy {platform}
@@ -793,6 +816,22 @@ export default function CampaignDetails() {
                       a.download = `${campaign.title}-qr.png`;
                       a.href = canvas.toDataURL("image/png");
                       a.click();
+                      
+                      toast({
+                        title: "QR Code Downloaded",
+                        description: "QR code has been saved to your downloads",
+                        duration: 3000,
+                      });
+                      
+                      // Track QR code download
+                      analyticsService.trackEvent(
+                        campaign.id,
+                        "click",
+                        {
+                          interactionType: "link_copy",
+                          action: "download"
+                        }
+                      );
                     };
                     img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
                   }}
@@ -826,24 +865,30 @@ export default function CampaignDetails() {
               </div>
             </TabsContent>
 
-            {/* <TabsContent value="metrics">
+            <TabsContent value="metrics">
               <div className="grid grid-cols-2 gap-4">
                 <Card className="p-4">
-                  <p className="text-sm text-gray-600">Total Clicks</p>
+                  <p className="text-sm text-gray-600">Link Copies</p>
                   <p className="text-2xl font-bold">
-                    {campaign?.metrics?.clicks || 0}
+                    {campaign?.metrics?.promoterEngagement?.clickCount || 0}
                   </p>
                 </Card>
                 <Card className="p-4">
-                  <p className="text-sm text-gray-600">Unique Clicks</p>
+                  <p className="text-sm text-gray-600">Unique Promoter Views</p>
                   <p className="text-2xl font-bold">
-                    {campaign?.metrics?.uniqueClicks || 0}
+                    {campaign?.metrics?.uniquePromoterViews || 0}
+                  </p>
+                </Card>
+                <Card className="p-4">
+                  <p className="text-sm text-gray-600">QR Downloads</p>
+                  <p className="text-2xl font-bold">
+                    {campaign?.metrics?.promoterEngagement?.qrDownloads || 0}
                   </p>
                 </Card>
                 <Card className="p-4">
                   <p className="text-sm text-gray-600">Conversions</p>
                   <p className="text-2xl font-bold">
-                    {campaign?.metrics?.conversions || 0}
+                    {campaign?.metrics?.totalConversions || 0}
                   </p>
                 </Card>
                 <Card className="p-4">
@@ -852,8 +897,22 @@ export default function CampaignDetails() {
                     {campaign?.metrics?.averageEngagementRate || 0}%
                   </p>
                 </Card>
+
+                {campaign?.metrics?.promoterEngagement?.linkCopiesByPlatform && Object.keys(campaign.metrics.promoterEngagement.linkCopiesByPlatform).length > 0 && (
+                  <Card className="p-4 col-span-2">
+                    <p className="text-sm font-medium text-gray-600 mb-2">Link Copies by Platform</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {Object.entries(campaign.metrics.promoterEngagement.linkCopiesByPlatform).map(([platform, count]) => (
+                        <div key={platform} className="flex items-center justify-between border rounded p-2">
+                          <span className="capitalize">{platform}</span>
+                          <span className="font-medium">{count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                )}
               </div>
-            </TabsContent> */}
+            </TabsContent>
           </Tabs>
         </Card>
 

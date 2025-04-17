@@ -57,25 +57,37 @@ export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
 
   const renderEngagementMetrics = () => (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">View Duration</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-sm space-y-2">
-            <div>3s: {formatNumber(campaign.metrics.viewDuration?.threeSeconds || 0)}</div>
-            <div>30s: {formatNumber(campaign.metrics.viewDuration?.thirtySeconds || 0)}</div>
-            <div>1m: {formatNumber(campaign.metrics.viewDuration?.oneMinute || 0)}</div>
-          </div>
-        </CardContent>
-      </Card>
+      {campaign.contentAssets.some(asset => asset.contentType === 'video') && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">View Duration</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-sm space-y-2">
+              <div>3s: {formatNumber(campaign.metrics.viewDuration?.threeSeconds || 0)}</div>
+              <div>30s: {formatNumber(campaign.metrics.viewDuration?.thirtySeconds || 0)}</div>
+              <div>1m: {formatNumber(campaign.metrics.viewDuration?.oneMinute || 0)}</div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Engagement Rate</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {(campaign.metrics.averageEngagementRate * 100 || 0).toFixed(2)}%
+            {(() => {
+              // Dynamic calculation of engagement rate
+              const totalEvents = campaign.metrics.totalEngagements || 0;
+              const totalViews = campaign.metrics.totalViews || 1; // Prevent division by zero
+              
+              // Calculate engagement rate as percentage of engagements to views
+              const basicEngagementRate = (totalEvents / totalViews) * 100;
+              
+              // Return formatted value
+              return basicEngagementRate.toFixed(2);
+            })()}%
           </div>
           <p className="text-xs text-muted-foreground mt-2">
             Total Engagements: {formatNumber(campaign.metrics.totalEngagements)}

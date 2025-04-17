@@ -10,7 +10,10 @@ export type InteractionType =
   | "carousel_slide"
   | "cta_click"
   | "user_view"
-  | "url_shortener_click";
+  | "url_shortener_click"
+  | "link_copy"
+  | "video_play_start"
+  | "video_play_end";
 
 export interface EventMetadata {
   interactionType?: InteractionType;

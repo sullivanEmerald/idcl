@@ -28,13 +28,7 @@ export interface CampaignRequirements {
   };
   hashtags: string[];
   mentions: string[];
-  brandAssetLinks?: string[];
-  ctaLabel?: string;
-  aiSuggestions?: {
-    targetAudience: string;
-    contentStrategy: string;
-    optimizationTips: string[];
-  };
+  brandAssetLinks: string[];
 }
 
 export interface DeviceMetrics {
@@ -58,7 +52,6 @@ export interface CampaignMetrics {
   // Core metrics
   totalReach: number;
   totalViews: number;
-  uniqueViews: number;
   totalEngagements: number;
   totalPosts: number;
   totalConversions: number;
@@ -82,6 +75,9 @@ export interface CampaignMetrics {
     ratings: number; // Number of promoter ratings submitted
     averageRating: number; // Average promoter rating (1-5)
     views: number; // Number of times promoters viewed the campaign
+    clickCount?: number; // Number of times promoters copied links
+    linkCopiesByPlatform?: Record<string, number>; // Platform-specific link copies
+    qrDownloads?: number; // Number of QR code downloads
   }
 
   // Device-specific metrics
@@ -97,12 +93,38 @@ export interface CampaignMetrics {
 
   // Social platform metrics
   bySocialPlatform: {
-    instagram: SocialPlatformMetrics;
-    tiktok: SocialPlatformMetrics;
-    twitter: SocialPlatformMetrics;
-    facebook: SocialPlatformMetrics;
-    youtube: SocialPlatformMetrics;
-    linkedin: SocialPlatformMetrics;
+    instagram?: {
+      count: number;
+      _id?: string;
+      id?: string;
+    };
+    tiktok?: {
+      count: number;
+      _id?: string;
+      id?: string;
+    };
+    twitter?: {
+      count: number;
+      _id?: string;
+      id?: string;
+    };
+    facebook?: {
+      count: number;
+      _id?: string;
+      id?: string;
+    };
+    youtube?: {
+      count: number;
+      _id?: string;
+      id?: string;
+    };
+    linkedin?: {
+      count: number;
+      _id?: string;
+      id?: string;
+    };
+    _id?: string;
+    id?: string;
   };
 
   // Platform-specific totals
@@ -130,6 +152,19 @@ export interface Comment {
   };
 }
 
+export interface ActivePromoter {
+  promoterId: string;
+  username?: string;
+  profileImage?: string;
+  lastActivity?: string;
+  earnings?: number;
+  eventTypes?: {
+    views: number;
+    clicks: number;
+    conversions: number;
+  };
+}
+
 export interface Campaign {
   id: string;
   title: string;
@@ -147,6 +182,7 @@ export interface Campaign {
   targetGender?: 'male' | 'female' | 'all';
   targetPromotions: number;
   promotionalLink?: string;
+  promotionLink?: string;
   isBoosted: boolean;
   isActive: boolean;
   minFollowers: number;
@@ -163,18 +199,31 @@ export interface Campaign {
   engagement?: number;
   activePromoters: Array<{
     _id: string;
+    lastActivity: string;
+    totalEvents: number;
+    eventTypes?: string[];
     promoter: {
-      fullName: string;
+      _id?: string;
+      fullName?: string;
+      name?: string;
       email: string;
       location?: string;
       platforms: string[];
-      followersCount: number;
-      engagementRate: number;
+      followersCount: number | string;
+      engagementRate: number | string;
       contentTypes: string[];
       status: string;
+      audienceInterests?: string[];
+      audienceAge?: string;
+      phoneNumber?: string;
     };
-    lastActivity: string;
-    totalEvents: number;
   }>;
-  coverImage: string
+  coverImage: string;
+  displayCoverImage?: string;
+  conversionValue?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  approvedPromoters?: string[];
+  pendingPromoters?: string[];
+  rejectedPromoters?: string[];
 }
