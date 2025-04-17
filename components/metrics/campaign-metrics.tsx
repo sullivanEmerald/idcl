@@ -235,7 +235,7 @@ export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
                 {channel || "direct"}: {formatNumber(count)}
               </div>
             ))}
-            {Object.keys(campaign.metrics.byChannel || {}).length === 0 && (
+            {getTopChannels(campaign).length === 0 && (
               <div className="text-muted-foreground text-xs">
                 No channel data
               </div>
@@ -290,6 +290,25 @@ export function CampaignMetrics({ campaign }: CampaignMetricsProps) {
 
   const getTopChannels = (campaign: Campaign): [string, number][] => {
     const channels = campaign.metrics.byChannel || {};
+    
+    // If byChannel is empty, use data from bySocialPlatform
+    if (Object.keys(channels).length === 0 && campaign.metrics.bySocialPlatform) {
+      const socialPlatforms = campaign.metrics.bySocialPlatform;
+      return Object.entries(socialPlatforms)
+        .filter(([platform, data]) => 
+          platform !== '_id' && 
+          platform !== 'id' && 
+          typeof data === 'object' && 
+          data !== null && 
+          'count' in data)
+        .map(([platform, data]): [string, number] => [
+          platform, 
+          typeof data === 'object' && data !== null && 'count' in data ? data.count : 0
+        ])
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3);
+    }
+    
     return Object.entries(channels)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3);

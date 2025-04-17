@@ -541,27 +541,18 @@ export default function CampaignPage() {
                   <div className="p-4 border rounded-lg">
                     <h3 className="text-gray-600 mb-2">Platform Performance</h3>
                     <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Instagram</span>
-                        <span>
-                          {campaign.metrics.bySocialPlatform?.instagram?.count?.toLocaleString() ||
-                            "0"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Twitter</span>
-                        <span>
-                          {campaign.metrics.bySocialPlatform?.twitter?.count?.toLocaleString() ||
-                            "0"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Facebook</span>
-                        <span>
-                          {campaign.metrics.bySocialPlatform?.facebook?.count?.toLocaleString() ||
-                            "0"}
-                        </span>
-                      </div>
+                      {Object.entries(campaign.metrics.bySocialPlatform || {})
+                        .filter(([platform]) => platform !== '_id' && platform !== 'id')
+                        .map(([platform, data]) => (
+                          <div key={platform} className="flex justify-between text-sm">
+                            <span className="capitalize">{platform}</span>
+                            <span>
+                              {typeof data === 'object' && data !== null && 'count' in data 
+                                ? data.count.toLocaleString() 
+                                : "0"}
+                            </span>
+                          </div>
+                        ))}
                     </div>
                   </div>
                   {campaign.contentAssets.some(asset => asset.contentType === "video") && (
