@@ -32,7 +32,8 @@ export default function AdvertiserDashboard() {
   }[]>([])
   const [topPerformers, setTopPerformers] = useState<{
     date: string
-    reach: number
+    views?: number
+    reach?: number
     engagements: number
   }[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -57,13 +58,19 @@ export default function AdvertiserDashboard() {
         }))
         setRecentCampaigns(transformedCampaigns)
 
-        // Transform performance data for chart
-        const transformedPerformance = data.topPerformers.map(performer => ({
-          date: performer.campaign.title,
-          reach: performer.metrics.reach,
-          engagements: performer.metrics.engagements
-        }))
-        setTopPerformers(transformedPerformance)
+        // Get analytics data for the performance chart
+        const analyticsData = await advertiserService.getAnalyticsOverview()
+        if (analyticsData.timeSeriesData && analyticsData.timeSeriesData.length > 0) {
+          setTopPerformers(analyticsData.timeSeriesData)
+        } else {
+          // Fallback to old data structure if timeSeriesData is not available
+          const transformedPerformance = data.topPerformers.map(performer => ({
+            date: performer.campaign.title,
+            reach: performer.metrics.reach,
+            engagements: performer.metrics.engagements
+          }))
+          setTopPerformers(transformedPerformance)
+        }
       } catch (error) {
         console.error('Error fetching dashboard data:', error)
       } finally {

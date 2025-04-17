@@ -129,6 +129,11 @@ export interface AnalyticsOverview {
     metrics: CampaignMetrics;
   }[];
   topPerformers: TopPerformer[];
+  timeSeriesData: {
+    date: string;
+    views: number;
+    engagements: number;
+  }[];
 }
 
 export interface CampaignPerformanceData {
