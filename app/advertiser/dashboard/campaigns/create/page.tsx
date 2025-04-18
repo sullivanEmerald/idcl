@@ -451,10 +451,10 @@ export default function Page() {
 
       const pricePerPost =
         formValues.goal === "awareness"
-          ? 30
+          ? 60
           : formValues.goal === "engagement"
-            ? 200
-            : 400;
+            ? 400
+            : 1000;
 
       const campaignData = {
         title: formValues.name,
