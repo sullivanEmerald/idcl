@@ -29,6 +29,8 @@ interface Campaign {
   description: string;
   contentAssets: ContentAsset[];
   promotionLink: string;
+  status?: 'active' | 'paused' | 'completed' | 'expired' | 'scheduled' | 'draft';
+  endDate?: string;
   requirements?: {
     ctaLabel?: string;
     contentGuidelines?: string;
@@ -56,6 +58,7 @@ export default function CampaignPage({
   const searchParamsHook = useSearchParams();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
+  const [campaignExpired, setCampaignExpired] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const promoterId = initialSearchParams.pId;
   const utmSource = initialSearchParams.utm_source || searchParamsHook.get('utm_source') || undefined;
@@ -70,10 +73,18 @@ export default function CampaignPage({
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/campaigns/public/${params.shortId}`
         );
-        setCampaign(response.data);
-
-        // Track page view after campaign loads with utm_source as social platform
-        analyticsService.trackUserView(params.shortId, promoterId, utmSource);
+        
+        // Check if campaign has expired or is completed
+        const campaignData = response.data;
+        if (campaignData.status === 'completed' || campaignData.status === 'expired' || 
+            (campaignData.endDate && new Date(campaignData.endDate) < new Date())) {
+          setCampaignExpired(true);
+          setCampaign(null);
+        } else {
+          setCampaign(campaignData);
+          // Only track view if campaign is active
+          analyticsService.trackUserView(params.shortId, promoterId, utmSource);
+        }
       } catch (error) {
         console.error("Failed to fetch campaign:", error);
         // router.push('/404');
@@ -122,6 +133,30 @@ export default function CampaignPage({
           <h1 className="text-2xl font-bold mb-4">Loading Campaign...</h1>
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
         </div>
+      </div>
+    );
+  }
+
+  if (campaignExpired) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <NavigationBar />
+        
+        <main className="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-md mx-auto text-center bg-white p-8 rounded-lg shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">Campaign Expired</h1>
+            <p className="text-gray-600 mb-6">This campaign is no longer active and has been completed or expired.</p>
+            <button 
+              onClick={() => router.push('/')} 
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Return Home
+            </button>
+          </div>
+        </main>
       </div>
     );
   }
