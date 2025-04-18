@@ -46,7 +46,11 @@ import {
 import { cn } from "@/lib/utils";
 import { campaignService } from "@/services/campaign";
 import { axiosInstance } from "@/lib/utils";
-import { Alert, AlertDescription, AlertTitle } from "../../../../../components/ui/alert";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "../../../../../components/ui/alert";
 
 const PaystackButton = dynamic(
   () => import("react-paystack").then((mod) => mod.PaystackButton),
@@ -177,9 +181,7 @@ const campaignSchema = z.object({
   niches: z.array(z.string()).min(1, "Select at least one niche"),
   isBoosted: z.boolean().default(false),
   contentType: z.enum(["photo", "video", "carousel"]),
-  mediaFiles: z
-    .array(mediaFileSchema)
-    .optional(),
+  mediaFiles: z.array(mediaFileSchema).optional(),
   contentGuidelines: z
     .string()
     .min(10, "Guidelines must be at least 10 characters"),
@@ -188,14 +190,16 @@ const campaignSchema = z.object({
   brandAssetLinks: z.string().url().optional(),
   promotionLink: z.string().url("Please enter a valid URL"),
   contentAssets: z
-    .array(z.object({
-      type: z.string(),
-      contentType: z.string(),
-      url: z.string(),
-      size: z.number().optional(),
-      width: z.number().optional(),
-      height: z.number().optional(),
-    }))
+    .array(
+      z.object({
+        type: z.string(),
+        contentType: z.string(),
+        url: z.string(),
+        size: z.number().optional(),
+        width: z.number().optional(),
+        height: z.number().optional(),
+      })
+    )
     .optional(),
   ctaLabel: z.string().optional(),
 });
@@ -377,8 +381,12 @@ export default function Page() {
   // }, [watch]);
 
   const config = {
-    reference: typeof window !== 'undefined' ? new Date().getTime().toString() : '',
-    email: typeof window !== 'undefined' ? localStorage?.getItem("userEmail") || "" : "",
+    reference:
+      typeof window !== "undefined" ? new Date().getTime().toString() : "",
+    email:
+      typeof window !== "undefined"
+        ? localStorage?.getItem("userEmail") || ""
+        : "",
     amount: Math.round((watch("estimatedBudget") || 0) * 100),
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
   };
@@ -391,30 +399,33 @@ export default function Page() {
     // Create campaign with payment
     try {
       const formValues = form.getValues();
-      
+
       // Process media files if needed - this should happen before submitting
       let processedContentAssets = formValues.contentAssets;
-      
+
       // If we don't have pre-uploaded content assets but we do have mediaFiles, process them
-      if ((!processedContentAssets || processedContentAssets.length === 0) && formValues.mediaFiles && formValues.mediaFiles.length > 0) {
+      if (
+        (!processedContentAssets || processedContentAssets.length === 0) &&
+        formValues.mediaFiles &&
+        formValues.mediaFiles.length > 0
+      ) {
         const mediaUploads = [];
         for (const mediaFile of formValues.mediaFiles) {
           if (mediaFile && mediaFile.file) {
             try {
               const formData = new FormData();
               formData.append("file", mediaFile.file);
-              
-              const fileType = mediaFile.type === "video" ? "campaign-video" : "campaign-photo";
-              const response = await axiosInstance.post(
-                `/upload`,
-                formData,
-                {
-                  headers: {
-                    "Content-Type": "multipart/form-data",
-                  },
-                }
-              );
-              
+
+              const fileType =
+                mediaFile.type === "video"
+                  ? "campaign-video"
+                  : "campaign-photo";
+              const response = await axiosInstance.post(`/upload`, formData, {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              });
+
               mediaUploads.push({
                 type: mediaFile.type === "video" ? "video" : "photo",
                 contentType: mediaFile.type,
@@ -422,7 +433,10 @@ export default function Page() {
                 size: mediaFile.file.size,
                 width: response.data.width || 0,
                 height: response.data.height || 0,
-                carouselIndex: formValues.contentType === "carousel" ? mediaUploads.length : undefined,
+                carouselIndex:
+                  formValues.contentType === "carousel"
+                    ? mediaUploads.length
+                    : undefined,
               });
             } catch (error) {
               console.error("Error uploading media file:", error);
@@ -431,13 +445,17 @@ export default function Page() {
             }
           }
         }
-        
+
         processedContentAssets = mediaUploads;
       }
 
       const pricePerPost =
-        formValues.goal === "awareness" ? 30 : formValues.goal === "engagement" ? 200 : 400;
-      
+        formValues.goal === "awareness"
+          ? 30
+          : formValues.goal === "engagement"
+            ? 200
+            : 400;
+
       const campaignData = {
         title: formValues.name,
         description: formValues.description,
@@ -464,36 +482,43 @@ export default function Page() {
             endTime: formValues.postingSchedule.endTime,
             days: formValues.postingSchedule.days,
           },
-          hashtags: formValues.hashtags ? formValues.hashtags.split(',').map(tag => tag.trim()) : [],
-          mentions: formValues.mentions ? formValues.mentions.split(',').map(mention => mention.trim()) : [],
-          brandAssetLinks: formValues.brandAssetLinks ? [formValues.brandAssetLinks] : [],
+          hashtags: formValues.hashtags
+            ? formValues.hashtags.split(",").map((tag) => tag.trim())
+            : [],
+          mentions: formValues.mentions
+            ? formValues.mentions.split(",").map((mention) => mention.trim())
+            : [],
+          brandAssetLinks: formValues.brandAssetLinks
+            ? [formValues.brandAssetLinks]
+            : [],
         },
         paymentReference: reference.reference,
       };
-      
-      const response = await axiosInstance.post('/campaigns', campaignData);
 
-    toast.dismiss();
-    toast.success(
-      <div className="space-y-2">
-        <p className="font-medium">Congratulations 🎊!</p>
-        <p className="text-sm text-muted-foreground">
-          Your campaign was created successfully. You can view your campaign on
-          your dashboard.
-        </p>
-      </div>,
-      {
-        duration: 5000,
-      }
-    );
+      const response = await axiosInstance.post("/campaigns", campaignData);
 
-    setTimeout(() => {
-      router.push("/advertiser/dashboard/campaigns");
-    }, 2000);
+      toast.dismiss();
+      toast.success(
+        <div className="space-y-2">
+          <p className="font-medium">Congratulations 🎊!</p>
+          <p className="text-sm text-muted-foreground">
+            Your campaign was created successfully. You can view your campaign
+            on your dashboard.
+          </p>
+        </div>,
+        {
+          duration: 5000,
+        }
+      );
+
+      setTimeout(() => {
+        router.push("/advertiser/dashboard/campaigns");
+      }, 2000);
     } catch (error: any) {
       console.error("Error creating campaign:", error);
       toast.error(
-        error.response?.data?.message || "Failed to create campaign. Please try again."
+        error.response?.data?.message ||
+          "Failed to create campaign. Please try again."
       );
     }
   };
@@ -514,47 +539,55 @@ export default function Page() {
   const handleMediaFileUpload = async (file: File, type: "image" | "video") => {
     try {
       setIsUploadingMedia(true);
-      
+
       // Always use Cloudinary for videos
-      if (type === "video") { 
+      if (type === "video") {
         toast.info("Uploading video to cloud storage...");
-        
+
         // Cloudinary direct upload
         const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-        const uploadPreset = 'adminting'
-        
+        const uploadPreset = "adminting";
+
         if (!cloudName || !uploadPreset) {
           throw new Error("Cloudinary configuration is missing");
         }
-        
+
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", uploadPreset);
         formData.append("resource_type", "video");
         formData.append("max_file_size", "100000000"); // 100MB in bytes
-        
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/upload`, {
-          method: "POST",
-          body: formData,
-        });
-        
+
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
         const data = await response.json();
-        
+
         if (!response.ok) {
-          throw new Error(data.error?.message || "Error uploading to Cloudinary");
+          throw new Error(
+            data.error?.message || "Error uploading to Cloudinary"
+          );
         }
-        
+
         // Store the uploaded asset in contentAssets form field
         const asset = {
           type: "video",
           contentType: "video",
           url: data.secure_url,
-          thumbnailUrl: data.secure_url.replace("/video/upload/", "/video/upload/c_thumb,w_640,g_face/"),
+          thumbnailUrl: data.secure_url.replace(
+            "/video/upload/",
+            "/video/upload/c_thumb,w_640,g_face/"
+          ),
           size: file.size,
           width: data.width || 0,
           height: data.height || 0,
         };
-        
+
         form.setValue("contentAssets", [asset]);
         toast.success("Video uploaded successfully");
       } else {
@@ -562,15 +595,11 @@ export default function Page() {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await axiosInstance.post(
-          `/upload/`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const response = await axiosInstance.post(`/upload/`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
         // Store the uploaded asset in contentAssets form field
         const asset = {
@@ -581,14 +610,17 @@ export default function Page() {
           width: response.data.width || 0,
           height: response.data.height || 0,
         };
-        
+
         form.setValue("contentAssets", [asset]);
-        toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`);
+        toast.success(
+          `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`
+        );
       }
     } catch (error: any) {
       console.error(`Error uploading ${type} file:`, error);
       toast.error(
-        error.response?.data?.message || error.message ||
+        error.response?.data?.message ||
+          error.message ||
           `Failed to upload ${type} file. Please try again.`
       );
     } finally {
@@ -602,9 +634,9 @@ export default function Page() {
       setCurrentStep(STEPS[currentIndex + 1]);
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Create the campaign payload
       const campaignData: any = {
@@ -621,7 +653,9 @@ export default function Page() {
         targetGender: data.gender,
         minFollowers: Number(data.targetImpressions) || 1000,
         minEngagementRate: Number(data.pricePerImpression) || 0.02,
-        targetPromotions: Math.floor(Number(data.budget) / Number(data.pricePerPost)),
+        targetPromotions: Math.floor(
+          Number(data.budget) / Number(data.pricePerPost)
+        ),
         promotionLink: data.promotionLink,
         startDate: data.startDate,
         endDate: data.endDate,
@@ -632,16 +666,20 @@ export default function Page() {
             endTime: data.postingSchedule.endTime,
             days: data.postingSchedule.days,
           },
-          hashtags: data.hashtags ? data.hashtags.split(',').map(tag => tag.trim()) : [],
-          mentions: data.mentions ? data.mentions.split(',').map(mention => mention.trim()) : [],
+          hashtags: data.hashtags
+            ? data.hashtags.split(",").map((tag) => tag.trim())
+            : [],
+          mentions: data.mentions
+            ? data.mentions.split(",").map((mention) => mention.trim())
+            : [],
           brandAssetLinks: data.brandAssetLinks ? [data.brandAssetLinks] : [],
         },
       };
-      
+
       // Use the pre-uploaded contentAssets if available
       if (data.contentAssets && data.contentAssets.length > 0) {
         campaignData.contentAssets = data.contentAssets;
-      } 
+      }
       // Otherwise, process the mediaFiles
       else if (data.mediaFiles && data.mediaFiles.length > 0) {
         const mediaFileUploads = [];
@@ -649,18 +687,15 @@ export default function Page() {
           if (mediaFile.file) {
             const formData = new FormData();
             formData.append("file", mediaFile.file);
-            
-            const fileType = mediaFile.type === "video" ? "campaign-video" : "campaign-photo";
-            const response = await axiosInstance.post(
-              `/upload`,
-              formData,
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              }
-            );
-            
+
+            const fileType =
+              mediaFile.type === "video" ? "campaign-video" : "campaign-photo";
+            const response = await axiosInstance.post(`/upload`, formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            });
+
             mediaFileUploads.push({
               type: mediaFile.type === "video" ? "video" : "photo",
               contentType: mediaFile.type,
@@ -671,22 +706,22 @@ export default function Page() {
             });
           }
         }
-        
+
         campaignData.contentAssets = mediaFileUploads;
       } else {
         toast.error("Please upload at least one media file for your campaign");
         setIsSubmitting(false);
         return;
       }
-      
+
       // Create the campaign
       const response = await campaignService.createCampaign(campaignData);
-      
+
       toast.success("Campaign created successfully!");
       router.push(`/advertiser/dashboard/campaigns/${response._id}`);
     } catch (error: any) {
       console.error("Error creating campaign:", error);
-      
+
       setIsSubmitting(false);
     }
   };
@@ -698,7 +733,8 @@ export default function Page() {
 
   // Use a more specific check to prevent TypeScript errors
   const contentAssets = form.watch("contentAssets");
-  const hasContentAssets = Array.isArray(contentAssets) && contentAssets.length > 0;
+  const hasContentAssets =
+    Array.isArray(contentAssets) && contentAssets.length > 0;
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 p-8">
@@ -1322,7 +1358,7 @@ export default function Page() {
                                 file,
                               },
                             ]);
-                            
+
                             // Upload the image asynchronously
                             handleMediaFileUpload(file, "image");
                           }
@@ -1331,7 +1367,7 @@ export default function Page() {
                       {form.watch("mediaFiles")?.[0] && (
                         <div className="relative aspect-square w-full overflow-hidden rounded-lg border">
                           <img
-                            src={form.watch("mediaFiles")?.[0]?.url || ''}
+                            src={form.watch("mediaFiles")?.[0]?.url || ""}
                             alt="Preview"
                             className="object-cover"
                           />
@@ -1340,18 +1376,18 @@ export default function Page() {
                               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
                             </div>
                           ) : (
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute right-2 top-2"
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              className="absolute right-2 top-2"
                               onClick={() => {
                                 form.setValue("mediaFiles", []);
                                 form.setValue("contentAssets", []);
                               }}
-                          >
-                            ×
-                          </Button>
+                            >
+                              ×
+                            </Button>
                           )}
                         </div>
                       )}
@@ -1363,18 +1399,27 @@ export default function Page() {
                       <div className="space-y-2">
                         <Label>Media Content</Label>
                         <div className="grid gap-4">
-                          <div className="border border-dashed rounded-lg p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors"
-                            onClick={() => document.getElementById('file-upload')?.click()}>
+                          <div
+                            className="border border-dashed rounded-lg p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                            onClick={() =>
+                              document.getElementById("file-upload")?.click()
+                            }
+                          >
                             <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                            <p className="text-sm font-medium mb-1">Upload your campaign media</p>
+                            <p className="text-sm font-medium mb-1">
+                              Upload your campaign media
+                            </p>
                             <p className="text-xs text-muted-foreground">
                               Drag and drop or click to upload
                             </p>
                             <p className="text-xs text-muted-foreground mt-1">
-                              Supported formats: .jpg, .png, .mp4, .mov<br />
-                              <span className="font-medium">Videos up to 100MB supported</span>
+                              Supported formats: .jpg, .png, .mp4, .mov
+                              <br />
+                              <span className="font-medium">
+                                Videos up to 100MB supported
+                              </span>
                             </p>
-                            
+
                             <input
                               id="file-upload"
                               type="file"
@@ -1383,19 +1428,28 @@ export default function Page() {
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                  const fileType = file.type.startsWith("image/") ? "image" : "video";
-                                  
+                                  const fileType = file.type.startsWith(
+                                    "image/"
+                                  )
+                                    ? "image"
+                                    : "video";
+
                                   // Check file size for warning
-                                  if (fileType === "video" && file.size > 50 * 1024 * 1024) {
-                                    toast.warning("Large video detected. Upload may take a few minutes.");
+                                  if (
+                                    fileType === "video" &&
+                                    file.size > 50 * 1024 * 1024
+                                  ) {
+                                    toast.warning(
+                                      "Large video detected. Upload may take a few minutes."
+                                    );
                                   }
-                                  
+
                                   handleMediaFileUpload(file, fileType);
                                 }
                               }}
                             />
                           </div>
-                          
+
                           {isUploadingMedia && (
                             <div className="space-y-2">
                               <div className="h-2 w-full bg-muted overflow-hidden rounded-full">
@@ -1406,7 +1460,7 @@ export default function Page() {
                               </p>
                             </div>
                           )}
-                          
+
                           {hasContentAssets && !isUploadingMedia && (
                             <div className="space-y-2">
                               <div className="aspect-video relative rounded-lg overflow-hidden border">
@@ -1426,19 +1480,29 @@ export default function Page() {
                                   </div>
                                 )}
                               </div>
-                              
+
                               <div className="flex justify-between items-center">
                                 <p className="text-xs text-muted-foreground">
-                                  {contentAssets[0].contentType === "image" 
-                                    ? "Image" 
-                                    : "Video"} uploaded ({Math.round((contentAssets[0].size || 0) / 1024 / 1024 * 10) / 10} MB)
+                                  {contentAssets[0].contentType === "image"
+                                    ? "Image"
+                                    : "Video"}{" "}
+                                  uploaded (
+                                  {Math.round(
+                                    ((contentAssets[0].size || 0) /
+                                      1024 /
+                                      1024) *
+                                      10
+                                  ) / 10}{" "}
+                                  MB)
                                 </p>
                                 <Button
                                   type="button"
                                   variant="outline"
                                   size="sm"
                                   onClick={() => {
-                                    document.getElementById('file-upload')?.click();
+                                    document
+                                      .getElementById("file-upload")
+                                      ?.click();
                                   }}
                                 >
                                   Replace
@@ -1446,15 +1510,24 @@ export default function Page() {
                               </div>
                             </div>
                           )}
-                          
+
                           <Alert variant="info" className="mt-2">
                             <AlertCircle className="h-4 w-4" />
                             <AlertTitle>File Size Information</AlertTitle>
                             <AlertDescription>
                               <ul className="text-xs list-disc pl-4 space-y-1 mt-2">
-                                <li>Videos under 10MB will upload through our server</li>
-                                <li>Larger videos (10-100MB) will upload directly to cloud storage</li>
-                                <li>For best performance, compress videos before uploading</li>
+                                <li>
+                                  Videos under 10MB will upload through our
+                                  server
+                                </li>
+                                <li>
+                                  Larger videos (10-100MB) will upload directly
+                                  to cloud storage
+                                </li>
+                                <li>
+                                  For best performance, compress videos before
+                                  uploading
+                                </li>
                               </ul>
                             </AlertDescription>
                           </Alert>
@@ -1533,10 +1606,10 @@ export default function Page() {
                                 onClick={() => {
                                   const files = form.watch("mediaFiles") || [];
                                   if (files.length > 0) {
-                                  files.splice(currentSlide, 1);
-                                  form.setValue("mediaFiles", [...files]);
-                                  if (currentSlide > 0)
-                                    setCurrentSlide(currentSlide - 1);
+                                    files.splice(currentSlide, 1);
+                                    form.setValue("mediaFiles", [...files]);
+                                    if (currentSlide > 0)
+                                      setCurrentSlide(currentSlide - 1);
                                   }
                                 }}
                               >
@@ -1569,7 +1642,9 @@ export default function Page() {
                                 onClick={() => {
                                   const files = mediaFiles || [];
                                   const length = files.length || 1;
-                                  setCurrentSlide((prev) => (prev - 1 + length) % length);
+                                  setCurrentSlide(
+                                    (prev) => (prev - 1 + length) % length
+                                  );
                                 }}
                               >
                                 <ChevronLeft className="h-4 w-4" />
@@ -1582,7 +1657,9 @@ export default function Page() {
                                 onClick={() => {
                                   const files = mediaFiles || [];
                                   const length = files.length || 1;
-                                  setCurrentSlide((prev) => (prev + 1) % length);
+                                  setCurrentSlide(
+                                    (prev) => (prev + 1) % length
+                                  );
                                 }}
                               >
                                 <ChevronRight className="h-4 w-4" />
@@ -1600,7 +1677,6 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-2">
                   <Label>Content Guidelines</Label>
                   <Textarea
@@ -1614,7 +1690,6 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-4">
                   <Label>Posting Schedule</Label>
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -1717,7 +1792,6 @@ export default function Page() {
                     )}
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <Label>Hashtags (comma separated)</Label>
                   <Input
@@ -1731,7 +1805,6 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-2">
                   <Label>Mentions (comma separated)</Label>
                   <Input
@@ -1745,7 +1818,6 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-2">
                   <Label>Brand Asset Links (optional)</Label>
                   <Input
@@ -1759,7 +1831,6 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-2">
                   <Label>Promotion Link</Label>
                   <Input
@@ -1773,20 +1844,22 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-
-                <div className="space-y-2">
-                  <Label>CTA Label (optional)</Label>
-                  <Input
-                    {...form.register("ctaLabel")}
-                    type="text"
-                    placeholder="e.g., Learn More, Shop Now, Sign Up"
-                  />
-                  {errors.ctaLabel && (
-                    <p className="text-sm text-red-500 mt-1">
-                      {errors.ctaLabel.message}
-                    </p>
-                  )}
-                </div>
+                {form.watch("goal") !== "awareness"}{" "}
+                {
+                  <div className="space-y-2">
+                    <Label>CTA Label (optional)</Label>
+                    <Input
+                      {...form.register("ctaLabel")}
+                      type="text"
+                      placeholder="e.g., Learn More, Shop Now, Sign Up"
+                    />
+                    {errors.ctaLabel && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.ctaLabel.message}
+                      </p>
+                    )}
+                  </div>
+                }
               </div>
             </Card>
           </TabsContent>
