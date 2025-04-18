@@ -49,7 +49,7 @@ interface Campaign {
     mentions: string[];
     brandAssetLinks?: string[];
   };
-  goal: "conversion" | "awareness" | "engagement";
+  campaignGoal: "conversion" | "awareness" | "engagement";
 }
 
 export default function CampaignPage({
@@ -293,7 +293,7 @@ export default function CampaignPage({
           </div>
 
           {/* CTA Button */}
-          {campaign.goal !== "awareness" && (
+          {campaign.campaignGoal !== "awareness" && (
             <div className="text-center">
               <a
                 href={campaign.promotionLink}
@@ -305,7 +305,7 @@ export default function CampaignPage({
                     params.shortId,
                     campaign.promotionLink,
                     promoterId,
-                    campaign.goal
+                    campaign.campaignGoal
                   )
                 }
               >
