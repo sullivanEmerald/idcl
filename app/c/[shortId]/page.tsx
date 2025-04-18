@@ -29,7 +29,13 @@ interface Campaign {
   description: string;
   contentAssets: ContentAsset[];
   promotionLink: string;
-  status?: 'active' | 'paused' | 'completed' | 'expired' | 'scheduled' | 'draft';
+  status?:
+    | "active"
+    | "paused"
+    | "completed"
+    | "expired"
+    | "scheduled"
+    | "draft";
   endDate?: string;
   requirements?: {
     ctaLabel?: string;
@@ -43,7 +49,7 @@ interface Campaign {
     mentions: string[];
     brandAssetLinks?: string[];
   };
-  campaignGoal: "conversion" | "awareness" | "engagement";
+  goal: "conversion" | "awareness" | "engagement";
 }
 
 export default function CampaignPage({
@@ -61,7 +67,10 @@ export default function CampaignPage({
   const [campaignExpired, setCampaignExpired] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const promoterId = initialSearchParams.pId;
-  const utmSource = initialSearchParams.utm_source || searchParamsHook.get('utm_source') || undefined;
+  const utmSource =
+    initialSearchParams.utm_source ||
+    searchParamsHook.get("utm_source") ||
+    undefined;
   const [referrer] = useState(
     typeof document !== "undefined" ? document.referrer : ""
   );
@@ -73,11 +82,14 @@ export default function CampaignPage({
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/campaigns/public/${params.shortId}`
         );
-        
+
         // Check if campaign has expired or is completed
         const campaignData = response.data;
-        if (campaignData.status === 'completed' || campaignData.status === 'expired' || 
-            (campaignData.endDate && new Date(campaignData.endDate) < new Date())) {
+        if (
+          campaignData.status === "completed" ||
+          campaignData.status === "expired" ||
+          (campaignData.endDate && new Date(campaignData.endDate) < new Date())
+        ) {
           setCampaignExpired(true);
           setCampaign(null);
         } else {
@@ -141,16 +153,32 @@ export default function CampaignPage({
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
         <NavigationBar />
-        
+
         <main className="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-md mx-auto text-center bg-white p-8 rounded-lg shadow-md">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-16 w-16 text-gray-400 mx-auto mb-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Campaign Expired</h1>
-            <p className="text-gray-600 mb-6">This campaign is no longer active and has been completed or expired.</p>
-            <button 
-              onClick={() => router.push('/')} 
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              Campaign Expired
+            </h1>
+            <p className="text-gray-600 mb-6">
+              This campaign is no longer active and has been completed or
+              expired.
+            </p>
+            <button
+              onClick={() => router.push("/")}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
             >
               Return Home
@@ -173,9 +201,13 @@ export default function CampaignPage({
         <div className="max-w-4xl mx-auto">
           {/* Campaign Info */}
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-4">{campaign.title}</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-4">
+              {campaign.title}
+            </h1>
             {campaign.description && (
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">{campaign.description}</p>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                {campaign.description}
+              </p>
             )}
           </div>
           {/* Campaign Assets */}
@@ -225,10 +257,14 @@ export default function CampaignPage({
                   onTimeUpdate={() => {
                     const video = videoRef.current;
                     if (!video) return;
-                    
+
                     // Track view duration at key intervals
                     const currentTime = Math.floor(video.currentTime);
-                    if (currentTime === 3 || currentTime === 30 || currentTime === 60) {
+                    if (
+                      currentTime === 3 ||
+                      currentTime === 30 ||
+                      currentTime === 60
+                    ) {
                       analyticsService.trackVideoProgress(
                         params.shortId,
                         currentTime,
@@ -257,24 +293,26 @@ export default function CampaignPage({
           </div>
 
           {/* CTA Button */}
-          <div className="text-center">
-            <a
-              href={campaign.promotionLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-              onClick={() =>
-                analyticsService.trackConversion(
-                  params.shortId,
-                  campaign.promotionLink,
-                  promoterId,
-                  campaign.campaignGoal 
-                )
-              }
-            >
-              {campaign.requirements?.ctaLabel || "Learn More"}
-            </a>
-          </div>
+          {campaign.goal !== "awareness" && (
+            <div className="text-center">
+              <a
+                href={campaign.promotionLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                onClick={() =>
+                  analyticsService.trackConversion(
+                    params.shortId,
+                    campaign.promotionLink,
+                    promoterId,
+                    campaign.goal
+                  )
+                }
+              >
+                {campaign.requirements?.ctaLabel || "Learn More"}
+              </a>
+            </div>
+          )}
         </div>
       </main>
     </div>
