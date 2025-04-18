@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { JetBrains_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
+import "./force-light-mode.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="light" style={{colorScheme: 'light'}}>
+      <head>
+        <meta name="color-scheme" content="light" />
+      </head>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
