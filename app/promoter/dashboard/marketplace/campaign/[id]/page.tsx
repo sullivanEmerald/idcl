@@ -721,7 +721,7 @@ export default function CampaignDetails() {
                       variant="outline"
                       onClick={() => {
                         navigator.clipboard.writeText(
-                          `${campaign.promotionalLink}?utm_source=direct&utm_medium=share&utm_campaign=${campaign.id}`
+                          `${process.env.NEXT_PUBLIC_FRONTEND_URL}?utm_source=direct&utm_medium=share&utm_campaign=${campaign.id}`
                         );
                         toast.success("Link Copied!", {
                           description: "Promotional link copied to clipboard",
@@ -748,7 +748,7 @@ export default function CampaignDetails() {
                       <div key={platform} className="flex items-center gap-2">
                         <input
                           type="text"
-                          value={`${campaign.promotionalLink}?utm_source=${platform.toLowerCase()}&utm_medium=social&utm_campaign=${campaign.id}`}
+                          value={`${process.env.NEXT_PUBLIC_FRONTEND_URL}?utm_source=${platform.toLowerCase()}&utm_medium=social&utm_campaign=${campaign.id}`}
                           readOnly
                           className="flex-1 px-3 py-2 border rounded-md bg-gray-50"
                         />
