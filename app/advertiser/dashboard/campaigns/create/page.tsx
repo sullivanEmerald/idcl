@@ -156,11 +156,11 @@ const campaignSchema = z.object({
   pricePerPost: z.number().min(1, "Price per post must be at least 1"),
   targetImpressions: z
     .number()
-    .min(1, "Target impressions must be at least 1")
+    .min(1, "Target reach must be at least 1")
     .optional(),
   pricePerImpression: z
     .number()
-    .min(0.001, "Price per impression must be greater than 0")
+    .min(0.001, "Price per reach must be greater than 0")
     .optional(),
   estimatedBudget: z
     .number()
@@ -1083,43 +1083,49 @@ export default function Page() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <Label>Target Impressions</Label>
+                      <Label>Target reach</Label>
                       <span className="text-sm text-muted-foreground">
                         {(
                           form.watch("targetImpressions") || 1
                         ).toLocaleString()}{" "}
-                        impressions
+                        reach
                       </span>
                     </div>
-                    <Slider
-                      defaultValue={[form.getValues("targetImpressions") || 1]}
-                      min={1}
-                      max={1000000}
-                      step={20}
-                      onValueChange={([value]) => {
-                        form.setValue("targetImpressions", value);
-                        // Calculate estimated budget based on goal
-                        const goal = form.getValues("goal");
-                        let pricePerImpression = 0;
-                        switch (goal) {
-                          case "awareness":
-                            pricePerImpression = 60; // ₦60 per impression
-                            break;
-                          case "engagement":
-                            pricePerImpression = 300 + 100; // ₦400 per engagement
-                            break;
-                          case "conversion":
-                            pricePerImpression = 1000; // ₦1,000 per action
-                            break;
-                        }
-                        form.setValue("pricePerImpression", pricePerImpression);
-                        form.setValue(
-                          "estimatedBudget",
-                          value * pricePerImpression
-                        );
-                      }}
-                      className="py-4"
-                    />
+                    <div className="flex items-center space-x-4">
+                      <Input
+                        type="number"
+                        min={1}
+                        max={1000000}
+                        value={form.watch("targetImpressions") || 1}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 1;
+                          form.setValue("targetImpressions", value);
+                          // Calculate estimated budget based on goal
+                          const goal = form.getValues("goal");
+                          let pricePerImpression = 0;
+                          switch (goal) {
+                            case "awareness":
+                              pricePerImpression = 60; // ₦60 per impression
+                              break;
+                            case "engagement":
+                              pricePerImpression = 300 + 100; // ₦400 per engagement
+                              break;
+                            case "conversion":
+                              pricePerImpression = 1000; // ₦1,000 per action
+                              break;
+                          }
+                          form.setValue(
+                            "pricePerImpression",
+                            pricePerImpression
+                          );
+                          form.setValue(
+                            "estimatedBudget",
+                            value * pricePerImpression
+                          );
+                        }}
+                        className="w-full"
+                      />
+                    </div>
                     {errors.targetImpressions && (
                       <p className="text-sm text-red-500 mt-1">
                         {errors.targetImpressions.message}
@@ -1132,7 +1138,7 @@ export default function Page() {
                       <span>
                         Price per{" "}
                         {form.watch("goal") === "awareness"
-                          ? "impression"
+                          ? "reach"
                           : form.watch("goal") === "engagement"
                             ? "engagement"
                             : "conversion"}
@@ -1844,8 +1850,7 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-                {form.watch("goal") !== "awareness"}{" "}
-                {
+                {form.watch("goal") !== "awareness" && (
                   <div className="space-y-2">
                     <Label>CTA Label (optional)</Label>
                     <Input
@@ -1859,7 +1864,7 @@ export default function Page() {
                       </p>
                     )}
                   </div>
-                }
+                )}
               </div>
             </Card>
           </TabsContent>

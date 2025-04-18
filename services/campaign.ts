@@ -168,7 +168,7 @@ class CampaignService {
 
       const contentAssets = await Promise.all(contentAssetsPromises);
       const pricePerPost =
-        data.goal === "awareness" ? 30 : data.goal === "engagement" ? 200 : 400;
+        data.goal === "awareness" ? 60 : data.goal === "engagement" ? 400 : 1000;
       // Prepare campaign data
       const campaignData: any = {
         title: data.name,
