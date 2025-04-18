@@ -192,12 +192,12 @@ const campaignSchema = z.object({
   contentAssets: z
     .array(
       z.object({
-        type: z.string(),
-        contentType: z.string(),
-        url: z.string(),
-        size: z.number().optional(),
-        width: z.number().optional(),
-        height: z.number().optional(),
+      type: z.string(),
+      contentType: z.string(),
+      url: z.string(),
+      size: z.number().optional(),
+      width: z.number().optional(),
+      height: z.number().optional(),
       })
     )
     .optional(),
@@ -399,10 +399,10 @@ export default function Page() {
     // Create campaign with payment
     try {
       const formValues = form.getValues();
-
+      
       // Process media files if needed - this should happen before submitting
       let processedContentAssets = formValues.contentAssets;
-
+      
       // If we don't have pre-uploaded content assets but we do have mediaFiles, process them
       if (
         (!processedContentAssets || processedContentAssets.length === 0) &&
@@ -415,17 +415,17 @@ export default function Page() {
             try {
               const formData = new FormData();
               formData.append("file", mediaFile.file);
-
+              
               const fileType =
                 mediaFile.type === "video"
                   ? "campaign-video"
                   : "campaign-photo";
               const response = await axiosInstance.post(`/upload`, formData, {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
+                  headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
               });
-
+              
               mediaUploads.push({
                 type: mediaFile.type === "video" ? "video" : "photo",
                 contentType: mediaFile.type,
@@ -445,7 +445,7 @@ export default function Page() {
             }
           }
         }
-
+        
         processedContentAssets = mediaUploads;
       }
 
@@ -455,7 +455,7 @@ export default function Page() {
           : formValues.goal === "engagement"
             ? 400
             : 1000;
-
+      
       const campaignData = {
         title: formValues.name,
         description: formValues.description,
@@ -494,26 +494,26 @@ export default function Page() {
         },
         paymentReference: reference.reference,
       };
-
+      
       const response = await axiosInstance.post("/campaigns", campaignData);
 
-      toast.dismiss();
-      toast.success(
-        <div className="space-y-2">
-          <p className="font-medium">Congratulations 🎊!</p>
-          <p className="text-sm text-muted-foreground">
+    toast.dismiss();
+    toast.success(
+      <div className="space-y-2">
+        <p className="font-medium">Congratulations 🎊!</p>
+        <p className="text-sm text-muted-foreground">
             Your campaign was created successfully. You can view your campaign
             on your dashboard.
-          </p>
-        </div>,
-        {
-          duration: 5000,
-        }
-      );
+        </p>
+      </div>,
+      {
+        duration: 5000,
+      }
+    );
 
-      setTimeout(() => {
-        router.push("/advertiser/dashboard/campaigns");
-      }, 2000);
+    setTimeout(() => {
+      router.push("/advertiser/dashboard/campaigns");
+    }, 2000);
     } catch (error: any) {
       console.error("Error creating campaign:", error);
       toast.error(
@@ -552,8 +552,8 @@ export default function Page() {
           throw new Error("Cloudinary configuration is missing");
         }
 
-        const formData = new FormData();
-        formData.append("file", file);
+      const formData = new FormData();
+      formData.append("file", file);
         formData.append("upload_preset", uploadPreset);
         formData.append("resource_type", "video");
         formData.append("max_file_size", "100000000"); // 100MB in bytes
@@ -601,17 +601,17 @@ export default function Page() {
           },
         });
 
-        // Store the uploaded asset in contentAssets form field
-        const asset = {
-          type: type === "image" ? "photo" : "video",
-          contentType: type,
-          url: response.data.url,
-          size: file.size,
-          width: response.data.width || 0,
-          height: response.data.height || 0,
-        };
-
-        form.setValue("contentAssets", [asset]);
+      // Store the uploaded asset in contentAssets form field
+      const asset = {
+        type: type === "image" ? "photo" : "video",
+        contentType: type,
+        url: response.data.url,
+        size: file.size,
+        width: response.data.width || 0,
+        height: response.data.height || 0,
+      };
+      
+      form.setValue("contentAssets", [asset]);
         toast.success(
           `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`
         );
@@ -634,9 +634,9 @@ export default function Page() {
       setCurrentStep(STEPS[currentIndex + 1]);
       return;
     }
-
+    
     setIsSubmitting(true);
-
+    
     try {
       // Create the campaign payload
       const campaignData: any = {
@@ -675,11 +675,11 @@ export default function Page() {
           brandAssetLinks: data.brandAssetLinks ? [data.brandAssetLinks] : [],
         },
       };
-
+      
       // Use the pre-uploaded contentAssets if available
       if (data.contentAssets && data.contentAssets.length > 0) {
         campaignData.contentAssets = data.contentAssets;
-      }
+      } 
       // Otherwise, process the mediaFiles
       else if (data.mediaFiles && data.mediaFiles.length > 0) {
         const mediaFileUploads = [];
@@ -687,15 +687,15 @@ export default function Page() {
           if (mediaFile.file) {
             const formData = new FormData();
             formData.append("file", mediaFile.file);
-
+            
             const fileType =
               mediaFile.type === "video" ? "campaign-video" : "campaign-photo";
             const response = await axiosInstance.post(`/upload`, formData, {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
             });
-
+            
             mediaFileUploads.push({
               type: mediaFile.type === "video" ? "video" : "photo",
               contentType: mediaFile.type,
@@ -706,22 +706,22 @@ export default function Page() {
             });
           }
         }
-
+        
         campaignData.contentAssets = mediaFileUploads;
       } else {
         toast.error("Please upload at least one media file for your campaign");
         setIsSubmitting(false);
         return;
       }
-
+      
       // Create the campaign
       const response = await campaignService.createCampaign(campaignData);
-
+      
       toast.success("Campaign created successfully!");
       router.push(`/advertiser/dashboard/campaigns/${response._id}`);
     } catch (error: any) {
       console.error("Error creating campaign:", error);
-
+      
       setIsSubmitting(false);
     }
   };
@@ -1094,37 +1094,37 @@ export default function Page() {
                     <div className="flex items-center space-x-4">
                       <Input
                         type="number"
-                        min={1}
-                        max={1000000}
+                      min={1}
+                      max={1000000}
                         value={form.watch("targetImpressions") || 1}
                         onChange={(e) => {
                           const value = parseInt(e.target.value) || 1;
-                          form.setValue("targetImpressions", value);
-                          // Calculate estimated budget based on goal
-                          const goal = form.getValues("goal");
-                          let pricePerImpression = 0;
-                          switch (goal) {
-                            case "awareness":
-                              pricePerImpression = 60; // ₦60 per impression
-                              break;
-                            case "engagement":
-                              pricePerImpression = 300 + 100; // ₦400 per engagement
-                              break;
-                            case "conversion":
-                              pricePerImpression = 1000; // ₦1,000 per action
-                              break;
-                          }
+                        form.setValue("targetImpressions", value);
+                        // Calculate estimated budget based on goal
+                        const goal = form.getValues("goal");
+                        let pricePerImpression = 0;
+                        switch (goal) {
+                          case "awareness":
+                            pricePerImpression = 60; // ₦60 per impression
+                            break;
+                          case "engagement":
+                            pricePerImpression = 300 + 100; // ₦400 per engagement
+                            break;
+                          case "conversion":
+                            pricePerImpression = 1000; // ₦1,000 per action
+                            break;
+                        }
                           form.setValue(
                             "pricePerImpression",
                             pricePerImpression
                           );
-                          form.setValue(
-                            "estimatedBudget",
-                            value * pricePerImpression
-                          );
-                        }}
+                        form.setValue(
+                          "estimatedBudget",
+                          value * pricePerImpression
+                        );
+                      }}
                         className="w-full"
-                      />
+                    />
                     </div>
                     {errors.targetImpressions && (
                       <p className="text-sm text-red-500 mt-1">
@@ -1364,7 +1364,7 @@ export default function Page() {
                                 file,
                               },
                             ]);
-
+                            
                             // Upload the image asynchronously
                             handleMediaFileUpload(file, "image");
                           }
@@ -1382,18 +1382,18 @@ export default function Page() {
                               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
                             </div>
                           ) : (
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="icon"
-                              className="absolute right-2 top-2"
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute right-2 top-2"
                               onClick={() => {
                                 form.setValue("mediaFiles", []);
                                 form.setValue("contentAssets", []);
                               }}
-                            >
-                              ×
-                            </Button>
+                          >
+                            ×
+                          </Button>
                           )}
                         </div>
                       )}
@@ -1451,9 +1451,9 @@ export default function Page() {
                                   }
 
                                   handleMediaFileUpload(file, fileType);
-                                }
-                              }}
-                            />
+                            }
+                          }}
+                        />
                           </div>
 
                           {isUploadingMedia && (
@@ -1464,7 +1464,7 @@ export default function Page() {
                               <p className="text-xs text-center text-muted-foreground">
                                 Uploading media... Please wait
                               </p>
-                            </div>
+                      </div>
                           )}
 
                           {hasContentAssets && !isUploadingMedia && (
@@ -1478,14 +1478,14 @@ export default function Page() {
                                   />
                                 ) : (
                                   <div className="relative w-full h-full">
-                                    <video
+                            <video
                                       src={contentAssets[0].url}
-                                      controls
+                              controls
                                       className="object-contain w-full h-full"
-                                    />
-                                  </div>
+                            />
+                          </div>
                                 )}
-                              </div>
+                            </div>
 
                               <div className="flex justify-between items-center">
                                 <p className="text-xs text-muted-foreground">
@@ -1501,21 +1501,21 @@ export default function Page() {
                                   ) / 10}{" "}
                                   MB)
                                 </p>
-                                <Button
-                                  type="button"
+                          <Button
+                            type="button"
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => {
+                              onClick={() => {
                                     document
                                       .getElementById("file-upload")
                                       ?.click();
-                                  }}
-                                >
+                              }}
+                          >
                                   Replace
-                                </Button>
+                          </Button>
                               </div>
-                            </div>
-                          )}
+                        </div>
+                      )}
 
                           <Alert variant="info" className="mt-2">
                             <AlertCircle className="h-4 w-4" />
@@ -1612,10 +1612,10 @@ export default function Page() {
                                 onClick={() => {
                                   const files = form.watch("mediaFiles") || [];
                                   if (files.length > 0) {
-                                    files.splice(currentSlide, 1);
-                                    form.setValue("mediaFiles", [...files]);
-                                    if (currentSlide > 0)
-                                      setCurrentSlide(currentSlide - 1);
+                                  files.splice(currentSlide, 1);
+                                  form.setValue("mediaFiles", [...files]);
+                                  if (currentSlide > 0)
+                                    setCurrentSlide(currentSlide - 1);
                                   }
                                 }}
                               >
@@ -1851,19 +1851,19 @@ export default function Page() {
                   )}
                 </div>
                 {form.watch("goal") !== "awareness" && (
-                  <div className="space-y-2">
-                    <Label>CTA Label (optional)</Label>
-                    <Input
-                      {...form.register("ctaLabel")}
-                      type="text"
-                      placeholder="e.g., Learn More, Shop Now, Sign Up"
-                    />
-                    {errors.ctaLabel && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.ctaLabel.message}
-                      </p>
-                    )}
-                  </div>
+                <div className="space-y-2">
+                  <Label>CTA Label (optional)</Label>
+                  <Input
+                    {...form.register("ctaLabel")}
+                    type="text"
+                    placeholder="e.g., Learn More, Shop Now, Sign Up"
+                  />
+                  {errors.ctaLabel && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.ctaLabel.message}
+                    </p>
+                  )}
+                </div>
                 )}
               </div>
             </Card>

@@ -546,12 +546,14 @@ export default function CampaignPage() {
                         .map(([platform, data]) => (
                           <div key={platform} className="flex justify-between text-sm">
                             <span className="capitalize">{platform}</span>
-                        <span>
+                            <span>
                               {typeof data === 'object' && data !== null && 'count' in data 
-                                ? (typeof data.count === 'number' ? data.count.toLocaleString() : String(data.count))
+                                ? (typeof data.count === 'number' 
+                                    ? data.count.toLocaleString() 
+                                    : String(data.count))
                                 : "0"}
-                        </span>
-                      </div>
+                            </span>
+                          </div>
                         ))}
                     </div>
                   </div>

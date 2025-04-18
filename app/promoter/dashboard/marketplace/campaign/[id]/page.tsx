@@ -39,6 +39,7 @@ import {
 import { cn } from "@/lib/utils";
 import { CampaignSocialInteractions } from "@/components/campaigns/campaign-social-interactions";
 import { useAuth } from "@/hooks/use-auth";
+import axios from "axios";
 
 export default function CampaignDetails() {
   const params = useParams();
@@ -49,8 +50,75 @@ export default function CampaignDetails() {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [applicationNote, setApplicationNote] = useState("");
   const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const [promotionalLink, setPromotionalLink] = useState<string | null>(null);
+  const [isGeneratingLink, setIsGeneratingLink] = useState(false);
   const hasTracked = useRef(false);
   const { user } = useAuth();
+
+  // Fetch short URL for this promoter and campaign
+  const fetchPromoterShortUrl = async () => {
+    if (!user?.id || !params.id) return;
+
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/url-shortener/promoter-link`,
+        {
+          params: {
+            campaignId: params.id,
+            promoterId: user.id,
+          },
+        }
+      );
+      console.log(response.data);
+
+      if (response.data && response.data.shortUrl) {
+        setPromotionalLink(response.data.shortUrl);
+      }
+    } catch (error) {
+      console.error("Error fetching promoter short URL:", error);
+      // If there's an error, we'll leave the promotional link as null
+      // and show the generate button
+    }
+  };
+  console.log(promotionalLink);
+
+  // Generate a short URL for this promoter and campaign
+  const generateShortUrl = async () => {
+    if (!user?.id || !campaign) return;
+
+    try {
+      setIsGeneratingLink(true);
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/url-shortener/shorten`,
+        {
+          originalUrl: `${process.env.NEXT_PUBLIC_FRONTEND_URL}`,
+          campaignId: campaign.id,
+          promoterId: user.id,
+        }
+      );
+
+      if (response.data && response.data.shortUrl) {
+        setPromotionalLink(response.data.shortUrl);
+        toast.success("Promotional link generated!", {
+          description: "Your unique tracking link is ready to share",
+        });
+
+        // Track link generation
+        // analyticsService.trackEvent(campaign.id, "click", {
+        //   interactionType: "link_generation",
+        //   action: "generate",
+        // });
+      }
+    } catch (error) {
+      console.error("Error generating short URL:", error);
+      toast.error("Failed to generate link", {
+        description: "Please try again later",
+      });
+    } finally {
+      setIsGeneratingLink(false);
+    }
+  };
 
   useEffect(() => {
     const fetchCampaign = async () => {
@@ -72,6 +140,13 @@ export default function CampaignDetails() {
       fetchCampaign();
     }
   }, [params.id, user?.id]);
+
+  // Fetch the promoter's short URL when the campaign loads
+  useEffect(() => {
+    if (campaign && user?.id) {
+      fetchPromoterShortUrl();
+    }
+  }, [campaign, user?.id]);
 
   if (isLoading) {
     return (
@@ -116,7 +191,9 @@ export default function CampaignDetails() {
       setShowApplicationForm(false);
     } catch (error: any) {
       console.error("Error applying to campaign:", error?.response?.data);
-      toast.error(error?.response?.data?.message || "Failed to submit application");
+      toast.error(
+        error?.response?.data?.message || "Failed to submit application"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -711,116 +788,175 @@ export default function CampaignDetails() {
                 <div className="flex flex-col gap-4">
                   {/* Original Promotional Link */}
                   <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={`${process.env.NEXT_PUBLIC_FRONTEND_URL}?utm_source=direct&utm_medium=share&utm_campaign=${campaign.id}`}
-                      readOnly
-                      className="flex-1 px-3 py-2 border rounded-md bg-gray-50"
-                    />
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        navigator.clipboard.writeText(
-                          `${process.env.NEXT_PUBLIC_FRONTEND_URL}?utm_source=direct&utm_medium=share&utm_campaign=${campaign.id}`
-                        );
-                        toast.success("Link Copied!", {
-                          description: "Promotional link copied to clipboard",
-                          duration: 3000,
-                        });
-
-                        analyticsService.trackEvent(campaign.id, "click", {
-                          interactionType: "link_copy",
-                          action: "copy",
-                          platform: "direct",
-                        });
-                      }}
-                    >
-                      Copy
-                    </Button>
-                  </div>
-
-                  {/* Platform-specific Links */}
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-gray-600">
-                      Platform-specific Links
-                    </h3>
-                    {campaign.requiredPlatforms.map((platform) => (
-                      <div key={platform} className="flex items-center gap-2">
+                    {promotionalLink ? (
+                      <>
                         <input
                           type="text"
-                          value={`${process.env.NEXT_PUBLIC_FRONTEND_URL}?utm_source=${platform.toLowerCase()}&utm_medium=social&utm_campaign=${campaign.id}`}
+                          value={promotionalLink}
                           readOnly
                           className="flex-1 px-3 py-2 border rounded-md bg-gray-50"
                         />
                         <Button
                           variant="outline"
                           onClick={() => {
-                            navigator.clipboard.writeText(
-                              `${process.env.NEXT_PUBLIC_FRONTEND_URL}?utm_source=${platform.toLowerCase()}&utm_medium=social&utm_campaign=${campaign.id}`
-                            );
+                            navigator.clipboard.writeText(promotionalLink);
                             toast.success("Link Copied!", {
-                              description: `${platform} promotional link copied to clipboard`,
+                              description:
+                                "Promotional link copied to clipboard",
                               duration: 3000,
                             });
 
-                            // Track copy event with platform
                             analyticsService.trackEvent(campaign.id, "click", {
                               interactionType: "link_copy",
                               action: "copy",
-                              platform: platform.toLowerCase(),
+                              platform: "direct",
                             });
                           }}
                         >
-                          Copy {platform}
+                          Copy
                         </Button>
-                      </div>
-                    ))}
+                      </>
+                    ) : (
+                      <>
+                        <input
+                          type="text"
+                          value="Generate your unique promotional link"
+                          readOnly
+                          className="flex-1 px-3 py-2 border rounded-md bg-gray-50 text-gray-500"
+                        />
+                        <Button
+                          variant="outline"
+                          onClick={generateShortUrl}
+                          disabled={isGeneratingLink}
+                        >
+                          {isGeneratingLink ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Generating...
+                            </>
+                          ) : (
+                            "Generate Link"
+                          )}
+                        </Button>
+                      </>
+                    )}
                   </div>
+
+                  {/* Platform-specific Links */}
+                  {promotionalLink && (
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-medium text-gray-600">
+                        Platform-specific Links
+                      </h3>
+                      {campaign.requiredPlatforms.map((platform) => (
+                        <div key={platform} className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={`${promotionalLink}?utm_source=${platform.toLowerCase()}&utm_medium=social&utm_campaign=${campaign.id}`}
+                            readOnly
+                            className="flex-1 px-3 py-2 border rounded-md bg-gray-50"
+                          />
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                `${promotionalLink}?utm_source=${platform.toLowerCase()}&utm_medium=social&utm_campaign=${campaign.id}`
+                              );
+                              toast.success("Link Copied!", {
+                                description: `${platform} promotional link copied to clipboard`,
+                                duration: 3000,
+                              });
+
+                              // Track copy event with platform
+                              analyticsService.trackEvent(
+                                campaign.id,
+                                "click",
+                                {
+                                  interactionType: "link_copy",
+                                  action: "copy",
+                                  platform: platform.toLowerCase(),
+                                }
+                              );
+                            }}
+                          >
+                            Copy {platform}
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="qr">
-              <div className="flex flex-col items-center space-y-4">
-                <QRCodeSVG
-                  value={campaign.promotionalLink as string}
-                  size={200}
-                  includeMargin
-                  level="H"
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    const canvas = document.createElement("canvas");
-                    const svg = document.querySelector("svg");
-                    const svgData = new XMLSerializer().serializeToString(svg!);
-                    const img = document.createElement("img");
-                    img.onload = () => {
-                      canvas.width = img.width;
-                      canvas.height = img.height;
-                      canvas.getContext("2d")!.drawImage(img, 0, 0);
-                      const a = document.createElement("a");
-                      a.download = `${campaign.title}-qr.png`;
-                      a.href = canvas.toDataURL("image/png");
-                      a.click();
+              {promotionalLink ? (
+                <div className="flex flex-col items-center space-y-4">
+                  <QRCodeSVG
+                    value={promotionalLink}
+                    size={200}
+                    includeMargin
+                    level="H"
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const canvas = document.createElement("canvas");
+                      const svg = document.querySelector("svg");
+                      const svgData = new XMLSerializer().serializeToString(
+                        svg!
+                      );
+                      const img = document.createElement("img");
+                      img.onload = () => {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        canvas.getContext("2d")!.drawImage(img, 0, 0);
+                        const a = document.createElement("a");
+                        a.download = `${campaign.title}-qr.png`;
+                        a.href = canvas.toDataURL("image/png");
+                        a.click();
 
-                      toast.success("QR Code Downloaded", {
-                        description: "QR code has been saved to your downloads",
-                        duration: 3000,
-                      });
+                        toast.success("QR Code Downloaded", {
+                          description:
+                            "QR code has been saved to your downloads",
+                          duration: 3000,
+                        });
 
-                      // Track QR code download
-                      analyticsService.trackEvent(campaign.id, "click", {
-                        interactionType: "link_copy",
-                        action: "download",
-                      });
-                    };
-                    img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
-                  }}
-                >
-                  Download QR Code
-                </Button>
-              </div>
+                        // Track QR code download
+                        analyticsService.trackEvent(campaign.id, "click", {
+                          interactionType: "link_copy",
+                          action: "download",
+                        });
+                      };
+                      img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
+                    }}
+                  >
+                    Download QR Code
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center space-y-4 p-8">
+                  <div className="text-center p-8 border border-dashed rounded-lg">
+                    <QrCode className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500 mb-4">
+                      Generate your promotional link first to view QR code
+                    </p>
+                    <Button
+                      onClick={generateShortUrl}
+                      disabled={isGeneratingLink}
+                    >
+                      {isGeneratingLink ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Generating Link...
+                        </>
+                      ) : (
+                        "Generate Promotional Link"
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="preview">
