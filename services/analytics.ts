@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { axiosInstance } from "@/lib/utils";
 
-export type EventType = "view" | "click" | "conversion";
+export type EventType = "view" | "click" | "conversion" | "video_play";
 export type InteractionType =
   | "campaign_view"
   | "campaign_view_end"
@@ -187,7 +187,7 @@ class AnalyticsService {
   trackVideoPlay(shortId: string, promoterId?: string) {
     return this.trackEvent(
       shortId,
-      "view",
+      "video_play",
       {
         interactionType: "video_play",
       },
@@ -199,7 +199,7 @@ class AnalyticsService {
     const duration = Date.now() - this.lastEventTime;
     return this.trackEvent(
       shortId,
-      "view",
+      "video_play",
       {
         interactionType: "video_complete",
         duration,
@@ -215,7 +215,7 @@ class AnalyticsService {
   ) {
     return this.trackEvent(
       shortId,
-      "view",
+      "video_play",
       {
         interactionType: "video_play",
         viewDuration: secondsWatched,

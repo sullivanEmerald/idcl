@@ -173,7 +173,7 @@ export default function AnalyticsPage() {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold">Completed Tasks</h3>
+          <h3 className="text-lg font-semibold">Completed Campaigns</h3>
           <p className="mt-2 text-3xl font-bold">
             {(analyticsData?.completedTasks || []).reduce((a, b) => a + b, 0).toLocaleString()}
           </p>
@@ -211,7 +211,7 @@ export default function AnalyticsPage() {
                 {/* <p className="text-sm text-gray-600">{campaign.brand}</p> */}
               </div>
               <div className="text-right">
-                <p className="font-medium">₦{campaign.earnings.toLocaleString()}</p>
+                {/* <p className="font-medium">₦{campaign.earnings.toLocaleString()}</p> */}
                 <p className="text-sm text-gray-600">
                   {campaign.engagement.toLocaleString()} engagements
                 </p>
