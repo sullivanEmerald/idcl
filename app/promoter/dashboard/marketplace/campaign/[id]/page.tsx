@@ -425,14 +425,14 @@ export default function CampaignDetails() {
                 )}
               </div>
             ) : (
-              // Single Photo View
-              <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
-                <Image
-                  src={campaign.contentAssets[0].url}
-                  alt={campaign.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 75vw"
-                  className="object-cover"
+              campaign.contentAssets.length > 0 && (
+                <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
+                  <Image
+                    src={campaign.contentAssets[0].url}
+                    alt={campaign.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 75vw"
+                    className="object-cover"
                 />
                 <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
                   {campaign.contentAssets[0].contentType}
@@ -443,7 +443,7 @@ export default function CampaignDetails() {
                   </div>
                 )}
               </div>
-            )}
+            ))}
           </div>
         </Card>
 
