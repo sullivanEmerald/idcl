@@ -71,9 +71,10 @@ export default function CampaignPage({
     initialSearchParams.utm_source ||
     searchParamsHook.get("utm_source") ||
     undefined;
-  const [referrer] = useState(
-    typeof document !== "undefined" ? document.referrer : ""
-  );
+
+    // const [referrer] = useState(
+    //   typeof document !== "undefined" ? document.referrer : ""
+    // );
 
   useEffect(() => {
     const fetchCampaign = async () => {
@@ -94,7 +95,6 @@ export default function CampaignPage({
           setCampaign(null);
         } else {
           setCampaign(campaignData);
-          // Only track view if campaign is active
           analyticsService.trackUserView(params.shortId, promoterId, utmSource);
         }
       } catch (error) {
@@ -108,34 +108,34 @@ export default function CampaignPage({
     fetchCampaign();
 
     // Track session duration when user leaves
-    const handleBeforeUnload = () => {
-      const duration = analyticsService.getSessionDuration();
-      const baseMetadata = analyticsService.getBaseMetadata();
-      const blob = new Blob(
-        [
-          JSON.stringify({
-            shortUrlId: params.shortId,
-            eventType: "view",
-            promoterId: promoterId,
-            metadata: {
-              ...baseMetadata,
-              duration,
-              path: pathname,
-              interactionType: "campaign_view_end",
-              referrer,
-            },
-          }),
-        ],
-        { type: "application/json" }
-      );
-      navigator.sendBeacon(
-        `${process.env.NEXT_PUBLIC_API_URL}/analytics/track`,
-        blob
-      );
-    };
+    // const handleBeforeUnload = () => {
+    //   const duration = analyticsService.getSessionDuration();
+    //   const baseMetadata = analyticsService.getBaseMetadata();
+    //   const blob = new Blob(
+    //     [
+    //       JSON.stringify({
+    //         shortUrlId: params.shortId,
+    //         eventType: "view",
+    //         promoterId: promoterId,
+    //         metadata: {
+    //           ...baseMetadata,
+    //           duration,
+    //           path: pathname,
+    //           interactionType: "campaign_view_end",
+    //           referrer,
+    //         },
+    //       }),
+    //     ],
+    //     { type: "application/json" }
+    //   );
+    //   navigator.sendBeacon(
+    //     `${process.env.NEXT_PUBLIC_API_URL}/analytics/track`,
+    //     blob
+    //   );
+    // };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    // window.addEventListener("beforeunload", handleBeforeUnload);
+    // return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [params.shortId, pathname, router]);
 
   if (loading) {
