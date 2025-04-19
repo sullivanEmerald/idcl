@@ -1295,7 +1295,7 @@ export default function Page() {
                     }
                   />
                   <Label htmlFor="boost">
-                    Boost Campaign (Make available to community promoters)
+                    Feature campaign
                   </Label>
                 </div>
               </div>
