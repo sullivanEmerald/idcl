@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
 import { NavigationBar } from "@/components/ui/navigation-bar";
@@ -60,7 +60,6 @@ export default function CampaignPage({
   searchParams: { pId?: string; utm_source?: string };
 }) {
   const router = useRouter();
-  const pathname = usePathname();
   const searchParamsHook = useSearchParams();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,9 +71,12 @@ export default function CampaignPage({
     searchParamsHook.get("utm_source") ||
     undefined;
 
-    // const [referrer] = useState(
-    //   typeof document !== "undefined" ? document.referrer : ""
-    // );
+  // Ref to track if analytics have been recorded
+  const analyticsRecorded = useRef(false);
+
+  // const [referrer] = useState(
+  //   typeof document !== "undefined" ? document.referrer : ""
+  // );
 
   useEffect(() => {
     const fetchCampaign = async () => {
@@ -95,7 +97,12 @@ export default function CampaignPage({
           setCampaign(null);
         } else {
           setCampaign(campaignData);
-          analyticsService.trackUserView(params.shortId, promoterId, utmSource);
+          
+          // Check if we've already recorded analytics for this page view
+          if (!analyticsRecorded.current) {
+            await analyticsService.trackUserView(params.shortId, promoterId, utmSource);
+            analyticsRecorded.current = true;
+          }
         }
       } catch (error) {
         console.error("Failed to fetch campaign:", error);
@@ -106,37 +113,7 @@ export default function CampaignPage({
     };
 
     fetchCampaign();
-
-    // Track session duration when user leaves
-    // const handleBeforeUnload = () => {
-    //   const duration = analyticsService.getSessionDuration();
-    //   const baseMetadata = analyticsService.getBaseMetadata();
-    //   const blob = new Blob(
-    //     [
-    //       JSON.stringify({
-    //         shortUrlId: params.shortId,
-    //         eventType: "view",
-    //         promoterId: promoterId,
-    //         metadata: {
-    //           ...baseMetadata,
-    //           duration,
-    //           path: pathname,
-    //           interactionType: "campaign_view_end",
-    //           referrer,
-    //         },
-    //       }),
-    //     ],
-    //     { type: "application/json" }
-    //   );
-    //   navigator.sendBeacon(
-    //     `${process.env.NEXT_PUBLIC_API_URL}/analytics/track`,
-    //     blob
-    //   );
-    // };
-
-    // window.addEventListener("beforeunload", handleBeforeUnload);
-    // return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [params.shortId, pathname, router]);
+  }, [params.shortId]);
 
   if (loading) {
     return (

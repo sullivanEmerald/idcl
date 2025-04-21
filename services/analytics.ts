@@ -32,10 +32,25 @@ class AnalyticsService {
   private sessionStartTime: number;
   private lastEventTime: number;
   private pageReferrer: string;
+  private trackedCampaigns: Set<string>;
 
   constructor() {
     this.sessionStartTime = Date.now();
     this.lastEventTime = this.sessionStartTime;
+    this.trackedCampaigns = new Set();
+    
+    // Initialize tracked campaigns from sessionStorage
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      try {
+        const trackedCampaigns = JSON.parse(sessionStorage.getItem('trackedCampaigns') || '[]');
+        trackedCampaigns.forEach((campaign: string) => {
+          this.trackedCampaigns.add(campaign);
+        });
+      } catch (e) {
+        console.error('Error reading from sessionStorage', e);
+      }
+    }
+    
     // Store and categorize referrer when service is instantiated
     if (typeof window !== "undefined") {
       const rawReferrer = window.location.search.includes("ref=")
@@ -150,6 +165,34 @@ class AnalyticsService {
   }
 
   trackUserView(shortId: string, promoterId?: string, utmSource?: string) {
+    // Create a unique key for this campaign view
+    const viewKey = `${shortId}_${promoterId || 'anonymous'}`;
+    
+    // If we've already tracked a view for this campaign in this session, don't track again
+    if (this.trackedCampaigns.has(viewKey)) {
+      console.log(`Already tracked view for campaign ${shortId} in this session, skipping`);
+      return Promise.resolve(null);
+    }
+    
+    // Mark this campaign as tracked in this session
+    this.trackedCampaigns.add(viewKey);
+    
+    // Store in sessionStorage to persist across page refreshes in the same session
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      try {
+        // Get tracked campaigns from session storage
+        const trackedCampaigns = JSON.parse(sessionStorage.getItem('trackedCampaigns') || '[]');
+        
+        // Add this campaign if not already tracked
+        if (!trackedCampaigns.includes(viewKey)) {
+          trackedCampaigns.push(viewKey);
+          sessionStorage.setItem('trackedCampaigns', JSON.stringify(trackedCampaigns));
+        }
+      } catch (e) {
+        console.error('Error accessing sessionStorage', e);
+      }
+    }
+    
     return this.trackEvent(
       shortId,
       "view",
