@@ -1,13 +1,12 @@
 import axios from 'axios';
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 
 type Props = {
   params: { shortId: string };
 };
 
 export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata
+  { params }: Props
 ): Promise<Metadata> {
   // Get the shortId from params
   const shortId = params.shortId;
@@ -35,12 +34,15 @@ export async function generateMetadata(
       const campaign = campaignResponse.data;
       
       if (campaign) {
+        const title = campaign.title || 'Adminting Campaign';
+        const description = campaign.description || 'View this campaign on Adminting';
+        
         metadata = {
-          title: campaign.title || 'Adminting Campaign',
-          description: campaign.description || 'View this campaign on Adminting',
+          title,
+          description,
           openGraph: {
-            title: campaign.title || 'Adminting Campaign',
-            description: campaign.description || 'View this campaign on Adminting',
+            title,
+            description,
             url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/s/${shortId}`,
             siteName: 'Adminting',
             locale: 'en_US',
@@ -48,8 +50,12 @@ export async function generateMetadata(
           },
           twitter: {
             card: 'summary_large_image',
-            title: campaign.title || 'Adminting Campaign',
-            description: campaign.description || 'View this campaign on Adminting',
+            title,
+            description,
+          },
+          // Add alternate URLs to help SEO
+          alternates: {
+            canonical: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/c/${campaignId}`,
           }
         };
         
@@ -62,7 +68,7 @@ export async function generateMetadata(
                 url: campaign.coverImage,
                 width: 1200,
                 height: 630,
-                alt: campaign.title,
+                alt: title,
               },
             ],
           };
@@ -70,6 +76,26 @@ export async function generateMetadata(
           metadata.twitter = {
             ...metadata.twitter,
             images: [campaign.coverImage],
+          };
+        } else if (campaign.contentAssets?.length > 0) {
+          // Fallback to first content asset
+          const imageUrl = campaign.contentAssets[0].url;
+          
+          metadata.openGraph = {
+            ...metadata.openGraph,
+            images: [
+              {
+                url: imageUrl,
+                width: 1200,
+                height: 630,
+                alt: title,
+              },
+            ],
+          };
+          
+          metadata.twitter = {
+            ...metadata.twitter,
+            images: [imageUrl],
           };
         }
       }
