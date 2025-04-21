@@ -16,7 +16,6 @@ export default function RedirectPage({ params }: { params: { shortId: string } }
         const campaignId = response.data.campaignId;
         const promoterId = response.data.promoterId;
         
-        // Extract UTM parameters from URL
         const utm_source = searchParams.get('utm_source') || '';
         
         // Create query string with promoterId and utm_source

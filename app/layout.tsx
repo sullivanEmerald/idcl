@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     siteName: "Adminting",
     images: [
       {
-        url: "/og-image.jpg", // You'll need to create and add this image
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Adminting Platform"
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Adminting | Influencer Marketing Platform",
     description: "Connect brands with influential promoters to create engaging campaigns and drive meaningful results.",
-    images: ["/twitter-image.jpg"], // You'll need to create and add this image
+    images: ["/twitter-image.jpg"],
     creator: "@adminting",
     site: "@adminting"
   },
@@ -57,11 +57,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/favicon.ico",
-    apple: "/apple-icon.png" // You'll need to create and add this image
+    apple: "/apple-icon.png" 
   },
-  manifest: "/manifest.json", // You'll need to create this file
+  manifest: "/manifest.json",
   verification: {
-    // Add verification tokens as needed
     google: "google-site-verification-token", 
     yandex: "yandex-verification-token"
   }
