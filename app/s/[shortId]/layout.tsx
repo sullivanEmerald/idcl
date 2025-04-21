@@ -2,30 +2,27 @@ import axios from 'axios';
 import { Metadata } from 'next';
 
 type Props = {
+  children: React.ReactNode;
   params: { shortId: string };
 };
 
 export async function generateMetadata(
-  { params }: Props
+  { params }: Omit<Props, 'children'>
 ): Promise<Metadata> {
-  // Get the shortId from params
   const shortId = params.shortId;
   
-  // Default metadata
   let metadata: Metadata = {
     title: 'Adminting Campaign',
     description: 'View this campaign on Adminting',
   };
   
   try {
-    // First get the campaign ID from the URL shortener service
     const urlResponse = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/url-shortener/campaign/${shortId}`
     );
     
     const campaignId = urlResponse.data.campaignId;
     
-    // Then fetch the campaign details using the campaign ID
     if (campaignId) {
       const campaignResponse = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/campaigns/public/${campaignId}`
@@ -53,7 +50,6 @@ export async function generateMetadata(
             title,
             description,
           },
-          // Add alternate URLs to help SEO
           alternates: {
             canonical: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/c/${campaignId}`,
           }
@@ -78,7 +74,6 @@ export async function generateMetadata(
             images: [campaign.coverImage],
           };
         } else if (campaign.contentAssets?.length > 0) {
-          // Fallback to first content asset
           const imageUrl = campaign.contentAssets[0].url;
           
           metadata.openGraph = {
@@ -105,4 +100,8 @@ export async function generateMetadata(
   }
   
   return metadata;
+}
+
+export default function ShortIdLayout({ children }: Props) {
+  return children;
 } 
