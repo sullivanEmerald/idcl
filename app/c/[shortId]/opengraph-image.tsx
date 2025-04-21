@@ -13,15 +13,14 @@ export default async function og(request: NextRequest) {
   try {
     // Get shortId from the path
     const { pathname } = new URL(request.url);
-    const shortId = pathname.split('/')[2]; // /c/[shortId]/opengraph-image -> [shortId]
+    const shortId = pathname.split('/')[2];
 
-    // Fetch campaign data
     let campaignTitle = 'Adminting Campaign';
     let campaignDescription = 'View this campaign on Adminting';
     
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/campaigns/public/${shortId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/campaigns/public/${shortId}`
       );
       
       const campaign = response.data;
@@ -111,7 +110,7 @@ export default async function og(request: NextRequest) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 'calc(100% - 80px)',
+              width: '1040px',
             }}
           >
             <div

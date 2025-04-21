@@ -83,7 +83,7 @@ export default function OG() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: 'calc(100% - 80px)',
+            width: '1040px',
           }}
         >
           <div
