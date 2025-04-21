@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
 import { NavigationBar } from "@/components/ui/navigation-bar";
-// import { Footer } from '@/components/layout/footer';
 import {
   Carousel,
   CarouselContent,
@@ -74,10 +73,6 @@ export default function CampaignPage({
   // Ref to track if analytics have been recorded
   const analyticsRecorded = useRef(false);
 
-  // const [referrer] = useState(
-  //   typeof document !== "undefined" ? document.referrer : ""
-  // );
-
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
@@ -113,7 +108,14 @@ export default function CampaignPage({
     };
 
     fetchCampaign();
-  }, [params.shortId]);
+  }, [params.shortId, promoterId, utmSource]);
+
+  // Update document title - simple client-side metadata update
+  useEffect(() => {
+    if (campaign?.title) {
+      document.title = `${campaign.title} | Adminting`;
+    }
+  }, [campaign?.title]);
 
   if (loading) {
     return (

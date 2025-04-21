@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and internal routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /internal/
+
+# Sitemap
+Sitemap: https://adminting.co/sitemap.xml 
