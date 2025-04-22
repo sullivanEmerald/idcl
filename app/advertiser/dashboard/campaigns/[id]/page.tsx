@@ -212,7 +212,7 @@ export default function CampaignPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {campaign.metrics.totalPosts}
+              {campaign.metrics.totalPosts} 
             </div>
             <p className="text-xs text-muted-foreground mt-2">
               ${campaign.pricePerPost} per post
