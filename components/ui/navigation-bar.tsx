@@ -29,7 +29,7 @@ export function NavigationBar() {
           </Link>
 
           {/* Main Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          {/* <div className="hidden md:flex items-center space-x-6">
             <Link
               href="/home"
               className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
@@ -60,7 +60,7 @@ export function NavigationBar() {
             >
               Calculator
             </Link>
-          </div>
+          </div> */}
         </div>
 
         {/* Right side - CTA */}
