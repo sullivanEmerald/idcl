@@ -101,7 +101,7 @@ const NIGERIAN_STATES = [
   "Zamfara",
 ];
 
-const PLATFORMS = ["instagram", "tiktok", "youtube", "twitter"];
+const PLATFORMS = ["instagram", "tiktok", "youtube", "twitter", "facebook"];
 
 const NICHES = [
   { value: "fashion", label: "Fashion & Style" },
@@ -1086,45 +1086,56 @@ export default function Page() {
                       <Label>Target reach</Label>
                       <span className="text-sm text-muted-foreground">
                         {(
-                          form.watch("targetImpressions") || 1
+                          form.watch("targetImpressions") || 0
                         ).toLocaleString()}{" "}
                         reach
                       </span>
                     </div>
                     <div className="flex items-center space-x-4">
                       <Input
-                        type="number"
-                      min={1}
-                      max={1000000}
-                        value={form.watch("targetImpressions") || 1}
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="Enter target reach"
+                        value={form.watch("targetImpressions") === 0 ? "" : form.watch("targetImpressions")}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 1;
-                        form.setValue("targetImpressions", value);
-                        // Calculate estimated budget based on goal
-                        const goal = form.getValues("goal");
-                        let pricePerImpression = 0;
-                        switch (goal) {
-                          case "awareness":
-                            pricePerImpression = 60; // ₦60 per impression
-                            break;
-                          case "engagement":
-                            pricePerImpression = 300 + 100; // ₦400 per engagement
-                            break;
-                          case "conversion":
-                            pricePerImpression = 1000; // ₦1,000 per action
-                            break;
-                        }
-                          form.setValue(
-                            "pricePerImpression",
-                            pricePerImpression
-                          );
-                        form.setValue(
-                          "estimatedBudget",
-                          value * pricePerImpression
-                        );
-                      }}
+                          const inputValue = e.target.value;
+                          // Allow empty input
+                          if (inputValue === "") {
+                            form.setValue("targetImpressions", 0);
+                            form.setValue("estimatedBudget", 0);
+                            return;
+                          }
+                          
+                          const value = parseInt(inputValue);
+                          // Only update if it's a valid number
+                          if (!isNaN(value)) {
+                            form.setValue("targetImpressions", value);
+                            // Calculate estimated budget based on goal
+                            const goal = form.getValues("goal");
+                            let pricePerImpression = 0;
+                            switch (goal) {
+                              case "awareness":
+                                pricePerImpression = 60; // ₦60 per impression
+                                break;
+                              case "engagement":
+                                pricePerImpression = 300 + 100; // ₦400 per engagement
+                                break;
+                              case "conversion":
+                                pricePerImpression = 1000; // ₦1,000 per action
+                                break;
+                            }
+                            form.setValue(
+                              "pricePerImpression",
+                              pricePerImpression
+                            );
+                            form.setValue(
+                              "estimatedBudget",
+                              value * pricePerImpression
+                            );
+                          }
+                        }}
                         className="w-full"
-                    />
+                      />
                     </div>
                     {errors.targetImpressions && (
                       <p className="text-sm text-red-500 mt-1">
@@ -1371,11 +1382,11 @@ export default function Page() {
                         }}
                       />
                       {form.watch("mediaFiles")?.[0] && (
-                        <div className="relative aspect-square w-full overflow-hidden rounded-lg border">
+                        <div className="relative overflow-hidden rounded-lg border w-[200px] h-[200px]">
                           <img
                             src={form.watch("mediaFiles")?.[0]?.url || ""}
                             alt="Preview"
-                            className="object-cover"
+                            className="object-cover w-full h-full"
                           />
                           {isUploadingMedia ? (
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
