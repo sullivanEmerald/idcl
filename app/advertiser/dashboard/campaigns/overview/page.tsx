@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { Button } from '@/components/ui/button'
 import { Calendar, ChevronRight, DollarSign, Users } from 'lucide-react'
 import Link from 'next/link'
 import { campaignService } from '@/services/campaign'
@@ -58,9 +57,9 @@ export default function CampaignsOverview() {
           <h1 className="text-3xl font-bold">Campaign Overview</h1>
           <p className="mt-2 text-gray-600">Monitor your campaign performance</p>
         </div>
-        <Link href="/advertiser/dashboard/campaigns/create">
+        {/* <Link href="/advertiser/dashboard/campaigns/create">
           <Button>Create Campaign</Button>
-        </Link>
+        </Link> */}
       </div>
 
       {/* Quick Stats */}

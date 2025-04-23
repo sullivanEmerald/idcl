@@ -4,8 +4,8 @@ import { useEffect, useState } from "react"
 import { Card, CardTitle, CardDescription, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Verified, Plus } from "lucide-react";
-import { Calendar, DollarSign, Users, Pencil, Badge, Bell, BookmarkCheck } from 'lucide-react'
+import { Verified } from "lucide-react";
+import { Calendar, DollarSign, Users, Pencil, Badge, Bell } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ActiveCampaignList } from '@/components/campaigns/active-campaigns'
 import ProfileField from "@/components/advertiser/profile-field";
@@ -119,9 +119,9 @@ export default function Profile() {
             <div className="space-y-8 p-8">
                 <div className="bg-white shadow-md rounded-lg p-6 flex items-center justify-between gap-6">
                     <div className="flex gap-4">
-                        <Link href="/advertiser/dashboard/campaigns/create">
+                        {/* <Link href="/advertiser/dashboard/campaigns/create">
                             <Button>Create Campaign</Button>
-                        </Link>
+                        </Link> */}
                         <Button variant="outline">Manage Billing</Button>
                     </div>
                     <div className="flex items-center gap-4">

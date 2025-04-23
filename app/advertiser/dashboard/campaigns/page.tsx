@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/ca
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
-import { Plus, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import advertiserService from '@/services/advertiser'
@@ -86,10 +86,10 @@ export default function CampaignsPage() {
           <h1 className="text-3xl font-bold">Campaign Management</h1>
           <p className="mt-2 text-gray-600">Manage and monitor your advertising campaigns</p>
         </div>
-        <Button onClick={() => window.location.href = '/advertiser/campaigns/new'}>
+        {/* <Button onClick={() => window.location.href = '/advertiser/campaigns/new'}>
           <Plus className="mr-2 h-4 w-4" />
           Create Campaign
-        </Button>
+        </Button> */} 
       </div>
 
       <div className="flex gap-4">
