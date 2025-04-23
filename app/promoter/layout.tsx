@@ -55,11 +55,11 @@ const sidebarItems = [
     //   }
     // ],
   },
-  {
-    title: "Leaderboard",
-    href: "/promoter/dashboard/leaderboard",
-    icon: "trophy"
-  },
+  // {
+  //   title: "Leaderboard",
+  //   href: "/promoter/dashboard/leaderboard",
+  //   icon: "trophy"
+  // },
   {
     title: "Settings",
     href: "/promoter/dashboard/settings",
@@ -84,10 +84,12 @@ export default function PromoterLayout({
 }) {
   return (
     <RoleGuard role="promoter">
-      <div className="flex h-screen">
+      <div className="flex flex-col sm:flex-row min-h-screen">
         <Sidebar items={sidebarItems} role='promoter' />
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-8">
-          {children}
+        <main className="flex-1 overflow-y-auto bg-gray-50 px-0 py-12 sm:p-6 md:p-8">
+          <div className="max-w-[1400px] mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </RoleGuard>

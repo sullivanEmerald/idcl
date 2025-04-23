@@ -82,12 +82,12 @@ export function NavigationBar() {
           >
             {isAuthenticated ? 'Dashboard' : 'Sign In'}
           </Button>
-          <Button
+          {/* <Button
             size="sm"
             className="bg-gradient-to-r from-primary to-blue-600 text-white hover:opacity-90"
           >
             Download App
-          </Button>
+          </Button> */}
         </div>
       </div>
     </nav>

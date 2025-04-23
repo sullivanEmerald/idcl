@@ -140,8 +140,8 @@ export default function AnalyticsPage() {
     <div className="space-y-8 p-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Performance Analytics</h1>
-          <p className="mt-2 text-gray-600">Track your promotional performance and earnings</p>
+          <h1 className="text-xl sm:text-3xl font-bold">Performance Analytics</h1>
+          <p className="mt-2 text-gray-600 sm:text-base text-sm">Track your promotional performance and earnings</p>
         </div>
         <Select value={timeRange} onValueChange={(value: '7d' | '30d' | '90d') => setTimeRange(value)}>
           <SelectTrigger className="w-36">

@@ -51,7 +51,7 @@ export default function CampaignsOverview() {
     : 0
 
   return (
-    <div className="space-y-8 p-8">
+    <div className="space-y-8 px-0">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Campaign Overview</h1>

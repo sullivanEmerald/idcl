@@ -61,14 +61,14 @@ export default function CampaignPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+          <h1 className="text-3xl font-bold tracking-tight">
             {campaign.title}
           </h1>
           <p className="text-muted-foreground">{campaign.description}</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-4">
           <Badge
             variant="outline"
             className="bg-blue-100 text-blue-800 hover:bg-blue-100"
@@ -100,16 +100,12 @@ export default function CampaignPage() {
             onClick={() =>
               (window.location.href = `/advertiser/dashboard/campaigns/${id}/edit`)
             }
-            size="sm"
-            className="md:size-default"
           >
             Edit Campaign
           </Button>
           {campaign.status === "active" ? (
             <Button
               variant="destructive"
-              size="sm"
-              className="md:size-default"
               onClick={async () => {
                 try {
                   await campaignService.pauseCampaign(id as string);
@@ -123,8 +119,6 @@ export default function CampaignPage() {
             </Button>
           ) : campaign.status === "paused" ? (
             <Button
-              size="sm"
-              className="md:size-default"
               onClick={async () => {
                 try {
                   await campaignService.resumeCampaign(id as string);
@@ -142,7 +136,7 @@ export default function CampaignPage() {
 
       <CampaignMetrics campaign={campaign} />
 
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Budget Spent</CardTitle>
@@ -228,14 +222,14 @@ export default function CampaignPage() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="flex flex-wrap">
+        <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="promoters">Promoters</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>Campaign Schedule</CardTitle>
@@ -344,8 +338,7 @@ export default function CampaignPage() {
                                     <Image
                                       src={asset.url}
                                       alt={`Content asset ${index + 1}`}
-                                      fill
-                                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                      sizes="100vw"
                                       className="object-contain"
                                       priority={index === 0}
                                     />
@@ -362,15 +355,15 @@ export default function CampaignPage() {
                                 </CarouselItem>
                               ))}
                             </CarouselContent>
-                            <CarouselPrevious className="-left-1 md:-left-3 h-8 w-8 md:h-12 md:w-12 border-2 bg-white/90 hover:bg-white" />
-                            <CarouselNext className="-right-1 md:-right-3 h-8 w-8 md:h-12 md:w-12 border-2 bg-white/90 hover:bg-white" />
+                            <CarouselPrevious className="-left-3 h-12 w-12 border-2 bg-white/90 hover:bg-white" />
+                            <CarouselNext className="-right-3 h-12 w-12 border-2 bg-white/90 hover:bg-white" />
                           </Carousel>
                         </div>
                       )}
 
                       {/* Render standalone assets */}
                       {standaloneAssets.length > 0 && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                           {standaloneAssets.map((asset, index) => (
                             <div
                               key={`standalone-${index}`}
@@ -392,8 +385,7 @@ export default function CampaignPage() {
                                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                                     <Button
                                       variant="outline"
-                                      className="text-white border-white text-xs sm:text-sm"
-                                      size="sm"
+                                      className="text-white border-white"
                                     >
                                       Play Video
                                     </Button>
@@ -422,8 +414,8 @@ export default function CampaignPage() {
             <CardContent>
               <div className="space-y-6">
                 {campaign.activePromoters?.length > 0 ? (
-                  <div className="rounded-md border overflow-x-auto">
-                    <div className="hidden md:grid md:grid-cols-7 gap-6 p-6 font-medium border-b bg-muted/50">
+                  <div className="rounded-md border">
+                    <div className="grid grid-cols-7 gap-6 p-6 font-medium border-b bg-muted/50">
                       <div>Promoter</div>
                       <div>Platforms</div>
                       <div>Audience Size</div>
@@ -436,7 +428,7 @@ export default function CampaignPage() {
                       {campaign.activePromoters.map((item) => (
                         <div
                           key={item._id}
-                          className="flex flex-col md:grid md:grid-cols-7 gap-3 md:gap-6 p-4 md:p-6 items-start md:items-center hover:bg-muted/50"
+                          className="grid grid-cols-7 gap-6 p-6 items-center hover:bg-muted/50"
                         >
                           <div>
                             <p className="font-medium">
@@ -446,7 +438,7 @@ export default function CampaignPage() {
                               {item.promoter.location || "Location not set"}
                             </p>
                           </div>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex gap-2 flex-wrap">
                             {(item.promoter.platforms || []).map((platform) => (
                               <Badge
                                 key={platform}
@@ -457,17 +449,7 @@ export default function CampaignPage() {
                               </Badge>
                             ))}
                           </div>
-                          <div className="md:hidden flex justify-between w-full">
-                            <span className="text-sm text-muted-foreground">Audience Size:</span>
-                            <p className="font-medium">
-                              {item.promoter.followersCount
-                                ? Number(
-                                    item.promoter.followersCount
-                                  ).toLocaleString()
-                                : "0"}
-                            </p>
-                          </div>
-                          <div className="hidden md:block">
+                          <div>
                             <p className="font-medium">
                               {item.promoter.followersCount
                                 ? Number(
@@ -479,18 +461,7 @@ export default function CampaignPage() {
                               followers
                             </p>
                           </div>
-                          <div className="md:hidden flex justify-between w-full">
-                            <span className="text-sm text-muted-foreground">Engagement Rate:</span>
-                            <p className="font-medium">
-                              {item.promoter.engagementRate
-                                ? (Number(item.promoter.engagementRate) / 100)
-                                    .toFixed(2)
-                                    .toLocaleString()
-                                : "0.00"}
-                              %
-                            </p>
-                          </div>
-                          <div className="hidden md:block">
+                          <div>
                             <p className="font-medium">
                               {item.promoter.engagementRate
                                 ? (Number(item.promoter.engagementRate) / 100)
@@ -503,7 +474,7 @@ export default function CampaignPage() {
                               avg. engagement
                             </p>
                           </div>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex gap-2 flex-wrap">
                             {(item.promoter.contentTypes || []).map((type) => (
                               <Badge
                                 key={type}
@@ -514,17 +485,7 @@ export default function CampaignPage() {
                               </Badge>
                             ))}
                           </div>
-                          <div className="md:hidden flex justify-between w-full">
-                            <span className="text-sm text-muted-foreground">Last Activity:</span>
-                            <p className="font-medium">
-                              {item.lastActivity
-                                ? new Date(
-                                    item.lastActivity
-                                  ).toLocaleDateString()
-                                : "No activity"}
-                            </p>
-                          </div>
-                          <div className="hidden md:block">
+                          <div>
                             <p className="font-medium">
                               {item.lastActivity
                                 ? new Date(
@@ -536,27 +497,7 @@ export default function CampaignPage() {
                               {item.totalEvents || 0} events
                             </p>
                           </div>
-                          <div className="md:hidden flex justify-between w-full">
-                            <span className="text-sm text-muted-foreground">Status:</span>
-                            <Badge
-                              variant={
-                                item.promoter.status === "active"
-                                  ? "success"
-                                  : "secondary"
-                              }
-                              className={
-                                item.promoter.status === "active"
-                                  ? "bg-green-100 text-green-800"
-                                  : ""
-                              }
-                            >
-                              {(item.promoter.status || "inactive")
-                                .charAt(0)
-                                .toUpperCase() +
-                                (item.promoter.status || "inactive").slice(1)}
-                            </Badge>
-                          </div>
-                          <div className="hidden md:block">
+                          <div>
                             <Badge
                               variant={
                                 item.promoter.status === "active"
@@ -596,7 +537,7 @@ export default function CampaignPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="p-4 border rounded-lg">
                     <h3 className="text-gray-600 mb-2">Platform Performance</h3>
                     <div className="space-y-2">
@@ -653,7 +594,7 @@ export default function CampaignPage() {
                     </div>
                   </div> */}
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="p-4 border rounded-lg">
                     <h3 className="text-gray-600 mb-2">Mobile Devices</h3>
                     <div className="space-y-2">

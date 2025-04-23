@@ -1,80 +1,86 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
-import { toast, Toaster } from 'sonner'
-import authService from '@/services/auth'
-import { useRouter } from 'next/navigation'
+import { useState } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { toast, Toaster } from "sonner";
+import authService from "@/services/auth";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  })
+    email: "",
+    password: "",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     try {
       const data = await authService.login({
         email: formData.email,
-        password: formData.password
-      })
+        password: formData.password,
+      });
       console.log(data);
 
       // Store auth data
-      localStorage.setItem('token', data.accessToken)
-      localStorage.setItem('userId', data.user.id)
-      localStorage.setItem('userRole', data.user.role)
-      localStorage.setItem('userEmail', data.user.email)
-      localStorage.setItem('userName', data.user.fullName)
+      localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("userId", data.user.id);
+      localStorage.setItem("userRole", data.user.role);
+      localStorage.setItem("userEmail", data.user.email);
+      localStorage.setItem("userName", data.user.fullName);
 
-      // Show success message
-      setError('')
-      toast.success('Login successful', {
-        description: `Welcome back, ${data.user.fullName}!`,
-      })
+      setError("");
+      toast.success("Login successful", {
+        description: `Welcome back!`,
+      });
 
-      // Redirect based on role after a short delay to show the toast
-      const dashboardPath = data.user.role === 'advertiser'
-        ? '/advertiser/dashboard'
-        : '/promoter/dashboard'
+      const dashboardPath =
+        data.user.role === "advertiser"
+          ? "/advertiser/dashboard"
+          : "/promoter/dashboard";
 
       setTimeout(() => {
-        // Use replace to prevent going back to login page
-        router.replace(dashboardPath)
-      }, 1000)
+        router.replace(dashboardPath);
+      }, 1000);
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'An error occurred during login'
-      setError(errorMessage)
-      toast.error('Login failed', {
+      const errorMessage =
+        err.response?.data?.message || "An error occurred during login";
+      setError(errorMessage);
+      toast.error("Login failed", {
         description: errorMessage,
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -142,7 +148,9 @@ export default function LoginPage() {
                       id="remember"
                       className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                     />
-                    <Label htmlFor="remember" className="text-sm">Remember me</Label>
+                    <Label htmlFor="remember" className="text-sm">
+                      Remember me
+                    </Label>
                   </div>
                   <Link
                     href="/auth/forgot-password"
@@ -208,8 +216,11 @@ export default function LoginPage() {
               </Button>
             </div> */}
               <p className="text-center text-sm text-gray-600">
-                {"Don't"} have an account?{' '}
-                <Link href="/auth/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+                {"Don't"} have an account?{" "}
+                <Link
+                  href="/auth/register"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                >
                   Sign up
                 </Link>
               </p>
@@ -218,5 +229,5 @@ export default function LoginPage() {
         </Card>
       </motion.div>
     </>
-  )
+  );
 }

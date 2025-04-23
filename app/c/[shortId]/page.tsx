@@ -193,85 +193,85 @@ export default function CampaignPage({
           <div className="mb-12">
             {campaign.contentAssets.length > 0 ? (
               campaign.contentAssets[0]?.type === "carousel" ? (
-                <Carousel
-                  className="w-full"
-                  onSelect={(index) =>
-                    analyticsService.trackCarouselSlide(
-                      params.shortId,
-                      index,
-                      promoterId
-                    )
-                  }
-                >
-                  <CarouselContent>
-                    {campaign.contentAssets
-                      .sort(
+              <Carousel
+                className="w-full"
+                onSelect={(index) =>
+                  analyticsService.trackCarouselSlide(
+                    params.shortId,
+                    index,
+                    promoterId
+                  )
+                }
+              >
+                <CarouselContent>
+                  {campaign.contentAssets
+                    .sort(
                         (a, b) =>
                           (a.carouselIndex || 0) - (b.carouselIndex || 0)
-                      )
-                      .map((asset, index) => (
-                        <CarouselItem key={index}>
-                          <div className="relative aspect-video">
-                            <Image
-                              src={asset.url}
-                              alt={`Slide ${index + 1}`}
-                              fill
-                              className="object-contain rounded-lg"
-                            />
-                          </div>
-                        </CarouselItem>
-                      ))}
-                  </CarouselContent>
-                  <CarouselPrevious />
-                  <CarouselNext />
-                </Carousel>
-              ) : campaign.contentAssets[0]?.type === "video" ? (
-                <div className="relative aspect-video">
-                  <video
-                    ref={videoRef}
-                    src={campaign.contentAssets[0].url}
-                    controls
-                    className="w-full h-full rounded-lg"
-                    onPlay={() =>
+                    )
+                    .map((asset, index) => (
+                      <CarouselItem key={index}>
+                        <div className="relative aspect-video">
+                          <Image
+                            src={asset.url}
+                            alt={`Slide ${index + 1}`}
+                            fill
+                            className="object-contain rounded-lg"
+                          />
+                        </div>
+                      </CarouselItem>
+                    ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            ) : campaign.contentAssets[0]?.type === "video" ? (
+              <div className="relative aspect-video">
+                <video
+                  ref={videoRef}
+                  src={campaign.contentAssets[0].url}
+                  controls
+                  className="w-full h-full rounded-lg"
+                  onPlay={() =>
                       analyticsService.trackVideoPlay(
                         params.shortId,
                         promoterId
                       )
-                    }
-                    onTimeUpdate={() => {
-                      const video = videoRef.current;
-                      if (!video) return;
-
-                      // Track view duration at key intervals
-                      const currentTime = Math.floor(video.currentTime);
+                  }
+                  onTimeUpdate={() => {
+                    const video = videoRef.current;
+                    if (!video) return;
+                    
+                    // Track view duration at key intervals
+                    const currentTime = Math.floor(video.currentTime);
                       if (
                         currentTime === 3 ||
                         currentTime === 30 ||
                         currentTime === 60
                       ) {
-                        analyticsService.trackVideoProgress(
-                          params.shortId,
-                          currentTime,
-                          promoterId
-                        );
-                      }
-                    }}
-                    onEnded={() =>
-                      analyticsService.trackVideoComplete(
+                      analyticsService.trackVideoProgress(
                         params.shortId,
+                        currentTime,
                         promoterId
-                      )
+                      );
                     }
-                  />
-                </div>
-              ) : (
-                <div className="relative aspect-video">
-                  <Image
-                    src={campaign.contentAssets[0].url}
-                    alt={campaign.title}
-                    fill
-                    className="object-contain rounded-lg"
-                  />
+                  }}
+                  onEnded={() =>
+                    analyticsService.trackVideoComplete(
+                      params.shortId,
+                      promoterId
+                    )
+                  }
+                />
+              </div>
+            ) : (
+              <div className="relative aspect-video">
+                <Image
+                  src={campaign.contentAssets[0].url}
+                  alt={campaign.title}
+                  fill
+                  className="object-contain rounded-lg"
+                />
                 </div>
               )
             ) : (
@@ -283,24 +283,24 @@ export default function CampaignPage({
 
           {/* CTA Button */}
           {campaign.campaignGoal !== "awareness" && (
-            <div className="text-center">
-              <a
-                href={campaign.promotionLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                onClick={() =>
-                  analyticsService.trackConversion(
-                    params.shortId,
-                    campaign.promotionLink,
-                    promoterId,
-                    campaign.campaignGoal
-                  )
-                }
-              >
-                {campaign.requirements?.ctaLabel || "Learn More"}
-              </a>
-            </div>
+          <div className="text-center">
+            <a
+              href={campaign.promotionLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              onClick={() =>
+                analyticsService.trackConversion(
+                  params.shortId,
+                  campaign.promotionLink,
+                  promoterId,
+                  campaign.campaignGoal 
+                )
+              }
+            >
+              {campaign.requirements?.ctaLabel || "Learn More"}
+            </a>
+          </div>
           )}
         </div>
       </main>

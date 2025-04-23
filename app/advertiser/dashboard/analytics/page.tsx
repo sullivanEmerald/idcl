@@ -120,7 +120,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="space-y-8 p-8">
+    <div className="space-y-8 px-0">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Campaign Analytics</h1>

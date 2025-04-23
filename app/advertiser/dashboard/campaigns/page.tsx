@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
-import { Search } from 'lucide-react'
+import { Search, ChevronRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import advertiserService from '@/services/advertiser'
@@ -68,7 +68,7 @@ export default function CampaignsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 p-8">
+      <div className="space-y-6 p-4 md:p-8">
         <Skeleton className="h-8 w-48" />
         <div className="grid gap-6">
           {[...Array(5)].map((_, i) => (
@@ -80,10 +80,10 @@ export default function CampaignsPage() {
   }
 
   return (
-    <div className="space-y-8 p-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-4 md:p-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Campaign Management</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">Campaign Management</h1>
           <p className="mt-2 text-gray-600">Manage and monitor your advertising campaigns</p>
         </div>
         {/* <Button onClick={() => window.location.href = '/advertiser/campaigns/new'}>
@@ -92,7 +92,7 @@ export default function CampaignsPage() {
         </Button> */} 
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
           <Input
@@ -103,7 +103,7 @@ export default function CampaignsPage() {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="w-full sm:w-48">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
@@ -115,57 +115,71 @@ export default function CampaignsPage() {
         </Select>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-4 md:gap-6">
         {filteredCampaigns.map((campaign) => (
-          <Card key={campaign.id} className="hover:bg-accent/5 transition-colors">
-            <CardHeader className="p-4">
-              <div className="flex items-center justify-between">
+          <Card key={campaign.id} className="hover:bg-accent/5 transition-colors overflow-hidden">
+            <CardHeader className="p-4 md:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-4">
                   <div>
                     <CardTitle className="text-base font-semibold">{campaign.name}</CardTitle>
                     <CardDescription className="text-xs mt-0.5">
-                      {new Date(campaign.startDate).toLocaleDateString()} - {new Date(campaign.endDate).toLocaleDateString()}
+                      {campaign.startDate} - {campaign.endDate}
                     </CardDescription>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="text-sm text-right">
-                    <div className="font-medium">₦{campaign.budget.toLocaleString()}</div>
-                    <div className="text-xs text-muted-foreground">Budget</div>
-                  </div>
-                  <div className="text-sm text-right">
-                    <div className="font-medium">₦{campaign.spent.toLocaleString()}</div>
-                    <div className="text-xs text-muted-foreground">Spent</div>
-                  </div>
-                  <div className="text-sm text-right">
-                    <div className="font-medium">{campaign.impressions}</div>
-                    <div className="text-xs text-muted-foreground">Views</div>
-                  </div>
-                  <div className="text-sm text-right">
-                    <div className="font-medium">{campaign.clicks}</div>
-                    <div className="text-xs text-muted-foreground">Clicks</div>
-                  </div>
-                  <Badge
-                    variant={campaign.status === 'active' ? 'success' :
-                            campaign.status === 'paused' ? 'secondary' : 'outline'}
-                    className={campaign.status === 'active' ? 'bg-green-100 text-green-800 hover:bg-green-100' :
-                              campaign.status === 'paused' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' :
-                              'bg-gray-100 text-gray-800 hover:bg-gray-100'}
-                  >
-                    {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
-                  </Badge>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => router.push(`/advertiser/dashboard/campaigns/${campaign.id}`)}
-                  >
-                    View
-                  </Button>
-                </div>
+                <Badge
+                  variant={campaign.status === 'active' ? 'success' :
+                          campaign.status === 'paused' ? 'secondary' : 'outline'}
+                  className={`mr-auto sm:ml-auto sm:mr-0 ${
+                    campaign.status === 'active' ? 'bg-green-100 text-green-800 hover:bg-green-100' :
+                    campaign.status === 'paused' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' :
+                    'bg-gray-100 text-gray-800 hover:bg-gray-100'
+                  }`}
+                >
+                  {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                </Badge>
               </div>
             </CardHeader>
+            <CardContent className="p-0 pb-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-4">
+                <div className="text-sm">
+                  <div className="font-medium">₦{campaign.budget.toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">Budget</div>
+                </div>
+                <div className="text-sm">
+                  <div className="font-medium">₦{campaign.spent.toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">Spent</div>
+                </div>
+                <div className="text-sm">
+                  <div className="font-medium">{campaign.impressions.toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">Views</div>
+                </div>
+                <div className="text-sm">
+                  <div className="font-medium">{campaign.clicks.toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">Clicks</div>
+                </div>
+              </div>
+              <div className="flex justify-end px-4 mt-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push(`/advertiser/dashboard/campaigns/${campaign.id}`)}
+                  className="text-xs sm:text-sm flex items-center gap-1"
+                >
+                  View Details
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
           </Card>
         ))}
+
+        {filteredCampaigns.length === 0 && (
+          <div className="text-center py-10 text-muted-foreground">
+            No campaigns found with the current filters.
+          </div>
+        )}
       </div>
     </div>
   )

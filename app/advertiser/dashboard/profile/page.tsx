@@ -116,7 +116,7 @@ export default function Profile() {
         : 0
     return (
         <>
-            <div className="space-y-8 p-8">
+            <div className="space-y-8 p-0">
                 <div className="bg-white shadow-md rounded-lg p-6 flex items-center justify-between gap-6">
                     <div className="flex gap-4">
                         {/* <Link href="/advertiser/dashboard/campaigns/create">

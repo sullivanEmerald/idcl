@@ -737,7 +737,7 @@ export default function Page() {
     Array.isArray(contentAssets) && contentAssets.length > 0;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 p-8">
+    <div className="max-w-5xl mx-auto space-y-8">
       <div>
         <h1 className="text-3xl font-bold">Create Campaign</h1>
         <p className="mt-2 text-muted-foreground">
@@ -1109,33 +1109,33 @@ export default function Page() {
                           const value = parseInt(inputValue);
                           // Only update if it's a valid number
                           if (!isNaN(value)) {
-                            form.setValue("targetImpressions", value);
-                            // Calculate estimated budget based on goal
-                            const goal = form.getValues("goal");
-                            let pricePerImpression = 0;
-                            switch (goal) {
-                              case "awareness":
-                                pricePerImpression = 60; // ₦60 per impression
-                                break;
-                              case "engagement":
-                                pricePerImpression = 300 + 100; // ₦400 per engagement
-                                break;
-                              case "conversion":
-                                pricePerImpression = 1000; // ₦1,000 per action
-                                break;
-                            }
+                        form.setValue("targetImpressions", value);
+                        // Calculate estimated budget based on goal
+                        const goal = form.getValues("goal");
+                        let pricePerImpression = 0;
+                        switch (goal) {
+                          case "awareness":
+                            pricePerImpression = 60; // ₦60 per impression
+                            break;
+                          case "engagement":
+                            pricePerImpression = 300 + 100; // ₦400 per engagement
+                            break;
+                          case "conversion":
+                            pricePerImpression = 1000; // ₦1,000 per action
+                            break;
+                        }
                             form.setValue(
                               "pricePerImpression",
                               pricePerImpression
                             );
-                            form.setValue(
-                              "estimatedBudget",
-                              value * pricePerImpression
-                            );
+                        form.setValue(
+                          "estimatedBudget",
+                          value * pricePerImpression
+                        );
                           }
-                        }}
+                      }}
                         className="w-full"
-                      />
+                    />
                     </div>
                     {errors.targetImpressions && (
                       <p className="text-sm text-red-500 mt-1">

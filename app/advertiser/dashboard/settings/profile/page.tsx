@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import React, { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
@@ -160,7 +161,7 @@ export default function ProfileSettings() {
     return (
         <>
             <Toaster richColors position="top-center" />
-            <div className="space-y-8 p-8">
+            <div className="space-y-8 p-0">
                 <div className="grid gap-6">
                     <div>
                         <h1 className="text-3xl font-bold">Account Setting</h1>
