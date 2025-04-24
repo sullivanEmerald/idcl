@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import { useState, useEffect } from 'react';
-import { TrendingUp, PartyPopper, CheckCircle } from "lucide-react";
+import { TrendingUp, PartyPopper } from "lucide-react";
 import {
     Label,
     PolarGrid,
