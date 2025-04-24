@@ -89,7 +89,7 @@ export default function PreferencesSettings() {
   if (isFetching) {
     return (
       <>
-        <div className="space-y-8 p-8">
+        <div className="space-y-8 p-2">
           <div>
             <Skeleton className="h-8 w-48" />
             <Skeleton className="h-4 w-64 mt-2" />
@@ -128,7 +128,7 @@ export default function PreferencesSettings() {
   return (
     <>
       <Toaster richColors position="top-center" />
-      <div className="space-y-8 p-8">
+      <div className="space-y-8 p-2">
         <div>
           <h1 className="text-3xl font-bold">Preferences</h1>
           <p className="mt-2 text-gray-600">Customize your account settings</p>

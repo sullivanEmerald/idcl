@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { axiosInstance } from '@/lib/utils';
+import api from './api';
 
 export interface UserBasicInfo {
   id: string;
@@ -177,6 +178,12 @@ export interface PasswordResetDto {
   confirmNewPassword?: string
 }
 
+export interface AdvertiserWalletBalance {
+  totalDeposits: number;
+  totalWithdrawals: number;
+  totalBudgetAllocated: number;
+  availableBalance: number;
+}
 
 export const advertiserService = {
 
@@ -227,6 +234,15 @@ export const advertiserService = {
     return response.data;
   },
 
+  getWalletBalance: async (): Promise<AdvertiserWalletBalance> => {
+    const { data } = await axiosInstance.get('/advertiser/wallet/balance');
+    return data;
+  },
+
+  getWalletStats: async () => {
+    const { data } = await axiosInstance.get('/advertiser/wallet/spending-stats');
+    return data;
+  },
 
 }
 

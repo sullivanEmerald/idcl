@@ -31,7 +31,7 @@ const sidebarItems = [
   },
   {
     title: "Wallet",
-    href: "/promoter/dashboard/wallet",
+    href: "/promoter/dashboard/wallet/overview",
     icon: "wallet",
     items: [
       {
@@ -86,7 +86,7 @@ export default function PromoterLayout({
     <RoleGuard role="promoter">
       <div className="flex flex-col sm:flex-row min-h-screen">
         <Sidebar items={sidebarItems} role='promoter' />
-        <main className="flex-1 overflow-y-auto bg-gray-50 px-0 py-12 sm:p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto bg-gray-50 px-2 py-20 sm:p-6 md:p-8">
           <div className="max-w-[1400px] mx-auto">
             {children}
           </div>

@@ -161,67 +161,75 @@ export default function ProfileSettings() {
     return (
         <>
             <Toaster richColors position="top-center" />
-            <div className="space-y-8 p-0">
-                <div className="grid gap-6">
+            <div className="space-y-8 p-0 md:p-8">
+                <div className="grid gap-4 md:gap-6">
                     <div>
-                        <h1 className="text-3xl font-bold">Account Setting</h1>
-                        <p className="mt-2 text-gray-600">Manage your personal information</p>
+                        <h1 className="text-2xl md:text-3xl font-bold">Account Setting</h1>
+                        <p className="mt-2 text-sm md:text-base text-gray-600">Manage your personal information</p>
                     </div>
 
                     {/* Personal Information Card */}
-                    <Card className="p-6 relative">
-                        <div className='flex justify-start items-center align-center gap-[5px]'>
-                            <h2 className="text-xl font-semibold mb-6">Personal Information</h2>
+                    <Card className="p-4 md:p-6 relative">
+                        <div className='flex flex-col md:flex-row md:justify-between md:items-center gap-2 mb-4 md:mb-6'>
+                            <h2 className="text-lg md:text-xl font-semibold">Personal Information</h2>
                             {errors.responseError && <p className="text-red-500 text-sm">{errors.responseError}</p>}
                         </div>
                         <form className="space-y-4" onSubmit={onSubmitUserHandler}>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">First name</label>
-                                <Input
-                                    type="text"
-                                    name="firstName"
-                                    placeholder="Enter your first name"
-                                    value={userData.firstName}
-                                    onChange={onChangeHandler}
-                                />
-                                {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">First name</label>
+                                    <Input
+                                        type="text"
+                                        name="firstName"
+                                        placeholder="Enter your first name"
+                                        value={userData.firstName}
+                                        onChange={onChangeHandler}
+                                        className="mt-1"
+                                    />
+                                    {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Last name</label>
+                                    <Input
+                                        type="text"
+                                        name="lastName"
+                                        placeholder="Enter your last name"
+                                        value={userData.lastName}
+                                        onChange={onChangeHandler}
+                                        className="mt-1"
+                                    />
+                                    {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Last name</label>
-                                <Input
-                                    type="text"
-                                    name="lastName"
-                                    placeholder="Enter your last name"
-                                    value={userData.lastName}
-                                    onChange={onChangeHandler}
-                                />
-                                {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Company name</label>
-                                <Input
-                                    type="text"
-                                    name="companyName"
-                                    placeholder="Enter your company name"
-                                    value={userData.companyName}
-                                    onChange={onChangeHandler}
-                                />
-                                {errors.companyName && <p className="text-red-500 text-sm">{errors.companyName}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Phone</label>
-                                <Input
-                                    type="tel"
-                                    name="phone"
-                                    placeholder="Enter your phone number"
-                                    value={userData.phone}
-                                    onChange={onChangeHandler}
-                                />
-                                {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Company name</label>
+                                    <Input
+                                        type="text"
+                                        name="companyName"
+                                        placeholder="Enter your company name"
+                                        value={userData.companyName}
+                                        onChange={onChangeHandler}
+                                        className="mt-1"
+                                    />
+                                    {errors.companyName && <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Phone</label>
+                                    <Input
+                                        type="tel"
+                                        name="phone"
+                                        placeholder="Enter your phone number"
+                                        value={userData.phone}
+                                        onChange={onChangeHandler}
+                                        className="mt-1"
+                                    />
+                                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                                </div>
                             </div>
                             <Button
                                 disabled={isLoading || isEmpty()}
-                                className="absolute top-[5px] right-[20px]"
+                                className="w-full md:w-auto md:absolute md:top-6 md:right-6"
                                 title={isEmpty() ? 'Fill all form fields' : 'click to save'}
                             >
                                 {isLoading ?
@@ -236,90 +244,93 @@ export default function ProfileSettings() {
                     </Card>
 
                     {/* Password Management Card */}
-                    <Card className="p-6 relative">
-                        <div className='flex items-center gap-[15px] mb-6'>
-                            <h2 className="text-xl font-semibold leading-none">Password Management</h2>
+                    <Card className="p-4 md:p-6 relative">
+                        <div className='flex flex-col md:flex-row md:justify-between md:items-center gap-2 mb-4 md:mb-6'>
+                            <h2 className="text-lg md:text-xl font-semibold">Password Management</h2>
                             {passwordErrors.responseError && (
-                                <p className="text-red-500 text-sm leading-none">{passwordErrors.responseError}</p>
+                                <p className="text-red-500 text-sm">{passwordErrors.responseError}</p>
                             )}
                         </div>
                         <form className="space-y-4" onSubmit={onSubmitPasswordHandler}>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Old password</label>
-                                <div className='relative'>
-                                    <Input
-                                        type={passowordVisible.isOldPasswordVisible ? 'text' : 'password'}
-                                        name='oldPassword'
-                                        placeholder="Enter old password"
-                                        value={passwordData.oldPassword}
-                                        onChange={onChangePasswordHandler}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => toggleVisibiltyHandler("isOldPasswordVisible")}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                                    >
-                                        {passowordVisible.isOldPasswordVisible ? (
-                                            <EyeOff className="h-4 w-4" />
-                                        ) : (
-                                            <Eye className="h-4 w-4" />
-                                        )}
-                                    </button>
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Old password</label>
+                                    <div className='relative'>
+                                        <Input
+                                            type={passowordVisible.isOldPasswordVisible ? 'text' : 'password'}
+                                            name='oldPassword'
+                                            placeholder="Enter old password"
+                                            value={passwordData.oldPassword}
+                                            onChange={onChangePasswordHandler}
+                                            className="mt-1"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleVisibiltyHandler("isOldPasswordVisible")}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {passowordVisible.isOldPasswordVisible ? (
+                                                <EyeOff className="h-4 w-4" />
+                                            ) : (
+                                                <Eye className="h-4 w-4" />
+                                            )}
+                                        </button>
+                                    </div>
+                                    {passwordErrors.oldPassword && <p className="text-red-500 text-sm mt-1">{passwordErrors.oldPassword}</p>}
                                 </div>
-                                {passwordErrors.oldPassword && <p className="text-red-500 text-sm">{passwordErrors.oldPassword}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">New Password</label>
-                                <div className='relative'>
-                                    <Input
-                                        type={passowordVisible.isNewPasswordVisible ? 'text' : 'password'}
-                                        placeholder="Enter new password"
-                                        name='newPassword'
-                                        value={passwordData.newPassword}
-                                        onChange={onChangePasswordHandler}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => toggleVisibiltyHandler("isNewPasswordVisible")}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                                    >
-                                        {passowordVisible.isNewPasswordVisible ? (
-                                            <EyeOff className="h-4 w-4" />
-                                        ) : (
-                                            <Eye className="h-4 w-4" />
-                                        )}
-                                    </button>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">New Password</label>
+                                    <div className='relative'>
+                                        <Input
+                                            type={passowordVisible.isNewPasswordVisible ? 'text' : 'password'}
+                                            placeholder="Enter new password"
+                                            name='newPassword'
+                                            value={passwordData.newPassword}
+                                            onChange={onChangePasswordHandler}
+                                            className="mt-1"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleVisibiltyHandler("isNewPasswordVisible")}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {passowordVisible.isNewPasswordVisible ? (
+                                                <EyeOff className="h-4 w-4" />
+                                            ) : (
+                                                <Eye className="h-4 w-4" />
+                                            )}
+                                        </button>
+                                    </div>
+                                    {passwordErrors.newPassword && <p className="text-red-500 text-sm mt-1">{passwordErrors.newPassword}</p>}
                                 </div>
-
-                                {passwordErrors.newPassword && <p className="text-red-500 text-sm">{passwordErrors.newPassword}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Confirm new password</label>
-                                <div className='relative'>
-                                    <Input
-                                        type={passowordVisible.isConfirmNewPasswordVisible ? 'text' : 'password'}
-                                        placeholder="Confirm new password"
-                                        name='confirmNewPassword'
-                                        value={passwordData.confirmNewPassword}
-                                        onChange={onChangePasswordHandler}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => toggleVisibiltyHandler("isConfirmNewPasswordVisible")}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                                    >
-                                        {passowordVisible.isConfirmNewPasswordVisible ? (
-                                            <EyeOff className="h-4 w-4" />
-                                        ) : (
-                                            <Eye className="h-4 w-4" />
-                                        )}
-                                    </button>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700">Confirm new password</label>
+                                    <div className='relative'>
+                                        <Input
+                                            type={passowordVisible.isConfirmNewPasswordVisible ? 'text' : 'password'}
+                                            placeholder="Confirm new password"
+                                            name='confirmNewPassword'
+                                            value={passwordData.confirmNewPassword}
+                                            onChange={onChangePasswordHandler}
+                                            className="mt-1"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleVisibiltyHandler("isConfirmNewPasswordVisible")}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {passowordVisible.isConfirmNewPasswordVisible ? (
+                                                <EyeOff className="h-4 w-4" />
+                                            ) : (
+                                                <Eye className="h-4 w-4" />
+                                            )}
+                                        </button>
+                                    </div>
+                                    {passwordErrors.confirmNewPassword && <p className="text-red-500 text-sm mt-1">{passwordErrors.confirmNewPassword}</p>}
                                 </div>
-
-                                {passwordErrors.confirmNewPassword && <p className="text-red-500 text-sm">{passwordErrors.confirmNewPassword}</p>}
                             </div>
                             <Button
-                                className='absolute top-[5px] right-[20px]'
+                                className='w-full md:w-auto md:absolute md:top-6 md:right-6'
                                 disabled={isPasswordLoading}
                             >
                                 {isPasswordLoading ?

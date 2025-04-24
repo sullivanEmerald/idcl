@@ -48,16 +48,16 @@ const sidebarItems = [
     title: 'Wallet',
     href: '/advertiser/dashboard/wallet',
     icon: 'wallet',
-    items: [
-      {
-        title: 'Overview',
-        href: '/advertiser/dashboard/wallet/overview'
-      },
-      {
-        title: 'Add Funds',
-        href: '/advertiser/dashboard/wallet/add-funds'
-      }
-    ]
+    // items: [
+    //   {
+    //     title: 'Overview',
+    //     href: '/advertiser/dashboard/wallet/overview'
+    //   },
+    //   {
+    //     title: 'Add Funds',
+    //     href: '/advertiser/dashboard/wallet/add-funds'
+    //   }
+    // ]
   },
   {
     title: 'Settings',

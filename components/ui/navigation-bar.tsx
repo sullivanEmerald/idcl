@@ -68,7 +68,7 @@ export function NavigationBar() {
           <Button
             variant="ghost"
             size="sm"
-            className="hidden sm:flex"
+            className="sm:flex"
             onClick={() => {
               if (isAuthenticated && userRole) {
                 const dashboardPath = userRole === 'advertiser'
