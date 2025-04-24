@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { axiosInstance } from '@/lib/utils';
-import api from './api';
 
 export interface UserBasicInfo {
   id: string;

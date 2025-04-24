@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from "react";
 import transactionService from "@/services/transaction";
-import {
-  advertiserService,
-  DashboardMetrics,
-  type AdvertiserWalletBalance,
-} from "@/services/advertiser";
+import { advertiserService, DashboardMetrics } from "@/services/advertiser";
 import { toast } from "sonner";
 
 export type Transaction = {

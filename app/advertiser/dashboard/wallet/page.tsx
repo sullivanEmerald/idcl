@@ -3,8 +3,7 @@
 import { useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Button } from '@/components/ui/button'
-import { AlertTriangle, ArrowDown, Plus, Wallet } from 'lucide-react'
+import { AlertTriangle, Wallet } from 'lucide-react'
 import { useTransactions } from '@/hooks/use-transactions'
 import { Toaster } from 'sonner'
 
