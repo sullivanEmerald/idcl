@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import { TrendingUp, PartyPopper, CheckCircle } from "lucide-react"
+import { TrendingUp, PartyPopper } from "lucide-react"
 import {
     Label,
     PolarGrid,
@@ -82,7 +82,7 @@ export function ProfileCompletionPie({ percentage = 0, userData }: ProfileComple
                                     radialLines={false}
                                     stroke="none"
                                     className="first:fill-muted last:fill-background"
-                                    polarRadius={["65%", "55%"]}
+                                    polarRadius={[0.65, 0.55]}
                                 />
                                 <RadialBar dataKey="value" background cornerRadius={10} />
                                 <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
