@@ -375,7 +375,10 @@ export default function BrowseCampaigns() {
                   </div>
                 </div>
               </div>
-              <button className="w-full bg-[#00A0F1] rounded-lg cursor-pointer text-white text-[12px] font-semibold py-2">
+              <button 
+                className="w-full bg-[#00A0F1] rounded-lg cursor-pointer text-white text-[12px] font-semibold py-2"
+                onClick={() => router.push(`/promoter/dashboard/marketplace/campaign/${campaign.id}`)}
+              >
                 View Campaign
               </button>
               {/* Header */}
