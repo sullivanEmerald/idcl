@@ -309,9 +309,9 @@ export default function BrowseCampaigns() {
 
             {/* Content */}
             <div className="space-y-2">
-              <h5 className="font-bold text-[12px] mt-2">
+              <h5 className="font-bold text-[12px] mt-4 h-[50px]">
                 {" "}
-                {campaign.description}{" "}
+                {campaign.title}{" "}
               </h5>
 
               <div className="flex items-center justify-between border border-gray px-2 h-[27px] rounded-md">

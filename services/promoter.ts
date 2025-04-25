@@ -180,7 +180,7 @@ const promoterService = {
   },
 
   getCampaign: async (campaignId: string) => {
-    const response = await axiosInstance.get(`/promoter/campaigns/${campaignId}`);
+    const response = await axiosInstance.get(`/promoter/campaigns/public/${campaignId}`);
     const campaign = response.data;
 
     return {
