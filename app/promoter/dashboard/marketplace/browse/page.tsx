@@ -34,6 +34,40 @@ export default function BrowseCampaigns() {
   const [totalCampaigns, setTotalCampaigns] = useState(0);
   const [likedCampaigns, setLikedCampaigns] = useState<Set<string>>(new Set());
 
+  // Add color generation function
+  const backgroundColors = [
+    'bg-green-100',
+    'bg-blue-100',
+    'bg-purple-100',
+    'bg-yellow-100',
+    'bg-pink-100',
+    'bg-indigo-100',
+    'bg-red-100',
+    'bg-orange-100'
+  ];
+
+  const textColors = [
+    'text-green-600',
+    'text-blue-600',
+    'text-purple-600',
+    'text-yellow-600',
+    'text-pink-600',
+    'text-indigo-600',
+    'text-red-600',
+    'text-orange-600'
+  ];
+
+  const getAdvertiserColorIndex = (advertiserId: string) => {
+    // Simple hash function to get consistent index
+    let hash = 0;
+    for (let i = 0; i < advertiserId.length; i++) {
+      hash = ((hash << 5) - hash) + advertiserId.charCodeAt(i);
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    // Ensure positive index within array bounds
+    return Math.abs(hash) % backgroundColors.length;
+  };
+
   const handleFollowBrand = async (
     brandId: string,
     isFollowing: boolean | undefined
@@ -128,26 +162,34 @@ export default function BrowseCampaigns() {
   }
 
   return (
-    <div className="space-y-8 p-2">
+    <div className="container mx-auto py-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Browse Campaigns</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-[24px] font-bold">Browse Campaigns</h1>
+        <p className=" font-[300px] text-[16px]">
           Find campaigns that match your interests
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-4 border border-gray p-2 bg-white rounded-md h-[61px]">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+          <img
+            src="/Vector.png"
+            alt="Search"
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+          />
           <Input
             placeholder="Search campaigns..."
-            className="pl-10"
+            className="pl-14 border-none h-full focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Select value={nicheFilter} onValueChange={setNicheFilter}>
-          <SelectTrigger className="w-full sm:w-[200px]">
+        <div className="h-full">
+          <Select
+            value={nicheFilter}
+            onValueChange={setNicheFilter}
+          >
+            <SelectTrigger className="w-full sm:w-[200px] h-full focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none">
             <SelectValue placeholder="Filter by niche" />
           </SelectTrigger>
           <SelectContent>
@@ -160,26 +202,57 @@ export default function BrowseCampaigns() {
             <SelectItem value="gaming">Gaming</SelectItem>
           </SelectContent>
         </Select>
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
         {filteredCampaigns?.map((campaign) => (
           <Card
             key={campaign.id}
-            className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
-            onClick={() =>
-              router.push(
-                `/promoter/dashboard/marketplace/campaign/${campaign.id}`
-              )
-            }
+            className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray p-2 min-h-[445px] w-full md:w-[379px]"
+            onClick={() => router.push(`/promoter/dashboard/marketplace/campaign/${campaign.id}`)}
           >
             {/* Cover Image or Video */}
-            <div className="relative aspect-video w-full overflow-hidden group">
+            <div className="relative aspect-video w-full overflow-hidden group h-[216px]">
+              <div className="absolute top-0 w-full flex items-center justify-between p-2 z-10">
+                <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                  backgroundColors[getAdvertiserColorIndex(campaign.advertiser.id)]
+                }`}>
+                  <span className={`text-sm font-semibold ${
+                    textColors[getAdvertiserColorIndex(campaign.advertiser.id)]
+                  }`}>
+                    {campaign.advertiser.companyName.slice(0, 2).toUpperCase()}
+                  </span>
+                </div>
+                <img src="/share.png" alt="Share" className="h-8 w-auto" />
+              </div>
+
+              <div className="absolute bottom-0 w-full flex items-center justify-between p-2 z-10">
+                <div className="h-8 w-[110px] bg-white flex items-center justify-around rounded-md">
+                  <div className="flex items-center gap-1 text-[11px]">
+                    <img src="/like.png" alt="like" />
+                    {campaign.metrics?.totalEngagements || 0}
+                  </div>
+                  <div className="flex items-center gap-1 text-[11px]">
+                    <img src="/comment.png" alt="like" />{" "}
+                    {campaign.metrics?.totalPosts}
+                  </div>
+                  <div className="flex items-center gap-1 text-[11px]">
+                    <img src="/eye.png" alt="like" />{" "}
+                    {campaign.metrics?.totalEngagements || 0}
+                  </div>
+                </div>
+                <div
+                  className={`text-[10px] min-w-[47px] h-[21px] rounded-sm font-semibold p-4 flex items-center justify-center ${campaign.campaignGoal === "awareness" ? "bg-[#C2FFDB] text-[#00A142]" : campaign.campaignGoal === "engagement" ? "bg-[#FFC2F8] text-[#8C00A1]" : "bg-[#FFF9C2] text-[#A19900]"}`}
+                >
+                  {campaign.campaignGoal}
+                </div>
+              </div>
               <Image
                 src={campaign.coverImage}
                 alt={campaign.title}
                 fill
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                className="object-cover transition-transform duration-300 group-hover:scale-105 rounded-md"
               />
               {campaign.contentAssets?.some(
                 (asset) => asset.type === "video"
@@ -205,17 +278,8 @@ export default function BrowseCampaigns() {
                   />
                 </div>
               )}
-              {campaign.applicationStatus && (
-                <span
-                  className={`absolute top-4 right-4 px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap ${campaign.applicationStatus === "approved" ? "bg-green-500/90 text-white" : campaign.applicationStatus === "pending" ? "bg-yellow-500/90 text-white" : campaign.applicationStatus === "rejected" ? "bg-red-500/90 text-white" : "bg-blue-500/90 text-white"}`}
-                >
-                  {campaign.applicationStatus.charAt(0).toUpperCase() +
-                    campaign.applicationStatus.slice(1)}
-                </span>
-              )}
 
-              {/* End Date Badge */}
-              <div className="absolute flex items-center w-full justify-between bottom-4 right-0 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-none shadow-sm text-right space-y-1">
+              {/* <div className="absolute flex items-center w-full justify-between bottom-4 right-0 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-none shadow-sm text-right space-y-1">
                 <div>
                   <div className="text-xs font-medium text-gray-600 uppercase">
                     Starts
@@ -240,13 +304,82 @@ export default function BrowseCampaigns() {
                     })}
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-4">
+            <div className="space-y-2">
+              <h5 className="font-bold text-[12px] mt-2">
+                {" "}
+                {campaign.description}{" "}
+              </h5>
+
+              <div className="flex items-center justify-between border border-gray px-2 h-[27px] rounded-md">
+                <p className=" text-gray-500 text-[12px] font-normal">
+                  {campaign.advertiser.companyName}
+                </p>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFollowBrand(campaign.advertiser.id, campaign.advertiser.isFollowing);
+                  }}
+                  className={`text-xs font-semibold cursor-pointer ${
+                    campaign.advertiser.isFollowing 
+                    ? 'text-gray-600' 
+                    : 'text-[#34A4FF]'
+                  }`}
+                >
+                  {campaign.advertiser.isFollowing ? 'Following' : 'Follow +'}
+                </button>
+              </div>
+
+              <div className="bg-[#F8FBFC] min-h-[97px] rounded-md p-2">
+                <div className="flex items-center justify-between border-dashed border-gray-200 border-2 rounded-md flex-wrap h-full">
+                  <div className="border-r border-dashed border-gray-200 p-2 w-[50%]">
+                    <p className="text-[10px] font-[300px]">Starts</p>
+                    <p className="text-[12px] font-semibold">
+                      {new Date(campaign.startDate).toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        }
+                      )}
+                    </p>
+                  </div>
+                  <div className="p-2 w-[50%] text-right">
+                    <p className="text-[10px] font-[300px]">Ends</p>
+                    <p className="text-[12px] font-semibold">
+                      {new Date(campaign.endDate).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <div className="border-r border-dashed border-gray-200 p-2 w-[50%]">
+                    <p className="text-[10px] font-[300px]">Per Sale</p>
+                    <p className="text-[12px] font-semibold">
+                      ₦{campaign.pricePerPost}
+                    </p>
+                  </div>
+                  <div className="p-2 w-[50%] text-right">
+                    <p className="text-[10px] font-[300px]">Engagement Rate</p>
+                    <p className="text-[12px] font-semibold">
+                      {(campaign.metrics?.averageEngagementRate * 100).toFixed(
+                        1
+                      )}
+                      %
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <button className="w-full bg-[#00A0F1] rounded-lg cursor-pointer text-white text-[12px] font-semibold py-2">
+                View Campaign
+              </button>
               {/* Header */}
-              <div className="flex items-center gap-3">
+              {/* <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center border border-gray-100">
                   <span className="text-sm font-semibold text-blue-600">
                     {campaign.advertiser.companyName.charAt(0)}
@@ -274,19 +407,10 @@ export default function BrowseCampaigns() {
                 >
                   {campaign.advertiser.isFollowing ? "Following" : "Follow"}
                 </Button>
-              </div>
-
-              <div className="relative">
-                <p className="text-sm text-gray-600 line-clamp-2">
-                  {campaign.description}
-                </p>
-                <div className="absolute bottom-0 right-0 bg-gradient-to-l from-white via-white to-transparent pl-10 pr-2 text-xs text-blue-600 font-medium">
-                  Read more →
-                </div>
-              </div>
+              </div> */}
 
               {/* Campaign Metrics */}
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+              {/* <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
                 <div className="text-left">
                   <div className="text-lg font-semibold text-blue-600">
                     ₦
@@ -316,9 +440,9 @@ export default function BrowseCampaigns() {
                     <div className="text-xs text-gray-500">Total Reach</div>
                   </div>
                 )}
-              </div>
+              </div> */}
 
-              <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+              {/* <div className="flex justify-between items-center pt-4 border-t border-gray-100">
                 <div className="flex space-x-4">
                   <Button
                     variant="ghost"
@@ -375,7 +499,7 @@ export default function BrowseCampaigns() {
                     <Share2 className="h-4 w-4" />
                   </Button>
                 </div>
-              </div>
+              </div> */}
 
               {/* Tags */}
               <div className="space-y-3">

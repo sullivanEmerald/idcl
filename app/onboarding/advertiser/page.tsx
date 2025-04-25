@@ -14,6 +14,7 @@ import { BriefcaseIcon, BuildingIcon, CreditCardIcon, UserIcon } from 'lucide-re
 import onboardingService from '@/services/onboarding'
 import { useRouter } from 'next/navigation'
 import ReactSelect from 'react-select'
+import { toast } from 'sonner'
 
 const steps = [
   {
@@ -47,24 +48,27 @@ interface Option {
   label: string
 }
 
+interface FormData {
+  companyName: string
+  website: string
+  industry: string
+  companySize: string
+  role: string
+  phoneNumber: string
+  businessType: string
+  targetAudience: Option[]
+  goals: string
+  billingEmail: string
+  billingAddress: string
+  logo: string
+}
+
 export default function AdvertiserOnboarding() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [formData, setFormData] = useState<{
-    companyName: string
-    website: string
-    industry: string
-    companySize: string
-    role: string
-    phoneNumber: string
-    businessType: string
-    targetAudience: Option[]
-    goals: string
-    billingEmail: string
-    billingAddress: string
-  }>({
+  const [formData, setFormData] = useState<FormData>({
     companyName: '',
     website: '',
     industry: '',
@@ -75,16 +79,38 @@ export default function AdvertiserOnboarding() {
     targetAudience: [],
     goals: '',
     billingEmail: '',
-    billingAddress: ''
+    billingAddress: '',
+    logo: ''
   })
+
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false)
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1)
+      setIsLoading(true)
+      try {
+        // Validate current step fields
+        const currentStepFields = steps[currentStep].fields as Array<keyof FormData>
+        const hasEmptyFields = currentStepFields.some(field => {
+          if (field === 'targetAudience') {
+            return formData[field].length === 0
+          }
+          return !formData[field]
+        })
+
+        if (hasEmptyFields) {
+          toast.error('Please fill in all required fields')
+          return
+        }
+
+        setCurrentStep(currentStep + 1)
+      } finally {
+        setIsLoading(false)
+      }
     }
   }
 
@@ -97,7 +123,15 @@ export default function AdvertiserOnboarding() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (currentStep < steps.length - 1) {
-      handleNext()
+      await handleNext()
+      return
+    }
+
+    // Validate final step fields
+    const finalStepFields = steps[currentStep].fields as Array<keyof FormData>
+    const hasEmptyFields = finalStepFields.some(field => !formData[field])
+    if (hasEmptyFields) {
+      toast.error('Please fill in all required fields')
       return
     }
 
@@ -113,17 +147,59 @@ export default function AdvertiserOnboarding() {
       // Submit the form
       await onboardingService.updateAdvertiserProfile(userId, {
         ...formData,
-        targetAudience: formData.targetAudience.map(option => option.value)
+        targetAudience: formData.targetAudience.map(option => option.value),
+        logoUrl: formData.logo
       })
 
-      // Show success message and redirect to advertiser dashboard
-      console.log('Advertiser profile updated successfully')
+      toast.success('Profile updated successfully!')
       router.push('/advertiser/dashboard')
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to update profile')
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to update profile'
+      setError(errorMessage)
+      toast.error(errorMessage)
       console.error('Onboarding error:', err)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleLogoUpload = async (file: File) => {
+    try {
+      setIsUploadingLogo(true)
+      
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+      const uploadPreset = "adminting"
+
+      if (!cloudName || !uploadPreset) {
+        throw new Error("Cloudinary configuration is missing")
+      }
+
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("upload_preset", uploadPreset)
+      formData.append("resource_type", "image")
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error?.message || "Error uploading to Cloudinary")
+      }
+
+      handleInputChange('logo', data.secure_url)
+      toast.success("Logo uploaded successfully")
+    } catch (error: any) {
+      console.error("Error uploading logo:", error)
+      toast.error("Upload failed");
+    } finally {
+      setIsUploadingLogo(false)
     }
   }
 
@@ -179,6 +255,94 @@ export default function AdvertiserOnboarding() {
                       placeholder="Enter your company name"
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label>Company Logo</Label>
+                    <div className="flex flex-col gap-4">
+                      {formData.logo && (
+                        <div className="relative w-32 h-32 rounded-lg overflow-hidden bg-gray-100">
+                          <img
+                            src={formData.logo}
+                            alt="Company logo"
+                            className="object-contain w-full h-full"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleInputChange('logo', '')}
+                            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M18 6L6 18" />
+                              <path d="M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                      <div className="flex items-center justify-center w-full">
+                        <label
+                          className={`flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 ${isUploadingLogo ? "opacity-50 pointer-events-none" : ""}`}
+                        >
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg
+                              className="w-8 h-8 mb-4 text-gray-500"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 20 16"
+                            >
+                              <path
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                              />
+                            </svg>
+                            {isUploadingLogo ? (
+                              <div className="flex flex-col items-center">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-2"></div>
+                                <p className="text-sm text-gray-500">
+                                  Uploading logo...
+                                </p>
+                              </div>
+                            ) : (
+                              <>
+                                <p className="mb-2 text-sm text-gray-500">
+                                  <span className="font-semibold">
+                                    Click to upload
+                                  </span>{" "}
+                                  or drag and drop
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  Upload your company logo (PNG, JPG)
+                                </p>
+                              </>
+                            )}
+                          </div>
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleLogoUpload(file);
+                            }}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <Label htmlFor="website">Company Website</Label>
                     <Input

@@ -842,7 +842,6 @@ export default function CampaignDetails() {
                     )}
                   </div>
 
-                  {/* Platform-specific Links */}
                   {promotionalLink && (
                     <div className="space-y-2">
                       <h3 className="text-sm font-medium text-gray-600">
