@@ -29,6 +29,7 @@ export interface CampaignRequirements {
   hashtags: string[];
   mentions: string[];
   brandAssetLinks: string[];
+  ctaLabel: string
 }
 
 export interface DeviceMetrics {
