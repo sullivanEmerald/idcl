@@ -205,11 +205,11 @@ export default function BrowseCampaigns() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
         {filteredCampaigns?.map((campaign) => (
           <Card
             key={campaign.id}
-            className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray p-2 min-h-[445px] w-full md:w-[379px]"
+            className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray p-2 min-h-[445px] w-full md:w-[379px] xl:w-[280px]"
             onClick={() => router.push(`/promoter/dashboard/marketplace/campaign/${campaign.id}`)}
           >
             {/* Cover Image or Video */}
