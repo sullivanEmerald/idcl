@@ -1,96 +1,136 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
-import { Calendar, ChartBar, Clock, DollarSign, Eye, Users } from 'lucide-react'
-import { campaignService } from '@/services/campaign'
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
-import Image from 'next/image'
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
+import { Calendar, Clock, Eye } from "lucide-react";
+import { CampaignMetrics } from "@/components/metrics/campaign-metrics";
+import { campaignService } from "@/services/campaign";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Image from "next/image";
 
-import { Campaign } from '@/types/campaign'
+import { Campaign } from "@/types/campaign";
 
 export default function CampaignPage() {
-  const { id } = useParams()
-  const [campaign, setCampaign] = useState<Campaign | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { id } = useParams();
+  const [campaign, setCampaign] = useState<Campaign | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
-        const data = await campaignService.getCampaign(id as string)
-        console.log(data)
-        setCampaign(data)
+        const data = await campaignService.getCampaign(id as string);
+        console.log(data);
+        setCampaign(data);
       } catch (error) {
-        console.error('Error fetching campaign:', error)
+        console.error("Error fetching campaign:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchCampaign()
-  }, [id])
+    fetchCampaign();
+  }, [id]);
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   if (!campaign) {
-    return <div>Campaign not found</div>
+    return <div>Campaign not found</div>;
   }
 
-  const spentAmount = campaign.metrics.totalPosts * campaign.pricePerPost
-  const spentPercentage = (spentAmount / campaign.budget) * 100
+  const spentAmount = campaign.metrics.totalReach * campaign.pricePerPost;
+  const spentPercentage = (spentAmount / campaign.budget) * 100;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{campaign.title}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            {campaign.title}
+          </h1>
           <p className="text-muted-foreground">{campaign.description}</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2 md:gap-4">
           <Badge
-            variant={campaign?.status === 'active' ? 'success' :
-                    campaign?.status === 'paused' ? 'secondary' : 'outline'}
-            className={campaign?.status === 'active' ? 'bg-green-100 text-green-800 hover:bg-green-100' :
-                      campaign?.status === 'paused' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' :
-                      'bg-gray-100 text-gray-800 hover:bg-gray-100'}
-          >
-            {(campaign?.status || 'draft').charAt(0).toUpperCase() + (campaign?.status || 'draft').slice(1)}
-          </Badge>
-          <Button 
             variant="outline"
-            onClick={() => window.location.href = `/advertiser/dashboard/campaigns/${id}/edit`}
+            className="bg-blue-100 text-blue-800 hover:bg-blue-100"
+          >
+            {campaign.campaignGoal.charAt(0).toUpperCase() +
+              campaign.campaignGoal.slice(1)}
+          </Badge>
+          <Badge
+            variant={
+              campaign?.status === "active"
+                ? "success"
+                : campaign?.status === "paused"
+                  ? "secondary"
+                  : "outline"
+            }
+            className={
+              campaign?.status === "active"
+                ? "bg-green-100 text-green-800 hover:bg-green-100"
+                : campaign?.status === "paused"
+                  ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                  : "bg-gray-100 text-gray-800 hover:bg-gray-100"
+            }
+          >
+            {(campaign?.status || "draft").charAt(0).toUpperCase() +
+              (campaign?.status || "draft").slice(1)}
+          </Badge>
+          <Button
+            variant="outline"
+            onClick={() =>
+              (window.location.href = `/advertiser/dashboard/campaigns/${id}/edit`)
+            }
+            size="sm"
+            className="md:size-default"
           >
             Edit Campaign
           </Button>
-          {campaign.status === 'active' ? (
-            <Button 
+          {campaign.status === "active" ? (
+            <Button
               variant="destructive"
+              size="sm"
+              className="md:size-default"
               onClick={async () => {
                 try {
                   await campaignService.pauseCampaign(id as string);
                   window.location.reload();
                 } catch (error) {
-                  console.error('Error pausing campaign:', error);
+                  console.error("Error pausing campaign:", error);
                 }
               }}
             >
               Pause Campaign
             </Button>
-          ) : campaign.status === 'paused' ? (
+          ) : campaign.status === "paused" ? (
             <Button
+              size="sm"
+              className="md:size-default"
               onClick={async () => {
                 try {
                   await campaignService.resumeCampaign(id as string);
                   window.location.reload();
                 } catch (error) {
-                  console.error('Error resuming campaign:', error);
+                  console.error("Error resuming campaign:", error);
                 }
               }}
             >
@@ -100,75 +140,108 @@ export default function CampaignPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <CampaignMetrics campaign={campaign} />
+
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Budget Spent</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            {/* <DollarSign className="h-4 w-4 text-muted-foreground" /> */}
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${spentAmount}</div>
+            <div className="text-2xl font-bold">
+              ₦{campaign.metrics.budgetSpent.toLocaleString()}
+            </div>
             <Progress value={spentPercentage} className="mt-2" />
             <p className="text-xs text-muted-foreground mt-2">
-              ${campaign.budget - spentAmount} remaining
+              ₦{(campaign.budget - campaign.metrics.budgetSpent).toLocaleString()} remaining
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Reach</CardTitle>
+            <CardTitle className="text-sm font-medium">Promoters Impression</CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{campaign.metrics.totalReach}</div>
+            <div className="text-2xl font-bold">
+              {campaign.metrics.promoterViews}
+            </div>
             <p className="text-xs text-muted-foreground mt-2">
-              {campaign.metrics.byDevice.desktop.uniqueViews + 
-               campaign.metrics.byDevice.mobile.uniqueViews + 
-               campaign.metrics.byDevice.tablet.uniqueViews} unique views
+              {campaign.metrics.uniquePromoterViews} unique promoter reach
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Engagement Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Impressions</CardTitle>
+            <Eye className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {campaign.metrics.totalViews}
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              {campaign.metrics.byDevice.desktop.uniqueViews +
+                campaign.metrics.byDevice.mobile.uniqueViews +
+                campaign.metrics.byDevice.tablet.uniqueViews}{" "}
+              reach
+            </p>
+          </CardContent>
+        </Card>
+        {/* <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              {campaign.campaignGoal === "engagement"
+                ? "Engagement Rate"
+                : "Impressions"}
+            </CardTitle>
             <ChartBar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {(campaign.metrics.averageEngagementRate * 100).toFixed(2)}%
+              {campaign.campaignGoal === "engagement"
+                ? `${(campaign.metrics.averageEngagementRate * 100).toFixed(2)}%`
+                : campaign.metrics.totalViews.toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              {campaign.metrics.totalEngagements} total engagements
+              {campaign.campaignGoal === "engagement"
+                ? `${campaign.metrics.totalEngagements} total engagements`
+                : `${campaign.metrics.totalReach} unique views`}
             </p>
           </CardContent>
-        </Card>
-        <Card>
+        </Card> */} 
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Posts Made</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{campaign.metrics.totalPosts}</div>
+            <div className="text-2xl font-bold">
+              {campaign.metrics.totalPosts} 
+            </div>
             <p className="text-xs text-muted-foreground mt-2">
               ${campaign.pricePerPost} per post
             </p>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
+        <TabsList className="flex flex-wrap">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="promoters">Promoters</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>Campaign Schedule</CardTitle>
-                <CardDescription>Campaign duration and posting times</CardDescription>
+                <CardDescription>
+                  Campaign duration and posting times
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center space-x-4">
@@ -176,7 +249,8 @@ export default function CampaignPage() {
                   <div>
                     <p className="text-sm font-medium">Duration</p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(campaign.startDate).toLocaleDateString()} - {new Date(campaign.endDate).toLocaleDateString()}
+                      {new Date(campaign.startDate).toLocaleDateString()} -{" "}
+                      {new Date(campaign.endDate).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -185,10 +259,11 @@ export default function CampaignPage() {
                   <div>
                     <p className="text-sm font-medium">Posting Schedule</p>
                     <p className="text-sm text-muted-foreground">
-                      {campaign.requirements.postingSchedule.startTime} - {campaign.requirements.postingSchedule.endTime}
+                      {campaign.requirements.postingSchedule.startTime} -{" "}
+                      {campaign.requirements.postingSchedule.endTime}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {campaign.requirements.postingSchedule.days.join(', ')}
+                      {campaign.requirements.postingSchedule.days.join(", ")}
                     </p>
                   </div>
                 </div>
@@ -197,7 +272,9 @@ export default function CampaignPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Content Requirements</CardTitle>
-                <CardDescription>Guidelines and requirements for promoters</CardDescription>
+                <CardDescription>
+                  Guidelines and requirements for promoters
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -236,18 +313,23 @@ export default function CampaignPage() {
           <Card>
             <CardHeader>
               <CardTitle>Campaign Content</CardTitle>
-              <CardDescription>Content assets for this campaign</CardDescription>
+              <CardDescription>
+                Content assets for this campaign
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4">
                 {(() => {
                   // Separate carousel and standalone assets
                   const carouselAssets = campaign.contentAssets
-                    .filter(asset => asset.type === 'carousel')
-                    .sort((a, b) => (a.carouselIndex ?? 0) - (b.carouselIndex ?? 0));
-                  
-                  const standaloneAssets = campaign.contentAssets
-                    .filter(asset => asset.type !== 'carousel');
+                    .filter((asset) => asset.type === "carousel")
+                    .sort(
+                      (a, b) => (a.carouselIndex ?? 0) - (b.carouselIndex ?? 0)
+                    );
+
+                  const standaloneAssets = campaign.contentAssets.filter(
+                    (asset) => asset.type !== "carousel"
+                  );
 
                   return (
                     <>
@@ -262,7 +344,8 @@ export default function CampaignPage() {
                                     <Image
                                       src={asset.url}
                                       alt={`Content asset ${index + 1}`}
-                                      sizes="100vw"
+                                      fill
+                                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                       className="object-contain"
                                       priority={index === 0}
                                     />
@@ -279,18 +362,21 @@ export default function CampaignPage() {
                                 </CarouselItem>
                               ))}
                             </CarouselContent>
-                            <CarouselPrevious className="-left-3 h-12 w-12 border-2 bg-white/90 hover:bg-white" />
-                            <CarouselNext className="-right-3 h-12 w-12 border-2 bg-white/90 hover:bg-white" />
+                            <CarouselPrevious className="-left-1 md:-left-3 h-8 w-8 md:h-12 md:w-12 border-2 bg-white/90 hover:bg-white" />
+                            <CarouselNext className="-right-1 md:-right-3 h-8 w-8 md:h-12 md:w-12 border-2 bg-white/90 hover:bg-white" />
                           </Carousel>
                         </div>
                       )}
 
                       {/* Render standalone assets */}
                       {standaloneAssets.length > 0 && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                           {standaloneAssets.map((asset, index) => (
-                            <div key={`standalone-${index}`} className="aspect-square relative rounded-lg overflow-hidden">
-                              {asset.contentType === 'image' ? (
+                            <div
+                              key={`standalone-${index}`}
+                              className="aspect-square relative rounded-lg overflow-hidden"
+                            >
+                              {asset.contentType === "image" ? (
                                 <img
                                   src={asset.url}
                                   alt={`Campaign content ${index + 1}`}
@@ -304,7 +390,11 @@ export default function CampaignPage() {
                                     className="object-cover w-full h-full"
                                   />
                                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                                    <Button variant="outline" className="text-white border-white">
+                                    <Button
+                                      variant="outline"
+                                      className="text-white border-white text-xs sm:text-sm"
+                                      size="sm"
+                                    >
                                       Play Video
                                     </Button>
                                   </div>
@@ -325,12 +415,175 @@ export default function CampaignPage() {
           <Card>
             <CardHeader>
               <CardTitle>Campaign Promoters</CardTitle>
-              <CardDescription>Manage your campaign promoters</CardDescription>
+              <CardDescription>
+                View and manage campaign promoters
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Promoters content will go here */}
-              <div className="text-center text-muted-foreground py-8">
-                Promoter management coming soon
+              <div className="space-y-6">
+                {campaign.activePromoters?.length > 0 ? (
+                  <div className="rounded-md border overflow-x-auto">
+                    <div className="hidden md:grid md:grid-cols-7 gap-6 p-6 font-medium border-b bg-muted/50">
+                      <div>Promoter</div>
+                      <div>Platforms</div>
+                      <div>Audience Size</div>
+                      <div>Engagement Rate</div>
+                      <div>Content Types</div>
+                      <div>Last Activity</div>
+                      <div>Status</div>
+                    </div>
+                    <div className="divide-y">
+                      {campaign.activePromoters.map((item) => (
+                        <div
+                          key={item._id}
+                          className="flex flex-col md:grid md:grid-cols-7 gap-3 md:gap-6 p-4 md:p-6 items-start md:items-center hover:bg-muted/50"
+                        >
+                          <div>
+                            <p className="font-medium">
+                              {item.promoter.fullName || item.promoter.email}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {item.promoter.location || "Location not set"}
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {(item.promoter.platforms || []).map((platform) => (
+                              <Badge
+                                key={platform}
+                                variant="secondary"
+                                className="capitalize"
+                              >
+                                {platform}
+                              </Badge>
+                            ))}
+                          </div>
+                          <div className="md:hidden flex justify-between w-full">
+                            <span className="text-sm text-muted-foreground">Audience Size:</span>
+                            <p className="font-medium">
+                              {item.promoter.followersCount
+                                ? Number(
+                                    item.promoter.followersCount
+                                  ).toLocaleString()
+                                : "0"}
+                            </p>
+                          </div>
+                          <div className="hidden md:block">
+                            <p className="font-medium">
+                              {item.promoter.followersCount
+                                ? Number(
+                                    item.promoter.followersCount
+                                  ).toLocaleString()
+                                : "0"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              followers
+                            </p>
+                          </div>
+                          <div className="md:hidden flex justify-between w-full">
+                            <span className="text-sm text-muted-foreground">Engagement Rate:</span>
+                            <p className="font-medium">
+                              {item.promoter.engagementRate
+                                ? (Number(item.promoter.engagementRate) / 100)
+                                    .toFixed(2)
+                                    .toLocaleString()
+                                : "0.00"}
+                              %
+                            </p>
+                          </div>
+                          <div className="hidden md:block">
+                            <p className="font-medium">
+                              {item.promoter.engagementRate
+                                ? (Number(item.promoter.engagementRate) / 100)
+                                    .toFixed(2)
+                                    .toLocaleString()
+                                : "0.00"}
+                              %
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              avg. engagement
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {(item.promoter.contentTypes || []).map((type) => (
+                              <Badge
+                                key={type}
+                                variant="outline"
+                                className="capitalize"
+                              >
+                                {type}
+                              </Badge>
+                            ))}
+                          </div>
+                          <div className="md:hidden flex justify-between w-full">
+                            <span className="text-sm text-muted-foreground">Last Activity:</span>
+                            <p className="font-medium">
+                              {item.lastActivity
+                                ? new Date(
+                                    item.lastActivity
+                                  ).toLocaleDateString()
+                                : "No activity"}
+                            </p>
+                          </div>
+                          <div className="hidden md:block">
+                            <p className="font-medium">
+                              {item.lastActivity
+                                ? new Date(
+                                    item.lastActivity
+                                  ).toLocaleDateString()
+                                : "No activity"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {item.totalEvents || 0} events
+                            </p>
+                          </div>
+                          <div className="md:hidden flex justify-between w-full">
+                            <span className="text-sm text-muted-foreground">Status:</span>
+                            <Badge
+                              variant={
+                                item.promoter.status === "active"
+                                  ? "success"
+                                  : "secondary"
+                              }
+                              className={
+                                item.promoter.status === "active"
+                                  ? "bg-green-100 text-green-800"
+                                  : ""
+                              }
+                            >
+                              {(item.promoter.status || "inactive")
+                                .charAt(0)
+                                .toUpperCase() +
+                                (item.promoter.status || "inactive").slice(1)}
+                            </Badge>
+                          </div>
+                          <div className="hidden md:block">
+                            <Badge
+                              variant={
+                                item.promoter.status === "active"
+                                  ? "success"
+                                  : "secondary"
+                              }
+                              className={
+                                item.promoter.status === "active"
+                                  ? "bg-green-100 text-green-800"
+                                  : ""
+                              }
+                            >
+                              {(item.promoter.status || "inactive")
+                                .charAt(0)
+                                .toUpperCase() +
+                                (item.promoter.status || "inactive").slice(1)}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center text-muted-foreground py-8">
+                    No active promoters for this campaign
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -342,14 +595,136 @@ export default function CampaignPage() {
               <CardDescription>Detailed performance metrics</CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Analytics content will go here */}
-              <div className="text-center text-muted-foreground py-8">
-                Detailed analytics coming soon
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="text-gray-600 mb-2">Platform Performance</h3>
+                    <div className="space-y-2">
+                      {Object.entries(campaign.metrics.bySocialPlatform || {})
+                        .filter(([platform]) => platform !== '_id' && platform !== 'id')
+                        .map(([platform, data]) => (
+                          <div key={platform} className="flex justify-between text-sm">
+                            <span className="capitalize">{platform}</span>
+                            <span>
+                              {typeof data === 'object' && data !== null && 'count' in data 
+                                ? (typeof data.count === 'number' 
+                                    ? data.count.toLocaleString() 
+                                    : String(data.count))
+                                : "0"}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                  {campaign.contentAssets.some(asset => asset.contentType === "video") && (
+                    <div className="p-4 border rounded-lg">
+                      <h3 className="text-gray-600 mb-2">Video Metrics</h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>3-Second Views</span>
+                          <span>{campaign.metrics.viewDuration?.threeSeconds?.toLocaleString() || "0"}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>30-Second Views</span>
+                          <span>{campaign.metrics.viewDuration?.thirtySeconds?.toLocaleString() || "0"}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>1-Minute Views</span>
+                          <span>{campaign.metrics.viewDuration?.oneMinute?.toLocaleString() || "0"}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {/* <div className="p-4 border rounded-lg">
+                    <h3 className="text-gray-600 mb-2">Engagement Rate</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Average</span>
+                        <span>{(campaign.metrics.averageEngagementRate * 100).toFixed(2)}%</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Peak Engagement Rate</span>
+                        <span>{(campaign.metrics.averageEngagementRate * 100).toFixed(1)}%</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Total Interactions</span>
+                        <span>{campaign.metrics.totalEngagements?.toLocaleString() || '0'}</span>
+                      </div>
+                    </div>
+                  </div> */}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="text-gray-600 mb-2">Mobile Devices</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Android</span>
+                        <span>
+                          {campaign.metrics.byDevice.mobile.byOS.android}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>iOS</span>
+                        <span>{campaign.metrics.byDevice.mobile.byOS.ios}</span>
+                      </div>
+                      <div className="flex justify-between text-sm text-muted-foreground mt-2">
+                        <span>Total Views</span>
+                        <span>
+                          {campaign.metrics.byDevice.mobile.uniqueViews}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="text-gray-600 mb-2">Desktop</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Windows</span>
+                        <span>
+                          {campaign.metrics.byDevice.desktop.byOS.windows}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>macOS</span>
+                        <span>
+                          {campaign.metrics.byDevice.desktop.byOS.macos}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm text-muted-foreground mt-2">
+                        <span>Total Views</span>
+                        <span>
+                          {campaign.metrics.byDevice.desktop.uniqueViews}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="text-gray-600 mb-2">Tablet</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Android</span>
+                        <span>
+                          {campaign.metrics.byDevice.tablet.byOS.android}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>iOS</span>
+                        <span>{campaign.metrics.byDevice.tablet.byOS.ios}</span>
+                      </div>
+                      <div className="flex justify-between text-sm text-muted-foreground mt-2">
+                        <span>Total Views</span>
+                        <span>
+                          {campaign.metrics.byDevice.tablet.uniqueViews}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

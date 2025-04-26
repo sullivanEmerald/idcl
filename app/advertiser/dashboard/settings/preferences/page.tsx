@@ -7,7 +7,7 @@ import advertiserService from '@/services/advertiser'
 import { Toaster, toast } from 'sonner'
 import { useEffect, useState } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
-import Loader from '@/components/layout/Loader'
+import Loader from '@/components/layout/loader'
 
 export default function PreferencesSettings() {
     const [isFetching, setIsFetching] = useState(true)
@@ -74,8 +74,8 @@ export default function PreferencesSettings() {
             }
             toast.success(checked ? `${handler} notification enabled` : `${handler} notification disabled`)
             console.log(data)
-        } catch (error: any) {
-            const responseError = error.response?.data?.message || 'An Error occured'
+        } catch (error: unknown) {
+            const responseError = error instanceof Error ? error.message : 'An Error occured'
             toast.error(responseError)
         } finally {
             setIsLoading((prev) => ({
@@ -87,7 +87,7 @@ export default function PreferencesSettings() {
 
     if (isFetching) {
         return (
-            <div className='space-y-8 p-8'>
+            <div className='space-y-8 p-0'>
                 <div>
                     <Skeleton className="h-8 w-48 mb-2" />
                     <Skeleton className="h-4 w-64" />
@@ -132,7 +132,7 @@ export default function PreferencesSettings() {
     return (
         <>
             <Toaster richColors position="top-center" />
-            <div className="space-y-8 p-8">
+            <div className="space-y-8 p-0">
                 <div>
                     <h1 className="text-3xl font-bold">Preferences</h1>
                     <p className="mt-2 text-gray-600">Customize your account settings</p>

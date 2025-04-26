@@ -22,9 +22,15 @@ export const axiosInstance = axios.create({
 // Add token to all requests
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-  console.log(token);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
+
+export function formatNumber(value: number): string {
+  return new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0
+  }).format(value);
+}

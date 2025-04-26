@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,6 +12,9 @@ import { Textarea } from '@/components/ui/textarea'
 
 import Select from 'react-select'
 import { UserIcon, UsersIcon, WalletIcon, GlobeIcon } from 'lucide-react'
+
+import onboardingService from '@/services/onboarding';
+import { useRouter } from 'next/navigation';
 
 const steps = [
   {
@@ -40,7 +43,7 @@ const steps = [
   }
 ]
 
-export const socialPlatforms = [
+const socialPlatforms = [
   { value: 'instagram', label: 'Instagram' },
   { value: 'tiktok', label: 'TikTok' },
   { value: 'youtube', label: 'YouTube' },
@@ -48,8 +51,6 @@ export const socialPlatforms = [
   { value: 'facebook', label: 'Facebook' },
 ]
 
-import onboardingService from '@/services/onboarding';
-import { useRouter } from 'next/navigation';
 
 export default function PromoterOnboarding() {
   const router = useRouter();
@@ -67,8 +68,67 @@ export default function PromoterOnboarding() {
     audienceInterests: [] as string[],
     contentTypes: [] as string[],
     paymentMethod: '',
-    accountDetails: ''
+    accountNumber: '',
+    bankCode: '',
+    bankName: ''
   })
+
+  const [banks, setBanks] = useState<Array<{ value: string; label: string }>>([]);
+  const [isValidatingAccount, setIsValidatingAccount] = useState(false);
+  const [accountValidationError, setAccountValidationError] = useState('');
+  const [isLoadingBanks, setIsLoadingBanks] = useState(true);
+  const [validatedAccountName, setValidatedAccountName] = useState('');
+
+  useEffect(() => {
+    const fetchBanks = async () => {
+      try {
+        const response = await fetch('/api/banks');
+        const data = await response.json();
+        if (data.status) {
+          const formattedBanks = data.data.map((bank: any) => ({
+            value: bank.code,
+            label: bank.name
+          }));
+          setBanks(formattedBanks);
+        }
+      } catch (error) {
+        console.error('Error fetching banks:', error);
+      } finally {
+        setIsLoadingBanks(false);
+      }
+    };
+
+    fetchBanks();
+  }, []);
+
+  const validateAccountNumber = async (accountNumber: string, bankCode: string) => {
+    if (accountNumber.length === 10 && bankCode) {
+      setIsValidatingAccount(true);
+      setAccountValidationError('');
+      try {
+        const response = await fetch(`/api/validate-account?account_number=${accountNumber}&bank_code=${bankCode}`);
+        const data = await response.json();
+        console.log(data)
+        if (data.status) {
+          setValidatedAccountName(data.data.account_name);
+          setAccountValidationError('');
+        } else {
+          setValidatedAccountName('');
+          setAccountValidationError('Invalid account details');
+        }
+      } catch (error) {
+        setAccountValidationError('Failed to validate account');
+      } finally {
+        setIsValidatingAccount(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (formData.accountNumber && formData.bankCode) {
+      validateAccountNumber(formData.accountNumber, formData.bankCode);
+    }
+  }, [formData.accountNumber, formData.bankCode]);
 
   const handleInputChange = (field: string, value: string | string[] | null) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -117,27 +177,27 @@ export default function PromoterOnboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-12">
-      <div className="container max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-10 sm:py-8 md:py-12 px-0 sm:px-6 md:px-8">
+      <div className="container max-w-4xl mx-auto">
         {/* Progress Steps */}
-        <div className="mb-8">
-          <div className="flex justify-between">
+        <div className="mb-8 sm:mb-12 md:mb-16 overflow-x-auto">
+          <div className="flex justify-between min-w-[400px] sm:min-w-full px-2">
             {steps.map((step, index) => {
               const StepIcon = step.icon
               return (
-                <div key={step.id} className="flex flex-col items-center">
+                <div key={step.id} className="flex flex-col items-center flex-1">
                   <div className={`
-                    w-10 h-10 rounded-full flex items-center justify-center
+                    w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center
                     ${index <= currentStep
                       ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
                       : 'bg-gray-200 text-gray-400'}
                   `}>
-                    <StepIcon className="w-5 h-5" />
+                    <StepIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5" />
                   </div>
-                  <p className="mt-2 text-sm font-medium text-gray-600">{step.name}</p>
+                  <p className="mt-2 text-xs sm:text-sm font-medium text-gray-600 text-center whitespace-nowrap">{step.name}</p>
                   {index < steps.length - 1 && (
                     <div className={`
-                      h-1 w-24 mt-5
+                      h-0.5 sm:h-1 w-full mt-3 sm:mt-4 md:mt-5
                       ${index < currentStep ? 'bg-indigo-600' : 'bg-gray-200'}
                     `} />
                   )}
@@ -155,8 +215,8 @@ export default function PromoterOnboarding() {
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
         >
-          <Card className="p-6 backdrop-blur-sm bg-white/80">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <Card className="p-3 sm:p-4 md:p-6 backdrop-blur-sm bg-white/80">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 md:space-y-6">
               {currentStep === 0 && (
                 <div className="space-y-4">
                   <div>
@@ -193,7 +253,7 @@ export default function PromoterOnboarding() {
                 <div className="space-y-4">
                   <div>
                     <Label>Social Media Platforms</Label>
-                    <div className="grid grid-cols-2 gap-4 mt-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
                       {socialPlatforms.map((platform) => (
                         <Button
                           key={platform.value}
@@ -237,7 +297,7 @@ export default function PromoterOnboarding() {
               )}
 
               {currentStep === 2 && (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div>
                     <Label htmlFor="audienceAge">Primary Audience Age Range</Label>
                     <Select
@@ -318,14 +378,14 @@ export default function PromoterOnboarding() {
               )}
 
               {currentStep === 3 && (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div>
                     <Label htmlFor="paymentMethod">Preferred Payment Method</Label>
                     <Select
                       options={[
                         { value: 'bank', label: 'Bank Transfer' },
-                        { value: 'paypal', label: 'PayPal' },
-                        { value: 'crypto', label: 'Cryptocurrency' }
+                        // { value: 'paypal', label: 'PayPal' },
+                        // { value: 'crypto', label: 'Cryptocurrency' }
                       ]}
                       value={formData.paymentMethod ? { value: formData.paymentMethod, label: formData.paymentMethod.charAt(0).toUpperCase() + formData.paymentMethod.slice(1) } : null}
                       onChange={(selected) => handleInputChange('paymentMethod', selected ? selected.value : '')}
@@ -334,32 +394,59 @@ export default function PromoterOnboarding() {
                       placeholder="Select payment method"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="accountDetails">Account Details</Label>
-                    <Textarea
-                      id="accountDetails"
-                      value={formData.accountDetails}
-                      onChange={(e) => handleInputChange('accountDetails', e.target.value)}
-                      placeholder="Enter your payment account details"
-                      rows={3}
-                    />
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="bankCode">Select Bank</Label>
+                      <Select
+                        options={banks}
+                        isLoading={isLoadingBanks}
+                        value={formData.bankCode ? { value: formData.bankCode, label: formData.bankName } : null}
+                        onChange={(selected) => {
+                          if (selected) {
+                            handleInputChange('bankCode', selected.value);
+                            handleInputChange('bankName', selected.label);
+                          } else {
+                            handleInputChange('bankCode', '');
+                            handleInputChange('bankName', '');
+                          }
+                        }}
+                        className="w-full"
+                        classNamePrefix="select"
+                        placeholder="Select your bank"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="accountNumber">Account Number</Label>
+                      <Input
+                        id="accountNumber"
+                        value={formData.accountNumber || ''}
+                        onChange={(e) => handleInputChange('accountNumber', e.target.value)}
+                        placeholder="Enter your account number"
+                        maxLength={10}
+                        pattern="\d*"
+                      />
+                      {isValidatingAccount && <p className="text-sm text-gray-500">Validating account...</p>}
+                      {accountValidationError && <p className="text-sm text-red-500">{accountValidationError}</p>}
+                      {validatedAccountName && <p className="text-sm text-green-500">Account Name: {validatedAccountName}</p>}
+                    </div>
                   </div>
                 </div>
               )}
 
-              <div className="flex justify-between pt-4">
+              <div className="flex justify-between pt-4 flex-wrap md:flex-no-wrap space-y-2 gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleBack}
                   disabled={currentStep === 0}
+                  className="w-full sm:w-auto order-2 sm:order-1"
                 >
                   Back
                 </Button>
                 <Button
                   type={currentStep === steps.length - 1 ? 'submit' : 'button'}
                   onClick={currentStep === steps.length - 1 ? undefined : handleNext}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                  className="w-full sm:w-auto order-1 sm:order-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
                 >
                   {currentStep === steps.length - 1 ? 'Complete Setup' : 'Continue'}
                 </Button>

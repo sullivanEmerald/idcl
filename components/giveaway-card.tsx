@@ -2,37 +2,24 @@ import Image from 'next/image'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
+import { Giveaway } from '@/types/giveaway'
 
-interface GiveawayCardProps {
-  title: string
-  description: string
-  prize: string
-  imageUrl: string
-  endDate: Date
-  entriesCount: number
-  isEntered?: boolean
+export interface GiveawayCardProps {
+  giveaway: Giveaway
   onEnter?: () => void
+  isEntered?: boolean
 }
 
-export function GiveawayCard({
-  title,
-  description,
-  prize,
-  imageUrl,
-  endDate,
-  entriesCount,
-  isEntered = false,
-  onEnter
-}: GiveawayCardProps) {
-  const timeLeft = new Date(endDate).getTime() - new Date().getTime()
+export function GiveawayCard({ giveaway, onEnter, isEntered = false }: GiveawayCardProps) {
+  const timeLeft = new Date(giveaway.endDate).getTime() - new Date().getTime()
   const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24))
 
   return (
     <Card className="overflow-hidden">
       <div className="relative h-48 w-full">
         <Image
-          src={imageUrl}
-          alt={title}
+          src={giveaway.prize.image || '/placeholder-image.jpg'}
+          alt={giveaway.title}
           fill
           className="object-cover"
         />
@@ -43,14 +30,14 @@ export function GiveawayCard({
         )}
       </div>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle>{giveaway.title}</CardTitle>
+        <CardDescription>{giveaway.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Prize:</span>
-            <span className="text-sm text-primary">{prize}</span>
+            <span className="text-sm text-primary">{giveaway.prize.title}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Time Left:</span>
@@ -58,7 +45,7 @@ export function GiveawayCard({
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Total Entries:</span>
-            <span className="text-sm">{entriesCount}</span>
+            <span className="text-sm">{giveaway.statistics.totalEntries}</span>
           </div>
         </div>
       </CardContent>

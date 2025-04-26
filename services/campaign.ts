@@ -62,6 +62,7 @@ export interface CampaignFormData {
   mentions?: string;
   brandAssetLinks?: string;
   isBoosted: boolean;
+  ctaLabel?: string;
 }
 
 export interface CampaignData {
@@ -93,6 +94,8 @@ export interface CampaignData {
 }
 
 class CampaignService {
+  private paymentInitializationInProgress = false;
+
   private async uploadFile(file: File): Promise<ContentAsset> {
     const formData = new FormData();
     formData.append("file", file);
@@ -149,8 +152,12 @@ class CampaignService {
   }
 
   async createCampaign(data: CampaignFormData): Promise<any> {
+    if (this.paymentInitializationInProgress) {
+      throw new Error("Payment initialization already in progress");
+    }
+
+    this.paymentInitializationInProgress = true;
     try {
-      // Upload and process all media files
       const contentAssetsPromises = data.mediaFiles.map((media, index) =>
         this.processMediaFile(media.file).then((asset) => ({
           ...asset,
@@ -160,29 +167,27 @@ class CampaignService {
       );
 
       const contentAssets = await Promise.all(contentAssetsPromises);
-
+      const pricePerPost =
+        data.goal === "awareness" ? 60 : data.goal === "engagement" ? 400 : 1000;
       // Prepare campaign data
       const campaignData: any = {
         title: data.name,
         description: data.description,
         coverImage: data.coverImage,
-        // Use the new budget and pricePerPost fields directly
-        budget: data.budget,
-        pricePerPost: data.pricePerPost,
-        // Add optional impression-based fields if they exist
-        ...(data.targetImpressions && { targetImpressions: data.targetImpressions }),
-        ...(data.pricePerImpression && { pricePerImpression: data.pricePerImpression }),
-        ...(data.estimatedBudget && { estimatedBudget: data.estimatedBudget }),
-        // Calculate target promotions based on budget and price per post
-        targetPromotions: Math.ceil(data.budget / data.pricePerPost),
+        budget: data.estimatedBudget,
+        pricePerPost,
+        pricePerImpression: data.pricePerImpression,
+        targetImpressions: data.targetImpressions,
+        estimatedBudget: data.estimatedBudget,
+        targetPromotions: Math.ceil((data.estimatedBudget || 0) / pricePerPost),
         requiredPlatforms: data.platforms,
         targetedNiches: data.niches,
         campaignGoal: data.goal,
         targetLocation: data.location.join(","),
         targetGender: data.gender,
         promotionLink: data.promotionLink,
-        minFollowers: 1000, // Default value
-        minEngagementRate: 0.02, // Default value
+        minFollowers: 1000,
+        minEngagementRate: 0.02,
         startDate: data.startDate,
         endDate: data.endDate,
         contentAssets,
@@ -201,16 +206,117 @@ class CampaignService {
         },
       };
 
-      const response = await axiosInstance.post(`/campaigns`, campaignData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      console.log(pricePerPost);
 
-      return response.data;
+      const res = await axiosInstance.post(
+        `/campaigns`,
+        {
+          ...campaignData,
+          paymentReference: "",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(res)
+
+      return res.data
+
+      // const idempotencyKey = `campaign_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+
+      // const paymentResponse = await axiosInstance.post(
+      //   "/payments/initialize",
+      //   {
+      //     amount: Math.round((data.estimatedBudget || 0) * 100),
+      //     email: localStorage.getItem("userEmail") || "",
+      //     metadata: {
+      //       campaignData: {
+      //         title: data.name,
+      //         budget: data.estimatedBudget,
+      //         goal: data.goal,
+      //       },
+      //     },
+      //   },
+      //   {
+      //     headers: {
+      //       "X-Idempotency-Key": idempotencyKey,
+      //       "Cache-Control": "no-cache",
+      //     },
+      //   }
+      // );
+
+      // if (!paymentResponse?.data?.reference) {
+      //   throw new Error(
+      //     "Payment initialization failed: Invalid response from payment service"
+      //   );
+      // }
+
+      // const paymentRef = paymentResponse.data.reference;
+      // console.log("Payment Reference:", paymentRef);
+
+      // return new Promise((resolve, reject) => {
+      //   const loadPaystackScript = () => {
+      //     return new Promise<void>((scriptResolve, scriptReject) => {
+      //       if (window.PaystackPop) {
+      //         scriptResolve();
+      //         return;
+      //       }
+
+      //       const script = document.createElement("script");
+      //       script.src = "https://js.paystack.co/v2/inline.js";
+      //       script.crossOrigin = "anonymous";
+      //       script.async = true;
+      //       script.onload = () => scriptResolve();
+      //       script.onerror = (error) => {
+      //         console.error("Failed to load Paystack script:", error);
+      //         scriptReject(
+      //           new Error(
+      //             "Failed to load Paystack script. Please check your internet connection and try again."
+      //           )
+      //         );
+      //       };
+      //       document.head.appendChild(script);
+      //     });
+      //   };
+
+      //   loadPaystackScript()
+      //     .then(() => {
+      //       const handler = window.PaystackPop.setup({
+      //         key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
+      //         email: localStorage.getItem("userEmail") || "",
+      //         amount: Math.round((data.estimatedBudget || 0) * 100),
+      //         ref: paymentRef,
+      //         onClose: () => {
+      //           console.log("Payment window closed");
+      //           reject(new Error("Payment cancelled by user"));
+      //         },
+      //         callback: function (response: any) {
+      //           if (response.status === "success") {
+
+      //           } else {
+      //             reject(
+      //               new Error(
+      //                 "Payment failed: " + (response.message || "Unknown error")
+      //               )
+      //             );
+      //           }
+      //         },
+      //       });
+
+      //       handler.openIframe();
+      //     })
+      //     .catch((error) => {
+      //       console.error("Payment initialization error:", error);
+      //       reject(error);
+      //     });
+      // });
     } catch (error) {
       console.error("Error creating campaign:", error);
       throw error;
+    } finally {
+      this.paymentInitializationInProgress = false;
     }
   }
 
@@ -240,28 +346,56 @@ class CampaignService {
       const campaignData: Partial<CampaignData> = {
         ...(formData.name && { title: formData.name }),
         ...(formData.description && { description: formData.description }),
-        ...(formData.targetImpressions && { targetImpressions: formData.targetImpressions }),
-        ...(formData.pricePerImpression && { pricePerImpression: formData.pricePerImpression }),
-        ...(formData.estimatedBudget && { estimatedBudget: formData.estimatedBudget }),
+        ...(formData.targetImpressions && {
+          targetImpressions: formData.targetImpressions,
+        }),
+        ...(formData.pricePerImpression && {
+          pricePerImpression: formData.pricePerImpression,
+        }),
+        ...(formData.estimatedBudget && {
+          estimatedBudget: formData.estimatedBudget,
+        }),
         ...(formData.platforms && { requiredPlatforms: formData.platforms }),
         ...(formData.niches && { targetedNiches: formData.niches }),
         ...(formData.goal && { campaignGoal: formData.goal }),
-        ...(formData.location && { targetLocation: formData.location.join(",") }),
+        ...(formData.location && {
+          targetLocation: formData.location.join(","),
+        }),
         ...(formData.gender && { targetGender: formData.gender }),
-        ...(formData.promotionLink && { promotionLink: formData.promotionLink }),
+        ...(formData.promotionLink && {
+          promotionLink: formData.promotionLink,
+        }),
         ...(formData.startDate && { startDate: formData.startDate }),
         ...(formData.endDate && { endDate: formData.endDate }),
         ...(contentAssets.length > 0 && { contentAssets }),
         // Only include requirements if any of the fields are present
-        ...(formData.contentGuidelines || formData.postingSchedule || formData.hashtags || formData.mentions || formData.brandAssetLinks ? {
-          requirements: {
-            contentGuidelines: formData.contentGuidelines || '',
-            postingSchedule: formData.postingSchedule || { startTime: '', endTime: '', days: [] },
-            hashtags: formData.hashtags ? formData.hashtags.split(',').map(tag => tag.trim()) : [],
-            mentions: formData.mentions ? formData.mentions.split(',').map(mention => mention.trim()) : [],
-            ...(formData.brandAssetLinks && { brandAssetLinks: [formData.brandAssetLinks] }),
-          }
-        } : undefined),
+        ...(formData.contentGuidelines ||
+        formData.postingSchedule ||
+        formData.hashtags ||
+        formData.mentions ||
+        formData.brandAssetLinks
+          ? {
+              requirements: {
+                contentGuidelines: formData.contentGuidelines || "",
+                postingSchedule: formData.postingSchedule || {
+                  startTime: "",
+                  endTime: "",
+                  days: [],
+                },
+                hashtags: formData.hashtags
+                  ? formData.hashtags.split(",").map((tag) => tag.trim())
+                  : [],
+                mentions: formData.mentions
+                  ? formData.mentions
+                      .split(",")
+                      .map((mention) => mention.trim())
+                  : [],
+                ...(formData.brandAssetLinks && {
+                  brandAssetLinks: [formData.brandAssetLinks],
+                }),
+              },
+            }
+          : undefined),
       };
 
       const response = await axiosInstance.patch(

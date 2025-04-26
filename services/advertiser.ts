@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { axiosInstance } from '@/lib/utils';
 
 export interface UserBasicInfo {
@@ -15,9 +16,12 @@ export interface PromoterInfo extends UserBasicInfo {
 
 export interface DashboardMetrics {
   activeCampaigns: number;
+  totalCampaigns: number;
+  pausedCampaigns: number;
   totalBudget: number;
   activePromoters: number;
   totalReach: number;
+  availableBudget: number;
 }
 
 export interface CampaignRequirements {
@@ -32,6 +36,7 @@ export interface CampaignMetrics {
   totalEngagements: number;
   totalPosts: number;
   averageEngagementRate: number;
+  totalViews: number
 }
 
 export interface ContentAsset {
@@ -116,6 +121,8 @@ export interface AnalyticsOverview {
   performanceMetrics: {
     totalReach: number;
     totalEngagements: number;
+    totalClicks: number;
+    totalVideoViews: number;
     averageEngagementRate: number;
   };
   topCampaigns: {
@@ -124,6 +131,37 @@ export interface AnalyticsOverview {
     metrics: CampaignMetrics;
   }[];
   topPerformers: TopPerformer[];
+  timeSeriesData: {
+    date: string;
+    views: number;
+    engagements: number;
+    clicks: number;
+    videoViews: number;
+  }[];
+}
+
+export interface CampaignPerformanceData {
+  campaigns: {
+    totalReach: number;
+    totalEngagements: number;
+    averageEngagementRate: number;
+    totalConversions: number;
+    byDevice: {
+      mobile: { uniqueViews: number };
+      desktop: { uniqueViews: number };
+      tablet: { uniqueViews: number };
+    };
+  };
+  promoters: {
+    totalCount: number;
+    activeCount: number;
+    averageEngagementRate: number;
+    topPerformers: Array<{
+      name: string;
+      engagementRate: number;
+      reach: number;
+    }>;
+  };
 }
 
 export interface updatePersonalDto {
@@ -139,6 +177,12 @@ export interface PasswordResetDto {
   confirmNewPassword?: string
 }
 
+export interface AdvertiserWalletBalance {
+  totalDeposits: number;
+  totalWithdrawals: number;
+  totalBudgetAllocated: number;
+  availableBalance: number;
+}
 
 export const advertiserService = {
 
@@ -159,6 +203,11 @@ export const advertiserService = {
 
   getAnalyticsOverview: async (): Promise<AnalyticsOverview> => {
     const response = await axiosInstance.get('/advertiser/analytics/overview');
+    return response.data;
+  },
+
+  getCampaignPerformance: async (): Promise<CampaignPerformanceData> => {
+    const response = await axiosInstance.get('/advertiser/analytics/performance');
     return response.data;
   },
 
@@ -184,6 +233,15 @@ export const advertiserService = {
     return response.data;
   },
 
+  getWalletBalance: async (): Promise<AdvertiserWalletBalance> => {
+    const { data } = await axiosInstance.get('/advertiser/wallet/balance');
+    return data;
+  },
+
+  getWalletStats: async () => {
+    const { data } = await axiosInstance.get('/advertiser/wallet/spending-stats');
+    return data;
+  },
 
 }
 

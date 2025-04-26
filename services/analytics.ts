@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { axiosInstance } from "@/lib/utils";
 
-export type EventType = "view" | "click" | "conversion";
+export type EventType = "view" | "click" | "conversion" | "video_play";
 export type InteractionType =
   | "campaign_view"
   | "campaign_view_end"
@@ -9,7 +9,11 @@ export type InteractionType =
   | "video_complete"
   | "carousel_slide"
   | "cta_click"
-  | "url_shortener_click";
+  | "user_view"
+  | "url_shortener_click"
+  | "link_copy"
+  | "video_play_start"
+  | "video_play_end";
 
 export interface EventMetadata {
   interactionType?: InteractionType;
@@ -20,6 +24,7 @@ export interface EventMetadata {
   referrer?: string;
   userAgent?: string;
   url?: string;
+  viewDuration?: number;
   [key: string]: any;
 }
 
@@ -27,16 +32,60 @@ class AnalyticsService {
   private sessionStartTime: number;
   private lastEventTime: number;
   private pageReferrer: string;
+  private trackedCampaigns: Set<string>;
 
   constructor() {
     this.sessionStartTime = Date.now();
     this.lastEventTime = this.sessionStartTime;
-    // Store referrer immediately when service is instantiated
+    this.trackedCampaigns = new Set();
+    
+    // Initialize tracked campaigns from sessionStorage
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      try {
+        const trackedCampaigns = JSON.parse(sessionStorage.getItem('trackedCampaigns') || '[]');
+        trackedCampaigns.forEach((campaign: string) => {
+          this.trackedCampaigns.add(campaign);
+        });
+      } catch (e) {
+        console.error('Error reading from sessionStorage', e);
+      }
+    }
+    
+    // Store and categorize referrer when service is instantiated
     if (typeof window !== "undefined") {
-      this.pageReferrer = window.location.search.includes("ref=")
+      const rawReferrer = window.location.search.includes("ref=")
         ? new URLSearchParams(window.location.search).get("ref") ||
           document.referrer
         : document.referrer;
+
+      // Categorize the referrer
+      const referrerUrl = rawReferrer ? new URL(rawReferrer) : null;
+      if (referrerUrl) {
+        const hostname = referrerUrl.hostname.toLowerCase();
+        if (hostname.includes("facebook.com") || hostname.includes("fb.com")) {
+          this.pageReferrer = "facebook";
+        } else if (hostname.includes("instagram.com")) {
+          this.pageReferrer = "instagram";
+        } else if (
+          hostname.includes("twitter.com") ||
+          hostname.includes("x.com")
+        ) {
+          this.pageReferrer = "twitter";
+        } else if (hostname.includes("linkedin.com")) {
+          this.pageReferrer = "linkedin";
+        } else if (hostname.includes("tiktok.com")) {
+          this.pageReferrer = "tiktok";
+        } else if (
+          hostname.includes("youtube.com") ||
+          hostname.includes("youtu.be")
+        ) {
+          this.pageReferrer = "youtube";
+        } else {
+          this.pageReferrer = rawReferrer;
+        }
+      } else {
+        this.pageReferrer = "direct";
+      }
     } else {
       this.pageReferrer = "";
     }
@@ -108,15 +157,68 @@ class AnalyticsService {
       "view",
       {
         interactionType: "campaign_view",
+        channel: this.pageReferrer,
+        campaignId: shortId,
       },
       promoterId
     );
   }
 
-  trackConversion(shortId: string, url: string, promoterId?: string) {
+  trackUserView(shortId: string, promoterId?: string, utmSource?: string) {
+    // Create a unique key for this campaign view
+    const viewKey = `${shortId}_${promoterId || 'anonymous'}`;
+    
+    // If we've already tracked a view for this campaign in this session, don't track again
+    if (this.trackedCampaigns.has(viewKey)) {
+      console.log(`Already tracked view for campaign ${shortId} in this session, skipping`);
+      return Promise.resolve(null);
+    }
+    
+    // Mark this campaign as tracked in this session
+    this.trackedCampaigns.add(viewKey);
+    
+    // Store in sessionStorage to persist across page refreshes in the same session
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      try {
+        // Get tracked campaigns from session storage
+        const trackedCampaigns = JSON.parse(sessionStorage.getItem('trackedCampaigns') || '[]');
+        
+        // Add this campaign if not already tracked
+        if (!trackedCampaigns.includes(viewKey)) {
+          trackedCampaigns.push(viewKey);
+          sessionStorage.setItem('trackedCampaigns', JSON.stringify(trackedCampaigns));
+        }
+      } catch (e) {
+        console.error('Error accessing sessionStorage', e);
+      }
+    }
+    
     return this.trackEvent(
       shortId,
-      "click",
+      "view",
+      {
+        interactionType: "user_view",
+        channel: utmSource || this.pageReferrer,
+        campaignId: shortId,
+        socialPlatform: utmSource || undefined
+      },
+      promoterId
+    );
+  }
+
+  trackConversion(
+    shortId: string,
+    url: string,
+    promoterId?: string,
+    goal: "awareness" | "engagement" | "conversion" = "conversion"
+  ) {
+    return this.trackEvent(
+      shortId,
+      goal === "awareness"
+        ? "click"
+        : goal === "engagement"
+          ? "click"
+          : "conversion",
       {
         interactionType: "cta_click",
         url,
@@ -128,7 +230,7 @@ class AnalyticsService {
   trackVideoPlay(shortId: string, promoterId?: string) {
     return this.trackEvent(
       shortId,
-      "view",
+      "video_play",
       {
         interactionType: "video_play",
       },
@@ -140,10 +242,27 @@ class AnalyticsService {
     const duration = Date.now() - this.lastEventTime;
     return this.trackEvent(
       shortId,
-      "view",
+      "video_play",
       {
         interactionType: "video_complete",
         duration,
+      },
+      promoterId
+    );
+  }
+
+  trackVideoProgress(
+    shortId: string,
+    secondsWatched: number,
+    promoterId?: string
+  ) {
+    return this.trackEvent(
+      shortId,
+      "video_play",
+      {
+        interactionType: "video_play",
+        viewDuration: secondsWatched,
+        videoProgress: secondsWatched,
       },
       promoterId
     );

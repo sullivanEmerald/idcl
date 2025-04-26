@@ -4,9 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "./button";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
 
 export function NavigationBar() {
   const router = useRouter();
+  const { isAuthenticated, userRole } = useAuth();
 
   return (
     <nav className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-sm z-50">
@@ -27,12 +29,18 @@ export function NavigationBar() {
           </Link>
 
           {/* Main Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          {/* <div className="hidden md:flex items-center space-x-6">
             <Link
               href="/home"
               className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
             >
               Home
+            </Link>
+            <Link
+              href="/giveaways"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
+              Giveaways
             </Link>
             <Link
               href="/faqs"
@@ -52,7 +60,7 @@ export function NavigationBar() {
             >
               Calculator
             </Link>
-          </div>
+          </div> */}
         </div>
 
         {/* Right side - CTA */}
@@ -60,17 +68,26 @@ export function NavigationBar() {
           <Button
             variant="ghost"
             size="sm"
-            className="hidden sm:flex"
-            onClick={() => router.push("/auth/login")}
+            className="sm:flex"
+            onClick={() => {
+              if (isAuthenticated && userRole) {
+                const dashboardPath = userRole === 'advertiser'
+                  ? '/advertiser/dashboard'
+                  : '/promoter/dashboard';
+                router.push(dashboardPath);
+              } else {
+                router.push('/auth/login');
+              }
+            }}
           >
-            Sign In
+            {isAuthenticated ? 'Dashboard' : 'Sign In'}
           </Button>
-          <Button
+          {/* <Button
             size="sm"
             className="bg-gradient-to-r from-primary to-blue-600 text-white hover:opacity-90"
           >
             Download App
-          </Button>
+          </Button> */}
         </div>
       </div>
     </nav>

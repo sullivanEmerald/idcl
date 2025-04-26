@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { Button } from '@/components/ui/button'
 import { Calendar, ChevronRight, DollarSign, Users } from 'lucide-react'
 import Link from 'next/link'
 import { campaignService } from '@/services/campaign'
@@ -52,15 +51,15 @@ export default function CampaignsOverview() {
     : 0
 
   return (
-    <div className="space-y-8 p-8">
+    <div className="space-y-8 px-0">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Campaign Overview</h1>
           <p className="mt-2 text-gray-600">Monitor your campaign performance</p>
         </div>
-        <Link href="/advertiser/dashboard/campaigns/create">
+        {/* <Link href="/advertiser/dashboard/campaigns/create">
           <Button>Create Campaign</Button>
-        </Link>
+        </Link> */}
       </div>
 
       {/* Quick Stats */}
@@ -72,7 +71,7 @@ export default function CampaignsOverview() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Total Budget</p>
-              <p className="text-2xl font-bold">${totalBudget.toLocaleString()}</p>
+              <p className="text-2xl font-bold">₦{totalBudget.toLocaleString()}</p>
             </div>
           </div>
         </Card>
@@ -122,7 +121,7 @@ export default function CampaignsOverview() {
           ) : (
             <div className="space-y-6">
               {activeCampaigns.map(campaign => (
-                <Link
+                <Link 
                   key={campaign.id}
                   href={`/advertiser/dashboard/campaigns/${campaign.id}`}
                   className="block hover:bg-gray-50 rounded-lg transition-colors"

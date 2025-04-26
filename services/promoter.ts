@@ -137,18 +137,50 @@ const promoterService = {
     return response.data;
   },
 
+  getCompletedCampaigns: async () => {
+    const response = await axiosInstance.get('/promoter/campaigns/completed');
+    return response.data.campaigns.map((campaign: any) => ({
+      ...campaign,
+      coverImage: promoterService.determineCoverImage(campaign)
+    }));
+  },
+
   getWalletOverview: async () => {
     const response = await axiosInstance.get('/promoter/wallet/overview');
     return response.data;
   },
 
-  getAnalytics: async (timeRange: string): Promise<{ data: AnalyticsData }> => {
-    const response = await axiosInstance.get(`/promoter/analytics/overview?timeRange=${timeRange}`);
-    return response;
+  getAnalytics: async (timeRange: '7d' | '30d' | '90d' | { start: Date; end: Date }): Promise<{ data: AnalyticsData }> => {
+    const response = await axiosInstance.get('/analytics/promoter', {
+      params: { timeRange }
+    });
+
+    const data = response.data;
+    const transformedData = {
+      dates: data.dates,
+      earnings: data.earnings,
+      engagements: data.engagements,
+      completedTasks: data.completedTasks.reduce((acc: number[], task: { completedAt: string }) => {
+        const date = new Date(task.completedAt).toISOString().split('T')[0]
+        const dateIndex = data.dates.indexOf(date)
+        if (dateIndex >= 0) {
+          acc[dateIndex] = (acc[dateIndex] || 0) + 1
+        }
+        return acc
+      }, Array(data.dates.length).fill(0)),
+      topPerformingCampaigns: data.topPerformingCampaigns.map((campaign: { _id: string; campaignTitle: string; totalEngagements: number }) => ({
+        id: campaign._id,
+        name: campaign.campaignTitle,
+        brand: 'Unknown',
+        earnings: 0,
+        engagement: campaign.totalEngagements
+      }))
+    };
+    return { data: transformedData };
   },
 
   getCampaign: async (campaignId: string) => {
-    const response = await axiosInstance.get(`/promoter/campaigns/${campaignId}`);
+    const response = await axiosInstance.get(`/promoter/campaigns/public/${campaignId}`);
     const campaign = response.data;
 
     return {

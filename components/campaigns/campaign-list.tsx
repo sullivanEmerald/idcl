@@ -8,6 +8,9 @@ interface Campaign {
   budget: number
   activePromoters: number
   reach: number
+  metrics: {
+    totalViews: number
+  }
 }
 
 interface CampaignListProps {
@@ -39,14 +42,14 @@ export function CampaignList({ campaigns }: CampaignListProps) {
                   {campaign.status}
                 </Badge>
                 <span>•</span>
-                <span>${campaign.budget}</span>
+                <span>₦{campaign?.budget?.toLocaleString()}</span>
                 <span>•</span>
-                <span>{campaign.activePromoters} promoters</span>
+                {/* <span>{campaign.activePromoters} promoters</span> */}
               </div>
             </div>
             <div className="text-right">
               <div className="text-sm font-medium">Total Reach</div>
-              <div className="text-lg">{campaign?.reach?.toLocaleString()}</div>
+              <div className="text-lg">{campaign?.metrics?.totalViews?.toLocaleString()}</div>
             </div>
           </div>
         </Link>

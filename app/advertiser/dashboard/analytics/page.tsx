@@ -55,26 +55,31 @@ export default function AnalyticsPage() {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }).reverse()
 
+  // Calculate aggregated metrics from topCampaigns
+  const totalReach = analyticsData?.topCampaigns.reduce((sum, campaign) => sum + (campaign.metrics.totalReach || 0), 0) || 0
+  const totalEngagements = analyticsData?.topCampaigns.reduce((sum, campaign) => sum + (campaign.metrics.totalEngagements || 0), 0) || 0
+  const averageEngagementRate = totalReach > 0 ? (totalEngagements / totalReach) * 100 : 0
+
   const chartData: ChartJSData<'line'> = {
     labels: last7Days,
     datasets: [
       {
         label: 'Total Reach',
-        data: Array(7).fill(analyticsData?.performanceMetrics.totalReach || 0),
+        data: Array(7).fill(totalReach),
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.5)',
         tension: 0.3,
       },
       {
         label: 'Total Engagements',
-        data: Array(7).fill(analyticsData?.performanceMetrics.totalEngagements || 0),
+        data: Array(7).fill(totalEngagements),
         borderColor: 'rgb(16, 185, 129)',
         backgroundColor: 'rgba(16, 185, 129, 0.5)',
         tension: 0.3,
       },
       {
         label: 'Average Engagement Rate',
-        data: Array(7).fill(analyticsData?.performanceMetrics.averageEngagementRate || 0),
+        data: Array(7).fill(averageEngagementRate),
         borderColor: 'rgb(249, 115, 22)',
         backgroundColor: 'rgba(249, 115, 22, 0.5)',
         tension: 0.3,
@@ -115,7 +120,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="space-y-8 p-8">
+    <div className="space-y-8 px-0">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Campaign Analytics</h1>
@@ -131,27 +136,27 @@ export default function AnalyticsPage() {
         <Card className="p-6">
           <h3 className="text-lg font-semibold">Total Reach</h3>
           <p className="mt-2 text-3xl font-bold">
-            {analyticsData?.performanceMetrics.totalReach.toLocaleString() || '0'}
+            {totalReach.toLocaleString()}
           </p>
           <p className="mt-2 text-sm text-gray-600">
-            Average per campaign: {Math.round(analyticsData?.performanceMetrics.totalReach || 0).toLocaleString()}
+            Average per campaign: {Math.round(totalReach / (analyticsData?.topCampaigns.length || 1)).toLocaleString()}
           </p>
         </Card>
 
         <Card className="p-6">
           <h3 className="text-lg font-semibold">Total Engagements</h3>
           <p className="mt-2 text-3xl font-bold">
-            {analyticsData?.performanceMetrics.totalEngagements.toLocaleString() || '0'}
+            {totalEngagements.toLocaleString()}
           </p>
           <p className="mt-2 text-sm text-gray-600">
-            Average per campaign: {Math.round(analyticsData?.performanceMetrics.totalEngagements || 0).toLocaleString()}
+            Average per campaign: {Math.round(totalEngagements / (analyticsData?.topCampaigns.length || 1)).toLocaleString()}
           </p>
         </Card>
 
         <Card className="p-6">
           <h3 className="text-lg font-semibold">Engagement Rate</h3>
           <p className="mt-2 text-3xl font-bold">
-            {(analyticsData?.performanceMetrics.averageEngagementRate || 0).toFixed(2)}%
+            {averageEngagementRate.toFixed(2)}%
           </p>
           <p className="mt-2 text-sm text-gray-600">
             Average across all campaigns

@@ -5,17 +5,16 @@ import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { TrustIndicator } from '../ui/trust-indicator'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/use-auth'
 
 export function HeroSection() {
   const router = useRouter()
+  const { user } = useAuth()
 
   const handleGetStarted = () => {
-    const userRole = localStorage.getItem('userRole')
-    const token = localStorage.getItem('token')
-
-    if (token && userRole) {
+    if (user) {
       // If user is already logged in, redirect to their dashboard
-      const dashboardPath = userRole === 'advertiser'
+      const dashboardPath = user.role === 'advertiser'
         ? '/advertiser/dashboard'
         : '/promoter/dashboard'
       router.push(dashboardPath)

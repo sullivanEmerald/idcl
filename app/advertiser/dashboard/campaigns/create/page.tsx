@@ -3,17 +3,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-
-const MediaUpload = dynamic(
-  () =>
-    import("@/app/components/campaign/MediaUpload").then(
-      (mod) => mod.MediaUpload
-    ),
-  { ssr: false }
-);
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -48,10 +40,26 @@ import {
   LayoutIcon,
   ChevronLeft,
   ChevronRight,
+  AlertCircle,
+  Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { campaignService, MediaFileClient } from "@/services/campaign";
+import { campaignService } from "@/services/campaign";
 import { axiosInstance } from "@/lib/utils";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "../../../../../components/ui/alert";
+
+const PaystackButton = dynamic(
+  () => import("react-paystack").then((mod) => mod.PaystackButton),
+  { ssr: false }
+);
+
+type CampaignSchemaOutput = z.infer<typeof campaignSchema>;
+
+const STEPS = ["details", "targeting", "content"] as const;
 
 const NIGERIAN_STATES = [
   "Abia",
@@ -93,83 +101,87 @@ const NIGERIAN_STATES = [
   "Zamfara",
 ];
 
-const PLATFORMS = ["instagram", "tiktok", "youtube", "twitter"];
+const PLATFORMS = ["instagram", "tiktok", "youtube", "twitter", "facebook"];
 
 const NICHES = [
-  { value: 'fashion', label: 'Fashion & Style' },
-  { value: 'tech', label: 'Technology' },
-  { value: 'gaming', label: 'Gaming' },
-  { value: 'beauty', label: 'Beauty & Cosmetics' },
-  { value: 'fitness', label: 'Fitness & Health' },
-  { value: 'food', label: 'Food & Cooking' },
-  { value: 'travel', label: 'Travel' },
-  { value: 'music', label: 'Music' },
-  { value: 'art', label: 'Art & Design' },
-  { value: 'business', label: 'Business & Entrepreneurship' },
-  { value: 'education', label: 'Education' },
-  { value: 'entertainment', label: 'Entertainment' },
-]
+  { value: "fashion", label: "Fashion & Style" },
+  { value: "tech", label: "Technology" },
+  { value: "gaming", label: "Gaming" },
+  { value: "beauty", label: "Beauty & Cosmetics" },
+  { value: "fitness", label: "Fitness & Health" },
+  { value: "food", label: "Food & Cooking" },
+  { value: "travel", label: "Travel" },
+  { value: "music", label: "Music" },
+  { value: "art", label: "Art & Design" },
+  { value: "business", label: "Business & Entrepreneurship" },
+  { value: "education", label: "Education" },
+  { value: "entertainment", label: "Entertainment" },
+];
 
 // Create a safe file schema that works on both server and client
-const fileSchema = typeof File === 'undefined'
-  ? z.any() // During SSR, accept any
-  : z.instanceof(File, { message: "Please upload a valid file" });
+const fileSchema =
+  typeof File === "undefined"
+    ? z.any() // During SSR, accept any
+    : z.instanceof(File, { message: "Please upload a valid file" });
 
 // Define the schema to match MediaFileClient interface
-const mediaFileSchema = z.object({
-  type: z.enum(["image", "video"] as const),
-  url: z.string(),
-  file: fileSchema, // File is required in MediaFileClient
-}).transform((data) => {
-  // Ensure the file property is always present and correctly typed
-  return {
-    ...data,
-    file: data.file as File // Cast to File since we validate it's a File on client-side
-  };
-});
+const mediaFileSchema = z
+  .object({
+    type: z.enum(["image", "video"] as const),
+    url: z.string(),
+    file: fileSchema, // File is required in MediaFileClient
+  })
+  .transform((data) => {
+    // Ensure the file property is always present and correctly typed
+    return {
+      ...data,
+      file: data.file as File, // Cast to File since we validate it's a File on client-side
+    };
+  });
 
-const postingScheduleSchema = z.object({
-  startTime: z.string().min(1, "Start time is required"),
-  endTime: z.string().min(1, "End time is required"),
-  days: z.array(z.string()).min(1, "Select at least one day"),
-}).strict();
+const postingScheduleSchema = z
+  .object({
+    startTime: z.string().min(1, "Start time is required"),
+    endTime: z.string().min(1, "End time is required"),
+    days: z.array(z.string()).min(1, "Select at least one day"),
+  })
+  .strict();
 
 const campaignSchema = z.object({
-  postingSchedule: postingScheduleSchema,  // Add this at the top to ensure it's properly typed
-  // Campaign Details
+  postingSchedule: postingScheduleSchema,
   name: z.string().min(3, "Campaign name must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
   coverImage: z.string().url("Please upload a valid cover image").optional(),
-  // New required budget fields
-  budget: z.number().min(100, "Budget must be at least $100"),
-  pricePerPost: z.number().min(10, "Price per post must be at least $10"),
-  // Optional impression-based fields
-  targetImpressions: z.number().min(1000, "Target impressions must be at least 1,000").optional(),
-  pricePerImpression: z.number().min(0.001, "Price per impression must be greater than 0").optional(),
-  estimatedBudget: z.number().min(1, "Estimated budget must be greater than 0").optional(),
+  budget: z.number().min(1, "Budget must be at least 1"),
+  pricePerPost: z.number().min(1, "Price per post must be at least 1"),
+  targetImpressions: z
+    .number()
+    .min(1, "Target reach must be at least 1")
+    .optional(),
+  pricePerImpression: z
+    .number()
+    .min(0.001, "Price per reach must be greater than 0")
+    .optional(),
+  estimatedBudget: z
+    .number()
+    .min(1, "Estimated budget must be greater than 0")
+    .optional(),
   startDate: z.date({
     required_error: "Start date is required",
   }),
   endDate: z.date({
     required_error: "End date is required",
   }),
-
-  // Targeting & Goals
   goal: z.enum(["awareness", "engagement", "conversion"], {
     required_error: "Please select a campaign goal",
   }),
   location: z.array(z.string()).min(1, "Select at least one location"),
   gender: z.enum(["all", "male", "female"]).default("all"),
-
   platforms: z.array(z.string()).min(1, "Select at least one platform"),
   niches: z.array(z.string()).min(1, "Select at least one niche"),
   isBoosted: z.boolean().default(false),
-
-  // Content & Assets
   contentType: z.enum(["photo", "video", "carousel"]),
-  mediaFiles: z
-    .array(mediaFileSchema)
-    .min(1, "Please upload at least one media file"),
+  mediaFiles: z.array(mediaFileSchema).optional(),
   contentGuidelines: z
     .string()
     .min(10, "Guidelines must be at least 10 characters"),
@@ -177,21 +189,29 @@ const campaignSchema = z.object({
   mentions: z.string().optional(),
   brandAssetLinks: z.string().url().optional(),
   promotionLink: z.string().url("Please enter a valid URL"),
+  contentAssets: z
+    .array(
+      z.object({
+      type: z.string(),
+      contentType: z.string(),
+      url: z.string(),
+      size: z.number().optional(),
+      width: z.number().optional(),
+      height: z.number().optional(),
+      })
+    )
+    .optional(),
+  ctaLabel: z.string().optional(),
 });
 
-// Import the type from campaign service
-import type { CampaignFormData } from '@/services/campaign';
-
-// Ensure the schema output matches CampaignFormData
-type CampaignSchemaOutput = z.infer<typeof campaignSchema>;
-type SchemaTypeCheck = CampaignSchemaOutput extends CampaignFormData ? true : false;
-
-const STEPS = ["details", "targeting", "content"] as const;
+// Update the form data type
+type CampaignFormData = z.infer<typeof campaignSchema>;
 
 export default function Page() {
   const router = useRouter();
   const [currentStep, setCurrentStep] =
     useState<(typeof STEPS)[number]>("details");
+  // const [initializePayment, setInitializePayment] = useState<ReturnType<typeof usePaystackPayment>>(() => () => {});
 
   const form = useForm<CampaignFormData>({
     resolver: zodResolver(campaignSchema),
@@ -199,10 +219,10 @@ export default function Page() {
       contentType: "photo",
       isBoosted: false,
       gender: "all",
-      budget: 1000,
-      pricePerPost: 100,
-      targetImpressions: 1000,
-      pricePerImpression: 0.001,
+      budget: 1,
+      pricePerPost: 1,
+      targetImpressions: 1,
+      pricePerImpression: 1,
       estimatedBudget: 1,
       platforms: [],
       niches: [],
@@ -229,6 +249,7 @@ export default function Page() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
 
   const validateStep = async () => {
     let fieldsToValidate: (keyof CampaignFormData)[] = [];
@@ -245,14 +266,14 @@ export default function Page() {
         break;
       case "targeting":
         fieldsToValidate = [
-          "goal", 
-          "platforms", 
-          "niches", 
-          "targetImpressions", 
+          "goal",
+          "platforms",
+          "niches",
+          "targetImpressions",
           "pricePerImpression",
           "estimatedBudget",
           "location",
-          "gender"
+          "gender",
         ];
         break;
       case "content":
@@ -260,7 +281,7 @@ export default function Page() {
           "contentType",
           "mediaFiles",
           "contentGuidelines",
-          "postingSchedule",  // Validate the entire postingSchedule object
+          "postingSchedule", // Validate the entire postingSchedule object
           "hashtags",
           "promotionLink",
         ];
@@ -268,20 +289,21 @@ export default function Page() {
     }
 
     const isValid = await trigger(fieldsToValidate, { shouldFocus: true });
-    
+
     if (!isValid) {
       const errorMessages = Object.entries(errors)
-        .filter(([field]) => fieldsToValidate.some(f => field.startsWith(f)))
+        .filter(([field]) => fieldsToValidate.some((f) => field.startsWith(f)))
         .map(([field, error]) => {
           if (error?.message) {
             const fieldName = field
-              .split('.')
-              .map(part => 
-                part.replace(/([A-Z])/g, ' $1')
+              .split(".")
+              .map((part) =>
+                part
+                  .replace(/([A-Z])/g, " $1")
                   .toLowerCase()
-                  .replace(/^./, str => str.toUpperCase())
+                  .replace(/^./, (str) => str.toUpperCase())
               )
-              .join(' › ');
+              .join(" › ");
             return `${fieldName}: ${error.message}`;
           }
           return null;
@@ -309,127 +331,413 @@ export default function Page() {
     try {
       setIsUploadingCover(true);
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
-      const response = await axiosInstance.post('/upload/campaign-cover', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axiosInstance.post(
+        "/upload/campaign-cover",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      form.setValue('coverImage', response.data.url);
-      toast.success('Cover image uploaded successfully');
+      form.setValue("coverImage", response.data.url);
+      // toast.success("Cover image uploaded successfully");
     } catch (error: any) {
-      console.error('Error uploading cover image:', error);
-      toast.error(error.response?.data?.message || 'Failed to upload cover image. Please try again.');
+      console.error("Error uploading cover image:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to upload cover image. Please try again."
+      );
     } finally {
       setIsUploadingCover(false);
     }
   };
 
-  const coverImage = watch('coverImage');
+  const coverImage = watch("coverImage");
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (typeof window === "undefined") return; // Skip in Node.js environment
+  const [paymentConfig, setPaymentConfig] = useState(() => ({
+    reference: "",
+    email: "",
+    amount: 0,
+    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
+  }));
 
-    const files = event.target.files;
-    if (!files?.length) return;
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     setPaymentConfig({
+  //       reference: new Date().getTime().toString(),
+  //       email: localStorage?.getItem("userEmail") || "",
+  //       amount: Math.round((watch("estimatedBudget") || 0) * 100),
+  //       publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
+  //     });
 
-    const fileArray = Array.from(files);
-    const mediaFiles: MediaFileClient[] = fileArray.map((file) => ({
-      type: file.type.startsWith("video/") ? "video" as const : "image" as const,
-      url: URL.createObjectURL(file),
-      file, // File is required in MediaFileClient
-    }));
+  //     // Initialize payment only on client side
+  //     const payment = usePaystackPayment(paymentConfig);
+  //     setInitializePayment(() => payment);
+  //   }
+  // }, [watch]);
 
-    form.setValue("mediaFiles", mediaFiles);
+  const config = {
+    reference:
+      typeof window !== "undefined" ? new Date().getTime().toString() : "",
+    email:
+      typeof window !== "undefined"
+        ? localStorage?.getItem("userEmail") || ""
+        : "",
+    amount: Math.round((watch("estimatedBudget") || 0) * 100),
+    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
+  };
+
+  // const initializePayment = usePaystackPayment(paymentConfig);
+
+  const onSuccess = async (reference: any) => {
+    // Implementation for whatever you want to do with reference and after success call.
+    console.log(reference);
+    // Create campaign with payment
+    try {
+      const formValues = form.getValues();
+      
+      // Process media files if needed - this should happen before submitting
+      let processedContentAssets = formValues.contentAssets;
+      
+      // If we don't have pre-uploaded content assets but we do have mediaFiles, process them
+      if (
+        (!processedContentAssets || processedContentAssets.length === 0) &&
+        formValues.mediaFiles &&
+        formValues.mediaFiles.length > 0
+      ) {
+        const mediaUploads = [];
+        for (const mediaFile of formValues.mediaFiles) {
+          if (mediaFile && mediaFile.file) {
+            try {
+              const formData = new FormData();
+              formData.append("file", mediaFile.file);
+              
+              const fileType =
+                mediaFile.type === "video"
+                  ? "campaign-video"
+                  : "campaign-photo";
+              const response = await axiosInstance.post(`/upload`, formData, {
+                  headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
+              });
+              
+              mediaUploads.push({
+                type: mediaFile.type === "video" ? "video" : "photo",
+                contentType: mediaFile.type,
+                url: response.data.url,
+                size: mediaFile.file.size,
+                width: response.data.width || 0,
+                height: response.data.height || 0,
+                carouselIndex:
+                  formValues.contentType === "carousel"
+                    ? mediaUploads.length
+                    : undefined,
+              });
+            } catch (error) {
+              console.error("Error uploading media file:", error);
+              toast.error("Failed to upload media files. Please try again.");
+              return;
+            }
+          }
+        }
+        
+        processedContentAssets = mediaUploads;
+      }
+
+      const pricePerPost =
+        formValues.goal === "awareness"
+          ? 60
+          : formValues.goal === "engagement"
+            ? 400
+            : 1000;
+      
+      const campaignData = {
+        title: formValues.name,
+        description: formValues.description,
+        coverImage: formValues.coverImage,
+        conversionValue: Number(formValues.pricePerImpression) || 0,
+        budget: Number(formValues.estimatedBudget),
+        pricePerPost,
+        requiredPlatforms: formValues.platforms || [],
+        targetedNiches: formValues.niches || [],
+        campaignGoal: formValues.goal,
+        targetLocation: formValues.location[0] || "",
+        targetGender: formValues.gender,
+        minFollowers: Number(formValues.targetImpressions) || 1000,
+        minEngagementRate: 1,
+        targetPromotions: 10,
+        promotionLink: formValues.promotionLink,
+        startDate: formValues.startDate,
+        endDate: formValues.endDate,
+        contentAssets: processedContentAssets || [],
+        requirements: {
+          contentGuidelines: formValues.contentGuidelines,
+          postingSchedule: {
+            startTime: formValues.postingSchedule.startTime,
+            endTime: formValues.postingSchedule.endTime,
+            days: formValues.postingSchedule.days,
+          },
+          hashtags: formValues.hashtags
+            ? formValues.hashtags.split(",").map((tag) => tag.trim())
+            : [],
+          mentions: formValues.mentions
+            ? formValues.mentions.split(",").map((mention) => mention.trim())
+            : [],
+          brandAssetLinks: formValues.brandAssetLinks
+            ? [formValues.brandAssetLinks]
+            : [],
+        },
+        paymentReference: reference.reference,
+      };
+      
+      const response = await axiosInstance.post("/campaigns", campaignData);
+
+    toast.dismiss();
+    toast.success(
+      <div className="space-y-2">
+        <p className="font-medium">Congratulations 🎊!</p>
+        <p className="text-sm text-muted-foreground">
+            Your campaign was created successfully. You can view your campaign
+            on your dashboard.
+        </p>
+      </div>,
+      {
+        duration: 5000,
+      }
+    );
+
+    setTimeout(() => {
+      router.push("/advertiser/dashboard/campaigns");
+    }, 2000);
+    } catch (error: any) {
+      console.error("Error creating campaign:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to create campaign. Please try again."
+      );
+    }
+  };
+
+  // you can call this function anything
+  const onClose = () => {
+    // implementation for  whatever you want to do when the Paystack dialog closed.
+    console.log("closed");
+  };
+
+  const componentProps = {
+    ...config,
+    text: "Create Campaign",
+    onSuccess: (reference: string) => onSuccess(reference),
+    onClose,
+  };
+
+  const handleMediaFileUpload = async (file: File, type: "image" | "video") => {
+    try {
+      setIsUploadingMedia(true);
+
+      // Always use Cloudinary for videos
+      if (type === "video") {
+        toast.info("Uploading video to cloud storage...");
+
+        // Cloudinary direct upload
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = "adminting";
+
+        if (!cloudName || !uploadPreset) {
+          throw new Error("Cloudinary configuration is missing");
+        }
+
+      const formData = new FormData();
+      formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+        formData.append("resource_type", "video");
+        formData.append("max_file_size", "100000000"); // 100MB in bytes
+
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.error?.message || "Error uploading to Cloudinary"
+          );
+        }
+
+        // Store the uploaded asset in contentAssets form field
+        const asset = {
+          type: "video",
+          contentType: "video",
+          url: data.secure_url,
+          thumbnailUrl: data.secure_url.replace(
+            "/video/upload/",
+            "/video/upload/c_thumb,w_640,g_face/"
+          ),
+          size: file.size,
+          width: data.width || 0,
+          height: data.height || 0,
+        };
+
+        form.setValue("contentAssets", [asset]);
+        toast.success("Video uploaded successfully");
+      } else {
+        // Regular upload through your backend for images
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await axiosInstance.post(`/upload/`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+      // Store the uploaded asset in contentAssets form field
+      const asset = {
+        type: type === "image" ? "photo" : "video",
+        contentType: type,
+        url: response.data.url,
+        size: file.size,
+        width: response.data.width || 0,
+        height: response.data.height || 0,
+      };
+      
+      form.setValue("contentAssets", [asset]);
+        toast.success(
+          `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`
+        );
+      }
+    } catch (error: any) {
+      console.error(`Error uploading ${type} file:`, error);
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          `Failed to upload ${type} file. Please try again.`
+      );
+    } finally {
+      setIsUploadingMedia(false);
+    }
   };
 
   const onSubmit = async (data: CampaignFormData) => {
+    const currentIndex = STEPS.indexOf(currentStep);
+    if (currentIndex < STEPS.length - 1) {
+      setCurrentStep(STEPS[currentIndex + 1]);
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
     try {
-      // Validate all fields before submitting
-      const isValid = await trigger();
-      if (!isValid) {
-        // Get all error messages
-        const errorMessages = Object.entries(errors)
-          .map(([field, error]) => {
-            if (error?.message) {
-              // Convert field name to readable format
-              const fieldName = field
-                .split('.')
-                .map(part => 
-                  part.replace(/([A-Z])/g, ' $1')
-                    .toLowerCase()
-                    .replace(/^./, str => str.toUpperCase())
-                )
-                .join(' › ');
-              return `${fieldName}: ${error.message}`;
-            }
-            return null;
-          })
-          .filter(Boolean);
-
-        if (errorMessages.length > 0) {
-          toast.error(
-            <div className="max-h-[80vh] overflow-auto">
-              <p className="font-medium mb-2">Please fix the following errors:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                {errorMessages.map((message, index) => (
-                  <li key={index}>{message}</li>
-                ))}
-              </ul>
-            </div>
-          );
-          return;
+      // Create the campaign payload
+      const campaignData: any = {
+        title: data.name,
+        description: data.description,
+        coverImage: data.coverImage,
+        conversionValue: Number(data.pricePerImpression) || 0,
+        budget: Number(data.budget) * 100, // Convert to kobo
+        pricePerPost: Number(data.pricePerPost),
+        requiredPlatforms: data.platforms || [],
+        targetedNiches: data.niches || [],
+        campaignGoal: data.goal,
+        targetLocation: data.location,
+        targetGender: data.gender,
+        minFollowers: Number(data.targetImpressions) || 1000,
+        minEngagementRate: Number(data.pricePerImpression) || 0.02,
+        targetPromotions: Math.floor(
+          Number(data.budget) / Number(data.pricePerPost)
+        ),
+        promotionLink: data.promotionLink,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        requirements: {
+          contentGuidelines: data.contentGuidelines,
+          postingSchedule: {
+            startTime: data.postingSchedule.startTime,
+            endTime: data.postingSchedule.endTime,
+            days: data.postingSchedule.days,
+          },
+          hashtags: data.hashtags
+            ? data.hashtags.split(",").map((tag) => tag.trim())
+            : [],
+          mentions: data.mentions
+            ? data.mentions.split(",").map((mention) => mention.trim())
+            : [],
+          brandAssetLinks: data.brandAssetLinks ? [data.brandAssetLinks] : [],
+        },
+      };
+      
+      // Use the pre-uploaded contentAssets if available
+      if (data.contentAssets && data.contentAssets.length > 0) {
+        campaignData.contentAssets = data.contentAssets;
+      } 
+      // Otherwise, process the mediaFiles
+      else if (data.mediaFiles && data.mediaFiles.length > 0) {
+        const mediaFileUploads = [];
+        for (const mediaFile of data.mediaFiles) {
+          if (mediaFile.file) {
+            const formData = new FormData();
+            formData.append("file", mediaFile.file);
+            
+            const fileType =
+              mediaFile.type === "video" ? "campaign-video" : "campaign-photo";
+            const response = await axiosInstance.post(`/upload`, formData, {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+            });
+            
+            mediaFileUploads.push({
+              type: mediaFile.type === "video" ? "video" : "photo",
+              contentType: mediaFile.type,
+              url: response.data.url,
+              size: mediaFile.file.size,
+              width: response.data.width || 0,
+              height: response.data.height || 0,
+            });
+          }
         }
+        
+        campaignData.contentAssets = mediaFileUploads;
+      } else {
+        toast.error("Please upload at least one media file for your campaign");
+        setIsSubmitting(false);
+        return;
       }
-
-      setIsSubmitting(true);
-      toast.loading('Creating your campaign...');
-
-      const response = await campaignService.createCampaign(data);
       
-      toast.dismiss(); // Dismiss the loading toast
-      toast.success(
-        <div className="space-y-2">
-          <p className="font-medium">Congratulations 🎊!</p>
-          <p className="text-sm text-muted-foreground">
-            Your campaign was created successfully. You can view your campaign on your dashboard.
-          </p>
-        </div>,
-        {
-          duration: 5000,
-        }
-      );
+      // Create the campaign
+      const response = await campaignService.createCampaign(campaignData);
       
-      // Wait a bit for the user to see the success message
-      setTimeout(() => {
-        router.push("/advertiser/dashboard/campaigns");
-      }, 2000);
-
+      toast.success("Campaign created successfully!");
+      router.push(`/advertiser/dashboard/campaigns/${response._id}`);
     } catch (error: any) {
       console.error("Error creating campaign:", error);
-      toast.dismiss(); // Dismiss the loading toast
-      toast.error(
-        <div className="space-y-2">
-          <p className="font-medium">Failed to create campaign</p>
-          <p className="text-sm text-muted-foreground">
-            {error.response?.data?.message || "An unexpected error occurred. Please try again."}
-          </p>
-        </div>,
-        {
-          duration: 5000,
-        }
-      );
-    } finally {
+      
       setIsSubmitting(false);
     }
   };
 
+  // Safely check for media files existence first
+  const mediaFiles = form.watch("mediaFiles");
+  const mediaFilesExist = Array.isArray(mediaFiles) && mediaFiles.length > 0;
+  const multipleMediaFiles = Array.isArray(mediaFiles) && mediaFiles.length > 1;
+
+  // Use a more specific check to prevent TypeScript errors
+  const contentAssets = form.watch("contentAssets");
+  const hasContentAssets =
+    Array.isArray(contentAssets) && contentAssets.length > 0;
+
   return (
-    <div className="max-w-5xl mx-auto space-y-8 p-8">
+    <div className="max-w-5xl mx-auto space-y-8">
       <div>
         <h1 className="text-3xl font-bold">Create Campaign</h1>
         <p className="mt-2 text-muted-foreground">
@@ -479,16 +787,16 @@ export default function Page() {
                 <div className="space-y-2">
                   <Label>Campaign Cover Image</Label>
                   <div className="flex flex-col gap-4">
-                    {form.watch('coverImage') && (
+                    {form.watch("coverImage") && (
                       <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-100">
                         <img
-                          src={form.watch('coverImage')}
+                          src={form.watch("coverImage")}
                           alt="Campaign cover"
                           className="object-cover w-full h-full"
                         />
                         <button
                           type="button"
-                          onClick={() => form.setValue('coverImage', '')}
+                          onClick={() => form.setValue("coverImage", "")}
                           className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                         >
                           <svg
@@ -509,7 +817,9 @@ export default function Page() {
                       </div>
                     )}
                     <div className="flex items-center justify-center w-full">
-                      <label className={`flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 ${isUploadingCover ? 'opacity-50 pointer-events-none' : ''}`}>
+                      <label
+                        className={`flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 ${isUploadingCover ? "opacity-50 pointer-events-none" : ""}`}
+                      >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                           <svg
                             className="w-8 h-8 mb-4 text-gray-500"
@@ -529,12 +839,17 @@ export default function Page() {
                           {isUploadingCover ? (
                             <div className="flex flex-col items-center">
                               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-2"></div>
-                              <p className="text-sm text-gray-500">Uploading cover image...</p>
+                              <p className="text-sm text-gray-500">
+                                Uploading cover image...
+                              </p>
                             </div>
                           ) : (
                             <>
                               <p className="mb-2 text-sm text-gray-500">
-                                <span className="font-semibold">Click to upload</span> or drag and drop
+                                <span className="font-semibold">
+                                  Click to upload
+                                </span>{" "}
+                                or drag and drop
                               </p>
                               <p className="text-xs text-gray-500">
                                 Upload your campaign cover image
@@ -554,15 +869,12 @@ export default function Page() {
                       </label>
                     </div>
                     {errors.coverImage && (
-                    
                       <p className="text-sm text-red-500 mt-1">
                         {errors.coverImage.message}
                       </p>
                     )}
                   </div>
                 </div>
-
-
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
@@ -637,19 +949,24 @@ export default function Page() {
                       // Update pricing based on new goal
                       const impressions = form.getValues("targetImpressions");
                       let pricePerImpression = 0;
-                      switch(value) {
+                      switch (value) {
                         case "awareness":
-                          pricePerImpression = 0.001;
+                          pricePerImpression = 60;
                           break;
                         case "engagement":
-                          pricePerImpression = 0.005;
+                          const viewCost = 300;
+                          const clickCost = 100;
+                          pricePerImpression = viewCost + clickCost;
                           break;
                         case "conversion":
-                          pricePerImpression = 0.01;
+                          pricePerImpression = 1000;
                           break;
                       }
                       form.setValue("pricePerImpression", pricePerImpression);
-                      form.setValue("estimatedBudget", (impressions || 0) * pricePerImpression);
+                      form.setValue(
+                        "estimatedBudget",
+                        (impressions || 0) * pricePerImpression
+                      );
                     }}
                     defaultValue={form.getValues("goal")}
                   >
@@ -658,13 +975,13 @@ export default function Page() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="awareness">
-                        Awareness (Reach & Impressions)
+                        Awareness (CPM - ₦60 per reach)
                       </SelectItem>
                       <SelectItem value="engagement">
-                        Engagement (Views & Clicks)
+                        Engagement (CPA - ₦100 per view, ₦300 per click)
                       </SelectItem>
                       <SelectItem value="conversion">
-                        Conversion (Leads & Downloads)
+                        Action (CPA - ₦1,000 per action)
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -680,13 +997,15 @@ export default function Page() {
                   <Select
                     onValueChange={(value) => {
                       if (value === "all") {
-                        form.setValue("location", NIGERIAN_STATES, { shouldValidate: true });
+                        form.setValue("location", NIGERIAN_STATES, {
+                          shouldValidate: true,
+                        });
                       } else {
                         const currentLocations =
                           form.getValues("location") || [];
                         if (!currentLocations.includes(value)) {
                           form.setValue(
-                            "location", 
+                            "location",
                             [...currentLocations, value],
                             { shouldValidate: true }
                           );
@@ -764,37 +1083,60 @@ export default function Page() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <Label>Target Impressions</Label>
+                      <Label>Target reach</Label>
                       <span className="text-sm text-muted-foreground">
-                        {(form.watch("targetImpressions") || 1000).toLocaleString()} impressions
+                        {(
+                          form.watch("targetImpressions") || 0
+                        ).toLocaleString()}{" "}
+                        reach
                       </span>
                     </div>
-                    <Slider
-                      defaultValue={[form.getValues("targetImpressions") || 1000]}
-                      min={1000}
-                      max={1000000}
-                      step={1000}
-                      onValueChange={([value]) => {
+                    <div className="flex items-center space-x-4">
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="Enter target reach"
+                        value={form.watch("targetImpressions") === 0 ? "" : form.watch("targetImpressions")}
+                        onChange={(e) => {
+                          const inputValue = e.target.value;
+                          // Allow empty input
+                          if (inputValue === "") {
+                            form.setValue("targetImpressions", 0);
+                            form.setValue("estimatedBudget", 0);
+                            return;
+                          }
+                          
+                          const value = parseInt(inputValue);
+                          // Only update if it's a valid number
+                          if (!isNaN(value)) {
                         form.setValue("targetImpressions", value);
                         // Calculate estimated budget based on goal
                         const goal = form.getValues("goal");
                         let pricePerImpression = 0;
-                        switch(goal) {
+                        switch (goal) {
                           case "awareness":
-                            pricePerImpression = 0.001; // $0.001 per impression
+                            pricePerImpression = 60; // ₦60 per impression
                             break;
                           case "engagement":
-                            pricePerImpression = 0.005; // $0.005 per engagement
+                            pricePerImpression = 300 + 100; // ₦400 per engagement
                             break;
                           case "conversion":
-                            pricePerImpression = 0.01; // $0.01 per conversion
+                            pricePerImpression = 1000; // ₦1,000 per action
                             break;
                         }
-                        form.setValue("pricePerImpression", pricePerImpression);
-                        form.setValue("estimatedBudget", value * pricePerImpression);
+                            form.setValue(
+                              "pricePerImpression",
+                              pricePerImpression
+                            );
+                        form.setValue(
+                          "estimatedBudget",
+                          value * pricePerImpression
+                        );
+                          }
                       }}
-                      className="py-4"
+                        className="w-full"
                     />
+                    </div>
                     {errors.targetImpressions && (
                       <p className="text-sm text-red-500 mt-1">
                         {errors.targetImpressions.message}
@@ -804,12 +1146,28 @@ export default function Page() {
 
                   <div className="p-4 bg-primary/5 rounded-lg space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>Price per {form.watch("goal") === "awareness" ? "impression" : form.watch("goal") === "engagement" ? "engagement" : "conversion"}:</span>
-                      <span>${form.watch("pricePerImpression")?.toFixed(3) || "0.000"}</span>
+                      <span>
+                        Price per{" "}
+                        {form.watch("goal") === "awareness"
+                          ? "reach"
+                          : form.watch("goal") === "engagement"
+                            ? "engagement"
+                            : "conversion"}
+                        :
+                      </span>
+                      <span>
+                        ₦
+                        {(
+                          form.watch("pricePerImpression") || 0
+                        ).toLocaleString()}
+                      </span>
                     </div>
                     <div className="flex justify-between font-medium">
                       <span>Estimated Budget:</span>
-                      <span>${form.watch("estimatedBudget")?.toLocaleString() || "0"}</span>
+                      <span>
+                        ₦
+                        {form.watch("estimatedBudget")?.toLocaleString() || "0"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -819,12 +1177,14 @@ export default function Page() {
                   <Select
                     onValueChange={(value) => {
                       if (value === "all") {
-                        form.setValue("platforms", PLATFORMS, { shouldValidate: true });
+                        form.setValue("platforms", PLATFORMS, {
+                          shouldValidate: true,
+                        });
                       } else {
                         const currentPlatforms =
                           form.getValues("platforms") || [];
                         form.setValue(
-                          "platforms", 
+                          "platforms",
                           [...currentPlatforms, value],
                           { shouldValidate: true }
                         );
@@ -881,17 +1241,15 @@ export default function Page() {
                     onValueChange={(value) => {
                       if (value === "all") {
                         form.setValue(
-                          "niches", 
-                          NICHES.map(niche => niche.value),
+                          "niches",
+                          NICHES.map((niche) => niche.value),
                           { shouldValidate: true }
                         );
                       } else {
                         const currentNiches = form.getValues("niches") || [];
-                        form.setValue(
-                          "niches", 
-                          [...currentNiches, value],
-                          { shouldValidate: true }
-                        );
+                        form.setValue("niches", [...currentNiches, value], {
+                          shouldValidate: true,
+                        });
                       }
                     }}
                   >
@@ -902,7 +1260,8 @@ export default function Page() {
                       <SelectItem value="all">All Niches</SelectItem>
                       {NICHES.map((niche) => (
                         <SelectItem key={niche.value} value={niche.value}>
-                          {niche.label.charAt(0).toUpperCase() + niche.label.slice(1)}
+                          {niche.label.charAt(0).toUpperCase() +
+                            niche.label.slice(1)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -947,7 +1306,7 @@ export default function Page() {
                     }
                   />
                   <Label htmlFor="boost">
-                    Boost Campaign (Make available to community promoters)
+                    Feature campaign
                   </Label>
                 </div>
               </div>
@@ -1008,6 +1367,7 @@ export default function Page() {
                         onDrop={(files) => {
                           const file = files[0];
                           if (file) {
+                            // Set the mediaFiles for UI preview
                             form.setValue("mediaFiles", [
                               {
                                 type: "image" as const,
@@ -1015,25 +1375,37 @@ export default function Page() {
                                 file,
                               },
                             ]);
+                            
+                            // Upload the image asynchronously
+                            handleMediaFileUpload(file, "image");
                           }
                         }}
                       />
                       {form.watch("mediaFiles")?.[0] && (
-                        <div className="relative aspect-square w-full overflow-hidden rounded-lg border">
+                        <div className="relative overflow-hidden rounded-lg border w-[200px] h-[200px]">
                           <img
-                            src={form.watch("mediaFiles")[0].url}
+                            src={form.watch("mediaFiles")?.[0]?.url || ""}
                             alt="Preview"
-                            className="object-cover"
+                            className="object-cover w-full h-full"
                           />
+                          {isUploadingMedia ? (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                            </div>
+                          ) : (
                           <Button
                             type="button"
                             variant="destructive"
                             size="icon"
                             className="absolute right-2 top-2"
-                            onClick={() => form.setValue("mediaFiles", [])}
+                              onClick={() => {
+                                form.setValue("mediaFiles", []);
+                                form.setValue("contentAssets", []);
+                              }}
                           >
                             ×
                           </Button>
+                          )}
                         </div>
                       )}
                     </div>
@@ -1042,57 +1414,142 @@ export default function Page() {
                   {contentType === "video" && (
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <FileUploader
-                          accept="video/mp4,video/quicktime"
-                          maxSize={104857600} // 100MB
-                          onDrop={(files) => {
-                            const file = files[0];
-                            if (file) {
-                              if (file.size > 104857600) {
-                                form.setError("mediaFiles", {
-                                  type: "size",
-                                  message: "Video size must be less than 100MB",
-                                });
-                                return;
-                              }
-                              form.clearErrors("mediaFiles");
-                              form.setValue("mediaFiles", [
-                                {
-                                  type: "video" as const,
-                                  url: URL.createObjectURL(file),
-                                  file,
-                                },
-                              ]);
+                        <Label>Media Content</Label>
+                        <div className="grid gap-4">
+                          <div
+                            className="border border-dashed rounded-lg p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                            onClick={() =>
+                              document.getElementById("file-upload")?.click()
+                            }
+                          >
+                            <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                            <p className="text-sm font-medium mb-1">
+                              Upload your campaign media
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Drag and drop or click to upload
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Supported formats: .jpg, .png, .mp4, .mov
+                              <br />
+                              <span className="font-medium">
+                                Videos up to 100MB supported
+                              </span>
+                            </p>
+
+                            <input
+                              id="file-upload"
+                              type="file"
+                              className="hidden"
+                              accept="image/jpeg,image/png,video/mp4,video/quicktime"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const fileType = file.type.startsWith(
+                                    "image/"
+                                  )
+                                    ? "image"
+                                    : "video";
+
+                                  // Check file size for warning
+                                  if (
+                                    fileType === "video" &&
+                                    file.size > 50 * 1024 * 1024
+                                  ) {
+                                    toast.warning(
+                                      "Large video detected. Upload may take a few minutes."
+                                    );
+                                  }
+
+                                  handleMediaFileUpload(file, fileType);
                             }
                           }}
                         />
-                        {form.formState.errors.mediaFiles?.type === "size" && (
-                          <p className="text-sm text-destructive">
-                            {form.formState.errors.mediaFiles.message}
-                          </p>
-                        )}
+                          </div>
+
+                          {isUploadingMedia && (
+                            <div className="space-y-2">
+                              <div className="h-2 w-full bg-muted overflow-hidden rounded-full">
+                                <div className="h-full bg-primary animate-pulse rounded-full"></div>
+                              </div>
+                              <p className="text-xs text-center text-muted-foreground">
+                                Uploading media... Please wait
+                              </p>
                       </div>
-                      {form.watch("mediaFiles")?.[0] && (
-                        <div className="relative mx-auto max-w-md overflow-hidden rounded-lg border">
-                          <div className="relative aspect-video bg-black flex items-center justify-center">
+                          )}
+
+                          {hasContentAssets && !isUploadingMedia && (
+                            <div className="space-y-2">
+                              <div className="aspect-video relative rounded-lg overflow-hidden border">
+                                {contentAssets[0].contentType === "image" ? (
+                                  <img
+                                    src={contentAssets[0].url}
+                                    alt="Campaign media"
+                                    className="object-contain w-full h-full"
+                                  />
+                                ) : (
+                                  <div className="relative w-full h-full">
                             <video
-                              src={form.watch("mediaFiles")[0].url}
+                                      src={contentAssets[0].url}
                               controls
-                              playsInline
-                              className="max-h-full max-w-full"
+                                      className="object-contain w-full h-full"
                             />
                           </div>
+                                )}
+                            </div>
+
+                              <div className="flex justify-between items-center">
+                                <p className="text-xs text-muted-foreground">
+                                  {contentAssets[0].contentType === "image"
+                                    ? "Image"
+                                    : "Video"}{" "}
+                                  uploaded (
+                                  {Math.round(
+                                    ((contentAssets[0].size || 0) /
+                                      1024 /
+                                      1024) *
+                                      10
+                                  ) / 10}{" "}
+                                  MB)
+                                </p>
                           <Button
                             type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute right-2 top-2 z-10"
-                            onClick={() => form.setValue("mediaFiles", [])}
+                                  variant="outline"
+                                  size="sm"
+                              onClick={() => {
+                                    document
+                                      .getElementById("file-upload")
+                                      ?.click();
+                              }}
                           >
-                            ×
+                                  Replace
                           </Button>
+                              </div>
                         </div>
                       )}
+
+                          <Alert variant="info" className="mt-2">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>File Size Information</AlertTitle>
+                            <AlertDescription>
+                              <ul className="text-xs list-disc pl-4 space-y-1 mt-2">
+                                <li>
+                                  Videos under 10MB will upload through our
+                                  server
+                                </li>
+                                <li>
+                                  Larger videos (10-100MB) will upload directly
+                                  to cloud storage
+                                </li>
+                                <li>
+                                  For best performance, compress videos before
+                                  uploading
+                                </li>
+                              </ul>
+                            </AlertDescription>
+                          </Alert>
+                        </div>
+                      </div>
                     </div>
                   )}
 
@@ -1120,11 +1577,11 @@ export default function Page() {
                           ]);
                         }}
                       />
-                      {form.watch("mediaFiles")?.length > 0 && (
+                      {mediaFilesExist && (
                         <div className="relative mx-auto max-w-md">
                           <div className="overflow-hidden rounded-lg border bg-background">
                             <div className="relative aspect-video">
-                              {form.watch("mediaFiles").map((media, index) => (
+                              {(mediaFiles || []).map((media, index) => (
                                 <div
                                   key={index}
                                   className={cn(
@@ -1160,24 +1617,24 @@ export default function Page() {
                                   )}
                                 </div>
                               ))}
-                              <Button
+                              <button
                                 type="button"
-                                variant="destructive"
-                                size="icon"
-                                className="absolute right-2 top-2 z-10"
+                                className="absolute right-2 top-2 z-10 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
                                 onClick={() => {
-                                  const files = form.watch("mediaFiles");
+                                  const files = form.watch("mediaFiles") || [];
+                                  if (files.length > 0) {
                                   files.splice(currentSlide, 1);
                                   form.setValue("mediaFiles", [...files]);
                                   if (currentSlide > 0)
                                     setCurrentSlide(currentSlide - 1);
+                                  }
                                 }}
                               >
                                 ×
-                              </Button>
+                              </button>
                             </div>
                             <div className="flex items-center justify-center gap-2 p-2">
-                              {form.watch("mediaFiles").map((_, index) => (
+                              {(mediaFiles || []).map((_, index) => (
                                 <button
                                   key={index}
                                   type="button"
@@ -1192,22 +1649,20 @@ export default function Page() {
                               ))}
                             </div>
                           </div>
-                          {form.watch("mediaFiles").length > 1 && (
+                          {multipleMediaFiles && (
                             <>
                               <Button
                                 type="button"
                                 variant="outline"
                                 size="icon"
                                 className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full"
-                                onClick={() =>
+                                onClick={() => {
+                                  const files = mediaFiles || [];
+                                  const length = files.length || 1;
                                   setCurrentSlide(
-                                    (prev) =>
-                                      (prev -
-                                        1 +
-                                        form.watch("mediaFiles").length) %
-                                      form.watch("mediaFiles").length
-                                  )
-                                }
+                                    (prev) => (prev - 1 + length) % length
+                                  );
+                                }}
                               >
                                 <ChevronLeft className="h-4 w-4" />
                               </Button>
@@ -1216,13 +1671,13 @@ export default function Page() {
                                 variant="outline"
                                 size="icon"
                                 className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full"
-                                onClick={() =>
+                                onClick={() => {
+                                  const files = mediaFiles || [];
+                                  const length = files.length || 1;
                                   setCurrentSlide(
-                                    (prev) =>
-                                      (prev + 1) %
-                                      form.watch("mediaFiles").length
-                                  )
-                                }
+                                    (prev) => (prev + 1) % length
+                                  );
+                                }}
                               >
                                 <ChevronRight className="h-4 w-4" />
                               </Button>
@@ -1239,7 +1694,6 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-2">
                   <Label>Content Guidelines</Label>
                   <Textarea
@@ -1253,7 +1707,6 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-4">
                   <Label>Posting Schedule</Label>
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -1263,10 +1716,16 @@ export default function Page() {
                       </Label>
                       <Input
                         value={form.watch("postingSchedule.startTime") || ""}
-                        onChange={(e) => form.setValue("postingSchedule", {
-                          ...form.getValues("postingSchedule"),
-                          startTime: e.target.value
-                        }, { shouldValidate: true })}
+                        onChange={(e) =>
+                          form.setValue(
+                            "postingSchedule",
+                            {
+                              ...form.getValues("postingSchedule"),
+                              startTime: e.target.value,
+                            },
+                            { shouldValidate: true }
+                          )
+                        }
                         type="time"
                       />
                       {errors.postingSchedule?.startTime && (
@@ -1281,10 +1740,16 @@ export default function Page() {
                       </Label>
                       <Input
                         value={form.watch("postingSchedule.endTime") || ""}
-                        onChange={(e) => form.setValue("postingSchedule", {
-                          ...form.getValues("postingSchedule"),
-                          endTime: e.target.value
-                        }, { shouldValidate: true })}
+                        onChange={(e) =>
+                          form.setValue(
+                            "postingSchedule",
+                            {
+                              ...form.getValues("postingSchedule"),
+                              endTime: e.target.value,
+                            },
+                            { shouldValidate: true }
+                          )
+                        }
                         type="time"
                       />
                       {errors.postingSchedule?.endTime && (
@@ -1318,12 +1783,14 @@ export default function Page() {
                           }
                           className="text-sm"
                           onClick={() => {
-                            const schedule = form.getValues("postingSchedule") || { days: [], startTime: "", endTime: "" };
+                            const schedule = form.getValues(
+                              "postingSchedule"
+                            ) || { days: [], startTime: "", endTime: "" };
                             const currentDays = schedule.days || [];
                             const updatedDays = currentDays.includes(day)
                               ? currentDays.filter((d) => d !== day)
                               : [...currentDays, day];
-                            
+
                             form.setValue(
                               "postingSchedule",
                               { ...schedule, days: updatedDays },
@@ -1342,7 +1809,6 @@ export default function Page() {
                     )}
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <Label>Hashtags (comma separated)</Label>
                   <Input
@@ -1356,7 +1822,6 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-2">
                   <Label>Mentions (comma separated)</Label>
                   <Input
@@ -1370,7 +1835,6 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-2">
                   <Label>Brand Asset Links (optional)</Label>
                   <Input
@@ -1384,7 +1848,6 @@ export default function Page() {
                     </p>
                   )}
                 </div>
-
                 <div className="space-y-2">
                   <Label>Promotion Link</Label>
                   <Input
@@ -1398,6 +1861,21 @@ export default function Page() {
                     </p>
                   )}
                 </div>
+                {form.watch("goal") !== "awareness" && (
+                <div className="space-y-2">
+                  <Label>CTA Label (optional)</Label>
+                  <Input
+                    {...form.register("ctaLabel")}
+                    type="text"
+                    placeholder="e.g., Learn More, Shop Now, Sign Up"
+                  />
+                  {errors.ctaLabel && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.ctaLabel.message}
+                    </p>
+                  )}
+                </div>
+                )}
               </div>
             </Card>
           </TabsContent>
@@ -1440,39 +1918,7 @@ export default function Page() {
                   Next
                 </Button>
               ) : (
-                <Button 
-                  type="submit" 
-                  variant="new"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center">
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                      Creating Campaign...
-                    </div>
-                  ) : (
-                    'Create Campaign'
-                  )}
-                </Button>
+                <PaystackButton {...componentProps} />
               )}
             </div>
           </div>

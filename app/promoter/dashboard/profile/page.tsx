@@ -100,15 +100,13 @@ export default function PromoterProfile() {
     if (isLoading) return <p>Fetching profile data</p>
     return (
         <>
-            <div className="space-y-8 p-8">
-                <Card className="shadow-md rounded-lg p-6 flex items-center justify-between gap-6">
-                    <div className="flex gap-4">
-
-                        <Button>Promotions</Button>
-
-                        <Button variant="outline">Manage Billing</Button>
+            <div className="space-y-8 p-2">
+                <Card className="shadow-md rounded-lg p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
+                    <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                        <Button className="w-full sm:w-auto">Promotions</Button>
+                        <Button variant="outline" className="w-full sm:w-auto">Manage Billing</Button>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                         <div className="relative">
                             <Button variant="outline" size="icon" className="rounded-full">
                                 <Bell className="h-5 w-5" />
@@ -169,7 +167,7 @@ export default function PromoterProfile() {
                                 </div>
                             </PopoverContent>
                         </Popover>
-                        <div className="">
+                        <div className="hidden sm:block">
                             <div className="flex items-center gap-1">
                                 <CardTitle className="flex items-center justify-center gap-1">
                                     {promoter.fullName.split(' ')[0].charAt(0).toUpperCase() + promoter.fullName.split(' ')[0].slice(1)}
@@ -182,25 +180,25 @@ export default function PromoterProfile() {
                         </div>
                     </div>
                 </Card>
-                <div className="flex flex-col md:flex-row gap-4">
-                    <div className="w-full md:w-60 flex">
+                <div className="flex flex-col md:flex-row gap-4 w-full">
+                    <div className="w-full md:w-60 flex justify-center md:justify-start">
                         <PromoterProfileCompletionChart percentage={promoter.profileCompletePercent} userData={promoter} />
                     </div>
-                    <Card className="p-4 flex-1">
-                        <CardHeader className="flex flex-row justify-between items-start space-y-0">
+                    <Card className="py-4 flex-1">
+                        <CardHeader className="flex flex-col sm:flex-row justify-between items-start space-y-2 sm:space-y-0">
                             <div>
                                 <CardTitle>Profile Overview</CardTitle>
                                 <CardDescription>Promoter account information</CardDescription>
                             </div>
                             <Link href="/promoter/dashboard/settings/profile">
-                                <Button variant="link" size="sm">
+                                <Button variant="link" size="sm" className="px-0 sm:px-2">
                                     <Pencil className="w-4 h-4 mr-2" />
                                     Edit Profile
                                 </Button>
                             </Link>
                         </CardHeader>
 
-                        <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+                        <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-4">
                             {/* Personal Information */}
                             <div className="space-y-4">
                                 <h3 className="text-sm font-medium text-gray-500">Personal Information</h3>
@@ -279,28 +277,28 @@ export default function PromoterProfile() {
                     </Card>
                 </div>
 
-                <Tabs defaultValue="account" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
-                        <TabsTrigger value="promotion">Active Promotions</TabsTrigger>
-                        <TabsTrigger value="brand">Brands</TabsTrigger>
-                        <TabsTrigger value="overview">Overview</TabsTrigger>
+                {/* <Tabs defaultValue="account" className="w-full">
+                    <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0">
+                        <TabsTrigger value="promotion" className="w-full">Active Promotions</TabsTrigger>
+                        <TabsTrigger value="brand" className="w-full">Brands</TabsTrigger>
+                        <TabsTrigger value="overview" className="w-full">Overview</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="account">
-                        <Card>
+                    <TabsContent value="account" className="mt-4">
+                        <Card className="p-4">
 
                         </Card>
                     </TabsContent>
-                    <TabsContent value="password">
-                        <Card>
+                    <TabsContent value="password" className="mt-4">
+                        <Card className="p-4">
 
                         </Card>
                     </TabsContent>
-                    <TabsContent value="overview">
-                        <Card>
+                    <TabsContent value="overview" className="mt-4">
+                        <Card className="p-4">
 
                         </Card>
                     </TabsContent>
-                </Tabs>
+                </Tabs> */} 
             </div>
         </>
     )

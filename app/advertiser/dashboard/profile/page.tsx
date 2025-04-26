@@ -1,16 +1,14 @@
 "use client"
 import advertiserService, { Campaign } from "@/services/advertiser";
 import { useEffect, useState } from "react"
-import { Card, CardTitle, CardDescription, CardHeader, CardContent } from "@/components/ui/card";
+import { Card, CardTitle, CardDescription, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Verified, Plus } from "lucide-react";
-import { Calendar, DollarSign, Users, Pencil, Badge, Bell, BookmarkCheck } from 'lucide-react'
+import { Verified } from "lucide-react";
+import { Calendar, DollarSign, Users, Pencil, Badge, Bell } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ActiveCampaignList } from '@/components/campaigns/active-campaigns'
-import ProfileField from "@/components/advertiser/profile-field";
 import ProfileSkeleton from "@/components/advertiser/skeleton";
-import { ProfileCompletionPie } from "@/components/charts/advertiser-chart";
 import {
     Popover,
     PopoverContent,
@@ -116,12 +114,12 @@ export default function Profile() {
         : 0
     return (
         <>
-            <div className="space-y-8 p-8">
+            <div className="space-y-8 p-0">
                 <div className="bg-white shadow-md rounded-lg p-6 flex items-center justify-between gap-6">
                     <div className="flex gap-4">
-                        <Link href="/advertiser/dashboard/campaigns/create">
+                        {/* <Link href="/advertiser/dashboard/campaigns/create">
                             <Button>Create Campaign</Button>
-                        </Link>
+                        </Link> */}
                         <Button variant="outline">Manage Billing</Button>
                     </div>
                     <div className="flex items-center gap-4">
@@ -198,77 +196,21 @@ export default function Profile() {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col md:flex-row gap-4 min-h-[600px]"> {/* Added min-height */}
-                    {/* Profile Completion Pie */}
-                    <div className="w-full md:w-60 flex-shrink-0"> {/* Prevent shrinking */}
-                        <ProfileCompletionPie percentage={advertiser.profilePercentage} userData={advertiser} />
-                    </div>
-
-                    {/* Profile Card */}
-                    <Card className="p-4 flex-1 min-w-0"> {/* Allow growth but prevent overflow */}
-                        <CardHeader className="flex flex-row justify-between items-start space-y-0">
+                <div className="space-y-4 sm:space-y-6 md:space-y-8 p-0 sm:p-2 md:p-4">
+                    <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
+                        <div className="flex gap-4 w-full sm:w-auto">
+                            <Button variant="outline" className="w-full sm:w-auto">Manage Billing</Button>
+                        </div>
+                        <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                            <div className="p-3 bg-blue-100 rounded-lg">
+                                <DollarSign className="w-6 h-6 text-blue-600" />
+                            </div>
                             <div>
-                                <CardTitle>Profile overview</CardTitle>
-                                <CardDescription>Advertiser basic information</CardDescription>
+                                <p className="text-sm text-gray-600">Total Budget</p>
+                                <p className="text-2xl font-bold">${totalBudget.toLocaleString()}</p>
                             </div>
-                            <Link href="/advertiser/dashboard/settings/profile">
-                                <Button variant="link" size="sm">
-                                    <Pencil className="w-4 h-4 mr-2" />
-                                    Edit Profile
-                                </Button>
-                            </Link>
-                        </CardHeader>
-
-                        <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 overflow-auto"> {/* Added overflow */}
-                            {/* Personal Information */}
-                            <div className="space-y-4">
-                                <h3 className="text-sm font-medium text-gray-500">Personal Information</h3>
-                                <div className="space-y-2">
-                                    <ProfileField label="Full Name" value={advertiser.fullName} />
-                                    <ProfileField label="Email" value={advertiser.email} />
-                                    <ProfileField label="Phone" value={advertiser.phoneNumber} />
-                                </div>
-                            </div>
-
-                            {/* Company Information */}
-                            <div className="space-y-4">
-                                <h3 className="text-sm font-medium text-gray-500">Company Information</h3>
-                                <div className="space-y-2">
-                                    <ProfileField label="Company Name" value={advertiser.companyName} />
-                                    <ProfileField label="Business Type" value={advertiser.businessType} />
-                                    <ProfileField label="Company Size" value={advertiser.companySize} />
-                                    <ProfileField label="Industry" value={advertiser.industry} />
-                                </div>
-                            </div>
-
-                            {/* Billing & Goals */}
-                            <div className="space-y-4">
-                                <h3 className="text-sm font-medium text-gray-500">Billing & Goals</h3>
-                                <div className="space-y-2">
-                                    <ProfileField label="Billing Address" value={advertiser.billingAddress} />
-                                    <ProfileField label="Billing Email" value={advertiser.billingEmail} />
-                                    <ProfileField label="Website" value={advertiser.website} />
-                                    <ProfileField label="Goals" value={advertiser.goals} />
-                                </div>
-                            </div>
-
-                            {/* Target Audience - full width */}
-                            <div className="col-span-full space-y-4">
-                                <h3 className="text-sm font-medium text-gray-500">Target Audience</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {advertiser.targetAudience?.length > 0 ? (
-                                        advertiser.targetAudience.map((audience, index) => (
-                                            <span key={index} className="px-3 py-1 text-sm rounded-full bg-gray-100">
-                                                {audience}
-                                            </span>
-                                        ))
-                                    ) : (
-                                        <p className="text-sm text-gray-400">No target audience specified</p>
-                                    )}
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </div>
 
                 <Card className="space-y-6 p-4">
@@ -276,48 +218,37 @@ export default function Profile() {
                         <CardTitle>Campaign overview</CardTitle>
                         <CardDescription>Advertiser campaign summary</CardDescription>
                     </CardHeader>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <Card className="p-6">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-blue-100 rounded-lg">
-                                    <DollarSign className="w-6 h-6 text-blue-600" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">Total Budget</p>
-                                    <p className="text-2xl font-bold">${totalBudget.toLocaleString()}</p>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card className="p-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 p-4">
+                        <Card className="p-4 sm:p-6">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-green-100 rounded-lg">
-                                    <Users className="w-6 h-6 text-green-600" />
+                                    <Users className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600">Total Reach</p>
-                                    <p className="text-2xl font-bold">{totalReach.toLocaleString()}</p>
+                                    <p className="text-xl sm:text-2xl font-bold">{totalReach.toLocaleString()}</p>
                                 </div>
                             </div>
                         </Card>
-                        <Card className="p-6">
+                        <Card className="p-4 sm:p-6">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-purple-100 rounded-lg">
-                                    <Calendar className="w-6 h-6 text-purple-600" />
+                                    <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600">Active Campaigns</p>
-                                    <p className="text-2xl font-bold">{activeCampaigns.length}</p>
+                                    <p className="text-xl sm:text-2xl font-bold">{activeCampaigns.length}</p>
                                 </div>
                             </div>
                         </Card>
-                        <Card className="p-6">
+                        <Card className="p-4 sm:p-6">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-yellow-100 rounded-lg">
-                                    <Users className="w-6 h-6 text-yellow-600" />
+                                    <Users className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600">Avg. Engagement Rate</p>
-                                    <p className="text-2xl font-bold">{(averageEngagementRate * 100).toFixed(1)}%</p>
+                                    <p className="text-xl sm:text-2xl font-bold">{(averageEngagementRate * 100).toFixed(1)}%</p>
                                 </div>
                             </div>
                         </Card>

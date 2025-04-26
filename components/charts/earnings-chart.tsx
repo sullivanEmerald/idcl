@@ -23,17 +23,23 @@ ChartJS.register(
 interface EarningsChartProps {
   data: {
     date: string
-    earnings: number
+    amount: number
+    campaign: string
   }[]
 }
 
 export function EarningsChart({ data }: EarningsChartProps) {
   const chartData: ChartData<'bar'> = {
-    labels: data.map((item) => item.date),
+    labels: data.map((item) => new Date(item.date).toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    })),
     datasets: [
       {
         label: 'Earnings',
-        data: data.map((item) => item.earnings),
+        data: data.map((item) => item.amount),
         backgroundColor: 'rgba(34, 197, 94, 0.5)',
         borderColor: 'rgb(34, 197, 94)',
         borderWidth: 1,

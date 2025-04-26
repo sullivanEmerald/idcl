@@ -36,31 +36,32 @@ const sidebarItems = [
       {
         title: 'Performance',
         href: '/advertiser/dashboard/analytics/performance'
-      },
-      {
-        title: 'Insights',
-        href: '/advertiser/dashboard/analytics/insights'
       }
     ]
   },
+  // {
+  //   title: 'Leaderboard',
+  //   href: '/advertiser/dashboard/leaderboard',
+  //   icon: 'trophy'
+  // },
   {
     title: 'Wallet',
     href: '/advertiser/dashboard/wallet',
     icon: 'wallet',
-    items: [
-      {
-        title: 'Overview',
-        href: '/advertiser/dashboard/wallet/overview'
-      },
-      {
-        title: 'Add Funds',
-        href: '/advertiser/dashboard/wallet/add-funds'
-      }
-    ]
+    // items: [
+    //   {
+    //     title: 'Overview',
+    //     href: '/advertiser/dashboard/wallet/overview'
+    //   },
+    //   {
+    //     title: 'Add Funds',
+    //     href: '/advertiser/dashboard/wallet/add-funds'
+    //   }
+    // ]
   },
   {
     title: 'Settings',
-    href: '/advertiser/dashboard/settings',
+    href: '/advertiser/dashboard/settings/profile',
     icon: 'settings',
     items: [
       {
@@ -85,7 +86,7 @@ export default function AdvertiserLayout({
     <RoleGuard role="advertiser">
       <div className="flex h-screen">
         <Sidebar items={sidebarItems} role='advertiser' />
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-8">
+        <main className="flex-1 overflow-y-auto bg-gray-50 px-4 py-20 sm:p-6 md:p-8">
           {children}
         </main>
       </div>

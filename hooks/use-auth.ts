@@ -16,6 +16,10 @@ export function useAuth() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Add computed properties
+  const isAuthenticated = Boolean(user);
+  const userRole = user?.role || null;
+
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem('token');
@@ -111,6 +115,8 @@ export function useAuth() {
     error,
     login,
     logout,
-    register
+    register,
+    isAuthenticated,
+    userRole
   };
 }
