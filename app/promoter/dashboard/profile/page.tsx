@@ -1,15 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Card, CardTitle, CardDescription, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardTitle, CardDescription, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Verified, Plus } from "lucide-react";
-import { Calendar, DollarSign, Users, Pencil, Badge, Bell, BookmarkCheck, ArrowLeftRight } from 'lucide-react'
+import { Verified } from "lucide-react";
+import { Pencil, Badge, Bell, ArrowLeftRight } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ActiveCampaignList } from '@/components/campaigns/active-campaigns'
 import ProfileField from "@/components/advertiser/profile-field";
 import { PromoterProfileCompletionChart } from "@/components/charts/promoter-chart";
 import {
@@ -68,6 +65,9 @@ export default function PromoterProfile() {
                 const [profileData] = await Promise.all([
                     promoterService.getProfile(),
                 ])
+
+
+                console.log('promoter', profileData)
 
                 setPromoter({
                     accountDetails: profileData?.user?.accountDetails || '',

@@ -145,8 +145,7 @@ const promoterService = {
   getAnalytics: async (timeRange: string): Promise<{ data: AnalyticsData }> => {
     const response = await axiosInstance.get(`/promoter/analytics/overview?timeRange=${timeRange}`);
     return response;
-  }
-  ,
+  },
 
   getCampaign: async (campaignId: string) => {
     const response = await axiosInstance.get(`/promoter/campaigns/${campaignId}`);
@@ -174,23 +173,29 @@ const promoterService = {
     return response.data;
   },
 
-  async upatePromoterPassword(data: PasswordResetDto) {
+  upatePromoterPassword: async (data: PasswordResetDto) => {
     const response = await axiosInstance.put('/promoter/update/password', data)
     return response.data;
   },
-  async updatePromoterPreference(data: { [key: string]: boolean }) {
+
+  updatePromoterPreference: async (data: { [key: string]: boolean }) => {
     console.log(data)
     const response = await axiosInstance.put('/settings/promoter/preference', data)
     return response.data;
   },
 
-  async removePromoterSocial(social: string) {
+  removePromoterSocial: async (social: string) => {
     const response = await axiosInstance.delete(`/promoter/social?platform=${social}`)
     return response.data;
   },
 
-  async undoRemoval(social: string) {
+  undoRemoval: async (social: string) => {
     const response = await axiosInstance.patch(`/promoter/social?platform=${social}`)
+    return response.data;
+  },
+
+  addPromoterSocial: async (social: string) => {
+    const response = await axiosInstance.post('/promoter/social', { social })
     return response.data;
   }
 }

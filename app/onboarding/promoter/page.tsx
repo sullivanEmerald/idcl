@@ -45,7 +45,7 @@ export const socialPlatforms = [
   { value: 'tiktok', label: 'TikTok' },
   { value: 'youtube', label: 'YouTube' },
   { value: 'twitter', label: 'Twitter' },
-  { value: 'facebook', label: 'Facebook' }
+  { value: 'facebook', label: 'Facebook' },
 ]
 
 import onboardingService from '@/services/onboarding';
@@ -200,8 +200,8 @@ export default function PromoterOnboarding() {
                           type="button"
                           variant={formData.platforms.includes(platform.value) ? "default" : "outline"}
                           className={`justify-start ${formData.platforms.includes(platform.value)
-                              ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
-                              : ""
+                            ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                            : ""
                             }`}
                           onClick={() => {
                             const newPlatforms = formData.platforms.includes(platform.value)

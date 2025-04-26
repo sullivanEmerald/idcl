@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Toaster, toast } from 'sonner'
-import { Eye, EyeOff, CheckCircle, CircleMinus } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle, CircleMinus, CirclePlus } from "lucide-react";
 import { Select as ShadcnSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePromoterAccountSettingHandler, usePromoterUpdatePasswordHandler } from '@/hooks/user/user-promoter'
 import promoterService from '@/services/promoter'
@@ -16,11 +16,10 @@ import { usePromoterOnboardingHandler } from '@/hooks/user/user-promoter'
 import Select from 'react-select'
 
 
-type SocialPlatforms = 'facebook' | 'twitter' | 'instagram' | 'instagram' | 'tiktok' | 'youtube';
+// type SocialPlatforms = 'facebook' | 'twitter' | 'instagram' | 'instagram' | 'tiktok' | 'youtube';
 
 export default function ProfileSettings() {
   const [isFetching, setIsFetching] = useState(true)
-  const [isConnected, setIsConnected] = useState(false);
   const [passwordVisible, setIsPasswordVisible] = useState({
     isOldPasswordVisible: false,
     isNewPasswordVisible: false,
@@ -86,9 +85,9 @@ export default function ProfileSettings() {
 
         // Set user state with fetched data
         setUserData({
-          companyName: user?.companyName || '',
-          phoneNumber: user?.phoneNumber || '',
-          fullName: user?.fullName || '',
+          companyName: user?.companyName,
+          phoneNumber: user?.phoneNumber,
+          fullName: user?.fullName,
         })
 
         // setting onboaring data
@@ -164,6 +163,40 @@ export default function ProfileSettings() {
     }
   }
 
+  const addSocialHandler = async (social: string, index: number) => {
+
+    setIsRemovingSocial((prev) => ({
+      ...prev,
+      [social]: true
+    }))
+
+    try {
+
+      await promoterService.addPromoterSocial(social)
+
+      // resetting the UI to show the added socials
+      setOnboardingData((prev) => {
+        const currentPlatform = prev.platforms || [];
+        return {
+          ...prev,
+          platforms: currentPlatform.includes(social)
+            ? currentPlatform
+            : [...currentPlatform, social]
+        };
+      });
+
+
+    } catch (error) {
+
+    } finally {
+      setIsRemovingSocial((prev) => ({
+        ...prev,
+        [social]: false
+      }))
+    }
+  }
+
+
   if (isFetching) {
     return (
       <div className="space-y-8 p-8">
@@ -216,8 +249,6 @@ export default function ProfileSettings() {
             <h1 className="text-3xl font-bold">Promoter Account Settings</h1>
             <p className="mt-2 text-gray-600">Manage your promoter account information</p>
           </div>
-
-
           <Card className="p-6 relative">
             <h2 className="text-xl font-semibold mb-6">Personal Information</h2>
             <form className="space-y-4" onSubmit={onSubmitPromoterHandler}>
@@ -528,49 +559,63 @@ export default function ProfileSettings() {
         <Card className="p-6 relative">
           <h2 className="text-xl font-semibold mb-6">Social Media Management</h2>
           <div className="space-y-4">
-            {onboardingData.platforms.map((item, index) => {
-              const platform = item.charAt(0).toUpperCase() + item.slice(1);
+            {socialPlatforms.map(({ value, label }, index) => {
+
+              const isAdded = onboardingData.platforms.includes(value.toLowerCase());
+              const isLoading = isRemovingSocial[value.toLowerCase()];
+
               return (
                 <div
                   key={index}
                   className="flex items-center justify-between py-3"
                 >
                   <div className="flex items-center">
-                    <span className="ml-2 font-medium">{platform}</span>
+                    <span className="ml-2 font-medium">{label}</span>
                   </div>
 
-                  {isRemovingSocial[item.toLowerCase()] ? (
-                    <div className="flex items-center justify-center">
-                      <div className="h-5 w-5 animate-spin rounded-full border-2 !border-red-500 border-t-transparent" />
-                      <span className="ml-2 text-black-500">{`removing ${item}`}</span>
-                    </div>
-                  ) : (
+                  {isLoading ? (
+                    <LoaderCircle className="animate-spin text-red-500 w-6 h-6" />
+                  ) : isAdded ? (
                     <button
-                      onClick={() => removeSocialHandler(item.toLowerCase(), index)}
-                      className='
+                      onClick={() => removeSocialHandler(value.toLowerCase(), index)}
+                      className="
                       p-2
                       rounded
                       bg-transparent
                       text-red-500
                       border
                       border-transparent
-                      hover:border-dashed
-                      hover:border-red-500
-                      hover:bg-transparent
                       focus:outline-none
                       disabled:opacity-50
-                    '
-                      disabled={isRemovingSocial[item.toLowerCase()]}
+                    "
+                      disabled={isLoading}
                     >
-                      <CircleMinus className='text-red-500' />
+                      <CircleMinus className="text-red-500" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => addSocialHandler(value.toLowerCase(), index)}
+                      className="
+                      p-2
+                      rounded
+                      bg-transparent
+                      text-green-500
+                      border
+                      border-transparent
+                      focus:outline-none
+                      disabled:opacity-50
+                    "
+                      disabled={isLoading}
+                    >
+                      <CirclePlus className="text-green-500" />
                     </button>
                   )}
-
                 </div>
               );
             })}
           </div>
         </Card>
+
       </div >
     </>
   );
