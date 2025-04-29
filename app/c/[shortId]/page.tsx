@@ -292,7 +292,7 @@ export default function CampaignPage({
 
               <div className="w-full sm:w-[578px] mx-auto bg-white p-2 rounded-md flex items-center justify-between mb-8">
                 <div className="flex items-center gap-2">
-                  <img src="/fir.png" alt="fire" />
+                  <img src="/fir.png" alt="fire" /> 
                   <span className="text-[#FD650B] font-bold text-base">
                     {campaign.metrics?.totalViews}
                   </span>
