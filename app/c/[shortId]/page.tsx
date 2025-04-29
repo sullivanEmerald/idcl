@@ -315,7 +315,7 @@ export default function CampaignPage({
                         onClick={() =>
                           analyticsService.trackConversion(
                             params.shortId,
-                            campaign.promotionLink || "",
+                            campaign.promotionLink || "", 
                             promoterId,
                             campaign.campaignGoal
                           )
