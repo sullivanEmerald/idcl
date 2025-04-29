@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Verified } from "lucide-react";
 import { Pencil, Badge, Bell, ArrowLeftRight } from 'lucide-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import ProfileField from "@/components/advertiser/profile-field";
 import { PromoterProfileCompletionChart } from "@/components/charts/promoter-chart";
 import {
@@ -65,27 +64,25 @@ export default function PromoterProfile() {
                 const [profileData] = await Promise.all([
                     promoterService.getProfile(),
                 ])
-
-
                 console.log('promoter', profileData)
 
                 setPromoter({
-                    accountDetails: profileData?.user?.accountDetails || '',
-                    audienceAge: profileData?.user?.audienceAge || '',
-                    audienceInterests: profileData?.user?.audienceInterests || [],
-                    companyName: profileData?.user?.companyName || '',
-                    contentTypes: profileData?.user?.contentTypes || [],
-                    engagementRate: profileData?.user?.engagementRate || 0,
-                    followersCount: profileData?.user?.followersCount || 0,
-                    fullName: profileData?.user?.fullName || '',
-                    location: profileData?.user?.location || '',
-                    paymentMethod: profileData?.user?.paymentMethod || '',
-                    phoneNumber: profileData?.user?.phoneNumber || '',
-                    platforms: profileData?.user?.platforms || [],
-                    bio: profileData?.user?.bio,
-                    companySize: profileData?.user?.companySize,
-                    website: profileData?.user?.website,
-                    profileCompletePercent: profileData?.user?.profileCompletedPercentage,
+                    accountDetails: profileData.user.accountDetails,
+                    audienceAge: profileData.user.audienceAge,
+                    audienceInterests: profileData.user.audienceInterests,
+                    companyName: profileData.user.companyName,
+                    contentTypes: profileData.user.contentTypes,
+                    engagementRate: profileData.user.engagementRate,
+                    followersCount: profileData.user.followersCount,
+                    fullName: profileData.user.fullName,
+                    location: profileData.user.location,
+                    paymentMethod: profileData.user.paymentMethod,
+                    phoneNumber: profileData.user.phoneNumber,
+                    platforms: profileData.user.platforms,
+                    bio: profileData.user.bio,
+                    companySize: profileData.user.companySize,
+                    website: profileData.user.website,
+                    profileCompletePercent: profileData.user.profileCompletedPercentage,
                 })
             } catch (error) {
                 console.error('Error fetching promoter data:', error)
@@ -104,7 +101,6 @@ export default function PromoterProfile() {
                 <Card className="shadow-md rounded-lg p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
                     <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                         <Button className="w-full sm:w-auto">Promotions</Button>
-                        <Button variant="outline" className="w-full sm:w-auto">Manage Billing</Button>
                     </div>
                     <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                         <div className="relative">
@@ -120,7 +116,7 @@ export default function PromoterProfile() {
                                         <Avatar className="cursor-pointer h-10 w-10 border-2 border-white">
                                             <AvatarImage />
                                             <AvatarFallback>
-                                                {promoter.fullName.split(' ').filter(Boolean).map((item) => item.charAt(0).toUpperCase()).join('.')}
+                                                {promoter.fullName.split(' ').map((name) => name.charAt(0).toUpperCase()).join('.')}
                                             </AvatarFallback>
                                         </Avatar>
                                     </div>
@@ -132,7 +128,7 @@ export default function PromoterProfile() {
                                         <Avatar className="h-16 w-16 border-2 border-white">
                                             <AvatarImage />
                                             <AvatarFallback className="text-xl">
-                                                {promoter.fullName.split(' ').filter(Boolean).map((item) => item.charAt(0).toUpperCase()).join('')}
+                                                {promoter.fullName.split(' ').map((name) => name.charAt(0).toUpperCase()).join('.')}
                                             </AvatarFallback>
                                         </Avatar>
                                     </div>
@@ -298,7 +294,7 @@ export default function PromoterProfile() {
 
                         </Card>
                     </TabsContent>
-                </Tabs> */} 
+                </Tabs> */}
             </div>
         </>
     )

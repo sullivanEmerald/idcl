@@ -196,13 +196,6 @@ export const usePromoterOnboardingHandler = () => {
         paymentMethod: '',
         accountDetails: ''
     })
-    // setting the state for each social for the loading states
-    const [isRemovingSocial, setIsRemovingSocial] = useState<Record<string, boolean>>(
-        (socialPlatforms || []).reduce((acc: Record<string, boolean>, { value }) => {
-            acc[value.toLowerCase()] = false;
-            return acc;
-        }, {})
-    );
 
     // promoter onboarding handler
     const onChangeOnboardingHandler = (field: string, value: string | string[] | null) => {
@@ -255,7 +248,5 @@ export const usePromoterOnboardingHandler = () => {
         onSubmitOnboardingHandler,
         isUpdatingRecord,
         isUpdatingRecordSuccessful,
-        setIsRemovingSocial,
-        isRemovingSocial
     }
 }

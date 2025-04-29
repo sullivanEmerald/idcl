@@ -9,15 +9,40 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Toaster, toast } from 'sonner'
-import { Eye, EyeOff, LoaderCircle, CircleMinus, CirclePlus } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle, CircleMinus, CirclePlus, Link2, Users, Hash, Tag, BarChart2, Share2, Pencil, Trash2, Ban } from "lucide-react";
 import { Select as ShadcnSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePromoterAccountSettingHandler, usePromoterUpdatePasswordHandler } from '@/hooks/user/user-promoter'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter
+} from "@/components/ui/dialog"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import Link from 'next/link';
 import promoterService from '@/services/promoter'
 import { usePromoterOnboardingHandler } from '@/hooks/user/user-promoter'
 import Select from 'react-select'
+import { Instagram, Facebook, Youtube, Twitter } from "lucide-react";
 
 
 // type SocialPlatforms = 'facebook' | 'twitter' | 'instagram' | 'instagram' | 'tiktok' | 'youtube';
+
+
+const socialIcons: Record<string, JSX.Element> = {
+  instagram: <Instagram className="w-6 h-6 text-pink-500" />,
+  facebook: <Facebook className="w-6 h-6 text-blue-600" />,
+  youtube: <Youtube className="w-6 h-6 text-red-600" />,
+  twitter: <Twitter className="w-6 h-6 text-blue-500" />,
+  tiktok: <Twitter className="w-6 h-6 text-blue-500" />,
+};
 
 const socialPlatforms = [
   { value: 'instagram', label: 'Instagram' },
@@ -27,6 +52,22 @@ const socialPlatforms = [
   { value: 'facebook', label: 'Facebook' }
 ]
 
+type SocialPlatformsType = {
+  facebook: SocialPlatformType[];
+  twitter: SocialPlatformType[];
+  instagram: SocialPlatformType[];
+  youtube: SocialPlatformType[];
+  tiktok: SocialPlatformType[];
+};
+
+type SocialPlatformType = {
+  id: string;
+  handle: string;
+  followers: string;
+  niches: string[];
+};
+
+
 export default function ProfileSettings() {
   const [isFetching, setIsFetching] = useState(true)
   const [passwordVisible, setIsPasswordVisible] = useState({
@@ -34,6 +75,132 @@ export default function ProfileSettings() {
     isNewPasswordVisible: false,
     isConfirmNewPasswordVisible: false
   })
+  // setting the state for each social for the loading states
+  const [isRemovingSocial, setIsRemovingSocial] = useState<Record<string, boolean>>(
+    (socialPlatforms || []).reduce((acc: Record<string, boolean>, { value }) => {
+      acc[value.toLowerCase()] = false;
+      return acc;
+    }, {})
+  );
+
+  const [toggleAddedDialog, setToggleAddedDialog] = useState<Record<string, boolean>>(
+    (socialPlatforms || []).reduce((acc: Record<string, boolean>, { value }) => {
+      acc[value.toLowerCase()] = false;
+      return acc;
+    }, {})
+  );
+
+  // To open individual dialog box
+  const [dialogOpenStates, setDialogOpenStates] = useState<Record<string, boolean>>(
+    (socialPlatforms || []).reduce((acc: Record<string, boolean>, { value }) => {
+      acc[value.toLowerCase()] = false;
+      return acc;
+    }, {})
+  );
+
+  // setting data for each socials to be added
+  const [formData, setFormData] = useState({
+    handle: '',
+    followers: '',
+    niches: [] as string[]
+  });
+
+  const [currentPlatform, setCurrentPlatform] = useState('');
+  const [isAdding, setIsAdding] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [promoterSocials, setPromoterSocials] = useState<SocialPlatformsType>({
+    facebook: [],
+    twitter: [],
+    instagram: [],
+    youtube: [],
+    tiktok: [],
+  })
+
+
+  const handleAddSocial = (platform: string) => {
+    setCurrentPlatform(platform);
+    // Reset form when opening a new dialog
+    setFormData({
+      handle: '',
+      followers: '',
+      niches: []
+    });
+  };
+
+
+  const handleDialogOpenChange = (platform: string, isOpen: boolean) => {
+    setDialogOpenStates(prev => ({
+      ...prev,
+      [platform]: isOpen
+    }));
+
+    if (!isOpen) {
+      setToggleAddedDialog(prev => ({
+        ...prev,
+        [platform]: false
+      }));
+    }
+  };
+
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  const submitSocialHandler = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsAdding(true)
+
+    try {
+      const socialResponse = await promoterService.addPromoterSocial({
+        ...formData,
+        currentPlatform
+      })
+
+      setOnboardingData((prev) => ({
+        ...prev,
+        platforms: prev.platforms.includes(currentPlatform)
+          ? prev.platforms
+          : [...prev.platforms, currentPlatform],
+      }));
+
+      setPromoterSocials((prev) => ({
+        ...prev,
+        [currentPlatform]: [
+          ...(prev[currentPlatform as keyof typeof prev] || []),
+          socialResponse
+        ]
+      }));
+
+      toast.success(`${currentPlatform} added successfully`)
+
+      setToggleAddedDialog((prev) => ({
+        ...prev,
+        [currentPlatform]: false
+      }))
+
+      // Reset after submission
+      setCurrentPlatform('');
+
+      // changing the dialog box
+      // setToggleAddedDialog((prev) => ({
+      //   ...prev,
+      //   [currentPlatform]: false
+      // }))
+      setOpen(false)
+
+    } catch (error: any) {
+      const resError = error.response?.data?.message || 'An errror occurred'
+      toast.error(resError)
+    } finally {
+      setIsAdding(false)
+    }
+  };
+
   const {
     onSubmitPromoterHandler,
     onChangePromoterHandler,
@@ -59,8 +226,7 @@ export default function ProfileSettings() {
     onSubmitOnboardingHandler,
     isUpdatingRecord,
     onChangeOnboardingHandler,
-    isRemovingSocial,
-    setIsRemovingSocial } = usePromoterOnboardingHandler();
+  } = usePromoterOnboardingHandler();
 
   useEffect(() => {
     if (isSuccessful) {
@@ -87,29 +253,47 @@ export default function ProfileSettings() {
   useEffect(() => {
     const getProfile = async () => {
       try {
-        // Fetching Promoter profile informations
-        const { user } = await promoterService.getProfile();
+        // Fetching Promoter profile informations and Socials
+        const [{ user }, promoterSocialData] = await Promise.all([
+          promoterService.getProfile(),
+          promoterService.getSocial(),
+        ])
 
-        console.log(user)
+        console.log(user,)
+        console.log('promoter socials', promoterSocialData)
+
+
+        if (!user) {
+          setIsFetching(true)
+        }
 
         // Set user state with fetched data
         setUserData({
-          companyName: user?.companyName,
-          phoneNumber: user?.phoneNumber,
-          fullName: user?.fullName,
+          companyName: user.companyName,
+          phoneNumber: user.phoneNumber,
+          fullName: user.fullName,
         })
 
         // setting onboaring data
         setOnboardingData({
-          location: user?.location || '',
-          platforms: user?.platforms || [],
-          followersCount: user?.followersCount || '',
-          engagementRate: user?.engagementRate || '',
-          audienceAge: user?.audienceAge || '',
-          audienceInterests: user?.audienceInterests || [],
-          contentTypes: user?.contentTypes || [],
-          paymentMethod: user?.paymentMethod || '',
-          accountDetails: user?.accountDetails || ''
+          location: user.location,
+          platforms: user.platforms,
+          followersCount: user.followersCount,
+          engagementRate: user.engagementRate,
+          audienceAge: user.audienceAge,
+          audienceInterests: user.audienceInterests,
+          contentTypes: user.contentTypes,
+          paymentMethod: user.paymentMethod,
+          accountDetails: user.accountDetails
+        })
+
+        // setting the promoter socials
+        setPromoterSocials({
+          facebook: promoterSocialData.facebook,
+          twitter: promoterSocialData.twitter,
+          tiktok: promoterSocialData.tiktok,
+          instagram: promoterSocialData.instagram,
+          youtube: promoterSocialData.youtube
         })
 
       } catch (error: any) {
@@ -120,6 +304,7 @@ export default function ProfileSettings() {
     }
     getProfile()
   }, [])
+
 
   const removeSocialHandler = async (social: string, index: number) => {
     try {
@@ -172,38 +357,7 @@ export default function ProfileSettings() {
     }
   }
 
-  const addSocialHandler = async (social: string, index: number) => {
 
-    setIsRemovingSocial((prev) => ({
-      ...prev,
-      [social]: true
-    }))
-
-    try {
-
-      await promoterService.addPromoterSocial(social)
-
-      // resetting the UI to show the added socials
-      setOnboardingData((prev) => {
-        const currentPlatform = prev.platforms || [];
-        return {
-          ...prev,
-          platforms: currentPlatform.includes(social)
-            ? currentPlatform
-            : [...currentPlatform, social]
-        };
-      });
-
-
-    } catch (error) {
-
-    } finally {
-      setIsRemovingSocial((prev) => ({
-        ...prev,
-        [social]: false
-      }))
-    }
-  }
 
 
   if (isFetching) {
@@ -569,55 +723,457 @@ export default function ProfileSettings() {
           <h2 className="text-xl font-semibold mb-6">Social Media Management</h2>
           <div className="space-y-4">
             {socialPlatforms.map(({ value, label }, index) => {
-
+              const platformKey = value.toLowerCase() as keyof SocialPlatformsType;
               const isAdded = onboardingData.platforms.includes(value.toLowerCase());
               const isLoading = isRemovingSocial[value.toLowerCase()];
+              const isNotEmpty = promoterSocials[platformKey].length > 0;
 
               return (
                 <div
                   key={index}
                   className="flex items-center justify-between py-3"
                 >
-                  <div className="flex items-center">
+                  <div className="flex items-center gap-2">
+                    {socialIcons[platformKey]}
                     <span className="ml-2 font-medium">{label}</span>
                   </div>
 
                   {isLoading ? (
                     <LoaderCircle className="animate-spin text-red-500 w-6 h-6" />
                   ) : isAdded ? (
-                    <button
-                      onClick={() => removeSocialHandler(value.toLowerCase(), index)}
-                      className="
-                      p-2
-                      rounded
-                      bg-transparent
-                      text-red-500
-                      border
-                      border-transparent
-                      focus:outline-none
-                      disabled:opacity-50
-                    "
-                      disabled={isLoading}
-                    >
-                      <CircleMinus className="text-red-500" />
-                    </button>
+                    isNotEmpty ? (
+                      <Dialog
+                        open={dialogOpenStates[platformKey]}
+                        onOpenChange={(isOpen) => handleDialogOpenChange(platformKey, isOpen)}
+                      >
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="gap-2 border border-blue-500"
+                            onClick={() => {
+                              handleAddSocial(platformKey);
+                              setDialogOpenStates(prev => ({
+                                ...prev,
+                                [platformKey]: true
+                              }));
+                            }}
+                          >
+                            <Eye className="w-4 h-4 text-blue-500" />
+                            <span className='text-blue-500'>View Profile</span>
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <div className='flex items-center gap-2'>
+                              {socialIcons[platformKey]}
+                              <h2 className="text-xl font-semibold">
+                                {toggleAddedDialog[platformKey] ? `Add ${platformKey} Profile` : `${platformKey} Profiles`}
+                              </h2>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {toggleAddedDialog[platformKey] ? "Add a new social profile" : "Manage all your connected accounts"}
+                            </p>
+                          </DialogHeader>
+
+                          {toggleAddedDialog[platformKey] ? (
+                            <div className="grid gap-4 py-4">
+                              <form onSubmit={submitSocialHandler}>
+                                <div className="grid gap-6 py-4">
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="handle" className="text-right flex items-center gap-2">
+                                      <Link2 className="w-4 h-4" />
+                                      Handle
+                                    </Label>
+                                    <Input
+                                      id="handle"
+                                      value={formData.handle}
+                                      onChange={handleInputChange}
+                                      placeholder={`https://${currentPlatform.toLowerCase()}.com/you`}
+                                      className="col-span-3"
+
+                                    />
+                                  </div>
+
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="followers" className="text-right flex items-center gap-2">
+                                      <Users className="w-4 h-4" />
+                                      Followers
+                                    </Label>
+                                    <Input
+                                      id="followers"
+                                      type="text"
+                                      value={formData.followers}
+                                      onChange={handleInputChange}
+                                      placeholder="5000"
+                                      className="col-span-3"
+                                      required
+                                    />
+                                  </div>
+
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="niche" className="text-right flex items-center gap-2">
+                                      <Tag className="w-4 h-4" />
+                                      Niche
+                                    </Label>
+                                    <div className="col-span-3">
+                                      <Select
+                                        isMulti
+                                        name="niches"
+                                        id="niches"
+                                        options={[
+                                          { value: 'fashion', label: 'Fashion & Style' },
+                                          { value: 'tech', label: 'Technology' },
+                                          { value: 'gaming', label: 'Gaming' },
+                                          { value: 'beauty', label: 'Beauty & Cosmetics' },
+                                          { value: 'fitness', label: 'Fitness & Health' },
+                                          { value: 'food', label: 'Food & Cooking' },
+                                          { value: 'travel', label: 'Travel' },
+                                          { value: 'music', label: 'Music' },
+                                          { value: 'art', label: 'Art & Design' },
+                                          { value: 'business', label: 'Business & Entrepreneurship' },
+                                          { value: 'education', label: 'Education' },
+                                          { value: 'entertainment', label: 'Entertainment' },
+                                        ]}
+                                        value={formData.niches.map(interest => ({
+                                          value: interest,
+                                          label: interest.charAt(0).toUpperCase() + interest.slice(1).replace(/_/g, ' ')
+                                        }))}
+                                        onChange={(selected) => {
+                                          setFormData(prev => ({
+                                            ...prev,
+                                            niches: selected ? selected.map(option => option.value) : []
+                                          }));
+                                        }}
+                                        className="w-full"
+                                        placeholder="Select niches (e.g. Fashion, Tech)..."
+                                        classNamePrefix="select"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <DialogFooter className="flex justify-end gap-2">
+                                  <Button
+                                    variant="destructive"
+                                    className="gap-2"
+                                    onClick={() => setToggleAddedDialog((prev) => ({
+                                      ...prev,
+                                      [platformKey]: false
+                                    }))}
+                                  >
+                                    <Ban className="w-4 h-4" />
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    type="submit"
+                                    className="gap-2"
+                                    disabled={isAdding}
+                                  >
+                                    {isAdding ? (
+                                      <LoaderCircle className='animate-spin' />
+                                    ) : (
+                                      <>
+                                        <CirclePlus className="w-4 h-4" />
+                                        Add Profile
+                                      </>
+                                    )}
+                                  </Button>
+                                </DialogFooter>
+                              </form>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="grid gap-4 py-4">
+                                {promoterSocials[platformKey]?.map((profile) => (
+                                  <div
+                                    key={profile.id}
+                                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                                  >
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2">
+                                        <Link
+                                          href={profile.handle}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="font-medium hover:underline truncate flex items-center gap-1"
+                                        >
+                                          {profile.handle}
+                                          <Link2 className="w-3 h-3 flex-shrink-0 text-muted-foreground" />
+                                        </Link>
+                                      </div>
+                                      <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
+                                        <span className="flex items-center gap-1">
+                                          <BarChart2 className="w-3 h-3" />
+                                          {profile.followers.toLocaleString()} followers
+                                        </span>
+                                        <span className="flex items-center gap-1 truncate">
+                                          {/* {profile.niches.join(', ') || []} */}
+                                        </span>
+                                      </div>
+                                    </div>
+
+                                    <div className="flex gap-2 ml-4">
+                                      <Button variant="ghost" size="icon" className="h-8 w-8" title="Edit">
+                                        <Pencil className="w-4 h-4" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-red-500 hover:text-red-600"
+                                        title="Delete"
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                              <Button
+                                variant='default'
+                                className='w-1/2 mx-auto'
+                                onClick={() => {
+                                  setToggleAddedDialog((prev) => ({
+                                    ...prev,
+                                    [platformKey]: true
+                                  }));
+                                  handleAddSocial(platformKey);
+                                }}
+                              >
+                                Add more
+                              </Button>
+                            </>
+                          )}
+                        </DialogContent>
+                      </Dialog>
+                    ) : (
+                      <Dialog open={open} onOpenChange={setOpen}>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="gap-2 border border-red-500"
+                            onClick={() => handleAddSocial(value)}
+                          >
+                            <CirclePlus className="w-4 h-4 text-red-500" />
+                            <span className='text-red-500'>Add Profile</span>
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[625px]">
+                          <form onSubmit={submitSocialHandler}>
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center gap-2">
+                                <CirclePlus className="w-5 h-5 text-green-500" />
+                                {`Add ${currentPlatform} Profile`}
+                              </DialogTitle>
+                            </DialogHeader>
+
+                            <div className="grid gap-6 py-4">
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="handle" className="text-right flex items-center gap-2">
+                                  <Link2 className="w-4 h-4" />
+                                  Handle
+                                </Label>
+                                <Input
+                                  id="handle"
+                                  value={formData.handle}
+                                  onChange={handleInputChange}
+                                  placeholder={`https://${currentPlatform.toLowerCase()}.com/you`}
+                                  className="col-span-3"
+
+                                />
+                              </div>
+
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="followers" className="text-right flex items-center gap-2">
+                                  <Users className="w-4 h-4" />
+                                  Followers
+                                </Label>
+                                <Input
+                                  id="followers"
+                                  type="text"
+                                  value={formData.followers}
+                                  onChange={handleInputChange}
+                                  placeholder="5000"
+                                  className="col-span-3"
+                                  required
+                                />
+                              </div>
+
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="niche" className="text-right flex items-center gap-2">
+                                  <Tag className="w-4 h-4" />
+                                  Niche
+                                </Label>
+                                <div className="col-span-3">
+                                  <Select
+                                    isMulti
+                                    name="niches"
+                                    id="niches"
+                                    options={[
+                                      { value: 'fashion', label: 'Fashion & Style' },
+                                      { value: 'tech', label: 'Technology' },
+                                      { value: 'gaming', label: 'Gaming' },
+                                      { value: 'beauty', label: 'Beauty & Cosmetics' },
+                                      { value: 'fitness', label: 'Fitness & Health' },
+                                      { value: 'food', label: 'Food & Cooking' },
+                                      { value: 'travel', label: 'Travel' },
+                                      { value: 'music', label: 'Music' },
+                                      { value: 'art', label: 'Art & Design' },
+                                      { value: 'business', label: 'Business & Entrepreneurship' },
+                                      { value: 'education', label: 'Education' },
+                                      { value: 'entertainment', label: 'Entertainment' },
+                                    ]}
+                                    value={formData.niches.map(interest => ({
+                                      value: interest,
+                                      label: interest.charAt(0).toUpperCase() + interest.slice(1).replace(/_/g, ' ')
+                                    }))}
+                                    onChange={(selected) => {
+                                      setFormData(prev => ({
+                                        ...prev,
+                                        niches: selected ? selected.map(option => option.value) : []
+                                      }));
+                                    }}
+                                    className="w-full"
+                                    placeholder="Select niches (e.g. Fashion, Tech)..."
+                                    classNamePrefix="select"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <DialogFooter>
+                              <Button
+                                type="submit"
+                                className="gap-2"
+                                disabled={isAdding}
+                              >
+                                {isAdding ? (
+                                  <LoaderCircle className='animate-spin' />
+                                ) : (
+                                  <>
+                                    <CirclePlus className="w-4 h-4" />
+                                    Add Profile
+                                  </>
+                                )}
+                              </Button>
+                            </DialogFooter>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
+                    )
                   ) : (
-                    <button
-                      onClick={() => addSocialHandler(value.toLowerCase(), index)}
-                      className="
-                      p-2
-                      rounded
-                      bg-transparent
-                      text-green-500
-                      border
-                      border-transparent
-                      focus:outline-none
-                      disabled:opacity-50
-                    "
-                      disabled={isLoading}
-                    >
-                      <CirclePlus className="text-green-500" />
-                    </button>
+                    <Dialog open={open} onOpenChange={setOpen}>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="gap-2"
+                          onClick={() => handleAddSocial(value)}
+                        >
+                          <CirclePlus className="w-4 h-4 text-green-500" />
+                          Add Social
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[625px]">
+                        <form onSubmit={submitSocialHandler}>
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                              <CirclePlus className="w-5 h-5 text-green-500" />
+                              {`Add ${currentPlatform} Profile`}
+                            </DialogTitle>
+                          </DialogHeader>
+
+                          <div className="grid gap-6 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="handle" className="text-right flex items-center gap-2">
+                                <Link2 className="w-4 h-4" />
+                                Handle
+                              </Label>
+                              <Input
+                                id="handle"
+                                value={formData.handle}
+                                onChange={handleInputChange}
+                                placeholder={`https://${currentPlatform.toLowerCase()}.com/you`}
+                                className="col-span-3"
+
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="followers" className="text-right flex items-center gap-2">
+                                <Users className="w-4 h-4" />
+                                Followers
+                              </Label>
+                              <Input
+                                id="followers"
+                                type="text"
+                                value={formData.followers}
+                                onChange={handleInputChange}
+                                placeholder="5000"
+                                className="col-span-3"
+                                required
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="niche" className="text-right flex items-center gap-2">
+                                <Tag className="w-4 h-4" />
+                                Niche
+                              </Label>
+                              <div className="col-span-3">
+                                <Select
+                                  isMulti
+                                  name="niches"
+                                  id="niches"
+                                  options={[
+                                    { value: 'fashion', label: 'Fashion & Style' },
+                                    { value: 'tech', label: 'Technology' },
+                                    { value: 'gaming', label: 'Gaming' },
+                                    { value: 'beauty', label: 'Beauty & Cosmetics' },
+                                    { value: 'fitness', label: 'Fitness & Health' },
+                                    { value: 'food', label: 'Food & Cooking' },
+                                    { value: 'travel', label: 'Travel' },
+                                    { value: 'music', label: 'Music' },
+                                    { value: 'art', label: 'Art & Design' },
+                                    { value: 'business', label: 'Business & Entrepreneurship' },
+                                    { value: 'education', label: 'Education' },
+                                    { value: 'entertainment', label: 'Entertainment' },
+                                  ]}
+                                  value={formData.niches.map(interest => ({
+                                    value: interest,
+                                    label: interest.charAt(0).toUpperCase() + interest.slice(1).replace(/_/g, ' ')
+                                  }))}
+                                  onChange={(selected) => {
+                                    setFormData(prev => ({
+                                      ...prev,
+                                      niches: selected ? selected.map(option => option.value) : []
+                                    }));
+                                  }}
+                                  className="w-full"
+                                  placeholder="Select niches (e.g. Fashion, Tech)..."
+                                  classNamePrefix="select"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <DialogFooter>
+                            <Button
+                              type="submit"
+                              className="gap-2"
+                              disabled={isAdding}
+                            >
+                              {isAdding ? (
+                                <LoaderCircle className='animate-spin' />
+                              ) : (
+                                <>
+                                  <CirclePlus className="w-4 h-4" />
+                                  Add Profile
+                                </>
+                              )}
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
                   )}
                 </div>
               );

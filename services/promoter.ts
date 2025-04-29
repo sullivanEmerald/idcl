@@ -40,6 +40,13 @@ export interface PasswordResetDto {
   confirmNewPassword?: string
 }
 
+interface AddSocial {
+  handle: string,
+  followers: string,
+  niches: string[],
+  currentPlatform: string,
+}
+
 const promoterService = {
   getDashboard: async (): Promise<DashboardData> => {
     const response = await axiosInstance.get('/promoter/dashboard');
@@ -200,6 +207,11 @@ const promoterService = {
     return response.data;
   },
 
+  async getSocial() {
+    const response = await axiosInstance.get(`/promoter/socials`);
+    return response.data;
+  },
+
   async updatePromoterProfile(data: ProfileDataDto) {
     const response = await axiosInstance.put('/promoter/update', data)
     return response.data;
@@ -226,8 +238,8 @@ const promoterService = {
     return response.data;
   },
 
-  addPromoterSocial: async (social: string) => {
-    const response = await axiosInstance.post('/promoter/social', { social })
+  addPromoterSocial: async (social: AddSocial) => {
+    const response = await axiosInstance.post('/promoter/social', social)
     return response.data;
   }
 }
