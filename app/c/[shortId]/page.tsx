@@ -168,7 +168,7 @@ export default function CampaignPage({
             {/* Main content area */}
             <div className="w-full lg:flex-1">
               {/* Campaign Info */}
-              <div className="mb-8 flex items-center justify-between w-full sm:w-[768px] mx-auto bg-white p-2 rounded-md">
+              <div className="mb-8 flex items-center justify-between w-full lg:w-[768px] mx-auto bg-white p-2 rounded-md">
                 <div className="flex items-center gap-4">
                   <img src="/adl.png" alt="" />
                   <div>
@@ -188,8 +188,54 @@ export default function CampaignPage({
                   {campaign.campaignGoal}
                 </div>
               </div>
+
+              <div className="w-full lg:w-[768px] mx-auto bg-white p-2 rounded-md flex items-center justify-between mb-8">
+                <div className="flex items-center gap-2">
+                  <img src="/fir.png" alt="fire" />
+                  <span className="text-[#FD650B] font-bold text-base">
+                    {campaign.metrics?.totalViews}
+                  </span>
+                  <span className="text-[#FD650B] font-normal">
+                    Impressions
+                  </span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <button
+                    className="flex justify-center items-center gap-2 w-[109px] h-[41px] text-[14px] font-semibold rounded-lg bg-[#1E1E1E] text-white hover:bg-[#1E1E1E] transition-colors"
+                    onClick={() => {
+                      const url = window.location.href;
+                      navigator.clipboard.writeText(url).then(() => {
+                        toast.success("Link copied to clipboard");
+                      });
+                    }}
+                  >
+                    Share <img src="/share-white.png" alt="share white" />{" "}
+                  </button>
+
+                  {campaign.campaignGoal !== "awareness" && (
+                    <div className="text-center">
+                      <a
+                        href={campaign.promotionLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex justify-center items-center w-[109px] h-[41px] text-[14px] font-semibold rounded-lg bg-[#0093DD] text-white hover:bg-[#0093DD] transition-colors"
+                        onClick={() =>
+                          analyticsService.trackConversion(
+                            params.shortId,
+                            campaign.promotionLink || "",
+                            promoterId,
+                            campaign.campaignGoal
+                          )
+                        }
+                      >
+                        {campaign.requirements?.ctaLabel || "Learn More"}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
               {/* Campaign Assets */}
-              <div className="mb-12 w-full sm:w-[768px] mx-auto bg-white p-2 rounded-md h-auto sm:h-[551px]">
+              <div className="mb-12 w-full lg:w-[768px] mx-auto bg-white p-2 rounded-md h-auto sm:h-[551px]">
                 {campaign.contentAssets.length > 0 ? (
                   campaign.contentAssets[0]?.type === "carousel" ? (
                     <Carousel
@@ -287,52 +333,6 @@ export default function CampaignPage({
                   </div>
                 )}
                 <p className="text-sm font-normal"> {campaign.description} </p>
-              </div>
-
-              <div className="w-full sm:w-[768px] mx-auto bg-white p-2 rounded-md flex items-center justify-between mb-8">
-                <div className="flex items-center gap-2">
-                  <img src="/fir.png" alt="fire" /> 
-                  <span className="text-[#FD650B] font-bold text-base">
-                    {campaign.metrics?.totalViews}
-                  </span>
-                  <span className="text-[#FD650B] font-normal">
-                    Impressions
-                  </span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <button 
-                    className="flex justify-center items-center gap-2 w-[109px] h-[41px] text-[14px] font-semibold rounded-lg bg-[#1E1E1E] text-white hover:bg-[#1E1E1E] transition-colors"
-                    onClick={() => {
-                      const url = window.location.href;
-                      navigator.clipboard.writeText(url).then(() => {
-                        toast.success("Link copied to clipboard");
-                      });
-                    }}
-                  >
-                    Share <img src="/share-white.png" alt="share white" />{" "}
-                  </button>
-
-                  {campaign.campaignGoal !== "awareness" && (
-                    <div className="text-center">
-                      <a
-                        href={campaign.promotionLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex justify-center items-center w-[109px] h-[41px] text-[14px] font-semibold rounded-lg bg-[#0093DD] text-white hover:bg-[#0093DD] transition-colors"
-                        onClick={() =>
-                          analyticsService.trackConversion(
-                            params.shortId,
-                            campaign.promotionLink || "", 
-                            promoterId,
-                            campaign.campaignGoal
-                          )
-                        }
-                      >
-                        {campaign.requirements?.ctaLabel || "Learn More"}
-                      </a>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
 

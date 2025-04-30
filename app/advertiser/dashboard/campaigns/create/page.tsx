@@ -491,6 +491,7 @@ export default function Page() {
           brandAssetLinks: formValues.brandAssetLinks
             ? [formValues.brandAssetLinks]
             : [],
+          ctaLabel: formValues.ctaLabel || undefined,
         },
         paymentReference: reference.reference,
       };
