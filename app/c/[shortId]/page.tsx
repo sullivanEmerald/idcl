@@ -163,12 +163,12 @@ export default function CampaignPage({
       }}
     >
       <main className="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row lg:gap-6">
             {/* Main content area */}
             <div className="w-full lg:flex-1">
               {/* Campaign Info */}
-              <div className="mb-8 flex items-center justify-between w-full sm:w-[578px] mx-auto bg-white p-2 rounded-md">
+              <div className="mb-8 flex items-center justify-between w-full sm:w-[768px] mx-auto bg-white p-2 rounded-md">
                 <div className="flex items-center gap-4">
                   <img src="/adl.png" alt="" />
                   <div>
@@ -189,7 +189,7 @@ export default function CampaignPage({
                 </div>
               </div>
               {/* Campaign Assets */}
-              <div className="mb-12 w-full sm:w-[578px] mx-auto bg-white p-2 rounded-md h-auto sm:h-[551px]">
+              <div className="mb-12 w-full sm:w-[768px] mx-auto bg-white p-2 rounded-md h-auto sm:h-[551px]">
                 {campaign.contentAssets.length > 0 ? (
                   campaign.contentAssets[0]?.type === "carousel" ? (
                     <Carousel
@@ -289,7 +289,7 @@ export default function CampaignPage({
                 <p className="text-sm font-normal"> {campaign.description} </p>
               </div>
 
-              <div className="w-full sm:w-[578px] mx-auto bg-white p-2 rounded-md flex items-center justify-between mb-8">
+              <div className="w-full sm:w-[768px] mx-auto bg-white p-2 rounded-md flex items-center justify-between mb-8">
                 <div className="flex items-center gap-2">
                   <img src="/fir.png" alt="fire" /> 
                   <span className="text-[#FD650B] font-bold text-base">
@@ -343,13 +343,13 @@ export default function CampaignPage({
                   <h2 className="mb-2 text-[10px] font-bold">More Ads</h2>
                 </div>
 
-                <div className="space-y-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                <div className="space-y-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
                   {promoterCampaigns
                     .filter((promoCampaign) => promoCampaign.id !== campaign.id)
                     .map((promoCampaign) => (
                       <div
                         key={promoCampaign.id}
-                        className="bg-white p-1 border border-gray rounded-lg cursor-pointer w-full h-[195px] group"
+                        className="bg-white p-1 border border-gray rounded-lg cursor-pointer w-full h-[195px] group mb-4"
                         onClick={() =>
                           router.push(
                             `/c/${promoCampaign.id}?pId=${promoterId}`
