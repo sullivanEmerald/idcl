@@ -447,8 +447,20 @@ export default function PromoterOnboarding() {
                   type={currentStep === steps.length - 1 ? 'submit' : 'button'}
                   onClick={currentStep === steps.length - 1 ? undefined : handleNext}
                   className="w-full sm:w-auto order-1 sm:order-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                  disabled={isLoading}
                 >
-                  {currentStep === steps.length - 1 ? 'Complete Setup' : 'Continue'}
+                  {currentStep === steps.length - 1 ? (
+                    isLoading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <span>Setting up...</span>
+                      </div>
+                    ) : (
+                      'Complete Setup'
+                    )
+                  ) : (
+                    'Continue'
+                  )}
                 </Button>
               </div>
             </form>

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/carousel";
 import { analyticsService } from "@/services/analytics";
 import { Campaign } from "@/types/campaign";
+import { toast } from "sonner";
 
 export default function CampaignPage({
   params,
@@ -35,7 +36,6 @@ export default function CampaignPage({
     searchParamsHook.get("utm_source") ||
     undefined;
 
-  // Ref to track if analytics have been recorded
   const analyticsRecorded = useRef(false);
 
   useEffect(() => {
@@ -92,7 +92,6 @@ export default function CampaignPage({
     fetchCampaign();
   }, [params.shortId, promoterId, utmSource]);
 
-  // Update document title - simple client-side metadata update
   useEffect(() => {
     if (campaign?.title) {
       document.title = `${campaign.title} | Adminting`;
@@ -301,7 +300,15 @@ export default function CampaignPage({
                   </span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <button className="flex justify-center items-center gap-2 w-[109px] h-[41px] text-[14px] font-semibold rounded-lg bg-[#1E1E1E] text-white hover:bg-[#1E1E1E] transition-colors">
+                  <button 
+                    className="flex justify-center items-center gap-2 w-[109px] h-[41px] text-[14px] font-semibold rounded-lg bg-[#1E1E1E] text-white hover:bg-[#1E1E1E] transition-colors"
+                    onClick={() => {
+                      const url = window.location.href;
+                      navigator.clipboard.writeText(url).then(() => {
+                        toast.success("Link copied to clipboard");
+                      });
+                    }}
+                  >
                     Share <img src="/share-white.png" alt="share white" />{" "}
                   </button>
 
