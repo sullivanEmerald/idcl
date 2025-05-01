@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Toaster, toast } from 'sonner'
-import { Eye, EyeOff, LoaderCircle, CircleMinus, CirclePlus, Link2, Users, Hash, Tag, BarChart2, Share2, Pencil, Trash2, Ban } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle, CircleMinus, CirclePlus, Link2, Users, Send, Tag, BarChart2, Share2, Pencil, Trash2, Ban, Loader2 } from "lucide-react";
 import { Select as ShadcnSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePromoterAccountSettingHandler, usePromoterUpdatePasswordHandler } from '@/hooks/user/user-promoter'
 import {
@@ -31,6 +31,8 @@ import promoterService from '@/services/promoter'
 import { usePromoterOnboardingHandler } from '@/hooks/user/user-promoter'
 import Select from 'react-select'
 import { Instagram, Facebook, Youtube, Twitter } from "lucide-react";
+import EditAccountField from '@/components/promoter/editAccountField'
+import Image from 'next/image'
 
 
 // type SocialPlatforms = 'facebook' | 'twitter' | 'instagram' | 'instagram' | 'tiktok' | 'youtube';
@@ -41,7 +43,7 @@ const socialIcons: Record<string, JSX.Element> = {
   facebook: <Facebook className="w-6 h-6 text-blue-600" />,
   youtube: <Youtube className="w-6 h-6 text-red-600" />,
   twitter: <Twitter className="w-6 h-6 text-blue-500" />,
-  tiktok: <Twitter className="w-6 h-6 text-blue-500" />,
+  tiktok: <Image src='/tiktok.png' alt='titkok' width={30} height={30} />,
 };
 
 const socialPlatforms = [
@@ -82,13 +84,18 @@ export default function ProfileSettings() {
       return acc;
     }, {})
   );
-
+  // setting state for each platform edit and view accounts
   const [toggleAddedDialog, setToggleAddedDialog] = useState<Record<string, boolean>>(
     (socialPlatforms || []).reduce((acc: Record<string, boolean>, { value }) => {
       acc[value.toLowerCase()] = false;
       return acc;
     }, {})
   );
+
+  // for loading deleting each social account
+  const [isDeletingAccounts, setIsDeletingAccounts] = useState<Record<string, boolean>>({});
+  const [isEditAccounts, setIsEditAccounts] = useState<Record<string, boolean>>({});
+  const [isEditLoding, setIsEditLoding] = useState<Record<string, boolean>>({});
 
   // To open individual dialog box
   const [dialogOpenStates, setDialogOpenStates] = useState<Record<string, boolean>>(
@@ -104,6 +111,7 @@ export default function ProfileSettings() {
     followers: '',
     niches: [] as string[]
   });
+
 
   const [currentPlatform, setCurrentPlatform] = useState('');
   const [isAdding, setIsAdding] = useState(false);
@@ -141,6 +149,20 @@ export default function ProfileSettings() {
       }));
     }
   };
+
+  const editPopoverHandler = (id: string, isOpen: boolean) => {
+    setIsEditAccounts((prev) => ({
+      ...prev,
+      [id]: isOpen
+    }))
+
+    if (!isOpen) {
+      setIsEditAccounts((prev) => ({
+        ...prev,
+        [id]: false
+      }))
+    }
+  }
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -186,11 +208,6 @@ export default function ProfileSettings() {
       // Reset after submission
       setCurrentPlatform('');
 
-      // changing the dialog box
-      // setToggleAddedDialog((prev) => ({
-      //   ...prev,
-      //   [currentPlatform]: false
-      // }))
       setOpen(false)
 
     } catch (error: any) {
@@ -200,6 +217,53 @@ export default function ProfileSettings() {
       setIsAdding(false)
     }
   };
+
+
+  const submitEditAccountHandler = async (id: string) => {
+
+    setIsEditLoding((prev) => ({
+      ...prev,
+      [id]: true
+    }))
+
+    try {
+
+      const data = await promoterService.editSocialAccount(id, {
+        ...formData,
+        currentPlatform
+      })
+      console.log(data)
+
+      setPromoterSocials((prev) => ({
+        ...prev,
+        [currentPlatform]: data
+      }))
+
+      setCurrentPlatform('');
+
+      setFormData({
+        handle: '',
+        followers: '',
+        niches: []
+      })
+
+      setIsEditAccounts((prev) => ({
+        ...prev,
+        [id]: false
+      }))
+
+
+    } catch (error: any) {
+      const resError = error?.response?.data?.message || 'An error occured. Try again'
+      toast.error(resError)
+    } finally {
+      setIsEditLoding((prev) => ({
+        ...prev,
+        [id]: false
+      }))
+    }
+
+  }
 
   const {
     onSubmitPromoterHandler,
@@ -228,21 +292,6 @@ export default function ProfileSettings() {
     onChangeOnboardingHandler,
   } = usePromoterOnboardingHandler();
 
-  useEffect(() => {
-    if (isSuccessful) {
-      toast.success('Profile successfully updated');
-    }
-
-    if (isPasswordResetSuccessful) {
-      toast.success('Password Changed Successfully')
-    }
-
-    if (isUpdatingRecordSuccessful) {
-      toast.success('Records Updated Successfully')
-    }
-
-  }, [isSuccessful, isPasswordResetSuccessful, isUpdatingRecordSuccessful]);
-
   const toggleVisibiltyHandler = (key: keyof typeof passwordVisible): void => {
     setIsPasswordVisible((prev) => ({
       ...prev,
@@ -258,10 +307,6 @@ export default function ProfileSettings() {
           promoterService.getProfile(),
           promoterService.getSocial(),
         ])
-
-        console.log(user,)
-        console.log('promoter socials', promoterSocialData)
-
 
         if (!user) {
           setIsFetching(true)
@@ -304,6 +349,46 @@ export default function ProfileSettings() {
     }
     getProfile()
   }, [])
+
+  useEffect(() => {
+    if (isSuccessful) {
+      toast.success('Profile successfully updated');
+    }
+
+    if (isPasswordResetSuccessful) {
+      toast.success('Password Changed Successfully')
+    }
+
+    if (isUpdatingRecordSuccessful) {
+      toast.success('Records Updated Successfully')
+    }
+
+  }, [isSuccessful, isPasswordResetSuccessful, isUpdatingRecordSuccessful]);
+
+
+  const deleteSocialAccount = async (id: string, platform: string) => {
+
+    setIsDeletingAccounts((prev) => ({
+      ...prev,
+      [id]: true
+    }))
+
+    try {
+      await promoterService.deleteAccount(id, platform);
+      setPromoterSocials((prev) => ({
+        ...prev,
+        [platform as keyof SocialPlatformsType]: prev[platform as keyof SocialPlatformsType].filter((item) => item.id !== id)
+      }));
+    } catch (error: any) {
+      const resError = error.response?.data?.message || 'An error occurred. Check your network and try again';
+      toast.error(resError);
+    } finally {
+      setIsDeletingAccounts((prev) => ({
+        ...prev,
+        [id]: false
+      }))
+    }
+  };
 
 
   const removeSocialHandler = async (social: string, index: number) => {
@@ -913,16 +998,103 @@ export default function ProfileSettings() {
                                     </div>
 
                                     <div className="flex gap-2 ml-4">
-                                      <Button variant="ghost" size="icon" className="h-8 w-8" title="Edit">
-                                        <Pencil className="w-4 h-4" />
-                                      </Button>
+                                      <Popover
+                                        open={isEditAccounts[profile.id]}
+                                        onOpenChange={(isOpen) => {
+                                          editPopoverHandler(profile.id, isOpen);
+
+                                          if (isOpen) {
+                                            setFormData({
+                                              handle: profile.handle,
+                                              followers: profile.followers,
+                                              niches: profile.niches
+                                            });
+                                            setCurrentPlatform(platformKey)
+                                          } else {
+                                            if (!isEditLoding[profile.id]) {
+                                              setFormData({
+                                                handle: '',
+                                                followers: '',
+                                                niches: []
+                                              });
+                                              setCurrentPlatform('');
+                                            }
+                                          }
+                                        }}
+                                      >
+                                        <PopoverTrigger>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8"
+                                          >
+                                            <Pencil className="w-4 h-4" />
+                                          </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className='w-[500px]'>
+                                          <form onSubmit={(e) => {
+                                            e.preventDefault();
+                                            submitEditAccountHandler(profile.id);
+                                          }}>
+                                            <EditAccountField
+                                              formData={formData}
+                                              handle={profile.handle}
+                                              handleInputChange={handleInputChange}
+                                              setFormData={setFormData} />
+                                            <div className='flex item-center gap-2 justify-end'>
+                                              <Button
+                                                variant='destructive'
+                                                className='gap-2'
+                                                type='button'
+                                                onClick={() => {
+                                                  setIsEditAccounts((prev) => ({
+                                                    ...prev,
+                                                    [profile.id]: false
+                                                  }));
+                                                  setFormData({
+                                                    handle: '',
+                                                    followers: '',
+                                                    niches: []
+                                                  });
+                                                  setCurrentPlatform('')
+                                                }}
+                                              >
+                                                <Ban className='w-4 h-4' />
+                                                Cancel
+                                              </Button>
+                                              <Button
+                                                variant="default"
+                                                className='gap-2'
+                                                type='submit'
+                                              >
+                                                {isEditLoding[profile.id] ? (
+                                                  <Loader2 className='w-4 h-4 animate-spin' />
+                                                ) : (
+                                                  <>
+                                                    <Send className='w-4 h-4' />
+                                                    Submit
+                                                  </>
+                                                )}
+
+                                              </Button>
+                                            </div>
+                                          </form>
+                                        </PopoverContent>
+                                      </Popover>
+
                                       <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="h-8 w-8 text-red-500 hover:text-red-600"
-                                        title="Delete"
+                                        className="group h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-500"
+                                        onClick={() => deleteSocialAccount(profile.id, platformKey)}
+                                        disabled={isDeletingAccounts[profile.id]}
                                       >
-                                        <Trash2 className="w-4 h-4" />
+                                        {isDeletingAccounts[profile.id] ? (
+                                          <LoaderCircle className='w-4 h-4 animate-spin text-red' />
+                                        ) : (
+                                          <Trash2 className="w-4 h-4 group-hover:text-white " />
+                                        )}
+
                                       </Button>
                                     </div>
                                   </div>

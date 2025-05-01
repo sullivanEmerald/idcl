@@ -241,6 +241,16 @@ const promoterService = {
   addPromoterSocial: async (social: AddSocial) => {
     const response = await axiosInstance.post('/promoter/social', social)
     return response.data;
+  },
+
+  deleteAccount: async (id: string, platform: string) => {
+    const response = await axiosInstance.delete(`/promoter/social/${id}/${platform}`)
+    return response.data;
+  },
+
+  editSocialAccount: async (id: string, data: AddSocial) => {
+    const response = await axiosInstance.post(`/promoter/social/${id}`, data)
+    return response.data;
   }
 }
 
