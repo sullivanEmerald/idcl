@@ -5,16 +5,16 @@ import Link from 'next/link'
 import { YoutubeIcon, FacebookIcon, TikTokIcon, InstagramIcon, LinkedInIcon } from '@/components/ui/social-icons'
 
 const companyLinks = [
-  { name: 'About Us', href: '/about' },
-  { name: 'FAQs', href: '/faqs' },
-  { name: 'Blog', href: '/blog' }, 
-  { name: 'Calculator', href: '/calculator' }
+  { name: 'About Us', href: '#' },
+  { name: 'FAQs', href: '#' },
+  { name: 'Blog', href: '#' }, 
+  { name: 'Calculator', href: '#' }
 ]
 
 const legalLinks = [
-  { name: 'Terms', href: '/terms' },
-  { name: 'Privacy', href: '/privacy' },
-  { name: 'Community', href: '/community' }
+  { name: 'Terms', href: '#' },
+  { name: 'Privacy', href: '#' },
+  { name: 'Community', href: '#' }
 ]
 
 type SocialIcon = React.ComponentType<{ className?: string }>

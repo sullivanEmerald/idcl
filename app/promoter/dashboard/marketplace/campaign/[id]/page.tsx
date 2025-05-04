@@ -454,18 +454,9 @@ export default function CampaignDetails() {
           {/* Content Assets */}
           <div className="grid gap-6 md:grid-cols-3">
             {/* Campaign Stats */}
-            <Card className="p-6">
+            {/* <Card className="p-6">
               <h2 className="text-lg font-semibold mb-4">Campaign Details</h2>
               <div className="space-y-4">
-                {/* <div className="flex items-center">
-                  <DollarSign className="h-5 w-5 text-blue-600 mr-2" />
-                  <div>
-                    <div className="text-sm text-gray-600">Price per Post</div>
-                    <div className="font-semibold">
-                      ${campaign.pricePerPost}
-                    </div>
-                  </div>
-                </div> */}
                 <div className="flex items-center">
                   <Calendar className="h-5 w-5 text-blue-600 mr-2" />
                   <div>
@@ -514,7 +505,7 @@ export default function CampaignDetails() {
                   </div>
                 </div>
               </div>
-            </Card>
+            </Card> */}
 
             {/* Content Assets */}
           </div>

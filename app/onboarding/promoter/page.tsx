@@ -180,8 +180,8 @@ export default function PromoterOnboarding() {
     
     if (!formData.engagementRate.trim()) {
       errors.engagementRate = 'Engagement rate is required'
-    } else if (!/^\d+(\.\d+)?%?$/.test(formData.engagementRate)) {
-      errors.engagementRate = 'Please enter a valid percentage (e.g., 3.5%)'
+    } else if (!/^\d+(\.\d+)?$/.test(formData.engagementRate)) {
+      errors.engagementRate = 'Please enter a valid number (e.g., 3.5)'
     }
     
     setFormErrors(errors)
@@ -430,7 +430,7 @@ export default function PromoterOnboarding() {
                       id="engagementRate"
                       value={formData.engagementRate}
                       onChange={(e) => handleInputChange('engagementRate', e.target.value)}
-                      placeholder="e.g. 3.5%"
+                      placeholder="e.g. 3.5"
                       className={formErrors.engagementRate ? 'border-red-500' : ''}
                     />
                     {formErrors.engagementRate && (
