@@ -25,7 +25,7 @@ export function HeroSection() {
   }
 
   const handleLearnMore = () => {
-    router.push('/about')
+    // router.push('/about')
   }
   return (
     <section className="relative min-h-[90vh] flex items-center pt-16 overflow-hidden bg-gradient-to-b from-background to-background/80">
