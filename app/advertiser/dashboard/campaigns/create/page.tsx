@@ -514,10 +514,10 @@ export default function Page() {
 
       const pricePerPost =
         formValues.goal === "awareness"
-          ? 60
+          ? 10
           : formValues.goal === "engagement"
-            ? 400
-            : 1000;
+            ? 150
+            : 800;
       
       const campaignData = {
         title: formValues.name,
@@ -1038,15 +1038,13 @@ export default function Page() {
                       let pricePerImpression = 0;
                       switch (value) {
                         case "awareness":
-                          pricePerImpression = 60;
+                          pricePerImpression = 10;
                           break;
                         case "engagement":
-                          const viewCost = 300;
-                          const clickCost = 100;
-                          pricePerImpression = viewCost + clickCost;
+                          pricePerImpression = 150;
                           break;
                         case "conversion":
-                          pricePerImpression = 1000;
+                          pricePerImpression = 800;
                           break;
                       }
                       form.setValue("pricePerImpression", pricePerImpression);
@@ -1062,13 +1060,13 @@ export default function Page() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="awareness">
-                        Awareness (CPM - ₦60 per reach)
+                        Awareness (CPM - ₦10 per reach)
                       </SelectItem>
                       <SelectItem value="engagement">
-                        Engagement (CPA - ₦100 per view, ₦300 per click)
+                        Engagement (CPA - ₦150 per click)
                       </SelectItem>
                       <SelectItem value="conversion">
-                        Action (CPA - ₦1,000 per action)
+                        Action (CPA - ₦800 per action)
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -1206,13 +1204,13 @@ export default function Page() {
                             let pricePerImpression = 0;
                             switch (goal) {
                               case "awareness":
-                                pricePerImpression = 60; // ₦60 per impression
+                                pricePerImpression = 10; // ₦60 per impression
                                 break;
                               case "engagement":
-                                pricePerImpression = 300 + 100; // ₦400 per engagement
+                                pricePerImpression = 150; // ₦400 per engagement
                                 break;
                               case "conversion":
-                                pricePerImpression = 1000; // ₦1,000 per action
+                                pricePerImpression = 800; // ₦1,000 per action
                                 break;
                             }
                             form.setValue(
