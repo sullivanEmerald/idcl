@@ -4,18 +4,18 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { YoutubeIcon, FacebookIcon, TikTokIcon, InstagramIcon, LinkedInIcon } from '@/components/ui/social-icons'
 
-const companyLinks = [
-  { name: 'About Us', href: '#' },
-  { name: 'FAQs', href: '#' },
-  { name: 'Blog', href: '#' }, 
-  { name: 'Calculator', href: '#' }
-]
+// const companyLinks = [
+//   { name: 'About Us', href: '#' },
+//   { name: 'FAQs', href: '#' },
+//   { name: 'Blog', href: '#' }, 
+//   { name: 'Calculator', href: '#' }
+// ]
 
-const legalLinks = [
-  { name: 'Terms', href: '#' },
-  { name: 'Privacy', href: '#' },
-  { name: 'Community', href: '#' }
-]
+// const legalLinks = [
+//   { name: 'Terms', href: '#' },
+//   { name: 'Privacy', href: '#' },
+//   { name: 'Community', href: '#' }
+// ]
 
 type SocialIcon = React.ComponentType<{ className?: string }>
 

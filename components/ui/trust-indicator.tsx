@@ -2,21 +2,21 @@
 
 import { motion } from 'framer-motion'
 
-const UserCircle = () => (
-  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="20" cy="20" r="20" fill="url(#paint0_linear)" />
-    <path
-      d="M20 10C17.2386 10 15 12.2386 15 15C15 17.7614 17.2386 20 20 20C22.7614 20 25 17.7614 25 15C25 12.2386 22.7614 10 20 10ZM20 25C15.0294 25 11 27.0294 11 29.5V30H29V29.5C29 27.0294 24.9706 25 20 25Z"
-      fill="white"
-    />
-    <defs>
-      <linearGradient id="paint0_linear" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#0066FF" />
-        <stop offset="1" stopColor="#4D9AFF" />
-      </linearGradient>
-    </defs>
-  </svg>
-)
+// const UserCircle = () => (
+//   <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+//     <circle cx="20" cy="20" r="20" fill="url(#paint0_linear)" />
+//     <path
+//       d="M20 10C17.2386 10 15 12.2386 15 15C15 17.7614 17.2386 20 20 20C22.7614 20 25 17.7614 25 15C25 12.2386 22.7614 10 20 10ZM20 25C15.0294 25 11 27.0294 11 29.5V30H29V29.5C29 27.0294 24.9706 25 20 25Z"
+//       fill="white"
+//     />
+//     <defs>
+//       <linearGradient id="paint0_linear" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+//         <stop stopColor="#0066FF" />
+//         <stop offset="1" stopColor="#4D9AFF" />
+//       </linearGradient>
+//     </defs>
+//   </svg>
+// )
 
 export function TrustIndicator() {
   return (
