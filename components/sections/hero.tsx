@@ -86,13 +86,13 @@ export function HeroSection() {
               >
                 Get Started
               </Button>
-              <Button 
+              {/* <Button 
                 size="lg" 
                 variant="outline"
                 onClick={handleLearnMore}
               >
                 Learn More
-              </Button>
+              </Button> */}
             </motion.div>
 
             <TrustIndicator />
