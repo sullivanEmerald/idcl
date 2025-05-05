@@ -27,7 +27,7 @@ export function TrustIndicator() {
       className="flex items-center gap-6 text-sm"
     >
       <div className="flex items-center gap-3">
-        <div className="relative flex -space-x-4">
+        {/* <div className="relative flex -space-x-4">
           {[...Array(4)].map((_, i) => (
             <motion.div
               key={i}
@@ -42,7 +42,7 @@ export function TrustIndicator() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </div> */}
         <div className="flex flex-col">
           <div className="flex items-baseline gap-1">
             <motion.span
