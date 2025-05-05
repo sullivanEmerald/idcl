@@ -101,7 +101,12 @@ export default function ProfileSettings() {
   const [isDeletingAccounts, setIsDeletingAccounts] = useState<Record<string, boolean>>({});
   const [isEditAccounts, setIsEditAccounts] = useState<Record<string, boolean>>({});
   const [isEditLoding, setIsEditLoding] = useState<Record<string, boolean>>({});
-  const [isCollapsibleOpen, setIsCollapsibleOpen] = useState<Record<string, boolean>>({})
+  const [isCollapsibleOpen, setIsCollapsibleOpen] = useState<Record<string, boolean>>({
+    personal: false,
+    password: false,
+    onboarding: false,
+    socials: false
+  })
 
 
   // To open individual dialog box
@@ -131,6 +136,24 @@ export default function ProfileSettings() {
     tiktok: [],
   })
 
+
+  const handleCollapsibleToggle = (section: string, isOpen: boolean) => {
+    setIsCollapsibleOpen(prev => {
+
+      if (isOpen) {
+        return {
+          personal: section === 'personal',
+          password: section === 'password',
+          onboarding: section === 'onboarding',
+          socials: section === 'socials'
+        };
+      }
+      return {
+        ...prev,
+        [section]: isOpen
+      };
+    });
+  };
 
   const handleAddSocial = (platform: string) => {
     setCurrentPlatform(platform);
@@ -508,10 +531,7 @@ export default function ProfileSettings() {
             <Collapsible
               open={isCollapsibleOpen['personal']}
               onOpenChange={(isOpen) => {
-                setIsCollapsibleOpen((prev) => ({
-                  ...prev,
-                  ['personal']: isOpen
-                }))
+                handleCollapsibleToggle('personal', isOpen)
               }}
             >
               <CollapsibleTrigger asChild>
@@ -594,10 +614,7 @@ export default function ProfileSettings() {
             <Collapsible
               open={isCollapsibleOpen['password']}
               onOpenChange={(isOpen) => {
-                setIsCollapsibleOpen((prev) => ({
-                  ...prev,
-                  ['password']: isOpen
-                }))
+                handleCollapsibleToggle('password', isOpen)
               }}
             >
               <CollapsibleTrigger asChild>
@@ -713,10 +730,7 @@ export default function ProfileSettings() {
           <Collapsible
             open={isCollapsibleOpen['onboarding']}
             onOpenChange={(isOpen) => {
-              setIsCollapsibleOpen((prev) => ({
-                ...prev,
-                ['onboarding']: isOpen
-              }))
+              handleCollapsibleToggle('onboarding', isOpen)
             }}
           >
             <CollapsibleTrigger asChild>
@@ -910,10 +924,7 @@ export default function ProfileSettings() {
           <Collapsible
             open={isCollapsibleOpen['socials']}
             onOpenChange={(isOpen) => {
-              setIsCollapsibleOpen((prev) => ({
-                ...prev,
-                ['socials']: isOpen
-              }))
+              handleCollapsibleToggle('socials', isOpen)
             }}
           >
             <CollapsibleTrigger asChild>
