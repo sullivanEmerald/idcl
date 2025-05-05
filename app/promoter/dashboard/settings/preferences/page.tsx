@@ -7,7 +7,12 @@ import promoterService from '@/services/promoter'
 import { useEffect, useState } from 'react'
 import { Toaster, toast } from 'sonner'
 import { Skeleton } from '@/components/ui/skeleton'
+<<<<<<< HEAD
+import Loader from '@/components/layout/Loader'
+import { LoaderCircle } from 'lucide-react'
+=======
 import Loader from '@/components/layout/loader'
+>>>>>>> main
 
 
 export default function PreferencesSettings() {
@@ -145,7 +150,7 @@ export default function PreferencesSettings() {
                 </div>
 
                 {isloading.isEmailNotificationEnabled ? (
-                  <Loader />
+                  <LoaderCircle className='text-blue-500 animate-spin' />
                 ) : (
                   <Switch
                     checked={promoterNotificationPreferences.isEmailNotificationEnabled}
@@ -160,7 +165,7 @@ export default function PreferencesSettings() {
                   <p className="text-sm text-gray-600">Receive campaign updates via sms</p>
                 </div>
                 {isloading.isSmsNotificationEnabled ? (
-                  <Loader />
+                  <LoaderCircle className='text-blue-500 animate-spin' />
                 ) : (
                   <Switch
                     checked={promoterNotificationPreferences.isSmsNotificationEnabled}
@@ -174,7 +179,7 @@ export default function PreferencesSettings() {
                   <p className="text-sm text-gray-600">Receive updates on your device</p>
                 </div>
                 {isloading.isPushNotificationEnabled ? (
-                  <Loader />
+                  <LoaderCircle className='text-blue-500 animate-spin' />
                 ) : (
                   <Switch
                     checked={promoterNotificationPreferences.isPushNotificationEnabled}

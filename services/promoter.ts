@@ -40,6 +40,13 @@ export interface PasswordResetDto {
   confirmNewPassword?: string
 }
 
+interface AddSocial {
+  handle: string,
+  followers: string,
+  niches: string[],
+  currentPlatform: string,
+}
+
 const promoterService = {
   getDashboard: async (): Promise<DashboardData> => {
     const response = await axiosInstance.get('/promoter/dashboard');
@@ -154,7 +161,7 @@ const promoterService = {
     const response = await axiosInstance.get('/analytics/promoter', {
       params: { timeRange }
     });
-    
+
     const data = response.data;
     const transformedData = {
       dates: data.dates,
@@ -200,28 +207,49 @@ const promoterService = {
     return response.data;
   },
 
+  async getSocial() {
+    const response = await axiosInstance.get(`/promoter/socials`);
+    return response.data;
+  },
+
   async updatePromoterProfile(data: ProfileDataDto) {
     const response = await axiosInstance.put('/promoter/update', data)
     return response.data;
   },
 
-  async upatePromoterPassword(data: PasswordResetDto) {
+  upatePromoterPassword: async (data: PasswordResetDto) => {
     const response = await axiosInstance.put('/promoter/update/password', data)
     return response.data;
   },
-  async updatePromoterPreference(data: { [key: string]: boolean }) {
+
+  updatePromoterPreference: async (data: { [key: string]: boolean }) => {
     console.log(data)
     const response = await axiosInstance.put('/settings/promoter/preference', data)
     return response.data;
   },
 
-  async removePromoterSocial(social: string) {
+  removePromoterSocial: async (social: string) => {
     const response = await axiosInstance.delete(`/promoter/social?platform=${social}`)
     return response.data;
   },
 
-  async undoRemoval(social: string) {
+  undoRemoval: async (social: string) => {
     const response = await axiosInstance.patch(`/promoter/social?platform=${social}`)
+    return response.data;
+  },
+
+  addPromoterSocial: async (social: AddSocial) => {
+    const response = await axiosInstance.post('/promoter/social', social)
+    return response.data;
+  },
+
+  deleteAccount: async (id: string, platform: string) => {
+    const response = await axiosInstance.delete(`/promoter/social/${id}/${platform}`)
+    return response.data;
+  },
+
+  editSocialAccount: async (id: string, data: AddSocial) => {
+    const response = await axiosInstance.post(`/promoter/social/${id}`, data)
     return response.data;
   }
 }

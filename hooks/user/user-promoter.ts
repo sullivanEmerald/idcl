@@ -196,12 +196,6 @@ export const usePromoterOnboardingHandler = () => {
         paymentMethod: '',
         accountDetails: ''
     })
-    const [isRemovingSocial, setIsRemovingSocial] = useState<Record<string, boolean>>(
-        (onboardingData?.platforms || []).map(item => item.toLowerCase()).reduce((acc: Record<string, boolean>, platform: string) => {
-            acc[platform] = false;
-            return acc;
-        }, {} as Record<string, boolean>)
-    );
 
     // promoter onboarding handler
     const onChangeOnboardingHandler = (field: string, value: string | string[] | null) => {
@@ -254,7 +248,5 @@ export const usePromoterOnboardingHandler = () => {
         onSubmitOnboardingHandler,
         isUpdatingRecord,
         isUpdatingRecordSuccessful,
-        setIsRemovingSocial,
-        isRemovingSocial
     }
 }
