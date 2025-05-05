@@ -24,9 +24,9 @@ export function HeroSection() {
     }
   }
 
-  const handleLearnMore = () => {
-    router.push('/about')
-  }
+  // const handleLearnMore = () => {
+  //   // router.push('/about')
+  // }
   return (
     <section className="relative min-h-[90vh] flex items-center pt-16 overflow-hidden bg-gradient-to-b from-background to-background/80">
       {/* Background decoration */}
@@ -86,13 +86,13 @@ export function HeroSection() {
               >
                 Get Started
               </Button>
-              <Button 
+              {/* <Button 
                 size="lg" 
                 variant="outline"
                 onClick={handleLearnMore}
               >
                 Learn More
-              </Button>
+              </Button> */}
             </motion.div>
 
             <TrustIndicator />

@@ -59,6 +59,8 @@ export interface CampaignMetrics {
   averageEngagementRate: number;
   dwellTime: number; // Average time spent on campaign
   adRating: number; // Average rating given by promoters (1-5)
+  uniqueViews: number;
+  uniqueClicks: number;
   
   // View Duration Metrics
   viewDuration: {

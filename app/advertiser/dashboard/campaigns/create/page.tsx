@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -11,7 +11,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -152,6 +151,8 @@ const campaignSchema = z.object({
   name: z.string().min(3, "Campaign name must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
   coverImage: z.string().url("Please upload a valid cover image").optional(),
+  backgroundUrl: z.string().url("Please select a valid background").optional(),
+  layoutType: z.enum(["portrait", "landscape"]).default("landscape"),
   budget: z.number().min(1, "Budget must be at least 1"),
   pricePerPost: z.number().min(1, "Price per post must be at least 1"),
   targetImpressions: z
@@ -192,16 +193,16 @@ const campaignSchema = z.object({
   contentAssets: z
     .array(
       z.object({
-      type: z.string(),
-      contentType: z.string(),
-      url: z.string(),
-      size: z.number().optional(),
-      width: z.number().optional(),
-      height: z.number().optional(),
+        type: z.string(),
+        contentType: z.string(),
+        url: z.string(),
+        size: z.number().optional(),
+        width: z.number().optional(),
+        height: z.number().optional(),
       })
     )
     .optional(),
-  ctaLabel: z.string().optional(),
+  ctaLabel: z.string().optional()
 });
 
 // Update the form data type
@@ -211,7 +212,6 @@ export default function Page() {
   const router = useRouter();
   const [currentStep, setCurrentStep] =
     useState<(typeof STEPS)[number]>("details");
-  // const [initializePayment, setInitializePayment] = useState<ReturnType<typeof usePaystackPayment>>(() => () => {});
 
   const form = useForm<CampaignFormData>({
     resolver: zodResolver(campaignSchema),
@@ -219,6 +219,7 @@ export default function Page() {
       contentType: "photo",
       isBoosted: false,
       gender: "all",
+      layoutType: "landscape",
       budget: 1,
       pricePerPost: 1,
       targetImpressions: 1,
@@ -233,8 +234,11 @@ export default function Page() {
         endTime: "17:00",
         days: [],
       },
+      backgroundUrl:
+        "https://res.cloudinary.com/dl8s7ivje/image/upload/v1746007664/Rectangle_1_hwxvuh.png",
     },
   });
+  console.log(form.getValues());
 
   const {
     watch,
@@ -250,6 +254,7 @@ export default function Page() {
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
 
   const validateStep = async () => {
     let fieldsToValidate: (keyof CampaignFormData)[] = [];
@@ -400,6 +405,64 @@ export default function Page() {
     try {
       const formValues = form.getValues();
       
+      // Validate all required fields
+      const requiredFields = {
+        name: "Campaign Name",
+        description: "Description",
+        coverImage: "Cover Image",
+        startDate: "Start Date",
+        endDate: "End Date",
+        goal: "Campaign Goal",
+        platforms: "Required Platforms",
+        niches: "Targeted Niches",
+        location: "Target Location",
+        contentType: "Content Type",
+        contentGuidelines: "Content Guidelines",
+        postingSchedule: {
+          startTime: "Posting Start Time",
+          endTime: "Posting End Time",
+          days: "Posting Days"
+        },
+        hashtags: "Hashtags",
+        promotionLink: "Promotion Link"
+      } as const;
+
+      const missingFields: string[] = [];
+      
+      // Check basic fields
+      for (const [field, label] of Object.entries(requiredFields)) {
+        if (field === 'postingSchedule') {
+          const schedule = formValues[field];
+          if (!schedule.startTime || !schedule.endTime || !schedule.days.length) {
+            missingFields.push(label as string);
+          }
+        } else {
+          const value = formValues[field as keyof typeof formValues];
+          if (!value || (Array.isArray(value) && !value.length)) {
+            missingFields.push(label as string);
+          }
+        }
+      }
+
+      // Check content assets
+      if (!formValues.contentAssets?.length && !formValues.mediaFiles?.length) {
+        missingFields.push("Content Media");
+      }
+
+      if (missingFields.length > 0) {
+        toast.error(
+          <div className="space-y-2">
+            <p className="font-medium">Please fill in all required fields:</p>
+            <ul className="list-disc pl-4 space-y-1">
+              {missingFields.map((field, index) => (
+                <li key={index}>{field}</li>
+              ))}
+            </ul>
+          </div>
+        );
+        return;
+      }
+
       // Process media files if needed - this should happen before submitting
       let processedContentAssets = formValues.contentAssets;
       
@@ -451,10 +514,10 @@ export default function Page() {
 
       const pricePerPost =
         formValues.goal === "awareness"
-          ? 60
+          ? 10
           : formValues.goal === "engagement"
-            ? 400
-            : 1000;
+            ? 150
+            : 800;
       
       const campaignData = {
         title: formValues.name,
@@ -491,29 +554,32 @@ export default function Page() {
           brandAssetLinks: formValues.brandAssetLinks
             ? [formValues.brandAssetLinks]
             : [],
+          ctaLabel: formValues.ctaLabel || undefined,
         },
         paymentReference: reference.reference,
+        backgroundUrl: formValues.backgroundUrl,
+        layoutType: formValues.layoutType,
       };
       
       const response = await axiosInstance.post("/campaigns", campaignData);
 
-    toast.dismiss();
-    toast.success(
-      <div className="space-y-2">
-        <p className="font-medium">Congratulations 🎊!</p>
-        <p className="text-sm text-muted-foreground">
+      toast.dismiss();
+      toast.success(
+        <div className="space-y-2">
+          <p className="font-medium">Congratulations 🎊!</p>
+          <p className="text-sm text-muted-foreground">
             Your campaign was created successfully. You can view your campaign
             on your dashboard.
-        </p>
-      </div>,
-      {
-        duration: 5000,
-      }
-    );
+          </p>
+        </div>,
+        {
+          duration: 5000,
+        }
+      );
 
-    setTimeout(() => {
-      router.push("/advertiser/dashboard/campaigns");
-    }, 2000);
+      setTimeout(() => {
+        router.push("/advertiser/dashboard/campaigns");
+      }, 2000);
     } catch (error: any) {
       console.error("Error creating campaign:", error);
       toast.error(
@@ -531,9 +597,21 @@ export default function Page() {
 
   const componentProps = {
     ...config,
-    text: "Create Campaign",
+    text: isSubmitting ? "Creating Campaign..." : "Pay & Create Campaign",
     onSuccess: (reference: string) => onSuccess(reference),
     onClose,
+  };
+
+  // Add a wrapper function to handle the payment button click
+  const handlePaymentClick = async () => {
+    // Validate the current step first
+    const isValid = await validateStep();
+    if (!isValid) {
+      return;
+    }
+
+    // If validation passes, show the payment button
+    setShowPayment(true);
   };
 
   const handleMediaFileUpload = async (file: File, type: "image" | "video") => {
@@ -552,8 +630,8 @@ export default function Page() {
           throw new Error("Cloudinary configuration is missing");
         }
 
-      const formData = new FormData();
-      formData.append("file", file);
+        const formData = new FormData();
+        formData.append("file", file);
         formData.append("upload_preset", uploadPreset);
         formData.append("resource_type", "video");
         formData.append("max_file_size", "100000000"); // 100MB in bytes
@@ -601,17 +679,17 @@ export default function Page() {
           },
         });
 
-      // Store the uploaded asset in contentAssets form field
-      const asset = {
-        type: type === "image" ? "photo" : "video",
-        contentType: type,
-        url: response.data.url,
-        size: file.size,
-        width: response.data.width || 0,
-        height: response.data.height || 0,
-      };
-      
-      form.setValue("contentAssets", [asset]);
+        // Store the uploaded asset in contentAssets form field
+        const asset = {
+          type: type === "image" ? "photo" : "video",
+          contentType: type,
+          url: response.data.url,
+          size: file.size,
+          width: response.data.width || 0,
+          height: response.data.height || 0,
+        };
+
+        form.setValue("contentAssets", [asset]);
         toast.success(
           `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`
         );
@@ -634,9 +712,9 @@ export default function Page() {
       setCurrentStep(STEPS[currentIndex + 1]);
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Create the campaign payload
       const campaignData: any = {
@@ -675,11 +753,11 @@ export default function Page() {
           brandAssetLinks: data.brandAssetLinks ? [data.brandAssetLinks] : [],
         },
       };
-      
+
       // Use the pre-uploaded contentAssets if available
       if (data.contentAssets && data.contentAssets.length > 0) {
         campaignData.contentAssets = data.contentAssets;
-      } 
+      }
       // Otherwise, process the mediaFiles
       else if (data.mediaFiles && data.mediaFiles.length > 0) {
         const mediaFileUploads = [];
@@ -687,15 +765,15 @@ export default function Page() {
           if (mediaFile.file) {
             const formData = new FormData();
             formData.append("file", mediaFile.file);
-            
+
             const fileType =
               mediaFile.type === "video" ? "campaign-video" : "campaign-photo";
             const response = await axiosInstance.post(`/upload`, formData, {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
             });
-            
+
             mediaFileUploads.push({
               type: mediaFile.type === "video" ? "video" : "photo",
               contentType: mediaFile.type,
@@ -706,22 +784,22 @@ export default function Page() {
             });
           }
         }
-        
+
         campaignData.contentAssets = mediaFileUploads;
       } else {
         toast.error("Please upload at least one media file for your campaign");
         setIsSubmitting(false);
         return;
       }
-      
+
       // Create the campaign
       const response = await campaignService.createCampaign(campaignData);
-      
+
       toast.success("Campaign created successfully!");
       router.push(`/advertiser/dashboard/campaigns/${response._id}`);
     } catch (error: any) {
       console.error("Error creating campaign:", error);
-      
+
       setIsSubmitting(false);
     }
   };
@@ -897,9 +975,15 @@ export default function Page() {
                         <Calendar
                           mode="single"
                           selected={startDate}
-                          onSelect={(date) =>
-                            form.setValue("startDate", date as Date)
-                          }
+                          onSelect={(date) => {
+                            if (date) {
+                              form.setValue("startDate", date);
+                              if (endDate && (endDate <= date)) {
+                                form.setValue("endDate", null as unknown as Date);
+                              }
+                            }
+                          }}
+                          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                           initialFocus
                         />
                       </PopoverContent>
@@ -925,9 +1009,12 @@ export default function Page() {
                         <Calendar
                           mode="single"
                           selected={endDate}
-                          onSelect={(date) =>
-                            form.setValue("endDate", date as Date)
-                          }
+                          onSelect={(date) => form.setValue("endDate", date as Date)}
+                          disabled={(date) => {
+                            const today = new Date(new Date().setHours(0, 0, 0, 0));
+                            const start = startDate ? new Date(startDate.setHours(0, 0, 0, 0)) : today;
+                            return date < start;
+                          }}
                           initialFocus
                         />
                       </PopoverContent>
@@ -951,15 +1038,13 @@ export default function Page() {
                       let pricePerImpression = 0;
                       switch (value) {
                         case "awareness":
-                          pricePerImpression = 60;
+                          pricePerImpression = 10;
                           break;
                         case "engagement":
-                          const viewCost = 300;
-                          const clickCost = 100;
-                          pricePerImpression = viewCost + clickCost;
+                          pricePerImpression = 150;
                           break;
                         case "conversion":
-                          pricePerImpression = 1000;
+                          pricePerImpression = 800;
                           break;
                       }
                       form.setValue("pricePerImpression", pricePerImpression);
@@ -975,13 +1060,13 @@ export default function Page() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="awareness">
-                        Awareness (CPM - ₦60 per reach)
+                        Awareness (CPM - ₦10 per reach)
                       </SelectItem>
                       <SelectItem value="engagement">
-                        Engagement (CPA - ₦100 per view, ₦300 per click)
+                        Engagement (CPA - ₦150 per click)
                       </SelectItem>
                       <SelectItem value="conversion">
-                        Action (CPA - ₦1,000 per action)
+                        Action (CPA - ₦800 per action)
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -1096,7 +1181,11 @@ export default function Page() {
                         type="text"
                         inputMode="numeric"
                         placeholder="Enter target reach"
-                        value={form.watch("targetImpressions") === 0 ? "" : form.watch("targetImpressions")}
+                        value={
+                          form.watch("targetImpressions") === 0
+                            ? ""
+                            : form.watch("targetImpressions")
+                        }
                         onChange={(e) => {
                           const inputValue = e.target.value;
                           // Allow empty input
@@ -1105,37 +1194,37 @@ export default function Page() {
                             form.setValue("estimatedBudget", 0);
                             return;
                           }
-                          
+
                           const value = parseInt(inputValue);
                           // Only update if it's a valid number
                           if (!isNaN(value)) {
-                        form.setValue("targetImpressions", value);
-                        // Calculate estimated budget based on goal
-                        const goal = form.getValues("goal");
-                        let pricePerImpression = 0;
-                        switch (goal) {
-                          case "awareness":
-                            pricePerImpression = 60; // ₦60 per impression
-                            break;
-                          case "engagement":
-                            pricePerImpression = 300 + 100; // ₦400 per engagement
-                            break;
-                          case "conversion":
-                            pricePerImpression = 1000; // ₦1,000 per action
-                            break;
-                        }
+                            form.setValue("targetImpressions", value);
+                            // Calculate estimated budget based on goal
+                            const goal = form.getValues("goal");
+                            let pricePerImpression = 0;
+                            switch (goal) {
+                              case "awareness":
+                                pricePerImpression = 10; // ₦60 per impression
+                                break;
+                              case "engagement":
+                                pricePerImpression = 150; // ₦400 per engagement
+                                break;
+                              case "conversion":
+                                pricePerImpression = 800; // ₦1,000 per action
+                                break;
+                            }
                             form.setValue(
                               "pricePerImpression",
                               pricePerImpression
                             );
-                        form.setValue(
-                          "estimatedBudget",
-                          value * pricePerImpression
-                        );
+                            form.setValue(
+                              "estimatedBudget",
+                              value * pricePerImpression
+                            );
                           }
-                      }}
+                        }}
                         className="w-full"
-                    />
+                      />
                     </div>
                     {errors.targetImpressions && (
                       <p className="text-sm text-red-500 mt-1">
@@ -1305,9 +1394,7 @@ export default function Page() {
                       form.setValue("isBoosted", checked)
                     }
                   />
-                  <Label htmlFor="boost">
-                    Feature campaign
-                  </Label>
+                  <Label htmlFor="boost">Feature campaign</Label>
                 </div>
               </div>
             </Card>
@@ -1316,6 +1403,124 @@ export default function Page() {
           <TabsContent value="content">
             <Card className="p-6">
               <div className="grid gap-6">
+                <div className="space-y-4">
+                  <Label>Content Layout</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Select the layout type for your content. Your uploaded media
+                    must match these dimensions for optimal display.
+                  </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button
+                      type="button"
+                      variant={
+                        form.watch("layoutType") === "portrait"
+                          ? "default"
+                          : "outline"
+                      }
+                      className="flex flex-col items-center justify-center h-auto py-4 px-2 min-h-[120px]"
+                      onClick={() => form.setValue("layoutType", "portrait")}
+                    >
+                      <div className="w-12 h-16 border-2 border-current rounded mb-2 flex items-center justify-center">
+                        <span className="text-xs">9:16</span>
+                      </div>
+                      <span className="font-medium">Portrait</span>
+                      <span className="text-xs text-muted-foreground mt-1 text-center">
+                        1080 x 1920px
+                      </span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={
+                        form.watch("layoutType") === "landscape"
+                          ? "default"
+                          : "outline"
+                      }
+                      className="flex flex-col items-center justify-center h-auto py-4 px-2 min-h-[120px]"
+                      onClick={() => form.setValue("layoutType", "landscape")}
+                    >
+                      <div className="w-16 h-12 border-2 border-current rounded mb-2 flex items-center justify-center">
+                        <span className="text-xs">16:9</span>
+                      </div>
+                      <span className="font-medium">Landscape</span>
+                      <span className="text-xs text-muted-foreground mt-1 text-center">
+                        1920 x 1080px
+                      </span>
+                    </Button>
+                  </div>
+                  <Alert variant="info" className="mt-2">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Recommended Dimensions</AlertTitle>
+                    <AlertDescription>
+                      <ul className="text-xs list-disc pl-4 space-y-1 mt-2">
+                        <li>
+                          Portrait (9:16): 1080 x 1920px - Best for Instagram
+                          Stories, TikTok, and mobile-first content
+                        </li>
+                        <li>
+                          Landscape (16:9): 1920 x 1080px - Best for YouTube,
+                          Facebook, and desktop viewing
+                        </li>
+                        <li>
+                          For best results, prepare your content in these exact
+                          dimensions before uploading
+                        </li>
+                      </ul>
+                    </AlertDescription>
+                  </Alert>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Background Style</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Select a background style for your campaign. This will be
+                      the backdrop that your content appears on when users view
+                      your campaign.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {[
+                      "https://res.cloudinary.com/dl8s7ivje/image/upload/v1746007664/Rectangle_1_hwxvuh.png",
+                      "https://res.cloudinary.com/dl8s7ivje/image/upload/v1746007665/Desktop_-_7s_d0eoq5.png",
+                      "https://res.cloudinary.com/dl8s7ivje/image/upload/v1746007666/Desktop_-_18_e8bsel.png",
+                    ].map((url, index) => (
+                      <div
+                        key={index}
+                        className={`relative aspect-video rounded-lg overflow-hidden cursor-pointer border-2 ${
+                          form.watch("backgroundUrl") === url
+                            ? "border-primary"
+                            : "border-transparent"
+                        }`}
+                        onClick={() => form.setValue("backgroundUrl", url)}
+                      >
+                        <img
+                          src={url}
+                          alt={`Background ${index + 1}`}
+                          className="object-cover w-full h-full"
+                        />
+                        {form.watch("backgroundUrl") === url && (
+                          <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                            <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="w-4 h-4 text-white"
+                              >
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="space-y-4">
                   <Label>Content Type</Label>
                   <div className="grid grid-cols-3 gap-4">
@@ -1375,7 +1580,7 @@ export default function Page() {
                                 file,
                               },
                             ]);
-                            
+
                             // Upload the image asynchronously
                             handleMediaFileUpload(file, "image");
                           }
@@ -1393,18 +1598,18 @@ export default function Page() {
                               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
                             </div>
                           ) : (
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute right-2 top-2"
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              className="absolute right-2 top-2"
                               onClick={() => {
                                 form.setValue("mediaFiles", []);
                                 form.setValue("contentAssets", []);
                               }}
-                          >
-                            ×
-                          </Button>
+                            >
+                              ×
+                            </Button>
                           )}
                         </div>
                       )}
@@ -1462,9 +1667,9 @@ export default function Page() {
                                   }
 
                                   handleMediaFileUpload(file, fileType);
-                            }
-                          }}
-                        />
+                                }
+                              }}
+                            />
                           </div>
 
                           {isUploadingMedia && (
@@ -1475,7 +1680,7 @@ export default function Page() {
                               <p className="text-xs text-center text-muted-foreground">
                                 Uploading media... Please wait
                               </p>
-                      </div>
+                            </div>
                           )}
 
                           {hasContentAssets && !isUploadingMedia && (
@@ -1489,14 +1694,14 @@ export default function Page() {
                                   />
                                 ) : (
                                   <div className="relative w-full h-full">
-                            <video
+                                    <video
                                       src={contentAssets[0].url}
-                              controls
+                                      controls
                                       className="object-contain w-full h-full"
-                            />
-                          </div>
+                                    />
+                                  </div>
                                 )}
-                            </div>
+                              </div>
 
                               <div className="flex justify-between items-center">
                                 <p className="text-xs text-muted-foreground">
@@ -1512,21 +1717,21 @@ export default function Page() {
                                   ) / 10}{" "}
                                   MB)
                                 </p>
-                          <Button
-                            type="button"
+                                <Button
+                                  type="button"
                                   variant="outline"
                                   size="sm"
-                              onClick={() => {
+                                  onClick={() => {
                                     document
                                       .getElementById("file-upload")
                                       ?.click();
-                              }}
-                          >
+                                  }}
+                                >
                                   Replace
-                          </Button>
+                                </Button>
                               </div>
-                        </div>
-                      )}
+                            </div>
+                          )}
 
                           <Alert variant="info" className="mt-2">
                             <AlertCircle className="h-4 w-4" />
@@ -1623,10 +1828,10 @@ export default function Page() {
                                 onClick={() => {
                                   const files = form.watch("mediaFiles") || [];
                                   if (files.length > 0) {
-                                  files.splice(currentSlide, 1);
-                                  form.setValue("mediaFiles", [...files]);
-                                  if (currentSlide > 0)
-                                    setCurrentSlide(currentSlide - 1);
+                                    files.splice(currentSlide, 1);
+                                    form.setValue("mediaFiles", [...files]);
+                                    if (currentSlide > 0)
+                                      setCurrentSlide(currentSlide - 1);
                                   }
                                 }}
                               >
@@ -1862,19 +2067,19 @@ export default function Page() {
                   )}
                 </div>
                 {form.watch("goal") !== "awareness" && (
-                <div className="space-y-2">
-                  <Label>CTA Label (optional)</Label>
-                  <Input
-                    {...form.register("ctaLabel")}
-                    type="text"
-                    placeholder="e.g., Learn More, Shop Now, Sign Up"
-                  />
-                  {errors.ctaLabel && (
-                    <p className="text-sm text-red-500 mt-1">
-                      {errors.ctaLabel.message}
-                    </p>
-                  )}
-                </div>
+                  <div className="space-y-2">
+                    <Label>CTA Label (optional)</Label>
+                    <Input
+                      {...form.register("ctaLabel")}
+                      type="text"
+                      placeholder="e.g., Learn More, Shop Now, Sign Up"
+                    />
+                    {errors.ctaLabel && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.ctaLabel.message}
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             </Card>
@@ -1917,8 +2122,17 @@ export default function Page() {
                 >
                   Next
                 </Button>
-              ) : (
+              ) : showPayment ? (
                 <PaystackButton {...componentProps} />
+              ) : (
+                <Button
+                  type="button"
+                  variant="new"
+                  onClick={handlePaymentClick}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Creating Campaign..." : "Create Campaign"}
+                </Button>
               )}
             </div>
           </div>

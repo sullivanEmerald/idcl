@@ -7,12 +7,7 @@ import promoterService from '@/services/promoter'
 import { useEffect, useState } from 'react'
 import { Toaster, toast } from 'sonner'
 import { Skeleton } from '@/components/ui/skeleton'
-<<<<<<< HEAD
-import Loader from '@/components/layout/Loader'
 import { LoaderCircle } from 'lucide-react'
-=======
-import Loader from '@/components/layout/loader'
->>>>>>> main
 
 
 export default function PreferencesSettings() {

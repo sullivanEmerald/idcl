@@ -4,18 +4,18 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { YoutubeIcon, FacebookIcon, TikTokIcon, InstagramIcon, LinkedInIcon } from '@/components/ui/social-icons'
 
-const companyLinks = [
-  { name: 'About Us', href: '/about' },
-  { name: 'FAQs', href: '/faqs' },
-  { name: 'Blog', href: '/blog' }, 
-  { name: 'Calculator', href: '/calculator' }
-]
+// const companyLinks = [
+//   { name: 'About Us', href: '#' },
+//   { name: 'FAQs', href: '#' },
+//   { name: 'Blog', href: '#' }, 
+//   { name: 'Calculator', href: '#' }
+// ]
 
-const legalLinks = [
-  { name: 'Terms', href: '/terms' },
-  { name: 'Privacy', href: '/privacy' },
-  { name: 'Community', href: '/community' }
-]
+// const legalLinks = [
+//   { name: 'Terms', href: '#' },
+//   { name: 'Privacy', href: '#' },
+//   { name: 'Community', href: '#' }
+// ]
 
 type SocialIcon = React.ComponentType<{ className?: string }>
 
@@ -54,7 +54,7 @@ export function Footer() {
 
           {/* Company Links */}
           <div>
-            <h3 className="font-semibold mb-4">Company</h3>
+            {/* <h3 className="font-semibold mb-4">Company</h3>
             <ul className="space-y-2">
               {companyLinks.map((link) => (
                 <li key={link.name}>
@@ -66,12 +66,12 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
-            </ul>
+            </ul> */}
           </div>
 
           {/* Legal Links */}
           <div>
-            <h3 className="font-semibold mb-4">Legal</h3>
+            {/* <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
               {legalLinks.map((link) => (
                 <li key={link.name}>
@@ -83,7 +83,7 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
-            </ul>
+            </ul> */}
           </div>
 
           {/* Contact Info */}

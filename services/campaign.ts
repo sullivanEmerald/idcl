@@ -168,8 +168,12 @@ class CampaignService {
 
       const contentAssets = await Promise.all(contentAssetsPromises);
       const pricePerPost =
-        data.goal === "awareness" ? 60 : data.goal === "engagement" ? 400 : 1000;
-      // Prepare campaign data
+        data.goal === "awareness"
+          ? 10
+          : data.goal === "engagement"
+            ? 150
+            : 800;
+
       const campaignData: any = {
         title: data.name,
         description: data.description,
@@ -220,9 +224,9 @@ class CampaignService {
           },
         }
       );
-      console.log(res)
+      console.log(res);
 
-      return res.data
+      return res.data;
 
       // const idempotencyKey = `campaign_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 

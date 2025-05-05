@@ -1,15 +1,31 @@
-"use client"
+"use client";
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
+// import Image from 'next/image'
+// import Link from 'next/link'
+import { motion } from "framer-motion";
+import { Button } from "../ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
 
 export function JoinCommunitySection() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const handleGetStarted = () => {
+    if (user) {
+      const dashboardPath = user.role === 'advertiser'
+        ? '/advertiser/dashboard'
+        : '/promoter/dashboard'
+      router.push(dashboardPath)
+    } else {
+      router.push('/auth/login')
+    }
+  }
   return (
     <section className="relative py-24 overflow-hidden">
       {/* Background with gradient */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-400" />
-      
+
       {/* Animated background circles */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -left-4 -top-4 w-24 h-24 rounded-full bg-white/10 blur-xl" />
@@ -19,7 +35,7 @@ export function JoinCommunitySection() {
 
       <div className="relative container px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
-          <motion.div 
+          <motion.div
             className="bg-white rounded-2xl shadow-2xl p-8 md:p-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -32,9 +48,17 @@ export function JoinCommunitySection() {
                   Join Our Growing Community
                 </h2>
                 <p className="text-lg text-gray-600">
-                  Join over 1,000 advertisers and promoters who trust AdMinting for their advertising needs.
+                  Join over 1,000 advertisers and promoters who trust AdMinting
+                  for their advertising needs.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-blue-600 text-white hover:opacity-90"
+                  onClick={handleGetStarted}
+                >
+                  Get Started
+                </Button>
+                {/* <div className="flex flex-col sm:flex-row gap-4">
                   <Link 
                     href="#" 
                     className="transform transition-transform hover:scale-105"
@@ -59,9 +83,9 @@ export function JoinCommunitySection() {
                       className="h-[42px] w-auto"
                     />
                   </Link>
-                </div>
+                </div> */}
               </div>
-              
+
               {/* <div className="relative">
                 <motion.div
                   className="relative z-10"
@@ -90,5 +114,5 @@ export function JoinCommunitySection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

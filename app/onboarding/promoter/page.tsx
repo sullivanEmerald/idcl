@@ -78,6 +78,7 @@ export default function PromoterOnboarding() {
   const [accountValidationError, setAccountValidationError] = useState('');
   const [isLoadingBanks, setIsLoadingBanks] = useState(true);
   const [validatedAccountName, setValidatedAccountName] = useState('');
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
     const fetchBanks = async () => {
@@ -132,11 +133,131 @@ export default function PromoterOnboarding() {
 
   const handleInputChange = (field: string, value: string | string[] | null) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+    
+    // Only clear error if the field has a valid value
+    if (value && value !== '') {
+      setFormErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[field]
+        return newErrors
+      })
+    }
+  }
+
+  const validatePersonalInfo = () => {
+    const errors: Record<string, string> = {}
+    
+    if (!formData.fullName.trim()) {
+      errors.fullName = 'Full name is required'
+    }
+    
+    if (!formData.phoneNumber.trim()) {
+      errors.phoneNumber = 'Phone number is required'
+    } else if (!/^\+?[\d\s-()]+$/.test(formData.phoneNumber)) {
+      errors.phoneNumber = 'Please enter a valid phone number'
+    }
+    
+    if (!formData.location.trim()) {
+      errors.location = 'Location is required'
+    }
+    
+    setFormErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
+  const validateSocialMedia = () => {
+    const errors: Record<string, string> = {}
+    
+    if (formData.platforms.length === 0) {
+      errors.platforms = 'Select at least one platform'
+    }
+    
+    if (!formData.followersCount.trim()) {
+      errors.followersCount = 'Followers count is required'
+    } else if (!/^\d+$/.test(formData.followersCount)) {
+      errors.followersCount = 'Please enter a valid number'
+    }
+    
+    if (!formData.engagementRate.trim()) {
+      errors.engagementRate = 'Engagement rate is required'
+    } else if (!/^\d+(\.\d+)?$/.test(formData.engagementRate)) {
+      errors.engagementRate = 'Please enter a valid number (e.g., 3.5)'
+    }
+    
+    setFormErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
+  const validateAudienceInfo = () => {
+    const errors: Record<string, string> = {}
+    
+    if (!formData.audienceAge) {
+      errors.audienceAge = 'Please select an age range'
+    }
+    
+    if (formData.audienceInterests.length === 0) {
+      errors.audienceInterests = 'Select at least one interest'
+    }
+    
+    if (formData.contentTypes.length === 0) {
+      errors.contentTypes = 'Select at least one content type'
+    }
+    
+    setFormErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
+  const validatePayoutSetup = () => {
+    const errors: Record<string, string> = {}
+    
+    if (!formData.paymentMethod) {
+      errors.paymentMethod = 'Please select a payment method'
+    }
+    
+    if (!formData.bankCode) {
+      errors.bankCode = 'Please select a bank'
+    }
+    
+    if (!formData.accountNumber) {
+      errors.accountNumber = 'Account number is required'
+    } else if (!/^\d{10}$/.test(formData.accountNumber)) {
+      errors.accountNumber = 'Account number must be 10 digits'
+    }
+    
+    if (!validatedAccountName) {
+      errors.accountNumber = 'Please verify your account number'
+    }
+    
+    if (accountValidationError) {
+      errors.accountNumber = accountValidationError
+    }
+    
+    setFormErrors(errors)
+    return Object.keys(errors).length === 0
   }
 
   const handleNext = () => {
-    if (currentStep < steps.length - 1) {
+    let isValid = false
+    
+    switch (currentStep) {
+      case 0:
+        isValid = validatePersonalInfo()
+        break
+      case 1:
+        isValid = validateSocialMedia()
+        break
+      case 2:
+        isValid = validateAudienceInfo()
+        break
+      case 3:
+        isValid = validatePayoutSetup()
+        break
+    }
+    
+    if (isValid && currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
+      // Clear all errors when moving to next step
+      setFormErrors({})
     }
   }
 
@@ -226,7 +347,11 @@ export default function PromoterOnboarding() {
                       value={formData.fullName}
                       onChange={(e) => handleInputChange('fullName', e.target.value)}
                       placeholder="Enter your full name"
+                      className={formErrors.fullName ? 'border-red-500' : ''}
                     />
+                    {formErrors.fullName && (
+                      <p className="text-sm text-red-500 mt-1">{formErrors.fullName}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="phoneNumber">Phone Number</Label>
@@ -235,7 +360,11 @@ export default function PromoterOnboarding() {
                       value={formData.phoneNumber}
                       onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
                       placeholder="+1 (555) 000-0000"
+                      className={formErrors.phoneNumber ? 'border-red-500' : ''}
                     />
+                    {formErrors.phoneNumber && (
+                      <p className="text-sm text-red-500 mt-1">{formErrors.phoneNumber}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="location">Location</Label>
@@ -244,7 +373,11 @@ export default function PromoterOnboarding() {
                       value={formData.location}
                       onChange={(e) => handleInputChange('location', e.target.value)}
                       placeholder="City, Country"
+                      className={formErrors.location ? 'border-red-500' : ''}
                     />
+                    {formErrors.location && (
+                      <p className="text-sm text-red-500 mt-1">{formErrors.location}</p>
+                    )}
                   </div>
                 </div>
               )}
@@ -274,6 +407,9 @@ export default function PromoterOnboarding() {
                         </Button>
                       ))}
                     </div>
+                    {formErrors.platforms && (
+                      <p className="text-sm text-red-500 mt-1">{formErrors.platforms}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="followersCount">Total Followers</Label>
@@ -282,7 +418,11 @@ export default function PromoterOnboarding() {
                       value={formData.followersCount}
                       onChange={(e) => handleInputChange('followersCount', e.target.value)}
                       placeholder="e.g. 10000"
+                      className={formErrors.followersCount ? 'border-red-500' : ''}
                     />
+                    {formErrors.followersCount && (
+                      <p className="text-sm text-red-500 mt-1">{formErrors.followersCount}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="engagementRate">Average Engagement Rate</Label>
@@ -290,8 +430,12 @@ export default function PromoterOnboarding() {
                       id="engagementRate"
                       value={formData.engagementRate}
                       onChange={(e) => handleInputChange('engagementRate', e.target.value)}
-                      placeholder="e.g. 3.5%"
+                      placeholder="e.g. 3.5"
+                      className={formErrors.engagementRate ? 'border-red-500' : ''}
                     />
+                    {formErrors.engagementRate && (
+                      <p className="text-sm text-red-500 mt-1">{formErrors.engagementRate}</p>
+                    )}
                   </div>
                 </div>
               )}
@@ -310,10 +454,13 @@ export default function PromoterOnboarding() {
                       ]}
                       value={formData.audienceAge ? { value: formData.audienceAge, label: formData.audienceAge + ' years' } : null}
                       onChange={(selected) => handleInputChange('audienceAge', selected ? selected.value : '')}
-                      className="w-full"
+                      className={`w-full ${formErrors.audienceAge ? 'border-red-500' : ''}`}
                       classNamePrefix="select"
                       placeholder="Select age range"
                     />
+                    {formErrors.audienceAge && (
+                      <p className="text-sm text-red-500 mt-1">{formErrors.audienceAge}</p>
+                    )}
                   </div>
                   <div className="space-y-4">
                     <div>
@@ -341,10 +488,13 @@ export default function PromoterOnboarding() {
                         onChange={(selected) => {
                           handleInputChange('audienceInterests', selected ? selected.map(option => option.value) : []);
                         }}
-                        className="w-full"
+                        className={`w-full ${formErrors.audienceInterests ? 'border-red-500' : ''}`}
                         placeholder="Select audience interests..."
                         classNamePrefix="select"
                       />
+                      {formErrors.audienceInterests && (
+                        <p className="text-sm text-red-500 mt-1">{formErrors.audienceInterests}</p>
+                      )}
                     </div>
                     <div>
                       <Label>Content Types</Label>
@@ -368,10 +518,13 @@ export default function PromoterOnboarding() {
                         onChange={(selected) => {
                           handleInputChange('contentTypes', selected ? selected.map(option => option.value) : []);
                         }}
-                        className="w-full"
+                        className={`w-full ${formErrors.contentTypes ? 'border-red-500' : ''}`}
                         placeholder="Select content types..."
                         classNamePrefix="select"
                       />
+                      {formErrors.contentTypes && (
+                        <p className="text-sm text-red-500 mt-1">{formErrors.contentTypes}</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -384,15 +537,16 @@ export default function PromoterOnboarding() {
                     <Select
                       options={[
                         { value: 'bank', label: 'Bank Transfer' },
-                        // { value: 'paypal', label: 'PayPal' },
-                        // { value: 'crypto', label: 'Cryptocurrency' }
                       ]}
                       value={formData.paymentMethod ? { value: formData.paymentMethod, label: formData.paymentMethod.charAt(0).toUpperCase() + formData.paymentMethod.slice(1) } : null}
                       onChange={(selected) => handleInputChange('paymentMethod', selected ? selected.value : '')}
-                      className="w-full"
+                      className={`w-full ${formErrors.paymentMethod ? 'border-red-500' : ''}`}
                       classNamePrefix="select"
                       placeholder="Select payment method"
                     />
+                    {formErrors.paymentMethod && (
+                      <p className="text-sm text-red-500 mt-1">{formErrors.paymentMethod}</p>
+                    )}
                   </div>
                   <div className="space-y-4">
                     <div>
@@ -405,28 +559,42 @@ export default function PromoterOnboarding() {
                           if (selected) {
                             handleInputChange('bankCode', selected.value);
                             handleInputChange('bankName', selected.label);
+                            // Reset account validation when bank changes
+                            setValidatedAccountName('');
+                            setAccountValidationError('');
                           } else {
                             handleInputChange('bankCode', '');
                             handleInputChange('bankName', '');
+                            setValidatedAccountName('');
+                            setAccountValidationError('');
                           }
                         }}
-                        className="w-full"
+                        className={`w-full ${formErrors.bankCode ? 'border-red-500' : ''}`}
                         classNamePrefix="select"
                         placeholder="Select your bank"
                       />
+                      {formErrors.bankCode && (
+                        <p className="text-sm text-red-500 mt-1">{formErrors.bankCode}</p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="accountNumber">Account Number</Label>
                       <Input
                         id="accountNumber"
                         value={formData.accountNumber || ''}
-                        onChange={(e) => handleInputChange('accountNumber', e.target.value)}
+                        onChange={(e) => {
+                          handleInputChange('accountNumber', e.target.value);
+                          // Reset account validation when account number changes
+                          setValidatedAccountName('');
+                          setAccountValidationError('');
+                        }}
                         placeholder="Enter your account number"
                         maxLength={10}
                         pattern="\d*"
+                        className={formErrors.accountNumber ? 'border-red-500' : ''}
                       />
                       {isValidatingAccount && <p className="text-sm text-gray-500">Validating account...</p>}
-                      {accountValidationError && <p className="text-sm text-red-500">{accountValidationError}</p>}
+                      {formErrors.accountNumber && <p className="text-sm text-red-500">{formErrors.accountNumber}</p>}
                       {validatedAccountName && <p className="text-sm text-green-500">Account Name: {validatedAccountName}</p>}
                     </div>
                   </div>
@@ -447,8 +615,20 @@ export default function PromoterOnboarding() {
                   type={currentStep === steps.length - 1 ? 'submit' : 'button'}
                   onClick={currentStep === steps.length - 1 ? undefined : handleNext}
                   className="w-full sm:w-auto order-1 sm:order-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                  disabled={isLoading || (currentStep === steps.length - 1 && !validatedAccountName)}
                 >
-                  {currentStep === steps.length - 1 ? 'Complete Setup' : 'Continue'}
+                  {currentStep === steps.length - 1 ? (
+                    isLoading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <span>Setting up...</span>
+                      </div>
+                    ) : (
+                      'Complete Setup'
+                    )
+                  ) : (
+                    'Continue'
+                  )}
                 </Button>
               </div>
             </form>

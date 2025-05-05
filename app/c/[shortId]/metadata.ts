@@ -24,16 +24,13 @@ export async function generateMetadata(
     console.error('Failed to fetch campaign metadata:', error);
   }
   
-  // Fallback values if campaign fetch fails
   const title = campaign?.title || 'Campaign';
   const description = campaign?.description || 'View this campaign on Adminting';
   
-  // Get image URL - use first campaign asset if available, fallback to default OG
   const imageUrl = campaign?.contentAssets?.length > 0
     ? campaign.contentAssets[0].url
     : new URL('opengraph-image.png', process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://adminting.co').toString();
   
-  // Get parent metadata from layout
   const previousImages = (await parent).openGraph?.images || [];
 
   return {

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/carousel";
 import { analyticsService } from "@/services/analytics";
 import { Campaign } from "@/types/campaign";
+import { toast } from "sonner";
 
 export default function CampaignPage({
   params,
@@ -35,7 +36,6 @@ export default function CampaignPage({
     searchParamsHook.get("utm_source") ||
     undefined;
 
-  // Ref to track if analytics have been recorded
   const analyticsRecorded = useRef(false);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function CampaignPage({
           setCampaign(null);
         } else {
           setCampaign(campaignData);
-          
+
           if (!analyticsRecorded.current) {
             await analyticsService.trackUserView(
               params.shortId,
@@ -92,7 +92,6 @@ export default function CampaignPage({
     fetchCampaign();
   }, [params.shortId, promoterId, utmSource]);
 
-  // Update document title - simple client-side metadata update
   useEffect(() => {
     if (campaign?.title) {
       document.title = `${campaign.title} | Adminting`;
@@ -164,23 +163,23 @@ export default function CampaignPage({
       }}
     >
       <main className="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row lg:gap-6">
             {/* Main content area */}
             <div className="w-full lg:flex-1">
-          {/* Campaign Info */}
-              <div className="mb-8 flex items-center justify-between w-full sm:w-[578px] mx-auto bg-white p-2 rounded-md">
+              {/* Campaign Info */}
+              <div className="mb-8 flex items-center justify-between w-full lg:w-[768px] mx-auto bg-white p-2 rounded-md">
                 <div className="flex items-center gap-4">
                   <img src="/adl.png" alt="" />
                   <div>
                     <h1 className="text-[18px] font-bold tracking-tight text-black">
-              {campaign.title}
-            </h1>
-            {campaign.description && (
+                      {campaign.title}
+                    </h1>
+                    {campaign.description && (
                       <p className="text-base text-black font-normal mx-auto">
                         {campaign.advertiser.companyName}
-              </p>
-            )}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div
@@ -188,133 +187,152 @@ export default function CampaignPage({
                 >
                   {campaign.campaignGoal}
                 </div>
-          </div>
-          {/* Campaign Assets */}
-              <div className="mb-12 w-full sm:w-[578px] mx-auto bg-white p-2 rounded-md h-auto sm:h-[551px]">
-            {campaign.contentAssets.length > 0 ? (
-              campaign.contentAssets[0]?.type === "carousel" ? (
-              <Carousel
-                className="w-full"
-                onSelect={(index) =>
-                  analyticsService.trackCarouselSlide(
-                    params.shortId,
-                    index,
-                    promoterId
-                  )
-                }
-              >
-                <CarouselContent>
-                  {campaign.contentAssets
-                    .sort(
-                        (a, b) =>
-                          (a.carouselIndex || 0) - (b.carouselIndex || 0)
-                    )
-                    .map((asset, index) => (
-                      <CarouselItem key={index}>
-                        <div className="relative aspect-video">
-                          <Image
-                            src={asset.url}
-                            alt={`Slide ${index + 1}`}
-                            fill
-                            className="object-contain rounded-lg"
-                          />
-                        </div>
-                      </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            ) : campaign.contentAssets[0]?.type === "video" ? (
-              <div className="relative aspect-video">
-                <video
-                  ref={videoRef}
-                  src={campaign.contentAssets[0].url}
-                  controls
-                  className="w-full h-full rounded-lg"
-                  onPlay={() =>
-                      analyticsService.trackVideoPlay(
-                        params.shortId,
-                        promoterId
-                      )
-                  }
-                  onTimeUpdate={() => {
-                    const video = videoRef.current;
-                    if (!video) return;
-                    
-                    // Track view duration at key intervals
-                    const currentTime = Math.floor(video.currentTime);
-                      if (
-                        currentTime === 3 ||
-                        currentTime === 30 ||
-                        currentTime === 60
-                      ) {
-                      analyticsService.trackVideoProgress(
-                        params.shortId,
-                        currentTime,
-                        promoterId
-                      );
-                    }
-                  }}
-                  onEnded={() =>
-                    analyticsService.trackVideoComplete(
-                      params.shortId,
-                      promoterId
-                    )
-                  }
-                />
               </div>
-            ) : (
-              <div className="relative aspect-video">
-                      <img
-                  src={campaign.contentAssets[0].url}
-                  alt={campaign.title}
-                        className="object-contain rounded-lg w-full h-auto sm:h-[420px]"
-                />
-                </div>
-              )
-            ) : (
-              <div className="relative aspect-video">
-                <p>No campaign assets found</p>
-              </div>
-            )}
-                <p className="text-sm font-normal"> {campaign.description} </p>
-          </div>
 
-              <div className="w-full sm:w-[578px] mx-auto bg-white p-2 rounded-md flex items-center justify-between mb-8">
+              <div className="w-full lg:w-[768px] mx-auto bg-white p-2 rounded-md flex items-center justify-between mb-8">
                 <div className="flex items-center gap-2">
                   <img src="/fir.png" alt="fire" />
                   <span className="text-[#FD650B] font-bold text-base">
                     {campaign.metrics?.totalViews}
                   </span>
-                  <span className="text-[#FD650B] font-normal">Impressions</span>
+                  <span className="text-[#FD650B] font-normal">
+                    Impressions
+                  </span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <button className="flex justify-center items-center gap-2 w-[109px] h-[41px] text-[14px] font-semibold rounded-lg bg-[#1E1E1E] text-white hover:bg-[#1E1E1E] transition-colors">
+                  <button
+                    className="flex justify-center items-center gap-2 w-[109px] h-[41px] text-[14px] font-semibold rounded-lg bg-[#1E1E1E] text-white hover:bg-[#1E1E1E] transition-colors"
+                    onClick={() => {
+                      const url = window.location.href;
+                      navigator.clipboard.writeText(url).then(() => {
+                        toast.success("Link copied to clipboard");
+                      });
+                    }}
+                  >
                     Share <img src="/share-white.png" alt="share white" />{" "}
                   </button>
 
-          {campaign.campaignGoal !== "awareness" && (
-          <div className="text-center">
-            <a
-              href={campaign.promotionLink}
-              target="_blank"
-              rel="noopener noreferrer"
+                  {campaign.campaignGoal !== "awareness" && (
+                    <div className="text-center">
+                      <a
+                        href={campaign.promotionLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="flex justify-center items-center w-[109px] h-[41px] text-[14px] font-semibold rounded-lg bg-[#0093DD] text-white hover:bg-[#0093DD] transition-colors"
-              onClick={() =>
-                analyticsService.trackConversion(
-                  params.shortId,
+                        onClick={() =>
+                          analyticsService.trackConversion(
+                            params.shortId,
                             campaign.promotionLink || "",
-                  promoterId,
-                  campaign.campaignGoal 
-                )
-              }
-            >
-              {campaign.requirements?.ctaLabel || "Learn More"}
-            </a>
-          </div>
-          )}
+                            promoterId,
+                            campaign.campaignGoal
+                          )
+                        }
+                      >
+                        {campaign.requirements?.ctaLabel || "Learn More"}
+                      </a>
+                    </div>
+                  )}
                 </div>
+              </div>
+              {/* Campaign Assets */}
+              <div className="mb-12 w-full lg:w-[768px] mx-auto bg-white p-2 rounded-md h-auto sm:h-[551px]">
+                {campaign.contentAssets.length > 0 ? (
+                  campaign.contentAssets[0]?.type === "carousel" ? (
+                    <Carousel
+                      className="w-full"
+                      onSelect={(index) =>
+                        analyticsService.trackCarouselSlide(
+                          params.shortId,
+                          index,
+                          promoterId
+                        )
+                      }
+                    >
+                      <CarouselContent>
+                        {campaign.contentAssets
+                          .sort(
+                            (a, b) =>
+                              (a.carouselIndex || 0) - (b.carouselIndex || 0)
+                          )
+                          .map((asset, index) => (
+                            <CarouselItem key={index}>
+                              <div className="relative aspect-video">
+                                <Image
+                                  src={asset.url}
+                                  alt={`Slide ${index + 1}`}
+                                  fill
+                                  className="object-contain rounded-lg"
+                                />
+                              </div>
+                            </CarouselItem>
+                          ))}
+                      </CarouselContent>
+                      <CarouselPrevious />
+                      <CarouselNext />
+                    </Carousel>
+                  ) : campaign.contentAssets[0]?.type === "video" ? (
+                    <div className="relative h-[420px] w-full bg-black rounded-lg overflow-hidden">
+                      <video
+                        ref={videoRef}
+                        src={campaign.contentAssets[0].url}
+                        controls
+                        className="w-full h-full rounded-lg object-contain"
+                        onPlay={() =>
+                          analyticsService.trackVideoPlay(
+                            params.shortId,
+                            promoterId
+                          )
+                        }
+                        onLoadedMetadata={(e) => {
+                          const video = e.target as HTMLVideoElement;
+                          const aspectRatio =
+                            video.videoWidth / video.videoHeight;
+                          video.parentElement?.style.setProperty(
+                            "aspect-ratio",
+                            `${aspectRatio}`
+                          );
+                        }}
+                        onTimeUpdate={() => {
+                          const video = videoRef.current;
+                          if (!video) return;
+
+                          // Track view duration at key intervals
+                          const currentTime = Math.floor(video.currentTime);
+                          if (
+                            currentTime === 3 ||
+                            currentTime === 30 ||
+                            currentTime === 60
+                          ) {
+                            analyticsService.trackVideoProgress(
+                              params.shortId,
+                              currentTime,
+                              promoterId
+                            );
+                          }
+                        }}
+                        onEnded={() =>
+                          analyticsService.trackVideoComplete(
+                            params.shortId,
+                            promoterId
+                          )
+                        }
+                      />
+                    </div>
+                  ) : (
+                    <div className="relative aspect-video">
+                      <img
+                        src={campaign.contentAssets[0].url}
+                        alt={campaign.title}
+                        className="object-contain rounded-lg w-full h-auto sm:h-[420px]"
+                      />
+                    </div>
+                  )
+                ) : (
+                  <div className="relative aspect-video">
+                    <p>No campaign assets found</p>
+                  </div>
+                )}
+                <p className="text-sm font-normal"> {campaign.description} </p>
               </div>
             </div>
 
@@ -325,26 +343,53 @@ export default function CampaignPage({
                   <h2 className="mb-2 text-[10px] font-bold">More Ads</h2>
                 </div>
 
-                <div className="space-y-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                <div className="space-y-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
                   {promoterCampaigns
                     .filter((promoCampaign) => promoCampaign.id !== campaign.id)
                     .map((promoCampaign) => (
                       <div
                         key={promoCampaign.id}
-                        className="bg-white p-1 border border-gray rounded-lg cursor-pointer w-full h-[195px]"
+                        className="bg-white p-1 border border-gray rounded-lg cursor-pointer w-full h-[195px] group mb-4"
                         onClick={() =>
-                          router.push(`/c/${promoCampaign.id}?pId=${promoterId}`)
+                          router.push(
+                            `/c/${promoCampaign.id}?pId=${promoterId}`
+                          )
                         }
                       >
                         {/* Campaign image with elements overlaid on it */}
                         {promoCampaign.contentAssets?.length > 0 && (
-                          <div className="relative aspect-video mb-3 w-full h-full">
-                            <img
+                          <div className="relative aspect-video mb-3 w-full h-[195px]">
+                            <Image
                               src={promoCampaign.coverImage}
                               alt={promoCampaign.title}
-                              className="object-cover rounded-lg w-full h-full"
+                              fill
+                              className="object-cover transition-transform duration-300 group-hover:scale-105 rounded-lg"
                             />
-                            
+                            {promoCampaign.contentAssets?.some(
+                              (asset) => asset.type === "video"
+                            ) && (
+                              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <video
+                                  src={
+                                    promoCampaign.contentAssets.find(
+                                      (asset) => asset.type === "video"
+                                    )?.url
+                                  }
+                                  poster={promoCampaign.coverImage}
+                                  preload="none"
+                                  muted
+                                  loop
+                                  playsInline
+                                  className="w-full h-full object-cover"
+                                  onMouseEnter={(e) => e.currentTarget.play()}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.pause();
+                                    e.currentTarget.currentTime = 0;
+                                  }}
+                                />
+                              </div>
+                            )}
+
                             {/* Top bar with logo on left and metrics on right */}
                             <div className="absolute top-0 w-full flex items-center justify-between p-2 z-10">
                               <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
@@ -371,7 +416,8 @@ export default function CampaignPage({
                                     />
                                   </svg>
                                   <span className="text-[12px] font-medium">
-                                    {promoCampaign.metrics?.totalEngagements || 0}
+                                    {promoCampaign.metrics?.totalEngagements ||
+                                      0}
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-1">
@@ -393,7 +439,7 @@ export default function CampaignPage({
                                 </div>
                               </div>
                             </div>
-                          
+
                             {/* Title and advertiser name in bottom overlay */}
                             <div className="absolute bottom-2 z-10 w-full bg-white rounded-lg px-2">
                               <div>
