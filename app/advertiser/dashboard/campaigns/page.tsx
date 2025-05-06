@@ -43,13 +43,13 @@ export default function CampaignsPage() {
           status: campaign.status,
           budget: campaign.budget,
           spent: campaign.metrics.totalEngagements * campaign.pricePerPost,
-          impressions: campaign.metrics.totalReach,
-          clicks: campaign.metrics.totalEngagements,
+          impressions: campaign.metrics.totalViews,
+          clicks: campaign.metrics.totalUserClicks,
           startDate: new Date(campaign.startDate).toLocaleDateString(),
           endDate: new Date(campaign.endDate).toLocaleDateString()
         }))
         
-        setCampaigns(transformedCampaigns)
+        setCampaigns(transformedCampaigns as Campaign[])
       } catch (error) {
         console.error('Error fetching campaigns:', error)
       } finally {
@@ -153,7 +153,7 @@ export default function CampaignsPage() {
                 </div>
                 <div className="text-sm">
                   <div className="font-medium">{campaign.impressions.toLocaleString()}</div>
-                  <div className="text-xs text-muted-foreground">Views</div>
+                  <div className="text-xs text-muted-foreground">Impressions</div>
                 </div>
                 <div className="text-sm">
                   <div className="font-medium">{campaign.clicks.toLocaleString()}</div>

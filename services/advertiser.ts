@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { axiosInstance } from '@/lib/utils';
+import { Campaign } from '@/types/campaign';
 
 export interface UserBasicInfo {
   id: string;
@@ -43,33 +44,6 @@ export interface ContentAsset {
   type: string;
   url: string;
   description: string;
-}
-
-export interface Campaign {
-  id: string;
-  fullName?: string;
-  title: string;
-  description: string;
-  advertiser: UserBasicInfo;
-  budget: number;
-  pricePerPost: number;
-  requiredPlatforms: string[];
-  targetedNiches: string[];
-  minFollowers: number;
-  minEngagementRate: number;
-  approvedPromoters: PromoterInfo[];
-  promoterCount: number;
-  startDate: Date;
-  endDate: Date;
-  status: string;
-  requirements: CampaignRequirements;
-  metrics: CampaignMetrics;
-  contentAssets: ContentAsset[];
-  performance: {
-    reach: number;
-    engagements: number;
-    posts: number;
-  };
 }
 
 export interface DashboardData {

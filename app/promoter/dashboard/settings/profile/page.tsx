@@ -507,7 +507,7 @@ export default function ProfileSettings() {
           <Card className="overflow-hidden border border-gray-200">
             <Collapsible
               open={isCollapsibleOpen['personal']}
-              onOpenChange={(isOpen) => {
+              onOpenChange={(isOpen: boolean) => {
                 setIsCollapsibleOpen((prev) => ({
                   ...prev,
                   ['personal']: isOpen
@@ -593,7 +593,7 @@ export default function ProfileSettings() {
           <Card className="overflow-hidden border border-gray-200">
             <Collapsible
               open={isCollapsibleOpen['password']}
-              onOpenChange={(isOpen) => {
+              onOpenChange={(isOpen: boolean) => {
                 setIsCollapsibleOpen((prev) => ({
                   ...prev,
                   ['password']: isOpen
@@ -712,7 +712,7 @@ export default function ProfileSettings() {
         <Card className="overflow-hidden border border-gray-200">
           <Collapsible
             open={isCollapsibleOpen['onboarding']}
-            onOpenChange={(isOpen) => {
+            onOpenChange={(isOpen: boolean) => {
               setIsCollapsibleOpen((prev) => ({
                 ...prev,
                 ['onboarding']: isOpen
@@ -909,7 +909,7 @@ export default function ProfileSettings() {
         <Card className="overflow-hidden border border-gray-200">
           <Collapsible
             open={isCollapsibleOpen['socials']}
-            onOpenChange={(isOpen) => {
+            onOpenChange={(isOpen: boolean) => {
               setIsCollapsibleOpen((prev) => ({
                 ...prev,
                 ['socials']: isOpen
@@ -952,7 +952,7 @@ export default function ProfileSettings() {
                           isNotEmpty ? (
                             <Dialog
                               open={dialogOpenStates[platformKey]}
-                              onOpenChange={(isOpen) => handleDialogOpenChange(platformKey, isOpen)}
+                              onOpenChange={(isOpen: boolean) => handleDialogOpenChange(platformKey, isOpen)}
                             >
                               <DialogTrigger asChild>
                                 <Button
@@ -1123,7 +1123,7 @@ export default function ProfileSettings() {
                                           <div className="flex gap-2 ml-4">
                                             <Popover
                                               open={isEditAccounts[profile.id]}
-                                              onOpenChange={(isOpen) => {
+                                              onOpenChange={(isOpen: boolean) => {
                                                 editPopoverHandler(profile.id, isOpen);
 
                                                 if (isOpen) {
