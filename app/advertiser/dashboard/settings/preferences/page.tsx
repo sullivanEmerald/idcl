@@ -27,18 +27,18 @@ export default function PreferencesSettings() {
     // declaring function to get Advertiser notifications and campaign preferences
     const fetchData = async () => {
       try {
-        const [userNotificationsSetting, userCampaignSetting] =
-          await Promise.all([advertiserService.getProfile(), () => {}]);
+        const [userNotificationsSetting, userCampaignSetting] = await Promise.all([
+          advertiserService.getProfile(),
+          () => { }
+        ]);
 
         console.log("preferences", userNotificationsSetting);
 
         // setting user specific notications from returned data
         setUserNotificationPreferences({
-          isEmailNotificationEnabled:
-            userNotificationsSetting?.isEmailNotification,
+          isEmailNotificationEnabled: userNotificationsSetting?.isEmailNotification,
           isSmsNotificationEnabled: userNotificationsSetting?.isSmsNotification,
-          isPushNotificationEnabled:
-            userNotificationsSetting?.isPushNotification,
+          isPushNotificationEnabled: userNotificationsSetting?.isPushNotification,
         });
       } catch (error) {
         console.error("Error fetching data:", error);
