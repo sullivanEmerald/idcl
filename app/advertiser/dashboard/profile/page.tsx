@@ -1,5 +1,5 @@
 "use client"
-import advertiserService, { Campaign } from "@/services/advertiser";
+import advertiserService from "@/services/advertiser";
 import { useEffect, useState } from "react"
 import { Card, CardTitle, CardDescription, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/popover"
 
 import Link from 'next/link'
+import { Campaign } from "@/types/campaign";
 
 
 

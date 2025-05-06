@@ -13,14 +13,10 @@ import promoterService from "@/services/promoter";
 import {
   ArrowLeft,
   Calendar,
-  Globe,
-  Users,
   BarChart,
   QrCode,
   Share2,
   Clock,
-  Hash,
-  AtSign,
   Link as LinkIcon,
 } from "lucide-react";
 import Image from "next/image";
@@ -80,7 +76,6 @@ export default function CampaignDetails() {
       // and show the generate button
     }
   };
-  console.log(promotionalLink);
 
   // Generate a short URL for this promoter and campaign
   const generateShortUrl = async () => {
@@ -255,9 +250,9 @@ export default function CampaignDetails() {
               <div className="flex items-center">
                 <Calendar className="h-5 w-5 text-blue-600 mr-2" />
                 <div>
-                  <div className="text-sm text-gray-600">End Date</div>
+                  <div className="text-sm text-gray-600">Start Date</div>
                   <div className="font-semibold">
-                    {new Date(campaign.endDate).toLocaleDateString("en-US", {
+                    {new Date(campaign.startDate).toLocaleDateString("en-US", {
                       month: "long",
                       day: "numeric",
                       year: "numeric",
@@ -266,36 +261,15 @@ export default function CampaignDetails() {
                 </div>
               </div>
               <div className="flex items-center">
-                <Globe className="h-5 w-5 text-blue-600 mr-2" />
+                <Calendar className="h-5 w-5 text-blue-600 mr-2" />
                 <div>
-                  <div className="text-sm text-gray-600">
-                    Required Platforms
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 mt-1">
-                    {campaign.requiredPlatforms.map((platform) => (
-                      <span
-                        key={platform}
-                        className="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-md font-medium"
-                      >
-                        {platform}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <Users className="h-5 w-5 text-blue-600 mr-2" />
-                <div>
-                  <div className="text-sm text-gray-600">Target Niches</div>
-                  <div className="flex flex-wrap gap-1.5 mt-1">
-                    {campaign.targetedNiches.map((niche) => (
-                      <span
-                        key={niche}
-                        className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md font-medium"
-                      >
-                        {niche}
-                      </span>
-                    ))}
+                  <div className="text-sm text-gray-600">End Date</div>
+                  <div className="font-semibold">
+                    {new Date(campaign.endDate).toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </div>
                 </div>
               </div>
@@ -330,12 +304,9 @@ export default function CampaignDetails() {
 
           {/* Campaign Requirements */}
           <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Requirements</h2>
+            <h2 className="text-lg font-semibold mb-4">Content Guidelines</h2>
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-medium text-gray-600">
-                  Content Guidelines
-                </h3>
                 <p className="mt-1 text-sm">
                   Create engaging content that highlights our brand values and
                   resonates with your audience.
@@ -433,24 +404,23 @@ export default function CampaignDetails() {
                     fill
                     sizes="(max-width: 768px) 100vw, 75vw"
                     className="object-cover"
-                />
-                <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
-                  {campaign.contentAssets[0].contentType}
-                </div>
-                {campaign?.contentAssets?.[0]?.size != null && (
-                  <div className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
-                    {Math.round(campaign.contentAssets[0].size / 1024)} KB
+                  />
+                  <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
+                    {campaign.contentAssets[0].contentType}
                   </div>
-                )}
-              </div>
-            ))}
+                  {campaign?.contentAssets?.[0]?.size != null && (
+                    <div className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
+                      {Math.round(campaign.contentAssets[0].size / 1024)} KB
+                    </div>
+                  )}
+                </div>
+              )
+            )}
           </div>
         </Card>
 
         {/* Content Requirements */}
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-6">Content Requirements</h2>
-
           {/* Content Assets */}
           <div className="grid gap-6 md:grid-cols-3">
             {/* Campaign Stats */}
@@ -511,12 +481,12 @@ export default function CampaignDetails() {
           </div>
 
           {/* Guidelines */}
-          <div className="mb-8">
+          {/* <div className="mb-8">
             <h3 className="text-lg font-medium mb-4">Guidelines</h3>
             <p className="text-gray-600">
               {campaign.requirements.contentGuidelines}
             </p>
-          </div>
+          </div> */}
 
           {/* Posting Schedule */}
           <div className="mb-8">
@@ -544,7 +514,8 @@ export default function CampaignDetails() {
           <div className="grid grid-cols-2 gap-6 mb-8">
             <div>
               <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
-                <Hash className="h-4 w-4" /> Hashtags
+                {/* <Hash className="h-4 w-4" /> */}
+                Hashtags
               </h3>
               <div className="flex flex-wrap gap-2">
                 {campaign.requirements.hashtags.map((tag) => (
@@ -552,14 +523,15 @@ export default function CampaignDetails() {
                     key={tag}
                     className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm"
                   >
-                    #{tag}
+                    {tag}
                   </span>
                 ))}
               </div>
             </div>
             <div>
               <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
-                <AtSign className="h-4 w-4" /> Mentions
+                {/* <AtSign className="h-4 w-4" />  */}
+                Mentions
               </h3>
               <div className="flex flex-wrap gap-2">
                 {campaign.requirements.mentions.map((mention) => (
@@ -567,7 +539,7 @@ export default function CampaignDetails() {
                     key={mention}
                     className="px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm"
                   >
-                    @{mention}
+                    {mention}
                   </span>
                 ))}
               </div>
@@ -629,32 +601,6 @@ export default function CampaignDetails() {
 
       {/* Right Column */}
       <div className="space-y-8">
-        {/* Advertiser Card */}
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-6">Advertiser</h2>
-          <div className="flex items-center space-x-4">
-            <div className="h-16 w-16 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center shadow-sm border border-gray-100">
-              {campaign.advertiser.logo ? (
-                <img
-                  src={campaign.advertiser.logo}
-                  alt={campaign.advertiser.companyName}
-                  className="h-full w-full rounded-lg object-cover"
-                />
-              ) : (
-                <span className="text-2xl font-semibold text-blue-600">
-                  {campaign.advertiser.companyName.charAt(0)}
-                </span>
-              )}
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg">
-                {campaign.advertiser.companyName}
-              </h3>
-              <p className="text-sm text-gray-600">Verified Advertiser</p>
-            </div>
-          </div>
-        </Card>
-
         {/* Platforms & Niches */}
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-6">Requirements</h2>
@@ -706,7 +652,6 @@ export default function CampaignDetails() {
                 clicks: 0,
                 conversions: 0,
               };
-              console.log("deviceMetrics for " + device + ":", deviceMetrics);
 
               return (
                 <div key={device} className="p-4 bg-gray-50 rounded-lg">
@@ -721,9 +666,6 @@ export default function CampaignDetails() {
                   </div>
                   <div className="mt-2">
                     <p className="text-sm">{deviceMetrics.clicks} clicks</p>
-                    <p className="text-sm">
-                      {deviceMetrics.conversions} conversions
-                    </p>
                   </div>
                 </div>
               );
@@ -801,7 +743,7 @@ export default function CampaignDetails() {
                               interactionType: "link_copy",
                               action: "copy",
                               platform: "direct",
-                            });
+                            }, user?.id);
                           }}
                         >
                           Copy
@@ -976,21 +918,9 @@ export default function CampaignDetails() {
             <TabsContent value="metrics">
               <div className="grid grid-cols-2 gap-4">
                 <Card className="p-4">
-                  <p className="text-sm text-gray-600">Link Copies</p>
-                  <p className="text-2xl font-bold">
-                    {campaign?.metrics?.promoterEngagement?.clickCount || 0}
-                  </p>
-                </Card>
-                <Card className="p-4">
                   <p className="text-sm text-gray-600">Unique Promoter Views</p>
                   <p className="text-2xl font-bold">
                     {campaign?.metrics?.uniquePromoterViews || 0}
-                  </p>
-                </Card>
-                <Card className="p-4">
-                  <p className="text-sm text-gray-600">QR Downloads</p>
-                  <p className="text-2xl font-bold">
-                    {campaign?.metrics?.promoterEngagement?.qrDownloads || 0}
                   </p>
                 </Card>
                 <Card className="p-4">

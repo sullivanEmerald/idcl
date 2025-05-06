@@ -342,11 +342,11 @@ export function FeaturesSection() {
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
             Our Features
           </h2>
-          <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
+          {/* <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
             Adminting seamlessly connects advertisers with niche digital
             promoters, empowering businesses to achieve their advertising goals
             with ease.
-          </p>
+          </p> */}
         </motion.div>
 
         <motion.div

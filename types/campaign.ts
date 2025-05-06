@@ -61,6 +61,9 @@ export interface CampaignMetrics {
   adRating: number; // Average rating given by promoters (1-5)
   uniqueViews: number;
   uniqueClicks: number;
+  totalUserClicks: number;
+  totalPromoterClicks: number;
+  uniquePromoterClicks: number;
   
   // View Duration Metrics
   viewDuration: {
@@ -212,7 +215,7 @@ export interface Campaign {
       email: string;
       location?: string;
       platforms: string[];
-      followersCount: number | string;
+      totalFollowers: number | string;
       engagementRate: number | string;
       contentTypes: string[];
       status: string;
@@ -223,6 +226,8 @@ export interface Campaign {
   }>;
   coverImage: string;
   displayCoverImage?: string;
+  backgroundUrl?: string;
+  layoutType?: 'landscape' | 'portrait';
   conversionValue?: number;
   createdAt?: string;
   updatedAt?: string;
