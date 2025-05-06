@@ -115,6 +115,12 @@ const NICHES = [
   { value: "business", label: "Business & Entrepreneurship" },
   { value: "education", label: "Education" },
   { value: "entertainment", label: "Entertainment" },
+  { value: "crypto", label: "Cryptocurrency & Blockchain" },
+  { value: "sports", label: "Sports" },
+  { value: "small-business", label: "Small Business" },
+  { value: "fintech", label: "Financial Technology" },
+  { value: "religion", label: "Religion & Spirituality" },
+  { value: "politics", label: "Politics & Current Affairs" }
 ];
 
 // Create a safe file schema that works on both server and client

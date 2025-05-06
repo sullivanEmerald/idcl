@@ -27,7 +27,7 @@ const steps = [
     id: 'social',
     name: 'Social Media',
     icon: GlobeIcon,
-    fields: ['platforms', 'followersCount', 'engagementRate']
+    fields: ['platforms', 'socialAccounts', 'engagementRate']
   },
   {
     id: 'audience',
@@ -62,8 +62,8 @@ export default function PromoterOnboarding() {
     phoneNumber: '',
     location: '',
     platforms: [] as string[],
-    followersCount: '',
-    engagementRate: '',
+    socialAccounts: {} as Record<string, { link: string; followers: string }>,
+    engagementRate: '0',
     audienceAge: '',
     audienceInterests: [] as string[],
     contentTypes: [] as string[],
@@ -172,20 +172,43 @@ export default function PromoterOnboarding() {
       errors.platforms = 'Select at least one platform'
     }
     
-    if (!formData.followersCount.trim()) {
-      errors.followersCount = 'Followers count is required'
-    } else if (!/^\d+$/.test(formData.followersCount)) {
-      errors.followersCount = 'Please enter a valid number'
-    }
-    
-    if (!formData.engagementRate.trim()) {
-      errors.engagementRate = 'Engagement rate is required'
-    } else if (!/^\d+(\.\d+)?$/.test(formData.engagementRate)) {
-      errors.engagementRate = 'Please enter a valid number (e.g., 3.5)'
-    }
+    // Validate each selected platform's details
+    formData.platforms.forEach(platform => {
+      const account = formData.socialAccounts[platform]
+      
+      if (!account?.link?.trim()) {
+        errors[`${platform}-link`] = 'Account link is required'
+      } else if (!isValidUrl(account.link)) {
+        errors[`${platform}-link`] = 'Please enter a valid URL'
+      }
+      
+      if (!account?.followers?.trim()) {
+        errors[`${platform}-followers`] = 'Followers count is required'
+      } else if (!/^\d+$/.test(account.followers)) {
+        errors[`${platform}-followers`] = 'Please enter a valid number'
+      }
+    })
     
     setFormErrors(errors)
     return Object.keys(errors).length === 0
+  }
+
+  // Add URL validation helper
+  const isValidUrl = (url: string) => {
+    try {
+      new URL(url)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  // Add total followers calculation
+  const calculateTotalFollowers = () => {
+    return formData.platforms.reduce((total, platform) => {
+      const followers = parseInt(formData.socialAccounts[platform]?.followers || '0')
+      return total + (isNaN(followers) ? 0 : followers)
+    }, 0)
   }
 
   const validateAudienceInfo = () => {
@@ -283,8 +306,27 @@ export default function PromoterOnboarding() {
         throw new Error('User ID not found. Please log in again.')
       }
 
+      // Calculate total followers
+      const totalFollowers = calculateTotalFollowers().toString()
+
+      // Prepare the data according to the DTO
+      const submitData = {
+        ...formData,
+        totalFollowers,
+        // Ensure socialAccounts is properly formatted
+        socialAccounts: Object.fromEntries(
+          formData.platforms.map(platform => [
+            platform,
+            {
+              link: formData.socialAccounts[platform]?.link || '',
+              followers: formData.socialAccounts[platform]?.followers || '0'
+            }
+          ])
+        )
+      }
+
       // Submit the form
-      await onboardingService.updatePromoterProfile(userId, formData)
+      await onboardingService.updatePromoterProfile(userId, submitData)
 
       // Show success message and redirect to promoter dashboard
       console.log('Promoter profile updated successfully')
@@ -296,6 +338,47 @@ export default function PromoterOnboarding() {
       setIsLoading(false)
     }
   }
+
+  // Add platform URL formatters
+  const getPlatformUrl = (platform: string, username: string) => {
+    const usernameWithoutAt = username.replace(/^@/, '');
+    switch (platform) {
+      case 'instagram':
+        return `https://instagram.com/${usernameWithoutAt}`;
+      case 'tiktok':
+        return `https://tiktok.com/@${usernameWithoutAt}`;
+      case 'youtube':
+        return `https://youtube.com/@${usernameWithoutAt}`;
+      case 'twitter':
+        return `https://twitter.com/${usernameWithoutAt}`;
+      case 'facebook':
+        return `https://facebook.com/${usernameWithoutAt}`;
+      default:
+        return username;
+    }
+  };
+
+  const getUsernameFromUrl = (platform: string, url: string) => {
+    try {
+      const urlObj = new URL(url);
+      switch (platform) {
+        case 'instagram':
+          return urlObj.pathname.replace(/^\//, '');
+        case 'tiktok':
+          return urlObj.pathname.replace(/^\/@/, '');
+        case 'youtube':
+          return urlObj.pathname.replace(/^\/@/, '');
+        case 'twitter':
+          return urlObj.pathname.replace(/^\//, '');
+        case 'facebook':
+          return urlObj.pathname.replace(/^\//, '');
+        default:
+          return url;
+      }
+    } catch {
+      return url;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-10 sm:py-8 md:py-12 px-0 sm:px-6 md:px-8">
@@ -312,7 +395,7 @@ export default function PromoterOnboarding() {
                     ${index <= currentStep
                       ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
                       : 'bg-gray-200 text-gray-400'}
-                  `}>
+                `}>
                     <StepIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5" />
                   </div>
                   <p className="mt-2 text-xs sm:text-sm font-medium text-gray-600 text-center whitespace-nowrap">{step.name}</p>
@@ -401,6 +484,15 @@ export default function PromoterOnboarding() {
                               ? formData.platforms.filter(p => p !== platform.value)
                               : [...formData.platforms, platform.value]
                             handleInputChange('platforms', newPlatforms)
+                            
+                            // Initialize or remove social account data when platform is toggled
+                            const newSocialAccounts = { ...formData.socialAccounts }
+                            if (newPlatforms.includes(platform.value)) {
+                              newSocialAccounts[platform.value] = { link: '', followers: '' }
+                            } else {
+                              delete newSocialAccounts[platform.value]
+                            }
+                            setFormData(prev => ({ ...prev, socialAccounts: newSocialAccounts }))
                           }}
                         >
                           {platform.label}
@@ -411,32 +503,76 @@ export default function PromoterOnboarding() {
                       <p className="text-sm text-red-500 mt-1">{formErrors.platforms}</p>
                     )}
                   </div>
-                  <div>
-                    <Label htmlFor="followersCount">Total Followers</Label>
-                    <Input
-                      id="followersCount"
-                      value={formData.followersCount}
-                      onChange={(e) => handleInputChange('followersCount', e.target.value)}
-                      placeholder="e.g. 10000"
-                      className={formErrors.followersCount ? 'border-red-500' : ''}
-                    />
-                    {formErrors.followersCount && (
-                      <p className="text-sm text-red-500 mt-1">{formErrors.followersCount}</p>
-                    )}
-                  </div>
-                  <div>
-                    <Label htmlFor="engagementRate">Average Engagement Rate</Label>
-                    <Input
-                      id="engagementRate"
-                      value={formData.engagementRate}
-                      onChange={(e) => handleInputChange('engagementRate', e.target.value)}
-                      placeholder="e.g. 3.5"
-                      className={formErrors.engagementRate ? 'border-red-500' : ''}
-                    />
-                    {formErrors.engagementRate && (
-                      <p className="text-sm text-red-500 mt-1">{formErrors.engagementRate}</p>
-                    )}
-                  </div>
+
+                  {/* Social Media Account Details */}
+                  {formData.platforms.map((platform) => (
+                    <div key={platform} className="space-y-4 p-4 border rounded-lg bg-gray-50">
+                      <h3 className="font-medium text-gray-900">
+                        {socialPlatforms.find(p => p.value === platform)?.label} Details
+                      </h3>
+                      <div>
+                        <Label htmlFor={`${platform}-link`}>Username</Label>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-500">@</span>
+                          <Input
+                            id={`${platform}-link`}
+                            value={formData.socialAccounts[platform]?.link ? 
+                              getUsernameFromUrl(platform, formData.socialAccounts[platform].link) : 
+                              ''}
+                            onChange={(e) => {
+                              const username = e.target.value.replace(/^@/, '');
+                              const newSocialAccounts = { ...formData.socialAccounts }
+                              newSocialAccounts[platform] = {
+                                ...newSocialAccounts[platform],
+                                link: getPlatformUrl(platform, username)
+                              }
+                              setFormData(prev => ({ ...prev, socialAccounts: newSocialAccounts }))
+                            }}
+                            placeholder={`Enter your ${platform} username`}
+                            className={formErrors[`${platform}-link`] ? 'border-red-500' : ''}
+                            required
+                          />
+                        </div>
+                        {formErrors[`${platform}-link`] && (
+                          <p className="text-sm text-red-500 mt-1">{formErrors[`${platform}-link`]}</p>
+                        )}
+                      </div>
+                      <div>
+                        <Label htmlFor={`${platform}-followers`}>Followers Count</Label>
+                        <Input
+                          id={`${platform}-followers`}
+                          value={formData.socialAccounts[platform]?.followers || ''}
+                          onChange={(e) => {
+                            // Only allow numbers
+                            const value = e.target.value.replace(/[^0-9]/g, '');
+                            const newSocialAccounts = { ...formData.socialAccounts }
+                            newSocialAccounts[platform] = {
+                              ...newSocialAccounts[platform],
+                              followers: value
+                            }
+                            setFormData(prev => ({ ...prev, socialAccounts: newSocialAccounts }))
+                          }}
+                          placeholder="Enter number of followers"
+                          className={formErrors[`${platform}-followers`] ? 'border-red-500' : ''}
+                          required
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                        />
+                        {formErrors[`${platform}-followers`] && (
+                          <p className="text-sm text-red-500 mt-1">{formErrors[`${platform}-followers`]}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Total Followers Display */}
+                  {formData.platforms.length > 0 && (
+                    <div className="p-4 border rounded-lg bg-indigo-50">
+                      <h3 className="font-medium text-gray-900">Total Followers</h3>
+                      <p className="text-2xl font-bold text-indigo-600">{calculateTotalFollowers().toLocaleString()}</p>
+                    </div>
+                  )}
                 </div>
               )}
 
