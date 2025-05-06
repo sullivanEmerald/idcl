@@ -101,7 +101,12 @@ export default function ProfileSettings() {
   const [isDeletingAccounts, setIsDeletingAccounts] = useState<Record<string, boolean>>({});
   const [isEditAccounts, setIsEditAccounts] = useState<Record<string, boolean>>({});
   const [isEditLoding, setIsEditLoding] = useState<Record<string, boolean>>({});
-  const [isCollapsibleOpen, setIsCollapsibleOpen] = useState<Record<string, boolean>>({})
+  const [isCollapsibleOpen, setIsCollapsibleOpen] = useState<Record<string, boolean>>({
+    personal: false,
+    password: false,
+    onboarding: false,
+    socials: false
+  })
 
 
   // To open individual dialog box
@@ -131,6 +136,24 @@ export default function ProfileSettings() {
     tiktok: [],
   })
 
+
+  const handleCollapsibleToggle = (section: string, isOpen: boolean) => {
+    setIsCollapsibleOpen(prev => {
+
+      if (isOpen) {
+        return {
+          personal: section === 'personal',
+          password: section === 'password',
+          onboarding: section === 'onboarding',
+          socials: section === 'socials'
+        };
+      }
+      return {
+        ...prev,
+        [section]: isOpen
+      };
+    });
+  };
 
   const handleAddSocial = (platform: string) => {
     setCurrentPlatform(platform);

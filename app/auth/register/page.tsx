@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BriefcaseIcon, MegaphoneIcon, Eye, EyeOff } from "lucide-react";
 import authService from "@/services/auth";
 import { useRouter } from "next/navigation";
+import { toast, Toaster } from 'sonner'
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -64,9 +65,9 @@ export default function RegisterPage() {
       console.log(data);
       router.push("/auth/verify-email");
     } catch (err: any) {
-      setError(
-        err.response?.data?.message || "An error occurred during registration"
-      );
+      const resError = err.response?.data?.message || 'An error occurred during registration'
+      setError(resError);
+      toast.error(resError)
     } finally {
       setIsLoading(false);
     }
@@ -78,6 +79,7 @@ export default function RegisterPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
+      <Toaster richColors position="top-center" />
       <Card className="backdrop-blur-sm bg-white/80">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">
@@ -213,11 +215,11 @@ export default function RegisterPage() {
                     "Submit"
                   )}
                 </Button>
-                {error && (
+                {/* {error && (
                   <p className="text-sm text-red-500 mt-2 text-center">
                     {error}
                   </p>
-                )}
+                )} */}
               </form>
             </TabsContent>
             <TabsContent value="promoter">

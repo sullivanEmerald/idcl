@@ -31,8 +31,9 @@ export const useAccountSettingHandler = () => {
 
 
     const isEmpty = (): boolean => {
-        return Object.values(userData).some((item) => item.trim() === "")
+        return Object.values(userData).some((item) => (item ?? '').trim() === "");
     }
+
 
     const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
