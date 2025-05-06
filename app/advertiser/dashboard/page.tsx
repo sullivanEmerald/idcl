@@ -1,13 +1,26 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { Card } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Metric } from '@/components/metrics/metric'
-import { CampaignList } from '@/components/campaigns/campaign-list'
-import { PerformanceChart } from '@/components/charts/performance-chart'
-import { Megaphone, DollarSign, MousePointer, Video } from 'lucide-react'
-import advertiserService, { DashboardMetrics, AnalyticsOverview } from '@/services/advertiser'
+import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Metric } from "@/components/metrics/metric";
+import { CampaignList } from "@/components/campaigns/campaign-list";
+import { PerformanceChart } from "@/components/charts/performance-chart";
+import { Megaphone, DollarSign, MousePointer, Video } from "lucide-react";
+import advertiserService, {
+  DashboardMetrics,
+  AnalyticsOverview,
+} from "@/services/advertiser";
+
+interface ICampaign {
+  id: string;
+  title: string;
+  status: string;
+  budget: number;
+  activePromoters: number;
+  reach: number;
+  metrics: { totalViews: number };
+}
 
 export default function AdvertiserDashboard() {
   const [metrics, setMetrics] = useState<DashboardMetrics>({
@@ -17,76 +30,72 @@ export default function AdvertiserDashboard() {
     totalBudget: 0,
     activePromoters: 0,
     totalReach: 0,
-    availableBudget: 0
-  })
-  const [recentCampaigns, setRecentCampaigns] = useState<{
-    id: string
-    title: string
-    status: string
-    budget: number
-    activePromoters: number
-    reach: number
-    metrics: {
-      totalViews: number
-    }
-  }[]>([])
-  const [topPerformers, setTopPerformers] = useState<{
-    date: string
-    views?: number
-    reach?: number
-    engagements: number
-    clicks?: number
-    videoViews?: number
-  }[]>([])
-  const [analyticsData, setAnalyticsData] = useState<AnalyticsOverview | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+    availableBudget: 0,
+  });
+  const [recentCampaigns, setRecentCampaigns] = useState<ICampaign[]>([]);
+  const [topPerformers, setTopPerformers] = useState<
+    {
+      date: string;
+      views?: number;
+      reach?: number;
+      engagements: number;
+      clicks?: number;
+      videoViews?: number;
+    }[]
+  >([]);
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsOverview | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const data = await advertiserService.getDashboard()
-        setMetrics(data.metrics)
+        const data = await advertiserService.getDashboard();
+        setMetrics(data.metrics);
 
         // Transform campaigns data to match CampaignList props
-        const transformedCampaigns = data.recentCampaigns.map(campaign => ({
+        const transformedCampaigns = data.recentCampaigns.map((campaign) => ({
           id: campaign.id,
           title: campaign.title,
           status: campaign.status,
           budget: campaign.budget,
-          activePromoters: campaign.approvedPromoters.length,
+          activePromoters: campaign.approvedPromoters?.length || 0,
           reach: campaign.metrics.totalReach,
           metrics: {
-            totalViews: campaign.metrics.totalViews
-          }
-        }))
-        setRecentCampaigns(transformedCampaigns)
+            totalViews: campaign.metrics.totalViews,
+          },
+        }));
+        setRecentCampaigns(transformedCampaigns as ICampaign[]);
 
         // Get analytics data for the performance chart
-        const analytics = await advertiserService.getAnalyticsOverview()
-        setAnalyticsData(analytics)
-        
+        const analytics = await advertiserService.getAnalyticsOverview();
+        setAnalyticsData(analytics);
+
         if (analytics.timeSeriesData && analytics.timeSeriesData.length > 0) {
-          setTopPerformers(analytics.timeSeriesData)
+          setTopPerformers(analytics.timeSeriesData);
         } else {
           // Fallback to old data structure if timeSeriesData is not available
-          const transformedPerformance = data.topPerformers.map(performer => ({
-            date: performer.campaign.title,
-            reach: performer.metrics.reach,
-            engagements: performer.metrics.engagements,
-            clicks: 0,
-            videoViews: 0
-          }))
-          setTopPerformers(transformedPerformance)
+          const transformedPerformance = data.topPerformers.map(
+            (performer) => ({
+              date: performer.campaign.title,
+              reach: performer.metrics.reach,
+              engagements: performer.metrics.engagements,
+              clicks: 0,
+              videoViews: 0,
+            })
+          );
+          setTopPerformers(transformedPerformance);
         }
       } catch (error) {
-        console.error('Error fetching dashboard data:', error)
+        console.error("Error fetching dashboard data:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchDashboardData()
-  }, [])
+    fetchDashboardData();
+  }, []);
 
   if (isLoading) {
     return (
@@ -102,7 +111,7 @@ export default function AdvertiserDashboard() {
           <Skeleton className="h-96" />
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -110,7 +119,9 @@ export default function AdvertiserDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Welcome back!</h1>
-          <p className="mt-2 text-gray-600">{"Here's what's"} happening with your campaigns today.</p>
+          <p className="mt-2 text-gray-600">
+            {"Here's what's"} happening with your campaigns today.
+          </p>
         </div>
         {/* <button
           onClick={() => window.location.href = '/advertiser/dashboard/campaigns/create'}
@@ -156,7 +167,10 @@ export default function AdvertiserDashboard() {
         />
         <Metric
           title="Total Clicks"
-          value={analyticsData?.performanceMetrics?.totalClicks?.toLocaleString() || "0"}
+          value={
+            analyticsData?.performanceMetrics?.totalClicks?.toLocaleString() ||
+            "0"
+          }
           description="User interactions"
           trend=""
           icon={<MousePointer className="h-4 w-4 sm:h-5 sm:w-5" />}
@@ -164,7 +178,10 @@ export default function AdvertiserDashboard() {
         />
         <Metric
           title="Video Views"
-          value={analyticsData?.performanceMetrics?.totalVideoViews?.toLocaleString() || "0"}
+          value={
+            analyticsData?.performanceMetrics?.totalVideoViews?.toLocaleString() ||
+            "0"
+          }
           description="Video content views"
           trend=""
           icon={<Video className="h-4 w-4 sm:h-5 sm:w-5" />}
@@ -176,7 +193,9 @@ export default function AdvertiserDashboard() {
         <Card className="overflow-hidden border-t-4 border-t-blue-500">
           <div className="border-b p-6">
             <h2 className="text-xl font-semibold">Recent Campaigns</h2>
-            <p className="mt-1 text-sm text-gray-600">Your latest campaign activities</p>
+            <p className="mt-1 text-sm text-gray-600">
+              Your latest campaign activities
+            </p>
           </div>
           <div className="p-6">
             <CampaignList campaigns={recentCampaigns} />
@@ -186,7 +205,9 @@ export default function AdvertiserDashboard() {
         <Card className="overflow-hidden border-t-4 border-t-purple-500">
           <div className="border-b p-6">
             <h2 className="text-xl font-semibold">Performance Overview</h2>
-            <p className="mt-1 text-sm text-gray-600">Campaign metrics over time</p>
+            <p className="mt-1 text-sm text-gray-600">
+              Campaign metrics over time
+            </p>
           </div>
           <div className="p-6">
             <PerformanceChart data={topPerformers} />
@@ -194,5 +215,5 @@ export default function AdvertiserDashboard() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

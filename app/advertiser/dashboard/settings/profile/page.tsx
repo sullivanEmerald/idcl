@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Toaster, toast } from 'sonner'
-import { Eye, EyeOff, Key, User, ChevronDown, Settings, Dribbble, CirclePlus, UserRoundPen, LoaderCircle, Link2, Users, Send, Tag, BarChart2, Share2, Pencil, Trash2, Ban, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Key, User, ChevronDown, Settings } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAccountSettingHandler, useUpdatePasswordHandler, useOnBoardingHandler } from '@/hooks/user/user-advertiser'
 import ReactSelect from 'react-select'

@@ -530,8 +530,11 @@ export default function ProfileSettings() {
           <Card className="overflow-hidden border border-gray-200">
             <Collapsible
               open={isCollapsibleOpen['personal']}
-              onOpenChange={(isOpen) => {
-                handleCollapsibleToggle('personal', isOpen)
+              onOpenChange={(isOpen: boolean) => {
+                setIsCollapsibleOpen((prev) => ({
+                  ...prev,
+                  ['personal']: isOpen
+                }))
               }}
             >
               <CollapsibleTrigger asChild>
@@ -613,8 +616,11 @@ export default function ProfileSettings() {
           <Card className="overflow-hidden border border-gray-200">
             <Collapsible
               open={isCollapsibleOpen['password']}
-              onOpenChange={(isOpen) => {
-                handleCollapsibleToggle('password', isOpen)
+              onOpenChange={(isOpen: boolean) => {
+                setIsCollapsibleOpen((prev) => ({
+                  ...prev,
+                  ['password']: isOpen
+                }))
               }}
             >
               <CollapsibleTrigger asChild>
@@ -729,8 +735,11 @@ export default function ProfileSettings() {
         <Card className="overflow-hidden border border-gray-200">
           <Collapsible
             open={isCollapsibleOpen['onboarding']}
-            onOpenChange={(isOpen) => {
-              handleCollapsibleToggle('onboarding', isOpen)
+            onOpenChange={(isOpen: boolean) => {
+              setIsCollapsibleOpen((prev) => ({
+                ...prev,
+                ['onboarding']: isOpen
+              }))
             }}
           >
             <CollapsibleTrigger asChild>
@@ -923,8 +932,11 @@ export default function ProfileSettings() {
         <Card className="overflow-hidden border border-gray-200">
           <Collapsible
             open={isCollapsibleOpen['socials']}
-            onOpenChange={(isOpen) => {
-              handleCollapsibleToggle('socials', isOpen)
+            onOpenChange={(isOpen: boolean) => {
+              setIsCollapsibleOpen((prev) => ({
+                ...prev,
+                ['socials']: isOpen
+              }))
             }}
           >
             <CollapsibleTrigger asChild>
@@ -963,7 +975,7 @@ export default function ProfileSettings() {
                           isNotEmpty ? (
                             <Dialog
                               open={dialogOpenStates[platformKey]}
-                              onOpenChange={(isOpen) => handleDialogOpenChange(platformKey, isOpen)}
+                              onOpenChange={(isOpen: boolean) => handleDialogOpenChange(platformKey, isOpen)}
                             >
                               <DialogTrigger asChild>
                                 <Button
@@ -1134,7 +1146,7 @@ export default function ProfileSettings() {
                                           <div className="flex gap-2 ml-4">
                                             <Popover
                                               open={isEditAccounts[profile.id]}
-                                              onOpenChange={(isOpen) => {
+                                              onOpenChange={(isOpen: boolean) => {
                                                 editPopoverHandler(profile.id, isOpen);
 
                                                 if (isOpen) {

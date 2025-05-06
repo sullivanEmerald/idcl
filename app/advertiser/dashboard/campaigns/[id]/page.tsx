@@ -424,10 +424,10 @@ export default function CampaignPage() {
                 {campaign.activePromoters?.length > 0 ? (
                   <div className="rounded-md border overflow-x-auto">
                     <div className="hidden md:grid md:grid-cols-7 gap-6 p-6 font-medium border-b bg-muted/50">
-                      <div>Promoter</div>
+                      {/* <div>Promoter</div> */}
                       <div>Platforms</div>
                       <div>Audience Size</div>
-                      <div>Engagement Rate</div>
+                      {/* <div>Engagement Rate</div> */}
                       <div>Content Types</div>
                       <div>Last Activity</div>
                       <div>Status</div>
@@ -438,14 +438,14 @@ export default function CampaignPage() {
                           key={item._id}
                           className="flex flex-col md:grid md:grid-cols-7 gap-3 md:gap-6 p-4 md:p-6 items-start md:items-center hover:bg-muted/50"
                         >
-                          <div>
+                          {/* <div>
                             <p className="font-medium">
                               {item.promoter.fullName || item.promoter.email}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               {item.promoter.location || "Location not set"}
                             </p>
-                          </div>
+                          </div> */}
                           <div className="flex flex-wrap gap-2">
                             {(item.promoter.platforms || []).map((platform) => (
                               <Badge
@@ -460,26 +460,26 @@ export default function CampaignPage() {
                           <div className="md:hidden flex justify-between w-full">
                             <span className="text-sm text-muted-foreground">Audience Size:</span>
                             <p className="font-medium">
-                              {item.promoter.followersCount
+                              {item.promoter.totalFollowers
                                 ? Number(
-                                    item.promoter.followersCount
+                                    item.promoter.totalFollowers
                                   ).toLocaleString()
                                 : "0"}
                             </p>
                           </div>
-                          <div className="hidden md:block">
+                          {/* <div className="hidden md:block">
                             <p className="font-medium">
-                              {item.promoter.followersCount
+                              {item.promoter.totalFollowers
                                 ? Number(
-                                    item.promoter.followersCount
+                                    item.promoter.totalFollowers
                                   ).toLocaleString()
                                 : "0"}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               followers
                             </p>
-                          </div>
-                          <div className="md:hidden flex justify-between w-full">
+                          </div> */}
+                          {/* <div className="md:hidden flex justify-between w-full">
                             <span className="text-sm text-muted-foreground">Engagement Rate:</span>
                             <p className="font-medium">
                               {item.promoter.engagementRate
@@ -489,7 +489,7 @@ export default function CampaignPage() {
                                 : "0.00"}
                               %
                             </p>
-                          </div>
+                          </div> */}
                           <div className="hidden md:block">
                             <p className="font-medium">
                               {item.promoter.engagementRate
@@ -524,7 +524,7 @@ export default function CampaignPage() {
                                 : "No activity"}
                             </p>
                           </div>
-                          <div className="hidden md:block">
+                          {/* <div className="hidden md:block">
                             <p className="font-medium">
                               {item.lastActivity
                                 ? new Date(
@@ -535,7 +535,7 @@ export default function CampaignPage() {
                             <p className="text-sm text-muted-foreground">
                               {item.totalEvents || 0} events
                             </p>
-                          </div>
+                          </div> */}
                           <div className="md:hidden flex justify-between w-full">
                             <span className="text-sm text-muted-foreground">Status:</span>
                             <Badge

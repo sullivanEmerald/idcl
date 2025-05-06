@@ -36,32 +36,32 @@ export default function BrowseCampaigns() {
 
   // Add color generation function
   const backgroundColors = [
-    'bg-green-100',
-    'bg-blue-100',
-    'bg-purple-100',
-    'bg-yellow-100',
-    'bg-pink-100',
-    'bg-indigo-100',
-    'bg-red-100',
-    'bg-orange-100'
+    "bg-green-100",
+    "bg-blue-100",
+    "bg-purple-100",
+    "bg-yellow-100",
+    "bg-pink-100",
+    "bg-indigo-100",
+    "bg-red-100",
+    "bg-orange-100",
   ];
 
   const textColors = [
-    'text-green-600',
-    'text-blue-600',
-    'text-purple-600',
-    'text-yellow-600',
-    'text-pink-600',
-    'text-indigo-600',
-    'text-red-600',
-    'text-orange-600'
+    "text-green-600",
+    "text-blue-600",
+    "text-purple-600",
+    "text-yellow-600",
+    "text-pink-600",
+    "text-indigo-600",
+    "text-red-600",
+    "text-orange-600",
   ];
 
   const getAdvertiserColorIndex = (advertiserId: string) => {
     // Simple hash function to get consistent index
     let hash = 0;
     for (let i = 0; i < advertiserId.length; i++) {
-      hash = ((hash << 5) - hash) + advertiserId.charCodeAt(i);
+      hash = (hash << 5) - hash + advertiserId.charCodeAt(i);
       hash = hash & hash; // Convert to 32-bit integer
     }
     // Ensure positive index within array bounds
@@ -185,23 +185,20 @@ export default function BrowseCampaigns() {
           />
         </div>
         <div className="h-full">
-          <Select
-            value={nicheFilter}
-            onValueChange={setNicheFilter}
-          >
+          <Select value={nicheFilter} onValueChange={setNicheFilter}>
             <SelectTrigger className="w-full sm:w-[200px] h-full focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none">
-            <SelectValue placeholder="Filter by niche" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Niches</SelectItem>
-            <SelectItem value="fashion">Fashion</SelectItem>
-            <SelectItem value="tech">Tech</SelectItem>
-            <SelectItem value="fitness">Fitness</SelectItem>
-            <SelectItem value="food">Food</SelectItem>
-            <SelectItem value="travel">Travel</SelectItem>
-            <SelectItem value="gaming">Gaming</SelectItem>
-          </SelectContent>
-        </Select>
+              <SelectValue placeholder="Filter by niche" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Niches</SelectItem>
+              <SelectItem value="fashion">Fashion</SelectItem>
+              <SelectItem value="tech">Tech</SelectItem>
+              <SelectItem value="fitness">Fitness</SelectItem>
+              <SelectItem value="food">Food</SelectItem>
+              <SelectItem value="travel">Travel</SelectItem>
+              <SelectItem value="gaming">Gaming</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -210,17 +207,29 @@ export default function BrowseCampaigns() {
           <Card
             key={campaign.id}
             className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray p-2 min-h-[445px] w-full md:w-[379px] xl:w-[280px]"
-            onClick={() => router.push(`/promoter/dashboard/marketplace/campaign/${campaign.id}`)}
+            onClick={() =>
+              router.push(
+                `/promoter/dashboard/marketplace/campaign/${campaign.id}`
+              )
+            }
           >
             {/* Cover Image or Video */}
             <div className="relative aspect-video w-full overflow-hidden group h-[216px]">
               <div className="absolute top-0 w-full flex items-center justify-between p-2 z-10">
-                <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                  backgroundColors[getAdvertiserColorIndex(campaign.advertiser.id)]
-                }`}>
-                  <span className={`text-sm font-semibold ${
-                    textColors[getAdvertiserColorIndex(campaign.advertiser.id)]
-                  }`}>
+                <div
+                  className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                    backgroundColors[
+                      getAdvertiserColorIndex(campaign.advertiser.id)
+                    ]
+                  }`}
+                >
+                  <span
+                    className={`text-sm font-semibold ${
+                      textColors[
+                        getAdvertiserColorIndex(campaign.advertiser.id)
+                      ]
+                    }`}
+                  >
                     {campaign.advertiser.companyName.slice(0, 2).toUpperCase()}
                   </span>
                 </div>
@@ -231,15 +240,15 @@ export default function BrowseCampaigns() {
                 <div className="h-8 w-[110px] bg-white flex items-center justify-around rounded-md">
                   <div className="flex items-center gap-1 text-[11px]">
                     <img src="/like.png" alt="like" />
-                    {campaign.metrics?.totalEngagements || 0}
+                    {campaign.metrics?.totalUserClicks || 0}
                   </div>
                   <div className="flex items-center gap-1 text-[11px]">
                     <img src="/comment.png" alt="like" />{" "}
-                    {campaign.metrics?.totalPosts}
+                    {campaign.metrics?.uniqueClicks || 0}
                   </div>
                   <div className="flex items-center gap-1 text-[11px]">
                     <img src="/eye.png" alt="like" />{" "}
-                    {campaign.metrics?.totalEngagements || 0}
+                    {campaign.metrics?.totalViews || 0}
                   </div>
                 </div>
                 <div
@@ -318,18 +327,21 @@ export default function BrowseCampaigns() {
                 <p className=" text-gray-500 text-[12px] font-normal">
                   {campaign.advertiser.companyName}
                 </p>
-                <button 
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleFollowBrand(campaign.advertiser.id, campaign.advertiser.isFollowing);
+                    handleFollowBrand(
+                      campaign.advertiser.id,
+                      campaign.advertiser.isFollowing
+                    );
                   }}
                   className={`text-xs font-semibold cursor-pointer ${
-                    campaign.advertiser.isFollowing 
-                    ? 'text-gray-600' 
-                    : 'text-[#34A4FF]'
+                    campaign.advertiser.isFollowing
+                      ? "text-gray-600"
+                      : "text-[#34A4FF]"
                   }`}
                 >
-                  {campaign.advertiser.isFollowing ? 'Following' : 'Follow +'}
+                  {campaign.advertiser.isFollowing ? "Following" : "Follow +"}
                 </button>
               </div>
 
@@ -359,7 +371,14 @@ export default function BrowseCampaigns() {
                     </p>
                   </div>
                   <div className="border-r border-dashed border-gray-200 p-2 w-[50%]">
-                    <p className="text-[10px] font-[300px]">Per Sale</p>
+                    <p className="text-[10px] font-[300px]">
+                      Per{" "}
+                      {campaign.campaignGoal === "awareness"
+                        ? "View"
+                        : campaign.campaignGoal === "engagement"
+                          ? "Engagement"
+                          : "Conversion"}
+                    </p>
                     <p className="text-[12px] font-semibold">
                       ₦{campaign.pricePerPost}
                     </p>
@@ -375,9 +394,13 @@ export default function BrowseCampaigns() {
                   </div>
                 </div>
               </div>
-              <button 
+              <button
                 className="w-full bg-[#00A0F1] rounded-lg cursor-pointer text-white text-[12px] font-semibold py-2"
-                onClick={() => router.push(`/promoter/dashboard/marketplace/campaign/${campaign.id}`)}
+                onClick={() =>
+                  router.push(
+                    `/promoter/dashboard/marketplace/campaign/${campaign.id}`
+                  )
+                }
               >
                 View Campaign
               </button>
