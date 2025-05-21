@@ -1,70 +1,83 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { JetBrains_Mono } from "next/font/google";
-import { Providers } from "./providers";
+import { Roboto, Poppins, Lexend, Be_Vietnam_Pro, Figtree, Mulish, Jost } from "next/font/google";
+import localFont from 'next/font/local'
 import "./globals.css";
-import "./force-light-mode.css";
+import Header from "@/components/general/header";
+import Footer from "@/components/sections/footer";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
+const satoshi = localFont({
+  src: [
+    {
+      path: '../public/fonts/Satoshi-Medium.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/Satoshi-Light.woff2',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/Satoshi-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/Satoshi-Bold.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/Satoshi-Black.woff2',
+      weight: '900',
+      style: 'normal',
+    },
+  ],
+  variable: "--font-satoshi",
+  display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-roboto',
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Adminting | Influencer Marketing Platform",
-    template: "%s | Adminting"
-  },
-  description: "Connect brands with influential promoters to create engaging campaigns and drive meaningful results through our streamlined marketing platform.",
-  keywords: ["influencer", "marketing", "campaigns", "promoters", "brands", "advertisers", "social media"],
-  authors: [{ name: "Adminting Team" }],
-  creator: "Adminting",
-  publisher: "Adminting",
-  applicationName: "Adminting Platform",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_URL || "https://adminting.com"),
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: process.env.NEXT_PUBLIC_FRONTEND_URL || "https://adminting.com",
-    title: "Adminting | Influencer Marketing Platform",
-    description: "Connect brands with influential promoters to create engaging campaigns and drive meaningful results.",
-    siteName: "Adminting",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Adminting Platform"
-      }
-    ]
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Adminting | Influencer Marketing Platform",
-    description: "Connect brands with influential promoters to create engaging campaigns and drive meaningful results.",
-    images: ["/twitter-image.jpg"],
-    creator: "@adminting",
-    site: "@adminting"
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-icon.png" 
-  },
-  manifest: "/manifest.json",
-  verification: {
-    google: "google-site-verification-token", 
-    yandex: "yandex-verification-token"
-  }
-};
+const mulish = Mulish({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-mulish',
+});
+
+const jost = Jost({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-jost',
+});
+
+const figtree = Figtree({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'], // Specify required weights
+  variable: '--font-figtree', // Optional: CSS variable
+});
+
+const be_Vietnam_Pro = Be_Vietnam_Pro({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-vietnam',
+});
+
+const lexend = Lexend({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-lexend',
+});
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-poppins',
+});
 
 export default function RootLayout({
   children,
@@ -72,14 +85,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="light" style={{colorScheme: 'light'}}>
-      <head>
-        <meta name="color-scheme" content="light" />
-      </head>
-      <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
-      >
-        <Providers>{children}</Providers>
+    <html lang="en" className={`${satoshi.variable} ${jost.variable} ${mulish.variable} ${figtree.variable} ${be_Vietnam_Pro.variable} ${lexend.variable} ${roboto.variable} ${poppins.variable}`}>
+      <body className="font-sans antialiased relative flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

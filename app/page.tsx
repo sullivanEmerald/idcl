@@ -1,24 +1,30 @@
-import { Layout } from '@/components/layout'
-import { HeroSection } from '@/components/sections/hero'
-import { IntroSection } from '@/components/sections/intro'
-import { FeaturesSection } from '@/components/sections/features'
-import { PartnersSection } from '@/components/sections/partners'
-// import { PromoterSpotlightSection } from '@/components/sections/promoter-spotlight'
-import { JoinCommunitySection } from '@/components/sections/join-community'
-import { FeaturedInSection } from '@/components/sections/featured-in'
-import { Footer } from '@/components/layout/footer'
+import GetStarted from "@/components/general/getStarted";
+import Navigation from "@/components/general/navigation";
+import Logo from "@/components/general/logo";
+import HeroSection from "@/components/sections/hero";
+import Glance from "@/components/sections/glance";
+import Mission from "@/components/sections/misson";
+import Objectives from "@/components/sections/objective";
+import Services from "@/components/sections/services";
+import Updates from "@/components/sections/updates";
+import Testimonials from "@/components/sections/testimonial";
+import Partners from "@/components/sections/partners";
+import Ellipse from "@/components/sections/ellipse";
+import GeneralEllipse from "@/components/general/ellipse";
+import { names } from "@/data/elllipse";
 
-export default function Home() {
+export default function Header() {
   return (
-    <Layout>
+    <>
       <HeroSection />
-      <IntroSection />
-      <FeaturesSection />
-      <PartnersSection />
-      {/* <PromoterSpotlightSection /> */}
-      <JoinCommunitySection />
-      <FeaturedInSection />
-      <Footer />
-    </Layout>
+      <Glance />
+      <Mission isMission={true} />
+      <Objectives isObjective={true} />
+      <Services isServices={true} />
+      <Updates />
+      <Testimonials />
+      <Partners />
+      <GeneralEllipse name={names.home} />
+    </>
   )
 }

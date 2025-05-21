@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import type { Config } from 'tailwindcss'
-import { shadows } from './styles/design-system'
+
 
 const config: Config = {
   darkMode: ['class'],
@@ -18,7 +18,6 @@ const config: Config = {
       }
     },
     extend: {
-      boxShadow: shadows,
       keyframes: {
         'accordion-down': {
           from: { height: '0' },

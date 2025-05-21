@@ -3,6 +3,7 @@
 import { useDropzone } from "react-dropzone";
 import { cn } from "@/lib/utils";
 import { UploadIcon } from "lucide-react";
+import Image from "next/image";
 
 interface FileUploaderProps {
   accept: string;
@@ -36,25 +37,35 @@ export function FileUploader({
     <div
       {...getRootProps()}
       className={cn(
-        "flex flex-col items-center justify-center rounded-lg border border-dashed p-6 cursor-pointer transition-colors",
+        "flex flex-col items-center bg-[#F8F8FF] justify-center rounded-lg border border-dashed p-6 cursor-pointer transition-colors",
         isDragActive
           ? "border-primary/50 bg-primary/5"
           : "border-muted-foreground/25 hover:border-primary/50 hover:bg-primary/5"
       )}
     >
-      <input {...getInputProps()} />
-      <UploadIcon className="h-6 w-6 text-muted-foreground" />
+      <input {...getInputProps()} id="file-upload-input" />
+      {/* <UploadIcon className="h-6 w-6 text-muted-foreground" /> */}
+      <Image src='/images/partnership/upload.png' width={68} height={59} priority className="object-cover" alt="upload" />
       <p className="mt-2 text-sm text-muted-foreground text-center">
         {isDragActive ? (
           "Drop the files here"
         ) : (
           <>
-            Drag & drop {multiple ? "files" : "a file"} here, or click to select{" "}
-            {multiple ? "files" : "a file"}
+            <p className="font-mulish font-bold text-[16px] leading-[24px] text-[#0F0F0F]">
+              Drag & drop {multiple ? "files" : "a file"} here, or{" "}
+              <span
+                className="text-[#483EA8] cursor-pointer underline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  document.getElementById('file-upload-input')?.click();
+                }}
+              >
+                Browse
+              </span>
+            </p>
             <br />
-            <span className="text-xs">
-              {accept.split(",").join(", ")} • Max size: {(maxSize / 1024 / 1024).toFixed(0)}MB
-              {multiple && ` • Max files: ${maxFiles}`}
+            <span className="text-[#676767] font-mulish text-[12px] font-normal leading-[18px]">
+              Supported formates: .PDF
             </span>
           </>
         )}
