@@ -75,7 +75,7 @@ export default function StarsSearch() {
                                 Case study on how MediBridge has served 50,000+ patients across 12 underserved regions.
                             </p>
                         </div>
-                        <Link href={`/startup/rising/${index}`} className="flex py-[12px] px-[33px] item-center justify-center gap-[10px] flex-[1_0_0] rounded-[56px] border border-[#005DFF]">
+                        <Link href={`/services/startup/rising/${index}`} className="flex py-[12px] px-[33px] item-center justify-center gap-[10px] flex-[1_0_0] rounded-[56px] border border-[#005DFF]">
                             <p className="text-[#005DFF] text-center font-roboto text-[15px] font-medium leading-normal">View Profile</p>
                         </Link>
                     </div>

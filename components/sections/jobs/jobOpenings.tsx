@@ -29,12 +29,12 @@ export default function JobOpenings() {
                                 <p className="font-satoshi font-medium leading-normal text-[#061A2E] text-[19px] ">Full-Time</p>
                             </div>
                             <div className="flex items-start gap-[16px]">
-                                <Link href={`/jobs/${index}/apply`} className="flex flex-col gap-[10px] py-[12px] px-[33px] rounded-[56px] bg-[#005DFF]">
+                                <Link href={`/services/jobs/${index}/apply`} className="flex flex-col gap-[10px] py-[12px] px-[33px] rounded-[56px] bg-[#005DFF]">
                                     <p className="font-roboto font-normal leading-normal text-[15px] text-[#fff]">
                                         Apply Now
                                     </p>
                                 </Link>
-                                <Link href={`/jobs/${index}`} className="flex flex-col gap-[10px] py-[12px] px-[33px] rounded-[56px] bg-transparent border border-[#005DFF]">
+                                <Link href={`/services/jobs/${index}`} className="flex flex-col gap-[10px] py-[12px] px-[33px] rounded-[56px] bg-transparent border border-[#005DFF]">
                                     <p className="font-Satoshi font-bold leading-[19px] text-[16px] text-[#005DFF]">
                                         Details
                                     </p>

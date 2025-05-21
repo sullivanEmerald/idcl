@@ -1,5 +1,7 @@
+"use client"
 import Image from "next/image"
 import Link from "next/link"
+import { useParams } from "next/navigation"
 
 const Responsibilities = [
     'Design, develop, and test electrical systems',
@@ -23,6 +25,8 @@ const Benefits = [
 ]
 
 export default function JobProfile() {
+    const { id } = useParams()
+    console.log(id)
     return (
         <div className="relative">
             {/* Background Images - fixed height */}
@@ -64,7 +68,7 @@ export default function JobProfile() {
                                 <h1 className="font-satoshi font-bold tracking-[0.9px] leading-normal text-lg text-[#000000]">Required Experience:</h1>
                                 <p className="font-satoshi font-normal leading-normal text-lg text-[#061A2EBF] tracking-[0.9px]">5+</p>
                             </div>
-                            <Link href='#' className="flex flex-col gap-2 py-3 px-8 rounded-[56px] bg-[#005DFF] hover:bg-[#0045CC] transition-colors">
+                            <Link href={`/services/jobs/${id}/apply`} className="flex flex-col gap-2 py-3 px-8 rounded-[56px] bg-[#005DFF] hover:bg-[#0045CC] transition-colors">
                                 <p className="font-roboto font-medium leading-normal text-sm text-[#fff]">
                                     Apply Now
                                 </p>

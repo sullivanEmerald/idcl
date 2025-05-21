@@ -1,6 +1,17 @@
-
-
+"use client"
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+
+
 
 type EventItem = {
     image: string;
@@ -15,19 +26,63 @@ type EventItem = {
 
 
 export default function UpcomingEventCom({ EventsData }: { EventsData: EventItem[] }) {
+
+    const [eventFilter, setEventFilter] = useState('all');
+
     return (
         <>
             <section className="w-full flex flex-col items-center justify-center py-[80px] px-[80px] gap-[10px] bg-[#144DAF] mb-[50px]">
                 <div className="flex flex-col items-center justify-center gap-[29px] self-stretch w-[1198px]">
-                    <div className="flex items-center justify-between w-[1110px]">
-                        <p className="w-[261px] font-satoshi font-bold text-[32px] leading-[1.1] tracking-normal text-[#FFFFFF]">Upcoming Events</p>
-                        <div className=" relative w-[359px] h-[52px] rounded-[20px] border border-[#144DAF] py-[4px] px-[15px] bg-[#FFFFFF] flex items-center">
-                            <p className="font-figtree font-bold text-[18px] tracking-normal leading-[1.5] text-[#344054]">Category</p>
-                            <div className="w-[213px] h-[44px] absolute right-[5px] top-[4px] rounded-[16px] border border-[#D0D5DD] bg-[#E1ECFF] flex items-center justify-between px-[12px]">
-                                <p className="w-[139px] font-figtree font-medium text-[16px] leading-[1.5] tracking-normal">Start-up Showcase</p>
-                                <img src='/images/events/arrow.png' alt='dropdown' />
+                    <div className="w-[1198px] flex flex-col gap-[35px]">
+                        <p className="w-[261px] font-satoshi font-bold text-[32px] leading-[1.1] tracking-normal text-[#FFFFFF]">
+                            Upcoming Events
+                        </p>
+                        <section className="flex items-center justify-between">
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                <Input
+                                    placeholder="Search"
+                                    className="pl-10 rounded-[16px] w-[789px] bg-[#ffff]"
+                                />
                             </div>
-                        </div>
+                            <div className="relative w-[359px] h-[52px] rounded-[20px] border border-[#144DAF] py-[4px] px-[15px] bg-[#FFFFFF] flex items-center">
+                                <p className="font-figtree font-bold text-[18px] tracking-normal leading-[1.5] text-[#344054]">
+                                    Category
+                                </p>
+
+                                <Select>
+                                    <SelectTrigger className="w-[213px] h-[44px] absolute right-[5px] top-[4px] rounded-[16px] border border-[#D0D5DD] bg-[#E1ECFF] flex items-center justify-between px-[12px] data-[state=open]:bg-[#E1ECFF] focus:ring-0 focus:ring-offset-0">
+                                        <SelectValue
+                                            placeholder={
+                                                <span className="w-[139px] font-figtree font-medium text-[16px] leading-[1.5] tracking-normal">
+                                                    Start-up Showcase
+                                                </span>
+                                            }
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-[16px] border border-[#D0D5DD] bg-[#E1ECFF] w-[213px]">
+                                        <SelectItem
+                                            value="light"
+                                            className="font-figtree font-medium text-[16px] focus:bg-[#D0D5DD]"
+                                        >
+                                            Expired
+                                        </SelectItem>
+                                        <SelectItem
+                                            value="dark"
+                                            className="font-figtree font-medium text-[16px] focus:bg-[#D0D5DD]"
+                                        >
+                                            Upcoming
+                                        </SelectItem>
+                                        <SelectItem
+                                            value="system"
+                                            className="font-figtree font-medium text-[16px] focus:bg-[#D0D5DD]"
+                                        >
+                                            Scheduled
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </section>
                     </div>
                     <section className="flex flex-wrap self-stretch gap-[47px] w-[1198px]" >
                         {EventsData.map((item, index) => (
