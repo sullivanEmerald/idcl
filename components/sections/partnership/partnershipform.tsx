@@ -12,8 +12,16 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+interface FormField {
+    label: string;
+    name: string;
+    placeholder: string;
+    type: 'text' | 'select' | 'photo' | 'textarea';
+    full?: boolean;
+    options?: string[]; // optional property
+}
 
-const PersonalInformation = [
+const PersonalInformation: FormField[] = [
     {
         label: 'Full Name',
         name: 'fullname',
@@ -46,7 +54,7 @@ const PersonalInformation = [
     },
 ]
 
-const PartnershipDetails = [
+const PartnershipDetails: FormField[] = [
 
     {
         label: 'Type of Partnership',
@@ -70,7 +78,8 @@ const PartnershipDetails = [
     {
         label: "Any relevant case studies or projects you've worked on that demonstrate your capability? (Please upload any supporting documents or provide links)",
         name: 'file',
-        type: 'photo'
+        type: 'photo',
+        placeholder: 'document',
     },
     {
         label: 'References or Testimonials',

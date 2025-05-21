@@ -13,8 +13,16 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+interface FormField {
+    label: string;
+    name: string;
+    placeholder?: string;
+    type: 'text' | 'select' | 'photo' | 'textarea' | 'combobox';
+    full?: boolean;
+    options?: string[]; // optional property
+}
 
-const PersonalInformation = [
+const PersonalInformation: FormField[] = [
     {
         label: 'Business Name',
         name: 'business',
@@ -53,7 +61,7 @@ const PersonalInformation = [
     },
 ]
 
-const ContactInformations = [
+const ContactInformations: FormField[] = [
 
     {
         label: 'Primary Contact Name',
@@ -80,7 +88,7 @@ const ContactInformations = [
 ];
 
 
-const ServiceDetails = [
+const ServiceDetails: FormField[] = [
 
     {
         label: 'Brief Description of Services',
@@ -108,7 +116,7 @@ const ServiceDetails = [
 
 ];
 
-const Certificates = [
+const Certificates: FormField[] = [
     {
         label: "Upload any relevant business licenses, certifications, or legal documents required to verify your business's legitimacy.",
         name: 'document',

@@ -13,8 +13,15 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
-
-const PersonalInformation = [
+interface FormField {
+    label: string;
+    name: string;
+    placeholder: string;
+    type: 'text' | 'select' | 'photo' | 'textarea';
+    full: boolean;
+    options?: string[]; // optional property
+}
+const PersonalInformation: FormField[] = [
     {
         label: 'Full Name (required)',
         name: 'fullname',
@@ -46,7 +53,7 @@ const PersonalInformation = [
 
 ]
 
-const PositonInformations = [
+const PositonInformations: FormField[] = [
 
     {
         label: 'Position You Are Applying For (required)',
@@ -67,7 +74,7 @@ const PositonInformations = [
     },
 ];
 
-const Documents = [
+const Documents: FormField[] = [
 
     {
         label: 'Upload Resume (PDF/DOC, max 5MB) (required)',
@@ -96,7 +103,7 @@ const Documents = [
 ];
 
 
-const Education = [
+const Education: FormField[] = [
 
     {
         label: 'Highest Level of Education Completed (required)',
@@ -111,7 +118,7 @@ const Education = [
         name: 'work',
         placeholder: 'enter work experience',
         type: 'text',
-        full: false
+        full: false,
     },
 
     {
@@ -132,7 +139,7 @@ const Education = [
 
 ];
 
-const AdditionalInfomations = [
+const AdditionalInfomations: FormField[] = [
     {
         label: "Why do you want to work with IDCL? (required)",
         name: 'reasom',

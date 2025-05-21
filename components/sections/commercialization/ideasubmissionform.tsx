@@ -13,8 +13,16 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+interface FormField {
+    label: string;
+    name: string;
+    placeholder?: string;
+    type: 'text' | 'select' | 'photo' | 'textarea' | 'combobox';
+    full?: boolean;
+    options?: string[]; // optional property
+}
 
-const PersonalInformation = [
+const PersonalInformation: FormField[] = [
     {
         label: 'Full Name',
         name: 'fullname',
@@ -47,7 +55,7 @@ const PersonalInformation = [
     },
 ]
 
-const IdeaDetails = [
+const IdeaDetails: FormField[] = [
 
     {
         label: 'Title of Your Idea / Innovation',
@@ -101,7 +109,7 @@ const IdeaDetails = [
 
 ];
 
-const SupportRequest = [
+const SupportRequest: FormField[] = [
 
     {
         label: 'What kind of support do you need?',
