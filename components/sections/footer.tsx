@@ -120,7 +120,7 @@ export default function Footer() {
                                 {item.data.map((link, i) => (
                                     <p
                                         key={i}
-                                        className="font-lexend font-normal leading-[20px] text-[14px] text-[#827F7F] tracking-normal"
+                                        className="font-lexend font-normal leading-[20px] text-[14px] text-[#827F7F] tracking-normal self-stretch"
                                         style={{ width: link.width }}
                                     >
                                         {link.name}
