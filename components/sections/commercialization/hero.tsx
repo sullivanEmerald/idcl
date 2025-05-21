@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 
-
-
 export default function CommercializationHeroSection() {
     return (
         <section className="relative w-full min-h-[618px] mb-0">
@@ -43,7 +41,7 @@ export default function CommercializationHeroSection() {
                     <Link className="w-[127px] h-[50px] rounded-[50px] bg-[#FFFFFF] no-underline flex items-center justify-center gap-[10px]" href='#'>
                         <p className="font-roboto font-medium text-[15px] text-[#373737] leading-normal tracking-normal">Get Support</p>
                     </Link>
-                    <Link className="w-[162px] h-[50px] rounded-[50px] bg-transparent border border-[#FFFFFF] no-underline flex items-center justify-center" href='#'>
+                    <Link className="w-[162px] h-[50px] rounded-[50px] bg-transparent border border-[#FFFFFF] no-underline flex items-center justify-center" href='/services/commercialization/idea'>
                         <p className="font-roboto font-medium text-[15.36px] text-[#F5F9FF] leading-[100%] tracking-normal">Submit Your Idea</p>
                     </Link>
                 </div>
