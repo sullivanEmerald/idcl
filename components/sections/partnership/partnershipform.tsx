@@ -124,10 +124,15 @@ export default function PartnershipForm() {
                                 </Select>
                             ) : item.type === 'photo' ? (
                                 <FileUploader
-                                    name={item.name}
-                                    className="w-full"
                                     accept=".pdf"
                                     maxSize={5 * 1024 * 1024}
+                                    onDrop={(files) => {
+                                        const file = files[0];
+                                        if (file) {
+                                            // Set the mediaFiles for UI preview
+                                            console.log(file)
+                                        }
+                                    }}
                                 />
                             ) : item.type === 'textarea' ? (
                                 <Textarea
