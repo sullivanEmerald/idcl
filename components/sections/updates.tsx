@@ -1,4 +1,4 @@
-import Image from "next/image"
+import Image from "next/image";
 
 const UpdateData = [
     {
@@ -23,28 +23,42 @@ const UpdateData = [
 
 export default function Updates() {
     return (
-        <section className="w-fill h-[724px] items-center bg-[#F5F9FF] py-[68px] flex flex-col gap-[26px]">
-            <div className="w-[238px] h-[90px] flex flex-col items-center gap-[21px]">
-                <div className="w-[104px] h-[34px] rounded-[20px] px-[14px] py-[5px] bg-[#D8F5FF]">
-                    <span className="font-satoshi font-normal text-[16px] leading-[1.5] tracking-[0.08em] uppercase text-[#0000FF]">
+        <section className="w-full min-h-screen lg:h-[724px] bg-[#F5F9FF] py-8 sm:py-12 lg:py-[68px] flex flex-col items-center gap-6 sm:gap-8 lg:gap-[26px] px-4 sm:px-6">
+            {/* Header Section */}
+            <div className="w-full sm:w-[238px] h-auto lg:h-[90px] flex flex-col items-center gap-4 sm:gap-5 lg:gap-[21px]">
+                <div className="w-[104px] h-[34px] rounded-[20px] px-[14px] py-[5px] bg-[#D8F5FF] flex items-center justify-center">
+                    <span className="font-satoshi font-normal text-sm sm:text-[16px] leading-[1.5] tracking-[0.08em] uppercase text-[#0000FF]">
                         Updates
                     </span>
                 </div>
-                <p className="inline-block w-[238px] h-[35px] font-satoshi font-bold text-[32px] leading-[1.1] tracking-normal text-[#3B3B3B]">Stay Up To Date</p>
+                <p className="w-full sm:w-[238px] h-auto font-satoshi font-bold text-2xl sm:text-3xl lg:text-[32px] leading-[1.1] tracking-normal text-[#3B3B3B] text-center">
+                    Stay Up To Date
+                </p>
             </div>
-            <div className="w-[1198.5px] h-[407.77px] flex items-center gap-[33.48px]">
+
+            {/* Cards Container */}
+            <div className="w-full max-w-[1198.5px] h-auto lg:h-[407.77px] flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-[33.48px]">
                 {UpdateData.map((item, index) => (
-                    <div key={index} className='relative w-[381.77px] h-[407.77px] flex flex-col gap-[15.76px]'>
-                        <Image src={item.image} alt='updates' height={246.2} width={381.77} />
-                        <div className="relative w-[381.77px] flex flex-col gap-[3.94px] items-center">
-                            <p className="w-full font-satoshi font-bold text-[19.7px] leading-[1.31] tracking-[0.17px] text-[#282A2D]">
+                    <div key={index} className='relative w-full sm:w-[calc(50%-16px)] lg:w-[381.77px] h-auto lg:h-[407.77px] flex flex-col gap-4 sm:gap-6 lg:gap-[15.76px]'>
+                        <div className="relative w-full aspect-[381.77/246.2]">
+                            <Image
+                                src={item.image}
+                                alt='updates'
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+                        <div className="w-full lg:w-[381.77px] flex flex-col gap-1 sm:gap-2 lg:gap-[3.94px]">
+                            <p className="w-full font-satoshi font-bold text-lg sm:text-xl lg:text-[19.7px] leading-snug lg:leading-[1.31] tracking-tight lg:tracking-[0.17px] text-[#282A2D]">
                                 {item.name}
                             </p>
-                            <p className="w-full font-satoshi font-normal text-[17.73px] leading-[1.42] tracking-[0.007em] text-[#616771] line-clamp-2 overflow-hidden text-ellipsis">
+                            <p className="w-full font-satoshi font-normal text-base sm:text-lg lg:text-[17.73px] leading-normal lg:leading-[1.42] tracking-[0.007em] text-[#616771] line-clamp-2 overflow-hidden text-ellipsis">
                                 {item.text}
                             </p>
                         </div>
-                        <p className="inline-block w-[162px] font-lexend font-bold text-[13.79px] leading-[1.45] tracking-[-0.02em] text-[#827F7F] ">{item.date}</p>
+                        <p className="w-full lg:w-[162px] font-lexend font-bold text-xs sm:text-sm lg:text-[13.79px] leading-tight lg:leading-[1.45] tracking-tight lg:tracking-[-0.02em] text-[#827F7F]">
+                            {item.date}
+                        </p>
                     </div>
                 ))}
             </div>

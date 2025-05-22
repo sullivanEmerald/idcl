@@ -20,10 +20,11 @@ const TestimonialData = [
         text: `"I attended a cybersecurity training at IDCL and was blown away by the quality of instruction and global relevance. Their infrastructure rivals what you'd find in top cities, and their vision for digital Africa is inspiring."`
     }
 ];
+
 export default function Testimonials() {
     return (
-        <section className="w-[1200px] h-[728px] mx-auto flex flex-col gap-[54px] items-center justify-center">
-            <header className="w-[867px] h-[161px] flex flex-col gap-[21px] items-center justify-center text-center">
+        <section className="w-full max-w-[1200px] px-4 mx-auto py-16 flex flex-col gap-12 md:gap-[54px] items-center justify-center">
+            <header className="w-full max-w-[867px] flex flex-col gap-5 md:gap-[21px] items-center justify-center text-center">
                 <div className="flex items-center w-[153px] h-[34px] gap-[10px] bg-[#D8F5FF] rounded-[20px] justify-center">
                     <span className="
                         font-satoshi 
@@ -37,47 +38,53 @@ export default function Testimonials() {
                         Testimonials
                     </span>
                 </div>
-                <p className="inline-block w-[318px] h-[35px] font-satoshi font-bold text-[32px] leading-[1.1] tracking-normal capitalize text-[#3B3B3B]">
+                <h2 className="w-full max-w-[318px] font-satoshi font-bold text-2xl md:text-[32px] leading-[1.1] tracking-normal capitalize text-[#3B3B3B]">
                     What Our Clients Say
+                </h2>
+                <p className="font-satoshi font-light text-base md:text-[20px] leading-[1] md:leading-[1.3] tracking-[0em] text-[#000000] w-full max-w-[653px]">
+                    Trusted by innovators, learners, and partners across West Africa and beyond.
                 </p>
-                <span className="font-satoshi font-light text-[20px] leading-[1] tracking-[0em] text-[#000000] w-[653px] h-[27px] inline-block">Trusted by innovators, learners, and partners across West Africa and beyond.</span>
             </header>
-            <section className="w-fill h-[376px] flex items-center gap-[24px]">
-                {TestimonialData.map((item, index) => {
-                    const num = 5; // Example variable declaration
 
-                    return (
-                        <div key={index} className=" relative w-[384px] h-[376px] flex flex-col gap-[10px] p-[25px] border border-[#EAEAEA] border-[1px]">
-                            <div className="flex items-center gap-[20px]">
-                                <Image
-                                    src={item.image}
-                                    alt={item.name}
-                                    height={72}
-                                    width={72}
-                                    className="rounded-full"
-                                />
-                                <div>
-                                    <p className="w-[130px] h-[28px] font-vietnam font-semibold text-[18px] leading-[28px] tracking-[-0.0025em] text-[#282A2D]">{item.name}</p>
-                                    <p className="w-[219.04px] h-[44px] font-vietnam font-normal text-[14px] leading-[22px] tracking-[-0.0025em] text-[#616771]">{item.description}</p>
-                                </div>
-                            </div>
-                            <blockquote className="w-[320px] h-[144px] font-vietnam font-normal text-[14px] text-[#616771] leading-[24px] tracking-[-0.0025em]">
-                                {item.text}
-                            </blockquote>
-                            <div className="flex gap-[10px] absolute bottom-[50px]">
-                                {[...Array(5)].map((_, i) => (
-                                    <Image
-                                        key={i}
-                                        src='/images/testimonial/star.png'
-                                        width={22}
-                                        height={22}
-                                        alt='star'
-                                    />
-                                ))}
+            <section className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-[24px]">
+                {TestimonialData.map((item, index) => (
+                    <div
+                        key={index}
+                        className="relative w-full max-w-[384px] min-h-[376px] flex flex-col gap-[10px] p-6 md:p-[25px] border border-[#EAEAEA] border-[1px]"
+                    >
+                        <div className="flex items-center gap-4 md:gap-[20px]">
+                            <Image
+                                src={item.image}
+                                alt={item.name}
+                                height={72}
+                                width={72}
+                                className="rounded-full"
+                            />
+                            <div>
+                                <p className="font-vietnam font-semibold text-lg md:text-[18px] leading-[28px] tracking-[-0.0025em] text-[#282A2D]">
+                                    {item.name}
+                                </p>
+                                <p className="font-vietnam font-normal text-sm md:text-[14px] leading-[22px] tracking-[-0.0025em] text-[#616771]">
+                                    {item.description}
+                                </p>
                             </div>
                         </div>
-                    );
-                })}
+                        <blockquote className="font-vietnam font-normal text-sm md:text-[14px] text-[#616771] leading-6 md:leading-[24px] tracking-[-0.0025em]">
+                            {item.text}
+                        </blockquote>
+                        <div className="flex gap-2 md:gap-[10px] mt-4 md:absolute md:bottom-[50px]">
+                            {[...Array(5)].map((_, i) => (
+                                <Image
+                                    key={i}
+                                    src='/images/testimonial/star.png'
+                                    width={22}
+                                    height={22}
+                                    alt='star'
+                                />
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </section>
         </section>
     )

@@ -1,15 +1,54 @@
 import Image from "next/image"
+
 export default function Partners() {
     return (
-        <section className="w-fill h-[436px] flex items-center justify-center gap-[49px] bg-[#F5F9FF]">
-            <div className="w-[599.06px] h-[178.34px] flex flex-wrap items-center gap-[19px]">
-                <Image src='/images/partners/silicon.png' width={134.7} height={58.08} alt='Silion Valley' />
-                <Image src='/images/partners/us.png' width={183.18} height={58.08} alt='US' />
-                <Image src='/images/partners/zinox.png' width={183.18} height={58.08} alt='Zinox' />
-                <Image src='/images/partners/berkeley.png' width={134.7} height={58.08} alt='Berkeley' />
-                <Image src='/images/partners/imo.png' width={102.18} height={101.26} alt='Imo' />
+        <section className="w-full min-h-[436px] flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-[49px] bg-[#F5F9FF] py-16 lg:py-0 px-4 sm:px-6 mb-[40px]">
+            {/* Partners Logo Grid - Maintains exact dimensions on large screens */}
+            <div className="w-full lg:w-[599.06px] h-auto lg:h-[178.34px] flex flex-wrap items-center gap-4 lg:gap-[19px]">
+                <div className="relative w-[134.7px] h-[58.08px]">
+                    <Image
+                        src='/images/partners/silicon.png'
+                        layout="fill"
+                        objectFit="contain"
+                        alt='Silicon Valley'
+                    />
+                </div>
+                <div className="relative w-[183.18px] h-[58.08px]">
+                    <Image
+                        src='/images/partners/us.png'
+                        layout="fill"
+                        objectFit="contain"
+                        alt='US'
+                    />
+                </div>
+                <div className="relative w-[183.18px] h-[58.08px]">
+                    <Image
+                        src='/images/partners/zinox.png'
+                        layout="fill"
+                        objectFit="contain"
+                        alt='Zinox'
+                    />
+                </div>
+                <div className="relative w-[134.7px] h-[58.08px]">
+                    <Image
+                        src='/images/partners/berkeley.png'
+                        layout="fill"
+                        objectFit="contain"
+                        alt='Berkeley'
+                    />
+                </div>
+                <div className="relative w-[102.18px] h-[101.26px]">
+                    <Image
+                        src='/images/partners/imo.png'
+                        layout="fill"
+                        objectFit="contain"
+                        alt='Imo'
+                    />
+                </div>
             </div>
-            <section className="w-[557.44px] h-[271px] flex flex-col gap-[17px]">
+
+            {/* Text Content - Pixel perfect on large screens */}
+            <section className="w-full lg:w-[557.44px] h-auto lg:h-[271px] flex flex-col gap-4 lg:gap-[17px]">
                 <div className="flex items-center w-[142px] h-[34px] gap-[10px] bg-[#D8F5FF] rounded-[20px] justify-center">
                     <span className="
                         font-satoshi 
@@ -23,11 +62,13 @@ export default function Partners() {
                         Partners
                     </span>
                 </div>
-                <p className="font-satoshi font-bold text-[32px] leading-[1.1] tracking-normal capitalize">
+                <h2 className="font-satoshi font-bold text-2xl sm:text-[32px] leading-[1.1] tracking-normal capitalize">
                     Core Partners
+                </h2>
+                <p className="w-full lg:w-[557.44px] font-vietnam font-normal text-sm sm:text-[14px] leading-6 sm:leading-[24px] tracking-[-0.0025em] text-[#616771]">
+                    Achieving Africa's digital future is not the work of one actor—it demands the collective strength of governments, the private sector, development organizations, academia, and civil society. These core partners play complementary roles in enabling inclusive growth, scalable innovation, and sustainable digital infrastructure across the continent.
                 </p>
-                <p className="w-[557.44px] h-[160px] font-vietnam font-normal text-[14px] leading-[24px] tracking-[-0.0025em] text-[#616771]">Achieving Africa’s digital future is not the work of one actor—it demands the collective strength of governments, the private sector, development organizations, academia, and civil society. These core partners play complementary roles in enabling inclusive growth, scalable innovation, and sustainable digital infrastructure across the continent.</p>
             </section>
         </section>
     )
-} 
+}
