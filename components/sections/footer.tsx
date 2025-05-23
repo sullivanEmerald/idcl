@@ -41,7 +41,7 @@ const socials = [
 export default function Footer() {
     return (
         <>
-            <section className="w-full mt-auto min-h-[356px] bg-[#F9FAFB] flex flex-col lg:flex-row items-center justify-center lg:justify-between px-4 sm:px-8 lg:px-[100px] py-8 lg:py-0 gap-8 lg:gap-[134px]">
+            <section className="w-full min-h-[356px] bg-[#F9FAFB] flex flex-start self-stretch gap-[134px] p-[80px]">
                 <div className="w-full lg:w-[185px] h-auto lg:h-[112.8px] flex flex-col gap-4 lg:gap-[19px]">
                     <Logo />
                     <p className="w-full lg:w-[185px] font-lexend font-normal text-[16px] leading-[1.4] tracking-[-0.02em] text-[#827F7F]">
@@ -50,7 +50,7 @@ export default function Footer() {
                 </div>
 
                 <div className="w-full lg:w-[893px] h-auto flex flex-col md:flex-row gap-8 lg:gap-[67px]">
-                    <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-8 lg:flex lg:gap-[67px]">
+                    <div className="w-[610px] grid grid-cols-2 md:grid-cols-3 gap-8 lg:flex lg:gap-[67px]">
                         {Solution.map((item, index) => (
                             <section key={index} className='w-full lg:w-[149px] h-auto lg:h-[168px] flex flex-col gap-4 lg:gap-[16px]'>
                                 <p className="font-lexend font-semibold text-[16px] leading-[24px] tracking-[-0.25px] text-[#3B3B3B]">
@@ -85,10 +85,6 @@ export default function Footer() {
                     </div>
                 </div>
             </section>
-
-            <p className="w-full py-4 font-lexend font-normal leading-[20px] tracking-normal text-[14px] text-[#3B3B3B] text-center">
-                Copyright ©2025, Imo Digital City Limited
-            </p>
         </>
     )
 }

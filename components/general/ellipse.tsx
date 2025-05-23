@@ -1,12 +1,12 @@
 import Image from "next/image"
 import { EllipseData } from "@/data/elllipse"
 import Link from "next/link"
+import Footer from "../sections/footer"
 
 export default function GeneralEllipse({ name }: { name: string }) {
     const object = EllipseData.find(item => item.name.toLowerCase() === name)
     return (
-
-        <div className="w-full mb-0 px-[100px] flex flex-col items-center">
+        <footer className="w-full flex flex-col items-center">
             <div className="relative w-[1228px] h-[401px] rounded-tl-[40px] rounded-tr-[40px] p-[80px] bg-[#144DAF] overflow-hidden flex items-center gap-[72px] ">
                 <div className="w-[714px] flex flex-col items-start gap-[22px] shrink-0">
                     <p className="self-stretch font-satoshi font-bold text-[43px] leading-[1.3] tracking-normal text-[#FFFFFF]">
@@ -38,6 +38,10 @@ export default function GeneralEllipse({ name }: { name: string }) {
 
                 </div>
             </div>
-        </div>
+            <Footer />
+            <p className="w-full py-4 font-lexend font-normal leading-[20px] tracking-normal text-[14px] text-[#3B3B3B] text-center">
+                Copyright ©2025, Imo Digital City Limited
+            </p>
+        </footer>
     )
 }
