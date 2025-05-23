@@ -7,7 +7,7 @@ export default function GeneralEllipse({ name }: { name: string }) {
     return (
 
         <div className="w-full mb-0 px-[100px] flex flex-col items-center">
-            <div className="relative w-[1228px] h-[349px] rounded-tl-[40px] rounded-tr-[40px] p-[80px] bg-[#144DAF] overflow-hidden flex items-center gap-[72px] ">
+            <div className="relative w-[1228px] h-[401px] rounded-tl-[40px] rounded-tr-[40px] p-[80px] bg-[#144DAF] overflow-hidden flex items-center gap-[72px] ">
                 <div className="w-[714px] flex flex-col items-start gap-[22px] shrink-0">
                     <p className="self-stretch font-satoshi font-bold text-[43px] leading-[1.3] tracking-normal text-[#FFFFFF]">
                         {object?.header}
@@ -27,7 +27,7 @@ export default function GeneralEllipse({ name }: { name: string }) {
                     </div>
                 </div>
                 {/* IMAGES */}
-                <div className="absolute w-[397px] h-[412px] right-[0]">
+                <div className="absolute w-[397px] h-[412px] aspect-[397.07/412.96] right-[-6.136px] bottom-[-36.043px]" style={{ opacity: '0.9' }}>
                     <Image
                         fill
                         priority
