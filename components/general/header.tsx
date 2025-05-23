@@ -13,6 +13,7 @@ export default function Header() {
         border-b border-opacity-10 border-black
         shadow-[3px_4px_16px_0px_rgba(88,124,88,0.02)]
         sticky top-0 z-50
+        h-[69px]
       ">
             <Logo />
             <Navigation />

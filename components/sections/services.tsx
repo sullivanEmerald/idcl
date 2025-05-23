@@ -69,7 +69,7 @@ export default function Services({ isServices }: { isServices: boolean }) {
             <section className="w-full lg:w-[1200px] h-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-[24px]">
                 {ServicesData.map((item, index) => (
                     <div key={index} className='w-full sm:w-auto lg:w-[384px] h-auto lg:h-[474.56px] p-1'>
-                        <div className="relative w-full aspect-[384/248.56]">
+                        <div className="relative w-full lg:w-[384px] aspect-[384/248.56]">
                             <Image
                                 src={item.image}
                                 alt='services'

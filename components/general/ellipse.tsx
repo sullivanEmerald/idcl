@@ -27,8 +27,16 @@ export default function GeneralEllipse({ name }: { name: string }) {
                     </div>
                 </div>
                 {/* IMAGES */}
+                <div className="absolute w-[397px] h-[412px] right-[0]">
+                    <Image
+                        fill
+                        priority
+                        alt="imo digital city"
+                        src='/images/home/digital.png'
+                        className="block object-contain"
+                    />
 
-                <img src='/images/home/digital.png' alt='' className="absolute  right-[0]" />
+                </div>
             </div>
         </div>
     )
