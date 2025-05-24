@@ -1,3 +1,4 @@
+import GeneralEllipse from "@/components/general/ellipse";
 import AppointmentHeroSection from "@/components/sections/appointment/hero";
 import AppointmentHowItWorks from "@/components/sections/appointment/howItWork";
 import AppointmentQuestions from "@/components/sections/appointment/questions";
@@ -14,6 +15,7 @@ export default function AppointmentPage() {
             <AppointmentSafety />
             <ScheduledAppointment />
             <AppointmentQuestions />
+            <GeneralEllipse />
         </>
     )
 }

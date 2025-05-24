@@ -1,5 +1,6 @@
+import GeneralEllipse from "@/components/general/ellipse"
 import InfrastructureBpo from "@/components/sections/infrastructure/bpo"
-import InfrastructureEllipse from "@/components/sections/infrastructure/ellipse"
+import { names } from "@/data/elllipse"
 import InfrastructureHeroSection from "@/components/sections/infrastructure/hero"
 import InfrastructureMain from "@/components/sections/infrastructure/main"
 import InfrastructureMobile from "@/components/sections/infrastructure/mobile"
@@ -12,7 +13,7 @@ export default function Infrastructure() {
             <InfrastructurePress />
             <InfrastructureBpo />
             <InfrastructureMobile />
-            <InfrastructureEllipse />
+            <GeneralEllipse name={names.infrastructure} />
         </>
     )
 }

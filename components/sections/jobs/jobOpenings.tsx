@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function JobOpenings() {
     return (
         <>
-            <section className="flex flex-col gap-[40px] items-center justify-center">
+            <section className="flex flex-col gap-[40px] py-[80px] items-center justify-center">
                 <div className="flex flex-col gap-[9px]">
                     <h1 className="font-satoshi font-bold text-center leading-[35px] text-[#3B3B3B] text-[32px]">Current Job Openings</h1>
                     <p className="font-satoshi font-light leading-normal text-center text-[#000] text-[20px]">Browse our open positions and apply to become a part of our innovative team.</p>

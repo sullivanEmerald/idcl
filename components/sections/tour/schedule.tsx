@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 const FormFields = [
     {
@@ -77,7 +77,7 @@ const FormFields = [
     },
     {
         label: 'Other Purpose',
-        name: 'date',
+        name: 'other-purpose',
         placeholder: 'other purposes',
         dropDown: false,
         full: true,
@@ -99,7 +99,6 @@ const FormFields = [
         full: true,
         type: 'textarea'
     },
-
     {
         label: 'How Did You Hear About Us?',
         name: 'source',
@@ -108,35 +107,36 @@ const FormFields = [
         full: true,
         type: 'text'
     },
-]
+];
 
 export default function ScheduledTour() {
     return (
-        <div className="w-full flex flex-col items-center justify-center py-[81px] bg-[#fff]">
-            <section className="bg-[#144DAF] w-[834px] rounded-[16px] p-[32px] flex flex-col gap-[30px] items-center border border-solid border-[#E4E4E4] ">
-                <h1 className="text-[#fff] font-satoshi font-bold text-[32px] leading-[35px]">
+        <div className="w-full flex flex-col items-center justify-center py-[60px] px-4 bg-white">
+            <section className="bg-[#144DAF] w-full max-w-[834px] rounded-[16px] p-6 md:p-8 flex flex-col gap-6 items-center border border-solid border-[#E4E4E4]">
+                <h1 className="text-white font-satoshi font-bold text-2xl md:text-[32px] leading-snug text-center">
                     Schedule Your Tour to IDCL
                 </h1>
-                <div className="grid grid-cols-2 gap-6 w-[770px] relative">
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                     {FormFields.map((item, index) => (
                         <div
                             key={index}
-                            className={item.full ? "col-span-2" : "col-span-1"}
+                            className={item.full ? "col-span-full" : "col-span-1"}
                         >
                             <div className="grid w-full items-center gap-1.5">
                                 <Label
                                     htmlFor={item.name}
-                                    className="font-figtree font-medium text-[18px] leading-[27px] text-[#fff]"
+                                    className="font-figtree font-medium text-base md:text-[18px] leading-[27px] text-white"
                                 >
                                     {item.label}
                                 </Label>
 
                                 {item.dropdown ? (
                                     <Select>
-                                        <SelectTrigger className="bg-[#1A4190] text-[#fff] border-none">
+                                        <SelectTrigger className="bg-[#1A4190] text-white border-none">
                                             <SelectValue placeholder={item.placeholder} />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-[#1A4190] text-[#fff] border-none">
+                                        <SelectContent className="bg-[#1A4190] text-white border-none">
                                             {item.dropdown.map((option, i) => (
                                                 <SelectItem
                                                     key={i}
@@ -152,33 +152,32 @@ export default function ScheduledTour() {
                                     <textarea
                                         id={item.name}
                                         placeholder={item.placeholder}
-                                        className="bg-[#1A4190] text-[#fff] placeholder:text-[#fff] placeholder:font-figtree placeholder:font-light placeholder:leading-[27px] placeholder:text-[18px] rounded-md border-none p-2 min-h-[100px] w-full"
+                                        className="bg-[#1A4190] text-white placeholder:text-white placeholder:font-figtree placeholder:font-light placeholder:leading-[27px] placeholder:text-base rounded-md border-none p-2 min-h-[100px] w-full"
                                     />
                                 ) : (
                                     <Input
                                         type={item.type}
                                         id={item.name}
                                         placeholder={item.placeholder}
-                                        className="bg-transparent placeholder:text-[#fff] placeholder:font-figtree placeholder:font-light placeholder:leading-[27px] placeholder:text-[18px] text-[#fff] bg-[#1A4190] w-full"
+                                        className="bg-[#1A4190] text-white placeholder:text-white placeholder:font-figtree placeholder:font-light placeholder:leading-[27px] placeholder:text-base w-full"
                                     />
                                 )}
                             </div>
                         </div>
                     ))}
 
-                    <div className="col-span-2 flex justify-end">
+                    <div className="col-span-full flex justify-end mt-4">
                         <Button
                             type="submit"
-                            className="py-[10px] px-[24px] gap-[16px] rounded-[50px] w-[293px] h-[44px] bg-[#fff] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)]"
+                            className="py-2.5 px-6 gap-4 rounded-full w-full sm:w-auto h-[44px] bg-white shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)]"
                         >
-                            <span className="font-figtree font-semi-bold text-[18px] text-[#1E1E1E]">
+                            <span className="font-figtree font-semibold text-base text-[#1E1E1E]">
                                 Submit Appointment Request
                             </span>
                         </Button>
                     </div>
-
                 </div>
             </section>
         </div>
-    )
+    );
 }

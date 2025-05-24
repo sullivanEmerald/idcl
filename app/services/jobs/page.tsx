@@ -1,3 +1,4 @@
+import GeneralEllipse from "@/components/general/ellipse";
 import JobGallery from "@/components/sections/jobs/gallery";
 import JobsHeroSection from "@/components/sections/jobs/hero";
 import JobOpenings from "@/components/sections/jobs/jobOpenings";
@@ -10,6 +11,7 @@ export default function JobsPage() {
             <JobsWhyWorkWithUs />
             <JobGallery />
             <JobOpenings />
+            <GeneralEllipse />
         </>
     )
 }

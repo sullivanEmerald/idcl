@@ -1,3 +1,4 @@
+import GeneralEllipse from "@/components/general/ellipse";
 import TourHeroSection from "@/components/sections/tour/hero";
 import TourPerfect from "@/components/sections/tour/perfect";
 import TourProcedure from "@/components/sections/tour/procedure";
@@ -12,6 +13,7 @@ export default function Tour() {
             <TourPerfect />
             <ScheduledTour />
             <TourQuestions />
+            <GeneralEllipse />
         </>
     )
 }

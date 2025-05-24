@@ -8,7 +8,8 @@ export const names = {
     partnership: 'partnership',
     public: 'public',
     awareness: 'awareness',
-    commercialization: 'commercialization'
+    commercialization: 'commercialization',
+    infrastructure: 'infrastructure',
 }
 export const EllipseData = [
     {
@@ -160,6 +161,23 @@ export const EllipseData = [
             second: {
                 name: 'Book a Consultation',
                 href: '#'
+            }
+        }
+
+    },
+
+    {
+        name: names.infrastructure,
+        header: 'Want to partner, print, or power your business with our infrastructure?',
+        body: "Let’s build the future together—explore partnership, printing, or tech-enabled services at IDCL.",
+        buttons: {
+            first: {
+                name: 'Contact Us',
+                href: '/services/contact'
+            },
+            second: {
+                name: 'Schedule a Visit',
+                href: '/services/tour'
             }
         }
 

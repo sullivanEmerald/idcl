@@ -1,3 +1,4 @@
+import GeneralEllipse from "@/components/general/ellipse";
 import ContactUs from "@/components/sections/contact/contactUs";
 
 
@@ -6,7 +7,7 @@ export default function ContactUsPage() {
         <>
 
             <ContactUs />
-
+            <GeneralEllipse />
         </>
     )
 }

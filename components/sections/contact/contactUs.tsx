@@ -20,14 +20,13 @@ const Address = [
 
 export default function ContactUs() {
     return (
-        <section className="relative w-full min-h-[1080px] mb-0">
-            {/* Background Images */}
+        <section className="relative w-full min-h-screen lg:min-h-[1080px] mb-0">
+            {/* Background Images - Responsive */}
             <div className="absolute inset-0 -z-10">
                 <Image
                     src="/images/contact/image.png"
                     alt="Background"
-                    width={1440}
-                    height={1080}
+                    fill
                     className="object-cover"
                     priority
                 />
@@ -37,28 +36,40 @@ export default function ContactUs() {
                 <Image
                     src="/images/contact/cover.png"
                     alt="Overlay"
-                    width={1440}
-                    height={1080}
+                    fill
                     className="object-cover"
                     priority
                 />
             </div>
 
-            {/* Text Content (on top of both images) */}
-            <div className="relative z-10 flex flex-col gap-[30px] items-center justify-center py-[115px]">
-                <div className="flex w-[810px] flex-col items-center gap-[10px] shrink-0">
-                    <h1 className="font-satoshi text-center text-[50px] self-stretch font-black leading-[56px] tracking-[0.35px] text-[#fff]">Contact Us</h1>
-                    <p className="font-satoshi text-center text-[24px] self-stretch font-medium leading-[34px] tracking-[0.168px] text-[#fff]" >We're here to answer your questions, hear your feedback, or assist with anything you need.</p>
+            {/* Content Container */}
+            <div className="relative z-10 flex flex-col gap-6 lg:gap-[30px] items-center justify-center py-12 lg:py-[115px] px-4 sm:px-6">
+                {/* Heading Section */}
+                <div className="flex w-full lg:w-[810px] flex-col items-center gap-2 lg:gap-[10px]">
+                    <h1 className="font-satoshi text-center text-4xl sm:text-5xl lg:text-[50px] font-black leading-tight lg:leading-[56px] tracking-wide lg:tracking-[0.35px] text-white">
+                        Contact Us
+                    </h1>
+                    <p className="font-satoshi text-center text-lg sm:text-xl lg:text-[24px] font-medium leading-relaxed lg:leading-[34px] tracking-normal lg:tracking-[0.168px] text-white">
+                        We're here to answer your questions, hear your feedback, or assist with anything you need.
+                    </p>
                 </div>
-                <section className="flex bg-[#fff] w-[1134px] rounded-[12px]">
-                    <div className="w-[491px] relative h-[648px] shrink-0 bg-[#00023D] py-[80px] px-[41px] flex flex-col gap-[100px] overflow-hidden">
+
+                {/* Form Section */}
+                <section className="flex flex-col lg:flex-row bg-white w-full max-w-7xl lg:w-[1134px] rounded-lg lg:rounded-[12px] sm:h-auto lg:h-[648px] overflow-hidden">
+                    {/* Left Panel - Contact Info */}
+                    <div className="w-full lg:w-[491px] relative lg:h-[648px] shrink-0 bg-[#00023D] py-12 lg:py-[80px] px-6 lg:px-[41px] flex flex-col gap-8 lg:gap-[100px] overflow-hidden">
                         <div>
-                            <h1 className="text-[#fff] font-satoshi text-[28px] font-bold leading-normal self-stretch">Contact Information</h1>
-                            <span className="text-[#C9C9C9] font-satoshi text-[18px] font-normal leading-normal">Say something to start a live chat!</span>
+                            <h1 className="text-white font-satoshi text-2xl lg:text-[28px] font-bold leading-normal">
+                                Contact Information
+                            </h1>
+                            <span className="text-[#C9C9C9] font-satoshi text-base lg:text-[18px] font-normal leading-normal">
+                                Say something to start a live chat!
+                            </span>
                         </div>
-                        <div className="w-[337px] flex flex-col items-start gap-[30px] px-[20px]">
+
+                        <div className="w-full lg:w-[337px] flex flex-col items-start gap-6 lg:gap-[30px] px-0 lg:px-[20px]">
                             {Address.map((item, index) => (
-                                <div key={index} className="flex items-center gap-[15px] shrink-0">
+                                <div key={index} className="flex items-center gap-4 lg:gap-[15px]">
                                     <Image
                                         src={item.image}
                                         width={24}
@@ -67,38 +78,26 @@ export default function ContactUs() {
                                         className="object-cover"
                                         alt="Icon"
                                     />
-                                    <p className="text-[#fff] font-poppins text-[16px] font-normal leading-normal">{item.data}</p>
+                                    <p className="text-white font-poppins text-sm lg:text-[16px] font-normal leading-normal">
+                                        {item.data}
+                                    </p>
                                 </div>
                             ))}
                         </div>
-                        <div className="inline-flex w-[341px] items-center gap-[55px] z-10">
-                            <img
-                                src="/images/contact/icons/facebook.png"
-                                className="object-cover"
-                                alt="Icon"
-                            />
-                            <img
-                                src="/images/contact/icons/twitter.png"
-                                className="object-cover"
-                                alt="Icon"
-                            />
-                            <img
-                                src="/images/contact/icons/instagram.png"
-                                className="object-cover"
-                                alt="Icon"
-                            />
-                            <img
-                                src="/images/contact/icons/youtube.png"
-                                className="object-cover"
-                                alt="Icon"
-                            />
-                            <img
-                                src="/images/contact/icons/tiktok.png"
-                                className="object-cover"
-                                alt="Icon"
-                            />
+
+                        <div className="flex justify-between lg:inline-flex w-full lg:w-[341px] items-center lg:gap-[45px] z-10">
+                            {['facebook', 'twitter', 'instagram', 'youtube', 'tiktok'].map((social) => (
+                                <img
+                                    key={social}
+                                    src={`/images/contact/icons/${social}.png`}
+                                    className="object-cover w-8 h-8"
+                                    alt={`${social} icon`}
+                                />
+                            ))}
                         </div>
-                        <div className="absolute w-[297px] left-[315px] top-[465px] h-[295px]">
+
+                        {/* Decorative Elements */}
+                        <div className="hidden lg:block absolute w-[297px] left-[315px] top-[465px] h-[295px]">
                             <img
                                 src="/images/contact/half.png"
                                 alt="Background"
@@ -117,44 +116,49 @@ export default function ContactUs() {
                             />
                         </div>
                     </div>
-                    <div className="h-[648px] w-[643px] py-[80px] px-[41px] flex flex-col gap-[38px]">
-                        <div className="grid grid-cols-2 gap-[11px]">
+
+                    {/* Right Panel - Form */}
+                    <div className="w-full lg:w-[643px] py-12 lg:py-[80px] px-6 lg:px-[41px] flex flex-col gap-6 lg:gap-[38px]">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-[11px]">
                             <div className="grid w-full items-center gap-1.5 mb-4">
-                                <Label htmlFor='fullname' className="font-figtree text-[18px] leading-[27px] text-[#344054]">
+                                <Label htmlFor='fullname' className="font-figtree text-base lg:text-[18px] leading-normal lg:leading-[27px] text-[#344054]">
                                     Your Name
                                 </Label>
                                 <Input
                                     type='text'
                                     name='fullname'
                                     placeholder='enter your fullname'
-                                    className="w-full placeholder:font-figtree "
+                                    className="w-full placeholder:font-figtree"
                                 />
                             </div>
                             <div className="grid w-full items-center gap-1.5 mb-4">
-                                <Label htmlFor='email' className="font-figtree text-[18px] leading-[27px] text-[#344054]">
+                                <Label htmlFor='email' className="font-figtree text-base lg:text-[18px] leading-normal lg:leading-[27px] text-[#344054]">
                                     Your email
                                 </Label>
                                 <Input
                                     type='text'
                                     name='email'
                                     placeholder='enter your email'
-                                    className="w-full placeholder:font-figtree "
+                                    className="w-full placeholder:font-figtree"
                                 />
                             </div>
                         </div>
+
                         <div className="grid w-full items-center gap-1.5 mb-4">
-                            <Label htmlFor='message' className="font-figtree text-[18px] leading-[27px] text-[#344054]">
+                            <Label htmlFor='message' className="font-figtree text-base lg:text-[18px] leading-normal lg:leading-[27px] text-[#344054]">
                                 Message
                             </Label>
                             <Textarea
-                                name='fullname'
+                                name='message'
                                 placeholder='write your message'
-                                className="w-full placeholder:font-figtree h-[267px]"
+                                className="w-full placeholder:font-figtree h-48 lg:h-[267px]"
                             />
                         </div>
 
-                        <button className="flex w-[168px] mx-auto flex-col py-[12px] px-[33px] items-center justify-center gap-[10px] bg-[#005DFF] rounded-[56px]">
-                            <span className="font-roboto font-medium text-[15px] text-[#fff]">Send Message</span>
+                        <button className="flex w-full sm:w-[168px] mx-auto flex-col py-3 lg:py-[12px] px-6 lg:px-[33px] items-center justify-center gap-2 lg:gap-[10px] bg-[#005DFF] rounded-full lg:rounded-[56px]">
+                            <span className="font-roboto font-medium text-sm lg:text-[15px] text-white">
+                                Send Message
+                            </span>
                         </button>
                     </div>
                 </section>

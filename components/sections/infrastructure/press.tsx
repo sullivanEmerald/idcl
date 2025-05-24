@@ -1,4 +1,5 @@
-import Image from "next/image"
+import Image from "next/image";
+
 const PressImages = [
     '/images/innovation/one.png',
     '/images/innovation/two.png',
@@ -6,29 +7,40 @@ const PressImages = [
     '/images/innovation/four.png',
     '/images/innovation/five.png',
     '/images/innovation/six.png',
-]
+];
+
 export default function InfrastructurePress() {
     return (
-        <section className="w-full flex flex-col gap-[17px] items-center justify-center py-[80px]">
-            <div className="relative w-[867px] h-[160px] flex flex-col gap-[17px]">
-                <div className="w-full h-[35px] flex items-center justify-center ">
-                    <p className="font-satoshi font-bold text-[32px] text-[#3B3B3B] leading-[1.1] tracking-normal ">3D Printing Press</p>
+        <section className="w-full flex flex-col gap-4 lg:gap-[17px] items-center justify-center py-10 lg:py-[80px] px-4 lg:px-0">
+            {/* Text Section */}
+            <div className="w-full lg:w-[867px] h-auto lg:h-[160px] flex flex-col gap-3 lg:gap-[17px]">
+                <div className="w-full h-auto lg:h-[35px] flex items-center justify-center">
+                    <h2 className="font-satoshi font-bold text-2xl md:text-3xl lg:text-[32px] text-[#3B3B3B] leading-[1.1] tracking-normal">
+                        3D Printing Press
+                    </h2>
                 </div>
-                <p className="font-satoshi font-light text-[20px] leading-[1] tracking-normal text-center">Our state-of-the-art 3D Printing & Digital Press delivers high-volume printing solutions for startups, government projects, and creative professionals. Whether it's rapid prototyping, signage, event materials, or branded merchandise, IDCL ensures quality, speed, and scalability—empowering innovation and business growth across West Africa.</p>
+                <p className="font-satoshi font-light text-base md:text-lg lg:text-[20px] leading-normal lg:leading-[1] tracking-normal text-center">
+                    Our state-of-the-art 3D Printing & Digital Press delivers high-volume printing solutions for startups, government projects, and creative professionals. Whether it's rapid prototyping, signage, event materials, or branded merchandise, IDCL ensures quality, speed, and scalability—empowering innovation and business growth across West Africa.
+                </p>
             </div>
-            <div className="w-[1200px] h-[741.29px] flex items-center gap-[9px] flex-wrap">
+
+            {/* Image Grid */}
+            <div className="w-full max-w-[1200px] h-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-[9px] mt-6 lg:mt-0">
                 {PressImages.map((item, index) => (
-                    <Image
-                        src={item}
-                        key={index}
-                        alt="Overlay"
-                        width={390.67}
-                        height={361.29}
-                        className="object-cover block"
-                        priority
-                    />
+                    <div key={index} className="relative w-full aspect-[390.67/361.29]">
+                        <Image
+                            src={item}
+                            alt="3D Printing Press Example"
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 640px) 100vw, 
+                                   (max-width: 1024px) 50vw, 
+                                   390.67px"
+                            priority={index < 3}
+                        />
+                    </div>
                 ))}
             </div>
         </section>
-    )
+    );
 }

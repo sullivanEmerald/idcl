@@ -1,17 +1,9 @@
+// components/navigation.jsx
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuContent } from "@/components/ui/navigation-menu";
 import Link from "next/link";
-import {
-    NavigationMenu,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-    NavigationMenuContent,
-    NavigationMenuIndicator,
-    NavigationMenuViewport,
-} from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 
-const navItems = [
+export const navItems = [
     { label: "Home", href: "/" },
     { label: "About Us", href: "/about" },
     {
@@ -38,7 +30,7 @@ const navItems = [
 
 export default function Navigation() {
     return (
-        <NavigationMenu>
+        <NavigationMenu className="hidden md:block">
             <NavigationMenuList className="flex items-center gap-8 py-4 px-5">
                 {navItems.map((item, index) => (
                     <NavigationMenuItem key={index}>
@@ -69,11 +61,7 @@ export default function Navigation() {
                                 </NavigationMenuContent>
                             </>
                         ) : (
-                            <Link
-                                href={item.href}
-                                legacyBehavior
-                                passHref
-                            >
+                            <Link href={item.href} passHref legacyBehavior>
                                 <NavigationMenuLink className={cn(
                                     "font-poppins font-semibold text-sm",
                                     "text-[#81838C] hover:text-[#1e40af]",
@@ -87,7 +75,6 @@ export default function Navigation() {
                     </NavigationMenuItem>
                 ))}
             </NavigationMenuList>
-            <NavigationMenuViewport className="relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-white shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]" />
         </NavigationMenu>
     );
 }
