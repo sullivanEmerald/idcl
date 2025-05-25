@@ -13,7 +13,7 @@ export default function EventsPage() {
         <>
             <HeroSection />
             <EventsInnovation />
-            <UpcomingEventCom EventsData={EventsData} />
+            <UpcomingEventCom />
             <EventsTech />
             <EventsHub />
             <EventsWhyUs />

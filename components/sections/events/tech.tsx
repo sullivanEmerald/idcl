@@ -38,23 +38,42 @@ const TechOccations = [
 ]
 export default function EventsTech() {
     return (
-        <>
-            <section className="w-full flex flex-col items-center justify-center py-[50px] gap-[55px]">
-                <div className="w-[1200px] h-[35] flex items-center justify-center">
-                    <p className="font-satoshi font-bold text-[32px] leading-[1.1] tracking-normal text-[#3B3B3B]">Tech-Forward Facilities for Every Occasion</p>
-                </div>
-                <div className="w-[1200px] h-[883] flex flex-wrap gap-[40px]">
-                    {TechOccations.map((item, index) => (
-                        <div key={index} className="w-[372px] h-[383px] bg-[#F9FAFB] pt-[21px] pr-[19px] pb-[13px] pl-[19px] rounded-[32px] flex flex-col gap-[16px]">
-                            <img src={item.image} alt={item.alt} className="block object-cover" />
-                            <div className="w-[334px] h-[104] flex flex-col gap-[16px]">
-                                <p className="w-[334px] font-satoshi font-bold text-[16px] leading-none tracking-normal text-[#1D2939]">{item.header}</p>
-                                <p className="w-[334px] font-satoshi font-light text-[16px] leading-[1.35] tracking-normal text-[#475467]">{item.body}</p>
-                            </div>
+        <section className="w-full flex flex-col items-center justify-center py-12 md:py-[50px] gap-8 md:gap-[55px] px-4 sm:px-6">
+            {/* Title - centered and responsive */}
+            <div className="w-full max-w-[1200px] flex items-center justify-center text-center">
+                <h2 className="font-satoshi font-bold text-2xl sm:text-3xl md:text-[32px] leading-[1.1] text-[#3B3B3B]">
+                    Tech-Forward Facilities for Every Occasion
+                </h2>
+            </div>
+
+            {/* Grid Container - responsive columns */}
+            <div className="w-full max-w-[1200px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-[40px]">
+                {TechOccations.map((item, index) => (
+                    <div
+                        key={index}
+                        className="w-full bg-[#F9FAFB] p-5 md:pt-[21px] md:pr-[19px] md:pb-[13px] md:pl-[19px] rounded-[32px] flex flex-col gap-4 md:gap-[16px]"
+                    >
+                        {/* Image - responsive while maintaining aspect ratio */}
+                        <div className="w-full aspect-video overflow-hidden rounded-lg">
+                            <img
+                                src={item.image}
+                                alt={item.alt}
+                                className="w-full h-full object-cover"
+                            />
                         </div>
-                    ))}
-                </div>
-            </section>
-        </>
+
+                        {/* Content - responsive text sizing */}
+                        <div className="flex flex-col gap-4 md:gap-[16px]">
+                            <h3 className="font-satoshi font-bold text-base md:text-[16px] leading-tight text-[#1D2939]">
+                                {item.header}
+                            </h3>
+                            <p className="font-satoshi font-light text-sm md:text-[16px] leading-snug md:leading-[1.35] text-[#475467]">
+                                {item.body}
+                            </p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </section>
     )
 }

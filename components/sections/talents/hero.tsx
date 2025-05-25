@@ -9,7 +9,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-
 import {
     Dialog,
     DialogContent,
@@ -19,7 +18,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-const ScheduleFormData = [
+export const ScheduleFormData = [
     {
         label: 'Full Name',
         name: 'fullname',
@@ -79,7 +78,7 @@ const ScheduleFormData = [
 
 export default function TalentHero() {
     return (
-        <section className="relative w-full min-h-[618px] mb-0">
+        <section className="relative w-full min-h-[400px] md:min-h-[618px] mb-0 px-4 sm:px-6 lg:px-0">
             {/* Background Images */}
             <div className="absolute inset-0 -z-10">
                 <Image
@@ -102,41 +101,39 @@ export default function TalentHero() {
             </div>
 
             {/* Content */}
-            <div className="relative z-10 w-[896px] top-[80px] left-[120px] flex flex-col gap-[15px]">
-                <h1 className="font-satoshi font-black text-[80px] leading-[89px] w-[896px] tracking-[0.007em] text-[#ffffff]">
+            <div className="relative z-10 w-full lg:w-[896px] pt-10 md:pt-20 lg:top-[10px] lg:left-[110px] flex flex-col gap-4 md:gap-[15px] mx-auto lg:mx-0">
+                <h1 className="font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-[1.2] md:leading-[89px] w-full lg:w-[896px] tracking-[0.007em] text-[#ffffff] text-center lg:text-left">
                     Hire Certified Tech Talent from Across Africa—Fast.
                 </h1>
 
-                <div className="flex items-center gap-[24px] self-stretch border-l-4 border-[#ffffff] pl-[25px]">
-                    <p className="font-satoshi font-medium text-[24px] leading-[34px] tracking-[0.007em] text-[#ffffff] flex-[1_0_0]">
+                <div className="flex items-center gap-4 md:gap-[24px] self-stretch border-l-4 border-[#ffffff] pl-4 md:pl-[25px]">
+                    <p className="font-satoshi font-medium text-base sm:text-lg md:text-xl lg:text-[24px] leading-normal md:leading-[34px] tracking-[0.007em] text-[#ffffff] flex-[1_0_0]">
                         We produce top-tier, job-ready professionals ready to work on your most pressing digital needs. Tell us what you need—we'll match you with certified, reliable talent, quickly and efficiently.
                     </p>
                 </div>
 
-                <div className="w-[299px] h-[50px] flex items-center gap-[24px]">
+                <div className="w-full md:w-[450px] flex flex-col sm:flex-row items-center gap-4 md:gap-[24px] justify-center lg:justify-start">
                     <Dialog>
-                        <DialogTrigger>
-                            <button className="w-[216px] h-[50px] rounded-[50px] py-[16px] px-[22px] bg-[#FFFFFF] no-underline">
-                                <p className="w-[172px] font-roboto font-medium text-[15.36px] text-[#373737] leading-[100%] tracking-normal">
+                        <DialogTrigger asChild>
+                            <button className="w-full h-[50px] rounded-[50px] py-3 md:py-[16px] px-4 md:px-[22px] bg-[#FFFFFF] hover:bg-[#f0f0f0] transition-colors flex items-center justify-center">
+                                <p className="font-roboto font-medium text-sm md:text-[15.36px] text-[#373737] leading-[100%] tracking-normal text-center">
                                     Submit Talent Request
                                 </p>
                             </button>
                         </DialogTrigger>
 
-                        <DialogContent className="bg-[#fff] h-screen overflow-y-auto">
+                        <DialogContent className="bg-[#fff] max-h-screen overflow-y-auto w-full max-w-[90vw] md:max-w-2xl lg:max-w-4xl">
                             <DialogHeader>
-                                <DialogDescription className="overflow-y">
-                                    <form className="flex flex-col px-[16px] justify-center items-start gap-[32px] self-stretch">
-                                        <h1 className="font-satoshi text-[30px] self-stretch font-bold leading-normal text-[#344054]">
-                                            Submit Talent Request
-                                        </h1>
-
+                                <DialogTitle className="font-satoshi text-2xl md:text-[30px] font-bold leading-normal text-[#344054]">
+                                    Submit Talent Request
+                                </DialogTitle>
+                                <DialogDescription className="overflow-y-auto">
+                                    <form className="flex flex-col px-4 md:px-[16px] justify-center items-start gap-6 md:gap-[32px] self-stretch py-4">
                                         {ScheduleFormData.map((item, index) => (
-                                            <div key={index} className="grid w-full items-center gap-1.5">
-                                                <Label htmlFor={item.name} className="font-figtree text-[18px] leading-[27px] text-[#344054]">
+                                            <div key={index} className="grid w-full items-center gap-2 md:gap-1.5">
+                                                <Label htmlFor={item.name} className="font-figtree text-base md:text-[18px] leading-[1.5] text-[#344054]">
                                                     {item.label}
                                                 </Label>
-
                                                 {item.type === 'select' ? (
                                                     <Select>
                                                         <SelectTrigger className="w-full">
@@ -162,20 +159,20 @@ export default function TalentHero() {
                                             </div>
                                         ))}
 
-                                        <div className="flex items-start gap-[16px] self-end">
+                                        <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-[16px] self-end w-full sm:w-auto">
                                             <button
                                                 type="button"
-                                                className="flex py-[10px] px-[24px] items-center justify-center gap-[26] bg-[#F9FAFB] rounded-[50px]"
+                                                className="flex py-2 md:py-[10px] px-4 md:px-[24px] items-center justify-center gap-2 bg-[#F9FAFB] rounded-[50px] w-full sm:w-auto"
                                             >
-                                                <p className="font-figtree font-semibold text-[18px] text-[#005DFF] leading-[24px]">
+                                                <p className="font-figtree font-semibold text-base md:text-[18px] text-[#005DFF] leading-[24px]">
                                                     Cancel
                                                 </p>
                                             </button>
                                             <button
                                                 type="submit"
-                                                className="flex py-[10px] px-[24px] items-center justify-center gap-[16px] bg-[#005DFF] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] rounded-[50px]"
+                                                className="flex py-2 md:py-[10px] px-4 md:px-[24px] items-center justify-center gap-2 bg-[#005DFF] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] rounded-[50px] w-full sm:w-auto hover:bg-[#004acc] transition-colors"
                                             >
-                                                <p className="font-figtree font-semibold text-[18px] text-[#fff] leading-[24px]">
+                                                <p className="font-figtree font-semibold text-base md:text-[18px] text-[#fff] leading-[24px]">
                                                     Submit
                                                 </p>
                                             </button>
@@ -187,10 +184,10 @@ export default function TalentHero() {
                     </Dialog>
 
                     <Link
-                        className="w-[218px] h-[50px] rounded-[50px] py-[16px] px-[22px] bg-transparent border border-[#FFFFFF] no-underline"
-                        href="#"
+                        className="w-full h-[50px] rounded-[56px] py-3 md:py-[16px] px-4 md:px-[22px] bg-transparent border border-[#FFFFFF] hover:bg-white/10 transition-colors flex items-center justify-center gap-[10px]"
+                        href="/services/startup"
                     >
-                        <p className="w-[174px] font-roboto font-medium text-[15.36px] text-[#F5F9FF] leading-[100%] tracking-normal">
+                        <p className="font-roboto font-medium text-sm md:text-[15px] text-[#F5F9FF] leading-[100%] tracking-normal text-center">
                             Browse Talent Pool
                         </p>
                     </Link>

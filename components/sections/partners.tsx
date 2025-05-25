@@ -8,40 +8,40 @@ export default function Partners() {
                 <div className="relative w-[134.7px] h-[58.08px]">
                     <Image
                         src='/images/partners/silicon.png'
-                        layout="fill"
-                        objectFit="contain"
+                        style={{ objectFit: "cover" }}
+                        fill
                         alt='Silicon Valley'
                     />
                 </div>
                 <div className="relative w-[183.18px] h-[58.08px]">
                     <Image
                         src='/images/partners/us.png'
-                        layout="fill"
-                        objectFit="contain"
+                        fill
+                        style={{ objectFit: "cover" }}
                         alt='US'
                     />
                 </div>
                 <div className="relative w-[183.18px] h-[58.08px]">
                     <Image
                         src='/images/partners/zinox.png'
-                        layout="fill"
-                        objectFit="contain"
+                        fill
+                        style={{ objectFit: "cover" }}
                         alt='Zinox'
                     />
                 </div>
                 <div className="relative w-[134.7px] h-[58.08px]">
                     <Image
                         src='/images/partners/berkeley.png'
-                        layout="fill"
-                        objectFit="contain"
+                        fill
+                        style={{ objectFit: "cover" }}
                         alt='Berkeley'
                     />
                 </div>
                 <div className="relative w-[102.18px] h-[101.26px]">
                     <Image
                         src='/images/partners/imo.png'
-                        layout="fill"
-                        objectFit="contain"
+                        fill
+                        style={{ objectFit: "cover" }}
                         alt='Imo'
                     />
                 </div>
