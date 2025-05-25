@@ -126,7 +126,61 @@ export default function StartUpHeroSection() {
                         <DialogContent className="bg-[#fff] h-screen overflow-y-auto">
                             <DialogHeader>
                                 <DialogDescription className="overflow-y">
-                                    <iframe src="https://office.imodigitalcity.com/startups" width="100%" height="600px"></iframe>
+                                    <form className="flex flex-col px-[16px] justify-center items-start gap-[32px] self-stretch">
+                                        <h1 className="font-satoshi text-[30px] self-stretch font-bold leading-normal text-[#344054]">
+                                            Submit Talent Request
+                                        </h1>
+
+                                        {ScheduleFormData.map((item, index) => (
+                                            <div key={index} className="grid w-full items-center gap-1.5">
+                                                <Label htmlFor={item.name} className="font-figtree text-[18px] leading-[27px] text-[#344054]">
+                                                    {item.label}
+                                                </Label>
+
+                                                {item.type === 'select' ? (
+                                                    <Select>
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder={item.placeholder} />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {item.options?.map((option, i) => (
+                                                                <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>
+                                                                    {option}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                ) : (
+                                                    <Input
+                                                        type={item.type}
+                                                        id={item.name}
+                                                        name={item.name}
+                                                        placeholder={item.placeholder}
+                                                        className="w-full"
+                                                    />
+                                                )}
+                                            </div>
+                                        ))}
+
+                                        <div className="flex items-start gap-[16px] self-end">
+                                            <button
+                                                type="button"
+                                                className="flex py-[10px] px-[24px] items-center justify-center gap-[26] bg-[#F9FAFB] rounded-[50px]"
+                                            >
+                                                <p className="font-figtree font-semibold text-[18px] text-[#005DFF] leading-[24px]">
+                                                    Cancel
+                                                </p>
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="flex py-[10px] px-[24px] items-center justify-center gap-[16px] bg-[#005DFF] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] rounded-[50px]"
+                                            >
+                                                <p className="font-figtree font-semibold text-[18px] text-[#fff] leading-[24px]">
+                                                    Submit
+                                                </p>
+                                            </button>
+                                        </div>
+                                    </form>
                                 </DialogDescription>
                             </DialogHeader>
                         </DialogContent>

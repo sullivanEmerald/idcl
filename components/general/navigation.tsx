@@ -24,7 +24,7 @@ export const navItems = [
         ],
     },
     { label: "Contact Us", href: "/contact" },
-    { label: "Link", href: "/link1" },
+    { label: "Start Up", href: "/startup" },
     { label: "Link", href: "/link2" },
 ];
 
