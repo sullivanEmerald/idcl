@@ -112,8 +112,8 @@ export default function UpcomingEventCom() {
                                 </SelectTrigger>
                                 <SelectContent
                                     className="rounded-[16px] border border-[#D0D5DD] bg-[#E1ECFF] w-[calc(100vw-32px)] md:w-[213px]"
-                                    position="popper" // Better mobile positioning
-                                    align="end"      // Aligns with trigger
+                                    position="popper"
+                                    align="end"
                                 >
                                     <SelectItem
                                         value="light"
