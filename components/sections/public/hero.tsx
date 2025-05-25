@@ -1,12 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
 
 export default function PublicHeroSection() {
     return (
-        <section className="relative w-full min-h-[618px] mb-0">
+        <section className="relative w-full min-h-[400px] lg:min-h-[618px] mb-0">
             {/* Background Images */}
             <div className="absolute inset-0 -z-10">
                 <Image
@@ -29,23 +26,23 @@ export default function PublicHeroSection() {
             </div>
 
             {/* Content */}
-            <div className="relative z-10 w-[896px] top-[80px] left-[120px] flex flex-col gap-[15px]">
-                <h1 className="font-satoshi font-black text-[80px] leading-[89px] w-[896px] tracking-[0.007em] text-[#ffffff]">
+            <div className="relative z-10 w-full px-4 lg:w-[896px] lg:top-[80px] lg:left-[120px] flex flex-col gap-3 lg:gap-[15px] pt-20 lg:pt-0">
+                <h1 className="font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-tight sm:leading-snug md:leading-normal lg:leading-[89px] w-full lg:w-[896px] tracking-wide lg:tracking-[0.007em] text-[#ffffff]">
                     Smart Solutions for Government and Business
                 </h1>
 
-                <div className="flex items-center gap-[24px] self-stretch border-l-4 border-[#ffffff] pl-[25px]">
-                    <p className="font-satoshi font-medium text-[24px] leading-[34px] tracking-[0.007em] text-[#ffffff] flex-[1_0_0]">
+                <div className="flex items-center gap-4 lg:gap-[24px] self-stretch border-l-4 border-[#ffffff] pl-4 lg:pl-[25px]">
+                    <p className="font-satoshi font-medium text-base sm:text-lg md:text-xl lg:text-[24px] leading-relaxed sm:leading-loose md:leading-loose lg:leading-[34px] tracking-normal lg:tracking-[0.007em] text-[#ffffff] flex-[1_0_0]">
                         From e-governance to business process automation, IDCL helps institutions transform digitally—improving efficiency, transparency, and service delivery.
                     </p>
                 </div>
 
-                <div className="w-[299px] h-[50px] flex items-center gap-[24px]">
+                <div className="w-full sm:w-[299px] h-[50px] flex items-center gap-4 lg:gap-[24px]">
                     <Link
-                        className="w-[204px] h-[50px] rounded-[50px] py-[16px] px-[22px] bg-[#fff] flex items-center justify-center border-none no-underline"
+                        className="w-full sm:w-[204px] h-[50px] rounded-[50px] py-4 lg:py-[16px] px-4 lg:px-[22px] bg-[#fff] flex items-center justify-center border-none no-underline"
                         href="#"
                     >
-                        <p className="w-[174px] font-roboto font-medium text-[15px] text-[#373737] leading-[100%] tracking-normal">
+                        <p className="w-full sm:w-[174px] font-roboto font-medium text-sm sm:text-[15px] text-[#373737] leading-[100%] tracking-normal">
                             Request a Consultation
                         </p>
                     </Link>

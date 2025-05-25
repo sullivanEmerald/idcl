@@ -1,15 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+
 export default function PartnershipHeroSection() {
     return (
-        <section className="relative w-full h-[618px]">
+        <section className="relative w-full sm:h-[450px] lg:h-[618px]">
+            {/* Background Images - unchanged at lg */}
             <div className="absolute inset-0 -z-10">
                 <Image
                     src="/images/partnership/image.png"
                     alt="Background"
                     width={1440}
                     height={618}
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                     priority
                 />
             </div>
@@ -20,23 +22,36 @@ export default function PartnershipHeroSection() {
                     alt="Overlay"
                     width={1440}
                     height={618}
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                     priority
                 />
             </div>
 
-            {/* Text Content (on top of both images) */}
-            <div className="relative z-10 flex w-[1167px] top-[150px] left-[120px] flex-col items-start gap-[15px]">
-                <h1 className="self-stretch font-satoshi font-black text-[80px] leading-[89px] tracking-[0.56px] text-[#fff]">Together, We Go Further</h1>
-                <div className="flex flex-col items-start  px-[20px] justify-center gap-[24px] border-l border-l-[4px] border-l-[#fff] self-stretch ">
-                    <p className="font-satoshi font-medium text-[24px] leading-[34px] tracking-[0.168px] text-[#fff] flex-[1_0_0]">We partner with global leaders to co-create programs, drive innovation, and accelerate Africa’s digital transformation. Explore our collaborations and see how your organization can plug in.</p>
+            {/* Text Content - identical at lg */}
+            <div className="relative z-10 w-full lg:w-[1167px] mx-auto lg:mx-0 lg:left-[120px] top-[200px] lg:top-[150px] transform lg:transform-none -translate-y-1/2 lg:translate-y-0 px-6 sm:px-8 lg:px-0 py-8 sm:py-0 flex flex-col items-start gap-6 sm:gap-4 lg:gap-[15px]">
+                <h1 className="w-full font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-[1.2] sm:leading-[1.1] lg:leading-[89px] tracking-wide lg:tracking-[0.56px] text-white">
+                    Together, We Go Further
+                </h1>
+
+                <div className="flex flex-col items-start pl-4 sm:pl-5 lg:px-[20px] justify-center gap-6 sm:gap-6 lg:gap-[24px] border-l-2 sm:border-l-[3px] lg:border-l-[4px] border-l-white w-full">
+                    <p className="font-satoshi font-medium text-base sm:text-lg md:text-xl lg:text-[24px] leading-relaxed sm:leading-8 lg:leading-[34px] tracking-normal lg:tracking-[0.168px] text-white">
+                        We partner with global leaders to co-create programs, drive innovation, and accelerate Africa's digital transformation. Explore our collaborations and see how your organization can plug in.
+                    </p>
                 </div>
-                <div className="flex items-start gap-[24px]">
-                    <Link href='/partnership/apply' className="flex py-[16px] px-[22px] w-[118px] items-center justify-center gap-[10px] rounded-[56px] border-none bg-[#fff] hover:border hover:border-solid hover:border-[#fff] hover:bg-transparent group transition-all">
-                        <p className="text-[#373737] group-hover:text-[#fff] font-roboto text-[15px] font-medium leading-normal">Apply Now</p>
+
+                <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-4 lg:gap-[24px] w-full mt-4 sm:mt-0">
+                    <Link
+                        href='/services/partnership/apply'
+                        className="flex py-3 sm:py-4 lg:py-[16px] px-4 sm:px-5 lg:px-[22px] w-full sm:w-full md:w-auto items-center justify-center gap-2 lg:gap-[10px] rounded-[56px] border-none bg-white hover:border hover:border-solid hover:border-white hover:bg-transparent group transition-all"
+                    >
+                        <p className="text-[#373737] group-hover:text-white font-roboto text-sm sm:text-[15px] font-medium leading-normal">
+                            Apply Now
+                        </p>
                     </Link>
-                    <button className="flex py-[16px] px-[22px] items-center justify-center gap-[10px] rounded-[56px] border border-[#fff] bg-transparent hover:bg-[#fff] hover:border-none group transition-all">
-                        <p className="text-[#F5F9FF] group-hover:text-[#373737] font-roboto text-[15px] font-medium leading-normal">Download Program Guide</p>
+                    <button className="flex py-3 sm:py-4 lg:py-[16px] px-4 sm:px-5 lg:px-[22px] w-full sm:w-full md:w-auto items-center justify-center gap-2 lg:gap-[10px] rounded-[56px] border border-white bg-transparent hover:bg-white hover:border-none group transition-all">
+                        <p className="text-white group-hover:text-[#373737] font-roboto text-sm sm:text-[15px] font-medium leading-normal">
+                            Download Program Guide
+                        </p>
                     </button>
                 </div>
             </div>
