@@ -10,6 +10,7 @@ export const names = {
     awareness: 'awareness',
     commercialization: 'commercialization',
     infrastructure: 'infrastructure',
+    innovation: 'innovation'
 }
 export const EllipseData = [
     {
@@ -178,6 +179,23 @@ export const EllipseData = [
             second: {
                 name: 'Schedule a Visit',
                 href: '/services/tour'
+            }
+        }
+
+    },
+
+    {
+        name: names.innovation,
+        header: 'Have an Idea That Can Change the World?',
+        body: "Let’s help you evaluate, protect, and scale it. Join our commercialization pipeline and access expert support from day one.",
+        buttons: {
+            first: {
+                name: 'Submit Your Innovation',
+                href: '/services/vendor/register'
+            },
+            second: {
+                name: 'Book a Consultation',
+                href: '#'
             }
         }
 

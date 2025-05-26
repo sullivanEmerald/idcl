@@ -15,7 +15,7 @@ export default function VendorPage() {
             <VendorBenefits />
             <VendorRegistration />
             <VendorHowItWorks />
-            <GeneralEllipse name={names.commercialization} />
+            <GeneralEllipse name={names.innovation} />
         </>
     )
 }
