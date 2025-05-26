@@ -1,15 +1,47 @@
+import Logo from "@/components/general/logo";
+import LogoNew from "@/components/general/logonew";
 import Image from "next/image";
 
 export default function JobGallery() {
     return (
-        <>
+        <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
 
-            <section className="w-full flex items-center py-[80px] overflow-hidden">
-                <Image src='/images/jobs/gallery/first.png' width={480} height={402} alt="gallery" priority />
-                <Image src='/images/jobs/gallery/second.png' width={480} height={402} alt="gallery" priority />
-                <Image src='/images/jobs/gallery/three.png' width={480} height={402} alt="gallery" priority />
-            </section>
+            <div className="relative w-full h-[300px] sm:h-[350px] md:h-[402px]">
+                <Image
+                    src='/images/jobs/gallery/first.png'
+                    fill
+                    alt="gallery image 1"
+                    className="object-cover"
+                    priority
+                />
+            </div>
 
-        </>
+
+            <div className="relative w-full h-[300px] sm:h-[350px] md:h-[402px]">
+                <Image
+                    src='/images/jobs/gallery/second.png'
+                    fill
+                    alt="gallery image 2"
+                    className="object-cover"
+                    priority
+                />
+            </div>
+
+
+            <div className="relative w-full h-[300px] sm:h-[350px] md:h-[402px]">
+                <Image
+                    src='/images/jobs/gallery/third.png'
+                    fill
+                    alt="gallery image 3"
+                    className="object-cover"
+                    priority
+                />
+            </div>
+
+            <div className="relative w-full h-[300px] sm:h-[350px] bg-[#075DF2] md:h-[402px] flex py-[100px] px-[40px] md:py-[151px] md:px-[86px] shrink-0">
+                <LogoNew />
+            </div>
+
+        </section>
     )
 }
