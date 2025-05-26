@@ -159,256 +159,176 @@ const AdditionalInfomations: FormField[] = [
 
 export default function JobForm() {
     return (
-        <div className="bg-[#fff] w-[834px] rounded-[16px] mx-auto flex flex-col p-[32px] justify-center border border-[#E4E4E4]">
-            <form className="flex flex-col gap-[24px]">
-                <h1 className="font-figtree font-bold text-[21px] text-[#344054] leading-[31px]">Personal Information</h1>
-                <div className="grid grid-cols-2 gap-6">
-                    {PersonalInformation.map((item, index) => (
-                        <div key={index} className={item.full ? "col-span-2" : "col-span-1"}>
-                            <Label htmlFor={item.name} className="font-figtree text-[18px] leading-[27px] text-[#344054]">
-                                {item.label}
-                            </Label>
-                            {item.type === 'select' ? (
-                                <Select>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder={item.placeholder} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {item.options?.map((option, i) => (
-                                            <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>
-                                                {option}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            ) : (
-                                <Input
-                                    type={item.type}
-                                    id={item.name}
-                                    name={item.name}
-                                    placeholder={item.placeholder}
-                                    className="w-full placeholder:font-figtree "
-                                />
-                            )}
+        <div className="bg-[#fff] w-full max-w-[834px] rounded-[16px] mx-auto flex flex-col p-4 sm:p-6 md:p-8 justify-center border border-[#E4E4E4] my-8">
+            <form className="flex flex-col gap-6">
+                {/* Personal Information Section */}
+                <div>
+                    <h1 className="font-figtree font-bold text-lg sm:text-xl text-[#344054] mb-4 sm:mb-6">Personal Information</h1>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                        {PersonalInformation.map((item, index) => (
+                            <div key={index} className={item.full ? "col-span-1 md:col-span-2" : "col-span-1"}>
+                                <Label htmlFor={item.name} className="font-figtree text-base sm:text-[18px] text-[#344054]">
+                                    {item.label}
+                                </Label>
+                                {item.type === 'select' ? (
+                                    <Select>
+                                        <SelectTrigger className="w-full mt-1 sm:mt-2">
+                                            <SelectValue placeholder={item.placeholder} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {item.options?.map((option, i) => (
+                                                <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>
+                                                    {option}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                ) : (
+                                    <Input
+                                        type={item.type}
+                                        id={item.name}
+                                        name={item.name}
+                                        placeholder={item.placeholder}
+                                        className="w-full mt-1 sm:mt-2 placeholder:font-figtree"
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
 
-                        </div>
-                    ))}
+                <div>
+                    <h1 className="font-figtree font-bold text-lg sm:text-xl text-[#344054] mb-4 sm:mb-6">Position Information</h1>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                        {PositonInformations.map((item, index) => (
+                            <div key={index} className={item.full ? "col-span-1 md:col-span-2" : "col-span-1"}>
+                                <Label htmlFor={item.name} className="font-figtree text-base sm:text-[18px] text-[#344054]">
+                                    {item.label}
+                                </Label>
+                                {item.type === 'select' ? (
+                                    <Select>
+                                        <SelectTrigger className="w-full mt-1 sm:mt-2">
+                                            <SelectValue placeholder={item.placeholder} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {item.options?.map((option, i) => (
+                                                <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>
+                                                    {option}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                ) : (
+                                    <Input
+                                        type={item.type}
+                                        id={item.name}
+                                        name={item.name}
+                                        placeholder={item.placeholder}
+                                        className="w-full mt-1 sm:mt-2 placeholder:font-figtree"
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                <h1 className="font-figtree font-bold text-[21px] text-[#344054] leading-[31px]">Position Information</h1>
-                <div className="grid grid-cols-2 gap-6">
-                    {PositonInformations.map((item, index) => (
-                        <div key={index} className={item.full ? "col-span-2" : "col-span-1"}>
-                            <Label htmlFor={item.name} className="font-figtree text-[18px] leading-[27px] text-[#344054]">
-                                {item.label}
-                            </Label>
 
-                            {item.type === 'select' ? (
-                                <Select>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder={item.placeholder} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {item.options?.map((option, i) => (
-                                            <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>
-                                                {option}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            ) : item.type === 'photo' ? (
+                {/* Documents Section */}
+                <div>
+                    <h1 className="font-figtree font-bold text-lg sm:text-xl text-[#344054] mb-4 sm:mb-6">Resume & Supporting Documents</h1>
+                    <div className="grid grid-cols-1 gap-4 sm:gap-6">
+                        {Documents.map((item, index) => (
+                            <div key={index} className="col-span-1">
+                                <Label htmlFor={item.name} className="font-figtree text-base sm:text-[18px] text-[#344054]">
+                                    {item.label}
+                                </Label>
                                 <FileUploader
                                     accept=".pdf"
                                     maxSize={5 * 1024 * 1024}
                                     onDrop={(files) => {
                                         const file = files[0];
-                                        if (file) {
-                                            // Set the mediaFiles for UI preview
-                                            console.log(file)
-                                        }
+                                        if (file) console.log(file);
                                     }}
                                 />
-                            ) : item.type === 'textarea' ? (
-                                <Textarea
-                                    id={item.name}
-                                    name={item.name}
-                                    placeholder={item.placeholder}
-                                    className="w-full min-h-[120px]"
-                                />
-                            ) : (
-                                <Input
-                                    type={item.type}
-                                    id={item.name}
-                                    name={item.name}
-                                    placeholder={item.placeholder}
-                                    className="w-full placeholder:font-figtree "
-                                />
-                            )}
-                        </div>
-                    ))}
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                <h1 className="font-figtree font-bold text-[21px] text-[#344054] leading-[31px]">Resume & Supporting Documents</h1>
-                <div className="grid grid-cols-2 gap-6">
-                    {Documents.map((item, index) => (
-                        <div key={index} className={item.full ? "col-span-2" : "col-span-1"}>
-                            <Label htmlFor={item.name} className="font-figtree text-[18px] leading-[27px] text-[#344054]">
-                                {item.label}
-                            </Label>
 
-                            {item.type === 'select' ? (
-                                <Select>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder={item.placeholder} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {item.options?.map((option, i) => (
-                                            <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>
-                                                {option}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            ) : item.type === 'photo' ? (
-                                <FileUploader
-                                    accept=".pdf"
-                                    maxSize={5 * 1024 * 1024}
-                                    onDrop={(files) => {
-                                        const file = files[0];
-                                        if (file) {
-                                            // Set the mediaFiles for UI preview
-                                            console.log(file)
-                                        }
-                                    }}
-                                />
-                            ) : item.type === 'textarea' ? (
-                                <Textarea
-                                    id={item.name}
-                                    name={item.name}
-                                    placeholder={item.placeholder}
-                                    className="w-full min-h-[120px]"
-                                />
-                            ) : (
-                                <Input
-                                    type={item.type}
-                                    id={item.name}
-                                    name={item.name}
-                                    placeholder={item.placeholder}
-                                    className="w-full placeholder:font-figtree "
-                                />
-                            )}
-                        </div>
-                    ))}
+                {/* Education Section */}
+                <div>
+                    <h1 className="font-figtree font-bold text-lg sm:text-xl text-[#344054] mb-4 sm:mb-6">Education & Experience</h1>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                        {Education.map((item, index) => (
+                            <div key={index} className={item.full ? "col-span-1 md:col-span-2" : "col-span-1"}>
+                                <Label htmlFor={item.name} className="font-figtree text-base sm:text-[18px] text-[#344054]">
+                                    {item.label}
+                                </Label>
+                                {item.type === 'textarea' ? (
+                                    <Textarea
+                                        id={item.name}
+                                        name={item.name}
+                                        placeholder={item.placeholder}
+                                        className="w-full mt-1 sm:mt-2 min-h-[120px]"
+                                    />
+                                ) : (
+                                    <Input
+                                        type={item.type}
+                                        id={item.name}
+                                        name={item.name}
+                                        placeholder={item.placeholder}
+                                        className="w-full mt-1 sm:mt-2 placeholder:font-figtree"
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                <h1 className="font-figtree font-bold text-[21px] text-[#344054] leading-[31px]">Education & Experience</h1>
-                <div className="grid grid-cols-2 gap-6">
-                    {Education.map((item, index) => (
-                        <div key={index} className={item.full ? "col-span-2" : "col-span-1"}>
-                            <Label htmlFor={item.name} className="font-figtree text-[18px] leading-[27px] text-[#344054]">
-                                {item.label}
-                            </Label>
-                            {item.type === 'select' ? (
-                                <Select>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder={item.placeholder} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {item.options?.map((option, i) => (
-                                            <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>
-                                                {option}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            ) : item.type === 'photo' ? (
-                                <FileUploader
-                                    accept=".pdf"
-                                    maxSize={5 * 1024 * 1024}
-                                    onDrop={(files) => {
-                                        const file = files[0];
-                                        if (file) {
-                                            // Set the mediaFiles for UI preview
-                                            console.log(file)
-                                        }
-                                    }}
-                                />
-                            ) : item.type === 'textarea' ? (
-                                <Textarea
-                                    id={item.name}
-                                    name={item.name}
-                                    placeholder={item.placeholder}
-                                    className="w-full min-h-[120px]"
-                                />
-                            ) : (
-                                <Input
-                                    type={item.type}
-                                    id={item.name}
-                                    name={item.name}
-                                    placeholder={item.placeholder}
-                                    className="w-full placeholder:font-figtree "
-                                />
-                            )}
-                        </div>
-                    ))}
+
+                <div>
+                    <h1 className="font-figtree font-bold text-lg sm:text-xl text-[#344054] mb-4 sm:mb-6">Additional Information</h1>
+                    <div className="grid grid-cols-1 gap-4 sm:gap-6">
+                        {AdditionalInfomations.map((item, index) => (
+                            <div key={index} className="col-span-1">
+                                <Label htmlFor={item.name} className="font-figtree text-base sm:text-[18px] text-[#344054]">
+                                    {item.label}
+                                </Label>
+                                {item.type === 'textarea' ? (
+                                    <Textarea
+                                        id={item.name}
+                                        name={item.name}
+                                        placeholder={item.placeholder}
+                                        className="w-full mt-1 sm:mt-2 min-h-[120px]"
+                                    />
+                                ) : (
+                                    <Input
+                                        type={item.type}
+                                        id={item.name}
+                                        name={item.name}
+                                        placeholder={item.placeholder}
+                                        className="w-full mt-1 sm:mt-2 placeholder:font-figtree"
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                <h1 className="font-figtree font-bold text-[21px] text-[#344054] leading-[31px]">Additional Information</h1>
-                <div className="grid grid-cols-2 gap-6">
-                    {AdditionalInfomations.map((item, index) => (
-                        <div key={index} className={item.full ? "col-span-2" : "col-span-1"}>
-                            <Label htmlFor={item.name} className="font-figtree text-[18px] leading-[27px] text-[#344054]">
-                                {item.label}
-                            </Label>
-                            {item.type === 'select' ? (
-                                <Select>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder={item.placeholder} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {item.options?.map((option, i) => (
-                                            <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>
-                                                {option}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            ) : item.type === 'photo' ? (
-                                <FileUploader
-                                    accept=".pdf"
-                                    maxSize={5 * 1024 * 1024}
-                                    onDrop={(files) => {
-                                        const file = files[0];
-                                        if (file) {
-                                            // Set the mediaFiles for UI preview
-                                            console.log(file)
-                                        }
-                                    }}
-                                />
-                            ) : item.type === 'textarea' ? (
-                                <Textarea
-                                    id={item.name}
-                                    name={item.name}
-                                    placeholder={item.placeholder}
-                                    className="w-full min-h-[120px]"
-                                />
-                            ) : (
-                                <Input
-                                    type={item.type}
-                                    id={item.name}
-                                    name={item.name}
-                                    placeholder={item.placeholder}
-                                    className="w-full placeholder:font-figtree "
-                                />
-                            )}
-                        </div>
-                    ))}
-                </div>
-                <div className="flex items-start gap-[16px] self-end">
-                    <button className="flex py-[10px] px-[24px] items-center justify-center gap-[26] bg-[#F9FAFB] rounded-[50px]">
-                        <p className="font-figtree font-semibold text-[18px] text-[#005DFF] leading-[24px]">Cancel</p>
-                    </button>
-                    <button className="flex py-[10px] px-[24px] items-center justify-center gap-[16px] bg-[#005DFF] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] rounded-[50px]">
-                        <p className="font-figtree font-semibold text-[18px] text-[#fff] leading-[24px]">Submit</p>
-                    </button>
+
+                <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 sm:gap-4 mt-4 sm:mt-6">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        className="px-6 py-2 sm:px-6 sm:py-2 rounded-full font-figtree font-semibold text-base sm:text-[18px] text-[#005DFF]"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type="submit"
+                        className="px-6 py-2 sm:px-6 sm:py-2 rounded-full font-figtree font-semibold text-base sm:text-[18px] bg-[#005DFF] hover:bg-[#0045CC] text-white"
+                    >
+                        Submit
+                    </Button>
                 </div>
             </form>
         </div>
     )
-}     
+}

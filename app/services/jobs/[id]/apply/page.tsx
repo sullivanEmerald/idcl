@@ -6,8 +6,8 @@ export default function JobApplicationPage() {
     return (
         <>
             <div className="relative">
-                {/* Background Images - fixed height */}
-                <div className="relative h-[639px] w-full">
+                {/* Background Images */}
+                <div className="relative h-[400px] sm:h-[500px] lg:h-[639px] w-full">
                     <Image
                         src="/images/jobs/image.png"
                         alt="Background"
@@ -24,8 +24,8 @@ export default function JobApplicationPage() {
                     />
                 </div>
 
-                {/* Content Container - positioned over background but with proper flow */}
-                <div className="relative container mx-auto px-4 -mt-80 mb-12 z-10">
+                {/* Content Overlap Container */}
+                <div className="relative container top-[-200px] md:top-[-100px] mx-auto px-4 lg:-mt-80 -mt-12 mb-12 z-10">
                     <JobForm />
                 </div>
             </div>
