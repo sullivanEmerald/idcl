@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Roboto, Poppins, Be_Vietnam_Pro, Figtree, Mulish, Jost, Lexend } from "next/font/google";
 import localFont from 'next/font/local'
+import { Roboto, Poppins, Be_Vietnam_Pro, Figtree, Mulish, Jost, Lexend } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/general/header";
 import Footer from "@/components/sections/footer";
-
 const satoshi = localFont({
   src: [
     {

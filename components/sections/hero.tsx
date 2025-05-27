@@ -1,21 +1,40 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
-
+import { motion } from 'framer-motion'
 
 export default function HeroSection() {
     return (
-        <section className="relative w-full h-screen min-h-[500px] md:h-[680px]">
-            <Image
-                src="/images/hero2.jpg"
-                alt="Background"
-                fill
-                className="object-cover"
-                priority
-            />
-            <div className="absolute z-10 w-full px-4 sm:px-6 md:px-8 lg:left-[80px] lg:w-[693px] top-[5%] sm:top-[10%] md:top-[65px] flex flex-col gap-6 sm:gap-8 md:gap-[45px]">
-                <h1 className="font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-[1.2] md:leading-[1.12] tracking-[0.007em] text-white w-full lg:w-[639.33px]">
+        <section className="relative w-full h-screen min-h-[500px] md:h-[680px] overflow-hidden">
+            <motion.div
+                initial={{ scale: 1.1 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="w-full h-full"
+            >
+                <Image
+                    src="/images/hero2.jpg"
+                    alt="Background"
+                    fill
+                    className="object-cover"
+                    priority
+                />
+            </motion.div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="absolute z-10 w-full px-4 sm:px-6 md:px-8 lg:left-[80px] lg:w-[693px] top-[5%] sm:top-[10%] md:top-[65px] flex flex-col gap-6 sm:gap-8 md:gap-[45px]"
+            >
+                <motion.h1
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                    className="font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-[1.2] md:leading-[1.12] tracking-[0.007em] text-white w-full lg:w-[639.33px]"
+                >
                     Driving Africa's Digital Transformation
-                </h1>
+                </motion.h1>
                 <div className="flex items-center border-l-4 border-white pl-4 sm:pl-6 md:pl-[25px]">
                     <p className="font-satoshi w-full font-medium text-base sm:text-lg md:text-xl lg:text-[24px] leading-[1.4] md:leading-[1.42] tracking-[0.007em] text-white">
                         Where Local Innovation Meets Global Technology
@@ -66,7 +85,7 @@ export default function HeroSection() {
                         Partner With Us
                     </Link>
                 </div>
-            </div>
+            </motion.div>
         </section>
     );
 }
