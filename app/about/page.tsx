@@ -19,7 +19,6 @@ export default function AboutUs() {
             <Mission isMission={false} />
             <Objectives isObjective={false} />
             <Services isServices={false} />
-            <Banner />
             <AboutLeaderShip />
             <GeneralEllipse name={names.about} />
         </>

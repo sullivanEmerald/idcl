@@ -10,17 +10,16 @@ export const navItems = [
         label: "Services",
         href: "/services",
         subItems: [
-            { label: "Event", href: "/services/event" },
-            { label: "Infastruture", href: "/services/infrastructure" },
-            { label: "Tour", href: "/services/tour" },
-            { label: "Talent", href: "/services/talent" },
-            { label: "Startup", href: "/services/startup" },
-            { label: "Partnerships", href: "/services/partnership" },
-            { label: "Public", href: "/services/public" },
-            { label: "Awareness", href: "/services/awareness" },
-            { label: "Commercialization", href: "/services/commercialization" },
-            { label: "Vendor", href: "/services/vendor" },
-            { label: "jobs", href: "/services/jobs" },
+            { label: "Events", href: "/services/event", subitems: [{ label: 'Upcoming Events', href: '/services/event/upcoming' }] },
+            { label: "Smart Infrastructure and Innovation Facilities", href: "/services/infrastructure" },
+            { label: "Digital Talent Funnel", href: "/services/talent" },
+            { label: "Start-up Section", href: "/services/startup" },
+            { label: "Global Partnerships", href: "/services/partnership" },
+            { label: "Public Sector & Business Solutions", href: "/services/public" },
+            { label: "IP Awareness & Training", href: "/services/awareness" },
+            { label: "Commercialization of IP & Innovation Support", href: "/services/commercialization" },
+            { label: "Vendor Registration – IDCL", href: "/services/vendor" },
+            { label: "Jobs & Recruitment Page Structure", href: "/services/jobs" },
         ],
     },
     { label: "Contact Us", href: "/contact" },
@@ -40,7 +39,7 @@ export default function Navigation() {
                                     {item.label}
                                 </NavigationMenuTrigger>
                                 <NavigationMenuContent className="bg-white p-2 rounded-md shadow-lg border">
-                                    <ul className="grid gap-1 p-2 w-[200px]">
+                                    <ul className="grid gap-1 p-2 w-[300px] overflow-auto">
                                         {item.subItems.map((subItem, subIndex) => (
                                             <li key={subIndex}>
                                                 <NavigationMenuLink asChild>

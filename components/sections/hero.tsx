@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+
 export default function HeroSection() {
     return (
         <section className="relative w-full h-screen min-h-[500px] md:h-[680px]">

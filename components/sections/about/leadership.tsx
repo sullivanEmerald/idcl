@@ -157,7 +157,7 @@ const Leaders = [
 export default function AboutLeaderShip() {
     return (
         <>
-            <section className="w-full max-w-[1200px] h-auto min-h-[892px] flex flex-col gap-[64px] py-[80px] mx-auto items-center justify-center px-4 md:px-6 lg:px-8">
+            <section className="w-full max-w-[1200px] h-auto min-h-[892px] mx-auto flex flex-col items-center gap-[64px] pb-[80px] px-4 md:px-6 lg:px-8">
                 <header className="w-full max-w-[867px] h-auto flex flex-col gap-[17px] items-center justify-center text-center">
                     <div className="flex items-center w-[232px] h-[34px] gap-[10px] bg-[#D8F5FF] rounded-[20px] justify-center">
                         <span className="

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Roboto, Poppins, Lexend, Be_Vietnam_Pro, Figtree, Mulish, Jost } from "next/font/google";
+import { Roboto, Poppins, Be_Vietnam_Pro, Figtree, Mulish, Jost, Lexend } from "next/font/google";
 import localFont from 'next/font/local'
 import "./globals.css";
 import Header from "@/components/general/header";

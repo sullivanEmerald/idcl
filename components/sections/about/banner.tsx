@@ -51,7 +51,7 @@ const SocialLink = [
 ]
 export default function Banner() {
     return (
-        <section className="w-full h-[402.65px] flex relative overflow-hidden">
+        <section className="w-full h-[402px] flex relative overflow-hidden">
             <div className="w-[656px] h-full py-[62px] px-[120px] bg-[linear-gradient(155deg,_rgba(0,0,142,1)_0%,_rgba(1,114,128,1)_80%)] flex-shrink-0 z-10">
                 <div className="w-[416px] h-[278.65px] flex flex-col gap-[39px]">
                     {Address.map((item, index) => (
