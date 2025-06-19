@@ -14,16 +14,14 @@ export default function Objectives({ isObjective }: { isObjective: boolean }) {
     return (
         <section className="w-full min-h-screen lg:h-[770.45px] bg-[#F9FAFB] flex flex-col lg:flex-row py-12 lg:py-[115px] px-6 sm:px-8 lg:px-[119px] gap-12 lg:gap-[61px] items-center">
             {/* Image - Responsive with exact LG dimensions */}
-            <div className="w-full max-w-[600px] lg:w-[600px] lg:h-[539.82px] relative aspect-[600/540]">
-                <Image
-                    src='/images/home/objective.png'
-                    alt='objective'
-                    fill
-                    className="object-contain"
-                    quality={100}
-                    priority={true}
-                />
-            </div>
+            <Image
+                src='/images/home/objective.png'
+                alt='objective'
+                width={540}
+                height={500}
+                className="object-contain rounded-[10px]"
+
+            />
 
             {/* Content - Exact LG dimensions when large */}
             <div className="w-full max-w-[536px] lg:w-[536px] lg:h-[468px] flex flex-col gap-6 lg:gap-[24px]">

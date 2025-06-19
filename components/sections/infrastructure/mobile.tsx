@@ -20,7 +20,7 @@ export default function InfrastructureMobile() {
                             src='/images/innovation/car2.png'
                             alt="Automobile Service Centre"
                             fill
-                            className="object-cover"
+                            className="object-cover rounded-[10px]"
                             sizes="(max-width: 1024px) 280px, 336.53px"
                             priority
                         />
@@ -29,7 +29,7 @@ export default function InfrastructureMobile() {
                                 src='/images/innovation/car1.png'
                                 alt="Automobile Service Detail"
                                 fill
-                                className="object-cover"
+                                className="object-cover rounded-[10px]"
                                 sizes="(max-width: 1024px) 280px, 336.53px"
                                 priority
                             />

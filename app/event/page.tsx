@@ -5,7 +5,6 @@ import EventsInnovation from "@/components/sections/events/innovation";
 import EventsTech from "@/components/sections/events/tech";
 import EventsWhyUs from "@/components/sections/events/whyus";
 import { names } from "@/data/elllipse";
-import { EventsData } from "@/data/upcoming";
 import UpcomingEventCom from "@/components/general/upcoming";
 
 export default function EventsPage() {

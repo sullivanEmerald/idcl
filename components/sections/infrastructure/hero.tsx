@@ -21,8 +21,8 @@ export default function HeroSection() {
             />
 
             {/* Content Container */}
-            <div className="absolute z-10 w-full px-4 lg:w-[896.51px] lg:left-[110px] 
-                top-1/2 lg:top-[90px] transform lg:transform-none -translate-y-1/2 lg:translate-y-0
+            <div className="absolute z-10 w-full px-4 lg:w-[1164px] lg:left-[110px] 
+                top-1/2 lg:top-[140px] transform lg:transform-none -translate-y-1/2 lg:translate-y-0
                 flex flex-col gap-4 lg:gap-[15px]">
 
                 {/* Main Heading */}
@@ -40,9 +40,9 @@ export default function HeroSection() {
                 </div>
 
                 {/* Buttons */}
-                <div className="w-full lg:w-[299px] h-[50px] flex flex-col sm:flex-row gap-4 lg:gap-[24px] mt-4 lg:mt-0">
+                <div className="w-full flex flex-col sm:flex-row gap-4 lg:gap-[24px] mt-4 lg:mt-0">
                     <Link
-                        className="w-full sm:w-[120px] h-[50px] rounded-[50px] py-4 lg:py-[16px] px-6 lg:px-[22px] 
+                        className="w-full sm:w-[130px] h-[50px] rounded-[50px] py-4 lg:py-[16px] px-6 lg:px-[22px] 
                         bg-white hover:bg-opacity-90 transition-opacity no-underline flex items-center justify-center"
                         href='/contact'
                     >

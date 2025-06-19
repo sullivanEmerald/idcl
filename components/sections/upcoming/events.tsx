@@ -140,7 +140,6 @@ export default function UpcomingEventSection() {
     return (
         <section className="w-full bg-[#144DAF] mb-[50px] py-8 sm:py-10 md:py-[81px] px-4 sm:px-6 lg:px-8 xl:px-[121px]">
             <main className="w-full max-w-[1198px] mx-auto flex flex-col gap-6 sm:gap-8 md:gap-[50px]">
-                {/* Header and Filter Section */}
                 <section className="flex flex-col items-start gap-6 sm:gap-8 md:gap-[35px] w-full">
                     <h2 className="font-satoshi font-bold text-xl sm:text-2xl md:text-[32px] leading-[1.1] text-white">
                         Upcoming Events
@@ -148,7 +147,7 @@ export default function UpcomingEventSection() {
 
                     <div className="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6">
                         <aside className="w-full flex flex-col sm:flex-row items-center gap-4 sm:gap-6 md:gap-[50px]">
-                            {/* Search Input - Responsive Width */}
+
                             <div className="relative w-full sm:w-auto sm:flex-1 max-w-[789px]">
                                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                 <Input
@@ -157,7 +156,6 @@ export default function UpcomingEventSection() {
                                 />
                             </div>
 
-                            {/* Filter Section - Responsive Layout */}
                             <div className="w-full sm:w-auto sm:flex-[0_0_auto] md:w-[359px] h-[44px] sm:h-[52px] rounded-[20px] border-2 border-[#144DAF] p-1 bg-white flex items-center">
                                 <p className="font-figtree font-bold text-xs sm:text-sm md:text-[18px] leading-[1.5] text-[#344054] ml-2 mr-2 sm:mr-3 whitespace-nowrap">
                                     Category
@@ -207,14 +205,13 @@ export default function UpcomingEventSection() {
                     </div>
                 </section>
 
-                {/* Events Grid - Responsive Columns */}
-                <section className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 lg:gap-[29px] w-full">
+                <section className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5 lg:gap-[29px] w-full">
                     {EventsData.map((item, index) => (
                         <EventDisplay key={index} {...item} />
                     ))}
                 </section>
 
-                {/* Optional: View More Button for Mobile */}
+                {/*  View More Button for Mobile for optimization */}
                 <div className="md:hidden flex justify-center mt-4">
                     <Button className="bg-white text-[#144DAF] hover:bg-gray-100 rounded-lg">
                         View More Events

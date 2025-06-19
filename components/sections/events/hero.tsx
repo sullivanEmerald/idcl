@@ -110,7 +110,7 @@ export default function HeroSection() {
                         <DialogTrigger>
                             <button className="w-full sm:w-[216px] h-[50px] rounded-[50px] py-4 lg:py-[16px] px-6 lg:px-[22px] 
                                 bg-white hover:bg-opacity-90 transition-opacity">
-                                <p className="font-roboto font-medium text-sm lg:text-[15.36px] text-[#373737] leading-[100%]">
+                                <p className="font-roboto font-medium text-sm lg:text-[15px] text-[#373737] leading-[100%]">
                                     Submit an Event Request
                                 </p>
                             </button>

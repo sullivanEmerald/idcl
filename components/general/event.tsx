@@ -15,15 +15,16 @@ export default function EventDisplay({ image, alt, header, text, body, day, mont
     return (
         <div className="w-full max-w-[362px] mx-auto flex flex-col items-center">
             {/* Image Container - fixed aspect ratio */}
-            <div className="w-full h-0 pb-[54.4%] relative"> {/* 197/362 ≈ 54.4% */}
-                <Image
-                    src={image}
-                    alt={alt}
-                    fill
-                    className="object-cover rounded-t-[18.95px]"
-                    priority
-                />
-            </div>
+            {/* 197/362 ≈ 54.4% */}
+            <Image
+                src={image}
+                alt={alt}
+                width={285}
+                height={197}
+                className="object-cover rounded-t-[10px] w-full"
+                priority
+            />
+
 
             {/* Content Container */}
             <div className="w-full py-3 px-5 sm:py-[14px] sm:px-[21px] rounded-b-[18.95px] border border-t-0 border-[#CACACA] bg-white flex flex-col gap-2 sm:gap-[8px]">

@@ -4,7 +4,6 @@ import Link from "next/link";
 export default function JobsHeroSection() {
     return (
         <section className="relative w-full min-h-[639px] mb-0">
-            {/* Background Images */}
             <div className="absolute inset-0 -z-10">
                 <Image
                     src="/images/jobs/image.png"
@@ -25,7 +24,7 @@ export default function JobsHeroSection() {
                 />
             </div>
 
-            {/* Content */}
+
             <div className="relative z-10 lg:w-[896px] w-full max-w-[90%] lg:top-[125px] top-[80px] lg:left-[120px] left-1/2 -translate-x-1/2 lg:translate-x-0 flex flex-col gap-[15px]">
                 <h1 className="font-satoshi font-black text-[32px] sm:text-[48px] md:text-[64px] lg:text-[80px] leading-tight lg:leading-[89px] tracking-[0.007em] text-white">
                     Join Our Dynamic Team at Imo Digital City Ltd (IDCL)

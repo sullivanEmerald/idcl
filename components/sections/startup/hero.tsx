@@ -83,7 +83,7 @@ export default function StartUpHeroSection() {
             {/* Background Images */}
             <div className="absolute inset-0 -z-10">
                 <Image
-                    src="/images/startup/hero.png"
+                    src="/images/startup/heroimage.png"
                     alt="Background"
                     fill
                     className="object-cover"

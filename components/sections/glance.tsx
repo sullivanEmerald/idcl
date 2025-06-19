@@ -7,12 +7,15 @@ export default function Glance() {
         <section className="flex flex-col lg:flex-row w-full items-center justify-center px-4 sm:px-6 md:px-8 lg:px-[121px] py-12 md:py-16 lg:h-[710px] gap-8 md:gap-12 lg:gap-[65px] bg-[#F5F9FF]">
             {/* Image Section - Order changes on mobile */}
             <motion.div
-                initial={{ backgroundColor: "rgb(0, 255, 0)", opacity: 0 }}
-                whileInView={{ backgroundColor: "rgb(255, 0, 0)", opacity: 1 }} className="order-2 lg:order-1 w-full lg:w-auto">
-                <img
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }} className="order-2 lg:order-1 w-full lg:w-auto">
+                <Image
                     src='/images/home/glance.png'
                     alt='glance image'
-                    className="w-full max-w-[564px] h-auto mx-auto lg:w-[564px] lg:h-[540px] object-contain shrink-0"
+                    width={564}
+                    height={540}
+                    priority
+                    className="object-contain rounded-[10px]"
                 />
             </motion.div>
 
@@ -31,7 +34,7 @@ export default function Glance() {
                     </p>
                 </div>
 
-                <div className="font-satoshi font-light text-base md:text-lg lg:text-[20px] leading-normal w-full lg:w-[570px] text-[#000] flex flex-col gap-4 md:gap-[17px]">
+                <div className="font-satoshi font-light text-base md:text-lg lg:text-[18px] leading-normal w-full lg:w-[570px] text-[#000] flex flex-col gap-4 md:gap-[17px]">
                     <p>
                         Welcome to Imo Digital City Ltd (IDCL), where local innovation meets global technology. As West Africa's premier tech incubation and acceleration hub, we connect startups, digital talent, and governments with global opportunities. Explore our digital skills training, startup programs, and smart innovation infrastructure—all from one platform
                     </p>
@@ -42,7 +45,7 @@ export default function Glance() {
 
                 <motion.button
                     initial={{ scale: 0 }} animate={{ scale: 1 }}
-                    className="w-[123px] bg-transparent h-[50px] rounded-[56px] border py-3 md:py-[16px] px-4 font-Roboto font-bold text-sm md:text-[15.36px] leading-[1] tracking-[0em] hover:bg-[#0000FF] hover:text-white transition-colors">
+                    className="w-[123px] bg-transparent text-[#005DFF] h-[50px] rounded-[56px] border border-[#005DFF] py-3 md:py-[16px] px-4 font-Roboto font-bold text-sm md:text-[15.36px] leading-[1] tracking-[0em] hover:bg-[#0000FF] hover:text-white transition-colors">
                     Learn More
                 </motion.button>
             </motion.div>

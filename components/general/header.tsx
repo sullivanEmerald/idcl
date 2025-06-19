@@ -15,13 +15,14 @@ export default function Header() {
                 className="
                     w-full
                     flex items-center justify-between
-                    px-6 md:px-[120px] py-[17px]
+                    px-6 lg:px-[120px] py-[17px]
                     bg-white bg-opacity-80
                     backdrop-blur-[14.4px]
                     border-b border-opacity-10 border-black
                     shadow-[3px_4px_16px_0px_rgba(88,124,88,0.02)]
                     sticky top-0 z-50
                     h-[69px]"
+
             >
                 <Logo />
                 <Navigation />

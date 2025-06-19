@@ -1,7 +1,7 @@
-// components/navigation.jsx
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuContent } from "@/components/ui/navigation-menu";
+
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useState, useRef } from "react";
 
 export const navItems = [
     { label: "Home", href: "/" },
@@ -10,70 +10,100 @@ export const navItems = [
         label: "Services",
         href: "/services",
         subItems: [
-            { label: "Events", href: "/services/event", subitems: [{ label: 'Upcoming Events', href: '/services/event/upcoming' }] },
             { label: "Smart Infrastructure and Innovation Facilities", href: "/services/infrastructure" },
-            { label: "Digital Talent Funnel", href: "/services/talent" },
-            { label: "Start-up Section", href: "/services/startup" },
-            { label: "Global Partnerships", href: "/services/partnership" },
+            { label: "Startup Incubation/Accleration", href: "/services/startup" },
             { label: "Public Sector & Business Solutions", href: "/services/public" },
             { label: "IP Awareness & Training", href: "/services/awareness" },
             { label: "Commercialization of IP & Innovation Support", href: "/services/commercialization" },
             { label: "Vendor Registration – IDCL", href: "/services/vendor" },
+            { label: "Tour – IDCL", href: "/services/tour" },
             { label: "Jobs & Recruitment Page Structure", href: "/services/jobs" },
         ],
     },
     { label: "Contact Us", href: "/contact" },
-    { label: "Start Up", href: "/startup" },
-    { label: "Link", href: "/link2" },
+    { label: "Events & Hospitality", href: "/event" },
+    { label: "Talents", href: "/talent" },
+    { label: "Global Partners", href: "/partnership" },
 ];
 
 export default function Navigation() {
+    const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
+    const navRef = useRef(null);
+
+    const toggleSubmenu = (index: number | null) => {
+        setActiveSubmenu(activeSubmenu === index ? null : index);
+    };
+
     return (
-        <NavigationMenu className="hidden md:block">
-            <NavigationMenuList className="flex items-center gap-8 py-4 px-5">
+        <nav className="hidden md:block" ref={navRef}>
+            <ul className="flex items-center gap-8 py-4 px-5">
                 {navItems.map((item, index) => (
-                    <NavigationMenuItem key={index}>
+                    <li key={index} className="relative group">
                         {item.subItems ? (
                             <>
-                                <NavigationMenuTrigger className="font-poppins font-semibold text-sm text-[#81838C] hover:text-[#1e40af] data-[active]:text-[#1e40af] data-[state=open]:text-[#1e40af] bg-transparent hover:bg-transparent px-0 flex items-center gap-2">
+                                <button
+                                    onClick={() => toggleSubmenu(index)}
+                                    className={cn(
+                                        "font-poppins font-semibold text-sm",
+                                        "text-[#81838C] hover:text-[#1e40af]",
+                                        "transition-colors duration-200",
+                                        "px-0 flex items-center gap-2",
+                                        "group-hover:text-[#1e40af]",
+                                        activeSubmenu === index && "text-[#1e40af]"
+                                    )}
+                                >
                                     {item.label}
-                                </NavigationMenuTrigger>
-                                <NavigationMenuContent className="bg-white p-2 rounded-md shadow-lg border">
-                                    <ul className="grid gap-1 p-2 w-[300px] overflow-auto">
-                                        {item.subItems.map((subItem, subIndex) => (
-                                            <li key={subIndex}>
-                                                <NavigationMenuLink asChild>
-                                                    <Link
-                                                        href={subItem.href}
-                                                        className={cn(
-                                                            "block w-full rounded-md px-3 py-2 text-sm font-medium",
-                                                            "text-[#81838C] hover:text-[#1e40af] hover:bg-gray-50",
-                                                            "transition-colors duration-200"
-                                                        )}
-                                                    >
-                                                        {subItem.label}
-                                                    </Link>
-                                                </NavigationMenuLink>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </NavigationMenuContent>
+                                    <svg
+                                        className={`h-4 w-4 transform transition-transform ${activeSubmenu === index ? "rotate-180" : ""
+                                            } group-hover:rotate-180`}
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M19 9l-7 7-7-7"
+                                        />
+                                    </svg>
+                                </button>
+                                <ul
+                                    className={`${activeSubmenu === index ? "block" : "hidden"
+                                        } absolute left-0 mt-0 bg-white p-2 rounded-md shadow-lg border w-[300px] group-hover:block z-10`}
+                                >
+                                    {item.subItems.map((subItem, subIndex) => (
+                                        <li key={subIndex}>
+                                            <Link
+                                                href={subItem.href}
+                                                className={cn(
+                                                    "block w-full rounded-md px-3 py-2 text-sm font-medium",
+                                                    "text-[#81838C] hover:text-[#1e40af] hover:bg-gray-50",
+                                                    "transition-colors duration-200"
+                                                )}
+                                            >
+                                                {subItem.label}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
                             </>
                         ) : (
-                            <Link href={item.href} passHref legacyBehavior>
-                                <NavigationMenuLink className={cn(
+                            <Link
+                                href={item.href}
+                                className={cn(
                                     "font-poppins font-semibold text-sm",
                                     "text-[#81838C] hover:text-[#1e40af]",
                                     "transition-colors duration-200",
                                     "inline-block px-0 py-2"
-                                )}>
-                                    {item.label}
-                                </NavigationMenuLink>
+                                )}
+                            >
+                                {item.label}
                             </Link>
                         )}
-                    </NavigationMenuItem>
+                    </li>
                 ))}
-            </NavigationMenuList>
-        </NavigationMenu>
+            </ul>
+        </nav>
     );
 }

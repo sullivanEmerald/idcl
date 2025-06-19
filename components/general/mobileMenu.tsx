@@ -6,19 +6,20 @@ import { navItems } from "./navigation";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
 import GetStarted from "./getStarted";
 
 export default function MobileMenu() {
     const { isOpen, closeMenu } = useMobileMenuStore();
     const pathname = usePathname();
     const prevPath = useRef(pathname);
+    const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
+
+
+    const toggleSubmenu = (index: number | null) => {
+        setActiveSubmenu(activeSubmenu === index ? null : index);
+    };
 
     useEffect(() => {
         if (prevPath.current !== pathname) {
@@ -48,40 +49,74 @@ export default function MobileMenu() {
                     </button>
                 </div>
                 <div className="flex flex-col h-[500px] justify-between px-5">
-                    <div className="flex flex-col gap-4">
+                    <ul className="flex flex-col gap-4">
                         {navItems.map((item, index) => (
-                            <div key={index}>
-                                {!item.subItems ? (
+                            <li key={index} className="relative group">
+                                {item.subItems ? (
+                                    <>
+                                        <button
+                                            onClick={() => toggleSubmenu(index)}
+                                            className={cn(
+                                                "font-poppins font-semibold text-sm",
+                                                "text-[#81838C] hover:text-[#1e40af]",
+                                                "transition-colors duration-200",
+                                                "px-0 flex items-center gap-2",
+                                                "group-hover:text-[#1e40af]",
+                                                activeSubmenu === index && "text-[#1e40af]"
+                                            )}
+                                        >
+                                            {item.label}
+                                            <svg
+                                                className={`h-4 w-4 transform transition-transform ${activeSubmenu === index ? "rotate-180" : ""
+                                                    } group-hover:rotate-180`}
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M19 9l-7 7-7-7"
+                                                />
+                                            </svg>
+                                        </button>
+                                        <ul
+                                            className={`${activeSubmenu === index ? "block" : "hidden"
+                                                } absolute left-0 mt-0 bg-white p-2 rounded-md shadow-lg border w-[300px] group-hover:block z-10`}
+                                        >
+                                            {item.subItems.map((subItem, subIndex) => (
+                                                <li key={subIndex}>
+                                                    <Link
+                                                        href={subItem.href}
+                                                        className={cn(
+                                                            "block w-full rounded-md px-3 py-2 text-sm font-medium",
+                                                            "text-[#81838C] hover:text-[#1e40af] hover:bg-gray-50",
+                                                            "transition-colors duration-200"
+                                                        )}
+                                                    >
+                                                        {subItem.label}
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                ) : (
                                     <Link
                                         href={item.href}
-                                        onClick={closeMenu}
-                                        className="block text-[#1e293b] font-semibold text-sm py-2 hover:text-blue-700"
+                                        className={cn(
+                                            "font-poppins font-semibold text-sm",
+                                            "text-[#81838C] hover:text-[#1e40af]",
+                                            "transition-colors duration-200",
+                                            "inline-block px-0 py-2"
+                                        )}
                                     >
                                         {item.label}
                                     </Link>
-                                ) : (
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger className="text-left w-full text-[#1e293b] font-semibold text-sm py-2 hover:text-blue-700">
-                                            {item.label}
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent className="w-48">
-                                            {item.subItems.map((sub, subIdx) => (
-                                                <DropdownMenuItem key={subIdx} asChild>
-                                                    <Link
-                                                        href={sub.href}
-                                                        onClick={closeMenu}
-                                                        className="text-sm text-[#64748b] hover:text-blue-600"
-                                                    >
-                                                        {sub.label}
-                                                    </Link>
-                                                </DropdownMenuItem>
-                                            ))}
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
                                 )}
-                            </div>
+                            </li>
                         ))}
-                    </div>
+                    </ul>
                     <div className="">
                         <GetStarted />
                     </div>

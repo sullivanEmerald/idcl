@@ -1,4 +1,4 @@
-import Image from "next/image"
+import Image from "next/image";
 
 const TestimonialData = [
     {
@@ -18,7 +18,13 @@ const TestimonialData = [
         name: 'Tolu Aina',
         description: 'Business Analyst, Lagos',
         text: `"I attended a cybersecurity training at IDCL and was blown away by the quality of instruction and global relevance. Their infrastructure rivals what you'd find in top cities, and their vision for digital Africa is inspiring."`
-    }
+    },
+    {
+        image: '/images/testimonial/fatima.png',
+        name: 'Fatima B.',
+        description: 'Software Engineering Intern, UniTech Owerri',
+        text: `"Thanks to IDCL's internship partnership with my university, I had hands-on access to advanced tools like 3D printing labs and AI workshops. The experience gave me confidence and skills that now stand out in my CV."`
+    },
 ];
 
 export default function Testimonials() {
@@ -46,11 +52,11 @@ export default function Testimonials() {
                 </p>
             </header>
 
-            <section className="w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-[24px]">
+            <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-4">
                 {TestimonialData.map((item, index) => (
                     <div
                         key={index}
-                        className="relative w-full max-w-[384px] min-h-[376px] flex flex-col gap-[10px] p-6 md:p-[25px] border border-[#EAEAEA] border-[1px]"
+                        className="relative w-full max-w-[287px] min-h-[376px] mx-auto sm:mx-0 flex flex-col gap-[10px] p-6 md:py-[30px] md:px-[22px] border border-[#EAEAEA] rounded-[10px]"
                     >
                         <div className="flex items-center gap-4 md:gap-[20px]">
                             <Image
@@ -64,12 +70,12 @@ export default function Testimonials() {
                                 <p className="font-vietnam font-semibold text-lg md:text-[18px] leading-[28px] tracking-[-0.0025em] text-[#282A2D]">
                                     {item.name}
                                 </p>
-                                <p className="font-vietnam font-normal text-sm md:text-[14px] leading-[22px] tracking-[-0.0025em] text-[#616771]">
+                                <p className="font-vietnam font-normal text-sm md:text-[12px] leading-[22px] tracking-[-0.0025em] text-[#616771]">
                                     {item.description}
                                 </p>
                             </div>
                         </div>
-                        <blockquote className="font-vietnam font-normal text-sm md:text-[14px] text-[#616771] leading-6 md:leading-[24px] tracking-[-0.0025em]">
+                        <blockquote className="font-vietnam font-normal text-sm md:text-[12px] text-[#616771] leading-6 md:leading-[24px] tracking-[-0.0025em]">
                             {item.text}
                         </blockquote>
                         <div className="flex gap-2 md:gap-[10px] mt-4 md:absolute md:bottom-[50px]">

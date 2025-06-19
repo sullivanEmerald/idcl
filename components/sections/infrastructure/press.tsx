@@ -1,3 +1,4 @@
+"use client"
 import Image from "next/image";
 
 const PressImages = [
@@ -7,6 +8,8 @@ const PressImages = [
     '/images/innovation/four.png',
     '/images/innovation/five.png',
     '/images/innovation/six.png',
+    '/images/innovation/four.png',
+    '/images/innovation/four.png',
 ];
 
 export default function InfrastructurePress() {
@@ -25,20 +28,18 @@ export default function InfrastructurePress() {
             </div>
 
             {/* Image Grid */}
-            <div className="w-full max-w-[1200px] h-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-[9px] mt-6 lg:mt-0">
+            <div className="w-full max-w-[1200px] h-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-y-[35px]">
                 {PressImages.map((item, index) => (
-                    <div key={index} className="relative w-full aspect-[390.67/361.29]">
-                        <Image
-                            src={item}
-                            alt="3D Printing Press Example"
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 640px) 100vw, 
-                                   (max-width: 1024px) 50vw, 
-                                   390.67px"
-                            priority={index < 3}
-                        />
-                    </div>
+
+                    <Image
+                        key={index}
+                        src={item}
+                        alt="3D Printing Press Example"
+                        width={289}
+                        height={289}
+                        className="object-cover rounded-[10px]"
+                    />
+
                 ))}
             </div>
         </section>

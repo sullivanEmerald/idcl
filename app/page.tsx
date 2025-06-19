@@ -1,6 +1,3 @@
-import GetStarted from "@/components/general/getStarted";
-import Navigation from "@/components/general/navigation";
-import Logo from "@/components/general/logo";
 import HeroSection from "@/components/sections/hero";
 import Glance from "@/components/sections/glance";
 import Mission from "@/components/sections/misson";
@@ -9,7 +6,6 @@ import Services from "@/components/sections/services";
 import Updates from "@/components/sections/updates";
 import Testimonials from "@/components/sections/testimonial";
 import Partners from "@/components/sections/partners";
-import Ellipse from "@/components/sections/ellipse";
 import GeneralEllipse from "@/components/general/ellipse";
 import { names } from "@/data/elllipse";
 

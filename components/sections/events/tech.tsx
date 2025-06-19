@@ -47,7 +47,7 @@ export default function EventsTech() {
             </div>
 
             {/* Grid Container - responsive columns */}
-            <div className="w-full max-w-[1200px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-[40px]">
+            <div className="w-full max-w-[1200px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-y-[30px]">
                 {TechOccations.map((item, index) => (
                     <div
                         key={index}

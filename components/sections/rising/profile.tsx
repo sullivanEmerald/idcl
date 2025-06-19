@@ -4,7 +4,6 @@ import StartUpProfileDetails from "../startup/profile";
 export default function StartUpProfileHero() {
     return (
         <section className="relative w-full h-auto sm:h-[391px] lg:h-[500px]">
-            {/* Background Image - Hidden on mobile, shown on sm+ */}
             <div className="absolute inset-0 -z-10 hidden sm:block">
                 <Image
                     src="/images/startup/heroimage.png"
@@ -15,7 +14,7 @@ export default function StartUpProfileHero() {
                 />
             </div>
 
-            {/* Overlay Image - Hidden on mobile, shown on sm+ */}
+
             <div className="absolute inset-0 -z-10 hidden sm:block">
                 <Image
                     src="/images/startup/risecover.png"
@@ -26,12 +25,12 @@ export default function StartUpProfileHero() {
                 />
             </div>
 
-            {/* Mobile Background - Only shown on mobile */}
+
             <div className="absolute inset-0 -z-10 sm:hidden bg-gray-100">
                 {/* You might want to add a mobile-specific background here */}
             </div>
 
-            {/* Content Container */}
+
             <div className="relative px-4 sm:px-8 md:px-12 lg:px-[200px] py-8 sm:py-12 md:py-16 lg:py-[139px]">
                 <StartUpProfileDetails />
             </div>

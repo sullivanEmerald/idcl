@@ -75,6 +75,26 @@ export const EventsData = [
         month: 'APR',
         time: '2:00 Pm'
     },
+    {
+        image: '/images/events/background.png',
+        alt: 'Events',
+        header: 'Imo State Innovation & Investment Forum 2025',
+        text: 'Start-up Showcase',
+        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
+        day: 14,
+        month: 'APR',
+        time: '2:00 Pm'
+    },
+    {
+        image: '/images/events/background.png',
+        alt: 'Events',
+        header: 'Imo State Innovation & Investment Forum 2025',
+        text: 'Start-up Showcase',
+        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
+        day: 14,
+        month: 'APR',
+        time: '2:00 Pm'
+    },
 ]
 export default function UpcomingEventCom() {
     return (
@@ -139,13 +159,13 @@ export default function UpcomingEventCom() {
                     </div>
                 </div>
                 {/* Events Grid */}
-                <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-[29px] w-full">
+                <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-[29px] w-full">
                     {EventsData.map((item, index) => (
                         <EventDisplay key={index} {...item} />
                     ))}
                 </section>
 
-                <Link href='/services/event/upcoming' className="w-full md:w-[152px]  mx-auto flex py-[12px] px-[33px] items-center justify-center gap-[10px] rounded-[56px] bg-[#fff]">
+                <Link href='/event/upcoming' className="w-full md:w-[152px]  mx-auto flex py-[12px] px-[33px] items-center justify-center gap-[10px] rounded-[56px] bg-[#fff]">
                     <p className="text-[#000] font-roboto text-[15px] font-medium leading-normal">More Events</p>
                 </Link>
             </main>
