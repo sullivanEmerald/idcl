@@ -50,7 +50,7 @@ export default function ExploreStartup({ id, name, reach, logo, story, industry,
 
 
                 <Link
-                    href={`/services/startup/rising/${id}`}
+                    href={`/services/startup/${id}`}
                     className="flex py-2 sm:py-3 lg:py-[12px] px-6 sm:px-8 lg:px-[33px] w-full lg:w-[159px] items-center justify-center gap-2 lg:gap-[10px] rounded-full lg:rounded-[56px] border border-[#005DFF] hover:bg-[#005DFF]/10 transition-colors duration-200"
                 >
                     <p className="text-[#005DFF] text-center font-roboto text-sm sm:text-base lg:text-[15px] font-medium leading-normal">View Profile</p>
