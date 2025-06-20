@@ -15,7 +15,7 @@ export default function Header() {
                 className="
                     w-full
                     flex items-center justify-between
-                    px-6 lg:px-[120px] py-[17px]
+                    px-6 lg:px-[80px] py-[17px]
                     bg-white bg-opacity-80
                     backdrop-blur-[14.4px]
                     border-b border-opacity-10 border-black

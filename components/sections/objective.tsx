@@ -12,7 +12,7 @@ const ObjectivesData = [
 
 export default function Objectives({ isObjective }: { isObjective: boolean }) {
     return (
-        <section className="w-full min-h-screen lg:h-[770.45px] bg-[#F9FAFB] flex flex-col lg:flex-row py-12 lg:py-[115px] px-6 sm:px-8 lg:px-[119px] gap-12 lg:gap-[61px] items-center">
+        <section className="w-full min-h-screen bg-[#F9FAFB] flex flex-col lg:flex-row py-12 lg:py-[115px] px-6 sm:px-8 lg:px-[119px] gap-12 lg:gap-[61px] items-center">
             {/* Image - Responsive with exact LG dimensions */}
             <Image
                 src='/images/home/objective.png'

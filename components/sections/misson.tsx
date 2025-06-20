@@ -35,7 +35,7 @@ const misson = [
 
 export default function Mission({ isMission }: { isMission: boolean }) {
     return (
-        <section className="flex flex-col items-center justify-center w-full min-h-screen lg:h-[654px] py-12 lg:py-0">
+        <section className="flex flex-col items-center justify-center w-full py-12 lg:py-0">
             <header className="w-full px-6 lg:px-0 lg:w-[867px] h-auto lg:h-[198px] flex flex-col gap-4 lg:gap-[17px] items-center justify-center text-center">
                 {isMission && (
                     <div className="flex items-center w-[142px] h-[34px] gap-[10px] bg-[#D8F5FF] rounded-[20px] justify-center">

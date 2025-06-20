@@ -50,8 +50,11 @@ export default function MobileMenu() {
                 </div>
                 <div className="flex flex-col h-[500px] justify-between px-5">
                     <ul className="flex flex-col gap-4">
-                        {navItems.map((item, index) => (
-                            <li key={index} className="relative group">
+                        {navItems.map((item, index) => {
+
+                            const isActiveLink = pathname.startsWith(item.href);
+
+                            return (<li key={index} className="relative group">
                                 {item.subItems ? (
                                     <>
                                         <button
@@ -105,17 +108,20 @@ export default function MobileMenu() {
                                     <Link
                                         href={item.href}
                                         className={cn(
-                                            "font-poppins font-semibold text-sm",
-                                            "text-[#81838C] hover:text-[#1e40af]",
-                                            "transition-colors duration-200",
-                                            "inline-block px-0 py-2"
+                                            "font-poppins font-semibold text-sm relative inline-block px-0 py-2 text-[#81838C]",
+                                            "transition-colors duration-200 hover:text-[#1e40af]",
+                                            isActiveLink && "text-[#1e40af] font-bold",
+                                            "after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#1e40af]",
+                                            "after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100",
+                                            isActiveLink && "after:scale-x-100"
                                         )}
                                     >
                                         {item.label}
                                     </Link>
                                 )}
-                            </li>
-                        ))}
+                            </li>)
+
+                        })}
                     </ul>
                     <div className="">
                         <GetStarted />

@@ -157,7 +157,7 @@ const Leaders = [
 export default function AboutLeaderShip() {
     return (
         <>
-            <section className="w-full max-w-[1200px] h-auto min-h-[892px] mx-auto flex flex-col items-center gap-[64px] pb-[80px] px-4 md:px-6 lg:px-8">
+            <section className="w-full max-w-[1200px] h-auto mx-auto flex flex-col items-center gap-[64px] pb-[80px] px-4 md:px-6 lg:px-8">
                 <header className="w-full max-w-[867px] h-auto flex flex-col gap-[17px] items-center justify-center text-center">
                     <div className="flex items-center w-[232px] h-[34px] gap-[10px] bg-[#D8F5FF] rounded-[20px] justify-center">
                         <span className="
@@ -181,7 +181,7 @@ export default function AboutLeaderShip() {
                     </span>
                 </header>
 
-                <section className="w-full max-w-[1140px] h-auto flex items-center justify-center flex-wrap gap-[30px]">
+                <section className="w-full max-w-[1140px] h-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-[32px]">
                     {Leaders.map((item, index) => (
                         <div key={index} className="w-full sm:w-[calc(50%-15px)] md:w-[calc(33.333%-20px)] lg:w-[261px] h-[220px] flex items-center flex-col justify-between">
                             <img src={item.image} alt={item.name} className="w-auto h-auto max-h-[120px]" />

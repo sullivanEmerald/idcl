@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useState, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 export const navItems = [
     { label: "Home", href: "/" },
@@ -20,25 +21,31 @@ export const navItems = [
             { label: "Jobs & Recruitment", href: "/services/jobs" },
         ],
     },
-    { label: "Contact Us", href: "/contact" },
-    { label: "Events & Hospitality", href: "/event" },
     { label: "Talents", href: "/talent" },
     { label: "Global Partners", href: "/partnership" },
+    { label: "Smart Infrastructure", href: "/infrastructure" },
+    { label: "Our News", href: "/news" },
 ];
 
 export default function Navigation() {
     const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
+    const pathname = usePathname();
     const navRef = useRef(null);
 
     const toggleSubmenu = (index: number | null) => {
         setActiveSubmenu(activeSubmenu === index ? null : index);
     };
 
+
+
     return (
         <nav className="hidden md:block" ref={navRef}>
             <ul className="flex items-center gap-8 py-4 px-5">
-                {navItems.map((item, index) => (
-                    <li key={index} className="relative group">
+                {navItems.map((item, index) => {
+
+                    const isActiveLink = pathname.startsWith(item.href);
+
+                    return (<li key={index} className="relative group">
                         {item.subItems ? (
                             <>
                                 <button
@@ -92,17 +99,20 @@ export default function Navigation() {
                             <Link
                                 href={item.href}
                                 className={cn(
-                                    "font-poppins font-semibold text-sm",
-                                    "text-[#81838C] hover:text-[#1e40af]",
-                                    "transition-colors duration-200",
-                                    "inline-block px-0 py-2"
+                                    "font-poppins font-semibold text-sm relative inline-block px-0 py-2 text-[#81838C]",
+                                    "transition-colors duration-200 hover:text-[#1e40af]",
+                                    isActiveLink && "text-[#1e40af] font-bold",
+                                    "after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#1e40af]",
+                                    "after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100",
+                                    isActiveLink && "after:scale-x-100"
                                 )}
                             >
                                 {item.label}
                             </Link>
                         )}
-                    </li>
-                ))}
+                    </li>)
+
+                })}
             </ul>
         </nav>
     );
