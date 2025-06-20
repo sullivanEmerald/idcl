@@ -36,40 +36,43 @@ const GlobalPartnersCollection = [
 
 export default function GlobalPartners() {
     return (
-        <section className="">
-            <h1 className="font-satoshi font-bold text-2xl sm:text-3xl lg:text-[32px] text-center leading-[1.1] lg:leading-[35px]">
+        <section className="w-full px-4 sm:px-6 mx-auto py-12 sm:py-16 lg:py-[80px] max-w-[1200px]">
+            <h1 className="font-satoshi font-bold text-2xl sm:text-3xl lg:text-[32px] text-center leading-[1.1] lg:leading-[35px] mb-6 lg:mb-[27px]">
                 Meet Our Global Allies
             </h1>
-            <div>
+            <div className="flex flex-col items-center sm:flex-row flex-wrap justify-center gap-4 sm:gap-[30px]">
                 {GlobalPartnersCollection.map((item, index) => (
                     <div
                         key={index}
-                        className="w-full border"
+                        className="w-full sm:w-[calc(50%-15px)] md:w-[calc(33.333%-20px)] lg:w-[256px] flex flex-col items-center gap-3 sm:gap-4"
                     >
-                        <Image
-                            src={item.image}
-                            alt={`${item.header} logo`}
-                            width={107}
-                            height={107}
-                            className="h-auto object-contain"
-                        />
-                        <div className="">
-                            <h2 className="w-full text-[#3B3B3B] text-xl sm:text-2xl lg:text-[24px] font-bold leading-[1.2] lg:leading-[26px]">
-                                {item.header}
-                            </h2>
-                            <p className="text-[#000] font-satoshi text-base sm:text-lg lg:text-[20px] font-light leading-relaxed lg:leading-normal w-full text-justify">
-                                {item.body}
-                            </p>
+                        <div className="w-[107px] h-[107px] flex items-center justify-center">
+                            <Image
+                                src={item.image}
+                                alt={`${item.header} logo`}
+                                width={107}
+                                height={107}
+                                className="h-auto object-contain"
+                            />
                         </div>
+
+                        <h2 className="text-[#3B3B3B] text-xl sm:text-2xl lg:text-[14px] font-bold leading-[1.2] lg:leading-[26px] text-center">
+                            {item.header}
+                        </h2>
+                        <p className="text-[#000] font-satoshi text-base sm:text-lg lg:text-[14px] font-light leading-relaxed lg:leading-normal text-center">
+                            {item.body}
+                        </p>
+
                         <Link
                             href={item.website}
-                            className="w-full lg:w-[156px] flex py-3 lg:py-[12px] px-6 lg:px-[33px] gap-2 lg:gap-[10px] rounded-[56px] border border-[#005DFF] justify-center"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full max-w-[280px] sm:max-w-none lg:w-[156px] flex py-3 lg:py-[12px] px-6 lg:px-[33px] gap-2 lg:gap-[10px] rounded-[56px] border border-[#005DFF] justify-center hover:bg-[#005DFF] hover:text-white transition-colors duration-200"
                         >
-                            <p className="font-roboto text-center font-medium text-sm sm:text-[15px] leading-normal text-[#005DFF]">
-                                Visit Website
-                            </p>
+                            <span className="font-roboto text-center font-medium text-sm sm:text-[15px] leading-normal text-[#005DFF] hover:text-white">
+                                Learn More
+                            </span>
                         </Link>
-
                     </div>
                 ))}
             </div>
