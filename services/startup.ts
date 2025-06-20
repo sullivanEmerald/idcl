@@ -10,5 +10,6 @@ export const startupService = {
     getStartUp: async (id: string) => {
         const response = await axiosInstance.get(`/startup/${id}`)
         return response.data;
-    }
+    },
+
 }

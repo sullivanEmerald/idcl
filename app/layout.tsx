@@ -3,7 +3,8 @@ import localFont from 'next/font/local'
 import { Roboto, Poppins, Be_Vietnam_Pro, Figtree, Mulish, Jost, Lexend } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/general/header";
-import Footer from "@/components/sections/footer";
+import { Toaster } from 'sonner'
+
 const satoshi = localFont({
   src: [
     {
@@ -86,6 +87,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${satoshi.variable} ${jost.variable} ${mulish.variable} ${figtree.variable} ${be_Vietnam_Pro.variable} ${lexend.variable} ${roboto.variable} ${poppins.variable}`}>
       <body className="font-sans antialiased relative flex flex-col min-h-screen">
+        <Toaster richColors position="top-center" />
         <Header />
         <main className="flex-grow">
           {children}

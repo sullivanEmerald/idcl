@@ -1,3 +1,4 @@
+"use client"
 import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,8 +10,47 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { useEffect, useState } from "react";
+import { startupService } from "@/services/startup";
+import ExploreStartup from "../startup/startUp";
+import axios from "axios";
+
+export interface StartUpInterface {
+    id: string,
+    track: string,
+    reach: string,
+    logo: string,
+    date: string,
+    name: string,
+    story: string,
+    type: string,
+    isApproved: boolean,
+    industry: string,
+    region: string,
+}
 
 export default function StarsSearch() {
+    const [startups, setStartups] = useState<StartUpInterface[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        const getAllStarUps = async () => {
+            try {
+                const data = await startupService.getAllStartups();
+                setStartups(data)
+            } catch (error: unknown) {
+                if (axios.isAxiosError(error)) {
+                    console.error(error.response?.data?.message || "An error occurred. Retry");
+                } else {
+                    console.error("An unexpected error occurred");
+                }
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        getAllStarUps();
+    }, [])
     return (
         <section className="relative w-full py-[40px] flex flex-col items-center justify-center gap-[54px] px-4 md:px-6">
             {/* Search and Filters */}
@@ -61,33 +101,11 @@ export default function StarsSearch() {
 
             {/* Cards */}
             <div className="w-full max-w-[1198px] flex items-start gap-[20px] flex-wrap justify-center md:justify-start">
-                {[...Array(12)].map((_, index) => (
-                    <div key={index} className="relative border rounded-[12px] bg-[#fff] w-full sm:w-[calc(50%-10px)] lg:w-[376px] pt-[37px] pr-[20px] pb-[24px] pl-[20px] flex flex-col items-start gap-[18px]">
-                        <div className="flex w-[74px] py-[4px] px-[6px] items-center justify-center gap-[10px] bg-[#1E1E1E] rounded-[8px] absolute right-[20px] top-[20px]">
-                            <p className="text-[#F5F9FF] font-satoshi font-bold text-[12px] leading-[16px]">HealthTech</p>
-                        </div>
-                        <div className="flex items-center gap-[11px] self-stretch w-full">
-                            <Image
-                                src="/images/startup/startup.png"
-                                alt="Background"
-                                width={64}
-                                height={64}
-                                className="object-cover"
-                                priority
-                            />
-                            <p className="font-satoshi font-bold text-[16px] leading-[21px] text-[#475467]">MediBridge</p>
-                        </div>
-                        <p className="font-satoshi text-[14px] font-medium leading-[18px] font-[#475467] self-stretch">Bridging rural communities to healthcare via mobile clinics.</p>
-                        <div className="flex p-[10px] items-center justify-center gap-[10px] self-stretch bg-[#F9F9F9]">
-                            <p className="text-[#475467] font-satoshi text-[14px] font-medium leading-[18px] flex-[1_0_0]">
-                                Case study on how MediBridge has served 50,000+ patients across 12 underserved regions.
-                            </p>
-                        </div>
-                        <Link href={`/services/startup/rising/${index}`} className="flex py-[12px] px-[33px] item-center justify-center gap-[10px] flex-[1_0_0] rounded-[56px] border border-[#005DFF]">
-                            <p className="text-[#005DFF] text-center font-roboto text-[15px] font-medium leading-normal">View Profile</p>
-                        </Link>
-                    </div>
-                ))}
+                <div className="w-full max-w-[1198px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-[33px]">
+                    {startups.map((startup, index) => (
+                        <ExploreStartup key={index} {...startup} />
+                    ))}
+                </div>
             </div>
         </section>
     );
