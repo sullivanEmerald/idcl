@@ -13,6 +13,10 @@ const PartnersVoices = [
         header: '“IDCL’s execution and local expertise made our pilot a success.”',
         body: 'Director, Zinox Education Program',
     },
+    {
+        header: '“IDCL’s execution and local expertise made our pilot a success.”',
+        body: 'Director, Zinox Education Program',
+    },
 ];
 
 export default function PartnershipVoices() {

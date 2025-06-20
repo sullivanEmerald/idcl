@@ -29,7 +29,7 @@ export default function PublicWork() {
                 {organisation.map((item, index) => (
                     <div
                         key={index}
-                        className="flex w-full sm:w-[calc(50%-16px)] lg:w-[263px] pt-6 md:pt-8 lg:pt-[35px] px-6 md:px-8 lg:pr-[40px] lg:pl-[40px] pb-4 md:pb-5 lg:pb-[16px] flex-col gap-3 md:gap-4 lg:gap-[16px] items-center justify-center self-stretch rounded-2xl md:rounded-3xl lg:rounded-[32px] bg-[#F9FAFB]"
+                        className="flex w-full sm:w-[calc(50%-16px)] lg:w-[263px] pt-6 md:pt-8 lg:pt-[35px] px-6 md:px-8 lg:pr-[40px] lg:pl-[40px] pb-4 md:pb-5 lg:pb-[16px] flex-col gap-3 md:gap-4 lg:gap-[16px] items-center justify-center self-stretch rounded-2xl md:rounded-[10px] bg-[#F9FAFB]"
                     >
                         <Image
                             src={item.image}

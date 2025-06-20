@@ -42,7 +42,7 @@ export default function StartUpRisingStars() {
     // if (!startups.length) return <p className="text-red-too font-medium">Refresh page to see our startups</p>
 
     return (
-        <section className="bg-[#F5F9FF] w-full min-h-screen lg:h-[975px] flex flex-col items-center justify-center gap-6 sm:gap-8 lg:gap-[34px] py-12 sm:py-16 lg:py-0">
+        <section className="bg-[#F5F9FF] w-full min-h-screen flex flex-col items-center justify-center gap-6 sm:gap-8 lg:gap-[34px] py-12 sm:py-16 lg:py-[80px]">
             <p className="w-full text-center text-[#3B3B3B] font-satoshi text-2xl sm:text-3xl lg:text-[32px] font-bold leading-normal lg:leading-[35px] px-4">
                 Meet Our Rising Stars
             </p>

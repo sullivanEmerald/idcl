@@ -10,7 +10,7 @@ export default function GeneralEllipse({ name, isComplete = true }: { name?: str
     return (
         <footer className="w-full flex flex-col items-center">
             {object ? (
-                <div className="relative w-full lg:w-[1228px] h-auto min-h-[300px] sm:min-h-[350px] lg:h-[401px] rounded-tl-[20px] rounded-tr-[20px] sm:rounded-tl-[30px] sm:rounded-tr-[30px] lg:rounded-tl-[40px] lg:rounded-tr-[40px] p-4 sm:p-8 md:p-12 lg:p-[80px] bg-[#144DAF] overflow-hidden flex items-center">
+                <div className="relative w-full lg:w-[1228px] h-auto min-h-[300px] sm:min-h-[350px] lg:h-[401px] rounded-tl-[10px] rounded-tr-[10px] sm:rounded-tl-[10px] sm:rounded-tr-[10px] lg:rounded-tl-[10px] lg:rounded-tr-[10px] p-4 sm:p-8 md:p-12 lg:p-[80px] bg-[#144DAF] overflow-hidden flex items-center">
                     <div className="w-full lg:w-[714px] flex flex-col items-start gap-4 sm:gap-5 lg:gap-[22px] shrink-0 z-10 relative">
                         <p className="self-stretch font-satoshi font-bold text-2xl sm:text-3xl md:text-4xl lg:text-[43px] leading-[1.2] sm:leading-[1.25] lg:leading-[1.3] tracking-normal text-[#FFFFFF]">
                             {object?.header}

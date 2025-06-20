@@ -29,6 +29,16 @@ const EventsData = [
         month: 'APR',
         time: '2:00 Pm'
     },
+    {
+        image: '/images/events/background.png',
+        alt: 'Events',
+        header: 'Imo State Innovation & Investment Forum 2025',
+        text: 'Start-up Showcase',
+        body: 'Start-up Showcase',
+        day: 14,
+        month: 'APR',
+        time: '2:00 Pm'
+    },
 ]
 
 export default function AwarenessUpcomingEvents() {
@@ -39,9 +49,9 @@ export default function AwarenessUpcomingEvents() {
                     Upcoming Events
                 </p>
 
-                <div className="w-full flex flex-col sm:grid sm:grid-cols-2 lg:flex lg:flex-row items-center gap-6 md:gap-8 lg:gap-[54px] justify-center">
+                <div className="w-full flex flex-col sm:grid sm:grid-cols-2 lg:flex lg:flex-row items-center gap-6 md:gap-8 lg:gap-[40px] justify-center">
                     {EventsData.map((item, index) => (
-                        <div key={index} className='w-full max-w-[362px]'>
+                        <div key={index} className='w-full max-w-[285px]'>
                             <div className="relative w-full aspect-[362/205] rounded-t-[18px] overflow-hidden">
                                 <img
                                     src={item.image}
