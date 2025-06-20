@@ -39,20 +39,20 @@ export default function CommercializationIpServices() {
             <h1 className="font-satoshi font-bold text-[24px] sm:text-[28px] lg:text-[32px] leading-[26px] sm:leading-[31px] lg:leading-[35px] text-[#fff] text-center">
                 IP Services We Offer
             </h1>
-            <section className="flex w-full max-w-[945px] items-center justify-center flex-wrap gap-[20px] sm:gap-[30px] lg:gap-[41px]">
+            <section className="w-full sm:w-auto lg:w-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[20px] sm:gap-[30px] lg:gap-[30px]">
                 {Services.map((item, index) => (
-                    <div key={index} className="flex w-full sm:w-[300px] lg:w-[283px] max-w-[283px] py-[1px] flex-col items-center">
+                    <div key={index} className="flex w-full sm:w-[300px] lg:w-[250px] py-[1px] flex-col items-center">
                         <div className="w-full">
                             <Image
                                 src={item.image}
                                 alt="Service"
                                 width={283}
                                 height={180}
-                                className="w-full h-[160px] sm:h-[170px] lg:h-[180px] object-cover rounded-tr-[11px] rounded-tl-[11px]"
+                                className="w-full h-[160px] sm:h-[170px] lg:h-[180px] object-cover rounded-tr-[10px] rounded-tl-[10px]"
                                 priority
                             />
                         </div>
-                        <div className="min-h-[140px] sm:min-h-[145px] lg:h-[151px] w-full flex py-[16px] sm:py-[18px] lg:py-[20px] px-[18px] sm:px-[20px] lg:px-[22px] flex-col items-start gap-[8px] sm:gap-[9px] lg:gap-[10px] border border-[#EAEAEA] self-stretch bg-[#ffffff] rounded-bl-[11px] rounded-br-[11px]">
+                        <div className="min-h-[140px] sm:min-h-[160px] lg:h-[190px] w-full flex py-[16px] sm:py-[18px] lg:py-[20px] px-[18px] sm:px-[20px] lg:px-[22px] flex-col items-start gap-[8px] sm:gap-[9px] lg:gap-[10px] border border-[#EAEAEA] self-stretch bg-[#ffffff] rounded-bl-[11px] rounded-br-[11px]">
                             <div className="flex flex-col items-start gap-[12px] sm:gap-[13px] lg:gap-[15px] self-stretch">
                                 <h1 className="font-satoshi text-[18px] sm:text-[19px] lg:text-[20px] font-bold leading-[23px] sm:leading-[24px] lg:leading-[26px] tracking-[0.14px] text-[#282A2D] self-stretch">
                                     {item.header}

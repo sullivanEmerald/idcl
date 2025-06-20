@@ -8,9 +8,9 @@ export default function CommercializationImpact() {
                 Impact & Case Studies
             </p>
             <div className="w-full max-w-[1198px]">
-                <div className="w-full flex items-start justify-center gap-[20px] sm:gap-[26px] lg:gap-[33px] self-stretch flex-wrap">
-                    {[...Array(3)].map((_, index) => (
-                        <div key={index} className="w-full sm:w-[340px] lg:w-[376px] max-w-[376px] relative border rounded-[12px] bg-[#fff] pt-[30px] sm:pt-[33px] lg:pt-[37px] pr-[16px] sm:pr-[18px] lg:pr-[20px] pb-[20px] sm:pb-[22px] lg:pb-[24px] pl-[16px] sm:pl-[18px] lg:pl-[20px] flex flex-col items-start gap-[15px] sm:gap-[16px] lg:gap-[18px]">
+                <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[20px] sm:gap-[26px] lg:gap-[33px]">
+                    {[...Array(4)].map((_, index) => (
+                        <div key={index} className="w-full sm:w-[340px] lg:w-[290px] max-w-auto relative border rounded-[10px] bg-[#fff] pt-[30px] sm:pt-[33px] lg:pt-[37px] pr-[16px] sm:pr-[18px] lg:pr-[20px] pb-[20px] sm:pb-[22px] lg:pb-[24px] pl-[16px] sm:pl-[18px] lg:pl-[20px] flex flex-col items-start gap-[15px] sm:gap-[16px] lg:gap-[18px]">
                             <div className="flex w-[74px] py-[4px] px-[6px] items-center justify-center gap-[10px] bg-[#1E1E1E] rounded-[8px] absolute right-[16px] sm:right-[18px] lg:right-[20px] top-[16px] sm:top-[18px] lg:top-[20px]">
                                 <p className="text-[#F5F9FF] font-satoshi font-bold text-[12px] leading-[16px]">HealthTech</p>
                             </div>

@@ -13,11 +13,11 @@ export default function JobOpenings() {
                 </p>
             </div>
 
-            <div className="w-full max-w-[1200px] flex items-start justify-center gap-[16px] sm:gap-[20px] md:gap-[23px] flex-wrap">
+            <div className="w-full max-w-[1200px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[16px] md:gap-[20px]">
                 {[...Array(12)].map((_, index) => (
                     <div
                         key={index}
-                        className="w-full sm:w-[calc(50%-10px)] md:w-[384px] p-[24px] sm:p-[28px] md:p-[32px] flex flex-col items-start gap-[12px] sm:gap-[14px] md:gap-[16px] rounded-[20px] border border-[#E4E4E4]"
+                        className="w-full sm:w-[calc(50%-10px)] md:w-[285px] p-4 sm:p-[20px] flex flex-col items-start gap-[12px] sm:gap-[14px] md:gap-[16px] rounded-[10px] border border-[#E4E4E4]"
                     >
                         <div className="flex flex-col items-start gap-[10px] sm:gap-[14px] md:gap-[16px]">
                             <h1 className="font-satoshi font-bold leading-normal text-[#061A2E] text-[18px] sm:text-[19px]">
@@ -37,12 +37,12 @@ export default function JobOpenings() {
                             </div>
                         </div>
 
-                        <h2 className="font-satoshi font-normal leading-normal text-[#061A2E] text-[15px] sm:text-[16px] self-stretch">
+                        <h2 className="font-satoshi font-normal leading-normal text-[#061A2E] text-[15px] sm:text-[14px] self-stretch">
                             Deliver training on emerging technologies such as AI, blockchain, and cybersecurity to individuals and corporate clients.
                         </h2>
 
                         <div className="w-full flex py-[16px] sm:py-[18px] md:py-[20px] px-[10px] items-center justify-center gap-[10px] self-stretch bg-[#F9F9F9]">
-                            <h2 className="font-satoshi w-full font-normal leading-normal text-[#061A2E] text-[15px] sm:text-[16px]">
+                            <h2 className="font-satoshi w-full font-normal leading-normal text-[#061A2E] text-[14px]">
                                 3+ years experience in training or teaching tech, strong communication skills.
                             </h2>
                         </div>
@@ -55,15 +55,15 @@ export default function JobOpenings() {
                                 alt="icon"
                                 priority
                             />
-                            <p className="font-satoshi font-medium leading-normal text-[#061A2E] text-[17px] sm:text-[18px]">
+                            <p className="font-satoshi font-medium leading-normal text-[#061A2E] text-[14px]">
                                 Full-Time
                             </p>
                         </div>
 
-                        <div className="flex flex-wrap gap-[12px] sm:gap-[16px]">
+                        <div className="flex gap-[12px] sm:gap-[16px]">
                             <Link
                                 href={`/services/jobs/${index}/apply`}
-                                className="flex flex-col gap-[8px] sm:gap-[10px] py-[10px] sm:py-[12px] px-[28px] sm:px-[33px] rounded-[56px] bg-[#005DFF]"
+                                className="py-[10px] px-[20px] h-[42px] w-[114px] rounded-[56px] bg-[#005DFF] "
                             >
                                 <p className="font-roboto font-normal leading-normal text-[14px] sm:text-[15px] text-[#fff]">
                                     Apply Now
@@ -71,7 +71,7 @@ export default function JobOpenings() {
                             </Link>
                             <Link
                                 href={`/services/jobs/${index}`}
-                                className="flex flex-col gap-[8px] sm:gap-[10px] py-[10px] sm:py-[12px] px-[28px] sm:px-[33px] rounded-[56px] bg-transparent border border-[#005DFF]"
+                                className="py-[12px] px-[32px] h-[42px] rounded-[56px] bg-transparent border border-[#005DFF]"
                             >
                                 <p className="font-satoshi font-bold leading-[18px] sm:leading-[19px] text-[15px] sm:text-[16px] text-[#005DFF]">
                                     Details
