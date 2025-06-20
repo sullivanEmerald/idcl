@@ -54,10 +54,6 @@ export const EllipseData = [
                 name: 'Apply Now',
                 href: '/'
             },
-            second: {
-                name: 'Talk to a Program Advisor',
-                href: '/'
-            }
         }
 
     },

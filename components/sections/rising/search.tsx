@@ -86,11 +86,15 @@ export default function StarsSearch() {
 
     })
 
+    console.log(typeof filters.batch)
+
     useEffect(() => {
         const getAllStarUps = async () => {
             try {
                 const data = await startupService.getAllStartups();
                 setStartups(data)
+                setFilteredStartup(data)
+                console.log(data)
             } catch (error: unknown) {
                 if (axios.isAxiosError(error)) {
                     console.error(error.response?.data?.message || "An error occurred. Retry");
@@ -104,7 +108,6 @@ export default function StarsSearch() {
 
         getAllStarUps();
     }, [])
-
 
 
     useEffect(() => {
@@ -131,6 +134,7 @@ export default function StarsSearch() {
         setFilteredStartup(results)
     }, [filters, startups])
 
+
     return (
         <section className="relative w-full py-[40px] flex flex-col items-center justify-center gap-[54px] px-4 md:px-6">
             {/* Search and Filters */}
@@ -141,6 +145,11 @@ export default function StarsSearch() {
                     <Input
                         placeholder="Search"
                         className="pl-10 rounded-[16px] w-full md:w-[438px]"
+                        value={filters.search}
+                        onChange={(e) => setFilters(prev => ({
+                            ...prev,
+                            search: e.target.value
+                        }))}
                     />
                 </div>
 
@@ -193,7 +202,7 @@ export default function StarsSearch() {
             <div className="w-full max-w-[1198px] flex items-start gap-[20px] flex-wrap justify-center md:justify-start">
                 {isLoading ? (
                     <StartupSkeleton />
-                ) : startups.length === 0 ? (
+                ) : filteredStartup.length === 0 ? (
                     <div className="w-full col-span-full py-12 text-center"> <p className="text-gray-500 max-w-md">
                         There are currently no startups available. Check back later or try a different search.
                     </p>
@@ -201,7 +210,7 @@ export default function StarsSearch() {
                     </div>
                 ) : (
                     <div className="w-full max-w-[1198px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-[33px]">
-                        {startups.map((startup, _) => (
+                        {filteredStartup.map((startup, _) => (
                             <ExploreStartup key={startup.id} {...startup} />
                         ))}
                     </div>
