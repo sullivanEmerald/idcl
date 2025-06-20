@@ -17,7 +17,7 @@ export const navItems = [
             { label: "Commercialization of IP & Innovation Support", href: "/services/commercialization" },
             { label: "Vendor Registration – IDCL", href: "/services/vendor" },
             { label: "Tour – IDCL", href: "/services/tour" },
-            { label: "Jobs & Recruitment Page Structure", href: "/services/jobs" },
+            { label: "Jobs & Recruitment", href: "/services/jobs" },
         ],
     },
     { label: "Contact Us", href: "/contact" },
