@@ -18,7 +18,14 @@ const TestimonialData = [
         name: 'Tolu Aina',
         description: 'CEO, Innovent Hub',
         text: `"I attended a cybersecurity training at IDCL and was blown away by the quality of instruction and global relevance. Their infrastructure rivals what you'd find in top cities, and their vision for digital Africa is inspiring."`
-    }
+    },
+    {
+        image: '/images/testimonial/tolu.png',
+        name: 'Tolu Aina',
+        description: 'CEO, Innovent Hub',
+        text: `"I attended a cybersecurity training at IDCL and was blown away by the quality of instruction and global relevance. Their infrastructure rivals what you'd find in top cities, and their vision for digital Africa is inspiring."`
+    },
+
 ];
 
 export default function StartUpFounders() {
@@ -33,13 +40,13 @@ export default function StartUpFounders() {
                 </span>
             </header>
 
-            <section className="w-full flex flex-col sm:flex-row items-center gap-6 lg:gap-[24px] overflow-x-auto pb-4 lg:pb-0 lg:h-[376px]">
+            <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-4">
                 {TestimonialData.map((item, index) => (
                     <div
                         key={index}
-                        className="relative w-full sm:w-[350px] lg:w-[384px] min-w-[300px] h-auto lg:h-[376px] flex flex-col gap-2 lg:gap-[10px] p-6 lg:p-[25px] border border-[#EAEAEA]"
+                        className="relative w-full max-w-[287px] min-h-[376px] mx-auto sm:mx-0 flex flex-col gap-[10px] p-6 md:py-[30px] md:px-[22px] border border-[#EAEAEA] rounded-[10px]"
                     >
-                        <div className="flex items-center gap-4 lg:gap-[20px]">
+                        <div className="flex items-center gap-4 md:gap-[20px]">
                             <Image
                                 src={item.image}
                                 alt={item.name}
@@ -48,18 +55,18 @@ export default function StartUpFounders() {
                                 className="rounded-full"
                             />
                             <div>
-                                <p className="font-vietnam font-semibold text-base lg:text-[18px] leading-7 lg:leading-[28px] tracking-[-0.0025em] text-[#282A2D]">
+                                <p className="font-vietnam font-semibold text-lg md:text-[18px] leading-[28px] tracking-[-0.0025em] text-[#282A2D]">
                                     {item.name}
                                 </p>
-                                <p className="font-vietnam font-normal text-sm lg:text-[14px] leading-5 lg:leading-[22px] tracking-[-0.0025em] text-[#616771]">
+                                <p className="font-vietnam font-normal text-sm md:text-[12px] leading-[22px] tracking-[-0.0025em] text-[#616771]">
                                     {item.description}
                                 </p>
                             </div>
                         </div>
-                        <blockquote className="font-vietnam font-normal text-sm lg:text-[14px] text-[#616771] leading-6 lg:leading-[24px] tracking-[-0.0025em] mt-2 lg:mt-0">
+                        <blockquote className="font-vietnam font-normal text-sm md:text-[12px] text-[#616771] leading-6 md:leading-[24px] tracking-[-0.0025em]">
                             {item.text}
                         </blockquote>
-                        <div className="flex gap-2 lg:gap-[10px] mt-4 lg:absolute lg:bottom-[50px]">
+                        <div className="flex gap-2 md:gap-[10px] mt-4 md:absolute md:bottom-[50px]">
                             {[...Array(5)].map((_, i) => (
                                 <Image
                                     key={i}
