@@ -1,7 +1,7 @@
-"use client"
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
 
 export default function HeroSection() {
     return (
@@ -25,7 +25,8 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="absolute z-10 w-full px-4 sm:px-6 md:px-8 left-80px md:left-[80px] lg:w-[895px] top-[100px] md:top-[180px] flex flex-col gap-6 sm:gap-8 md:gap-[16px]"
+                className="absolute z-10 inset-0 px-4 sm:px-6 md:px-8 flex flex-col items-center justify-center gap-6 sm:gap-8 md:gap-[16px] text-center
+        md:items-start md:justify-start md:left-[80px] md:top-[180px] md:text-left lg:w-[895px]"
             >
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -45,45 +46,14 @@ export default function HeroSection() {
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 md:gap-[24px]">
                     <Link
-                        href='/'
-                        className="          
-                            rounded-[56px]               
-                            py-3 sm:py-4 md:py-[16px] px-4 sm:px-5 md:px-[22px]          
-                            bg-white                    
-                            no-underline                
-                            flex items-center justify-center
-                            gap-2 sm:gap-[10px]                          
-                            border-none
-                            font-roboto font-medium
-                            transition-all
-                            hover:bg-transparent
-                            hover:text-[#F5F9FF]
-                            hover:border hover:border-solid hover:border-[#F5F9FF]
-                            text-sm sm:text-base
-                            w-full sm:w-auto text-center h-[50px]
-                        "
+                        href="/"
+                        className="rounded-[56px] py-3 sm:py-4 md:py-[16px] px-4 sm:px-5 md:px-[22px] bg-white no-underline flex items-center justify-center gap-2 sm:gap-[10px] border-none font-roboto font-medium transition-all hover:bg-transparent hover:text-[#F5F9FF] hover:border hover:border-solid hover:border-[#F5F9FF] text-sm sm:text-base w-full sm:w-auto text-center h-[50px]"
                     >
                         Explore Our Ecosystem
                     </Link>
                     <Link
-                        href='/'
-                        className="         
-                            rounded-[56px]               
-                            py-3 sm:py-4 md:py-[16px] px-4 sm:px-5 md:px-[22px]          
-                            bg-transparent                    
-                            no-underline                
-                            flex items-center justify-center
-                            gap-2 sm:gap-[10px]                   
-                            text-[#F5F9FF] 
-                            text-sm sm:text-base
-                            hover:bg-white
-                            hover:border-none 
-                            hover:text-[#373737]               
-                            transition-all
-                            border border-white
-                            font-roboto font-medium
-                            w-full sm:w-auto h-[50px] text-center
-                        "
+                        href="/"
+                        className="rounded-[56px] py-3 sm:py-4 md:py-[16px] px-4 sm:px-5 md:px-[22px] bg-transparent no-underline flex items-center justify-center gap-2 sm:gap-[10px] text-[#F5F9FF] text-sm sm:text-base hover:bg-white hover:border-none hover:text-[#373737] transition-all border border-white font-roboto font-medium w-full sm:w-auto h-[50px] text-center"
                     >
                         Partner With Us
                     </Link>

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function GetStarted() {
     return (
-        <button
+        <Link href='/news'
             className="
                 flex items-center justify-center
                 min-w-[145px] h-[42px]          
@@ -26,8 +26,8 @@ export default function GetStarted() {
         w-[79px]
           
       ">
-                Get Started
+                Our News
             </span>
-        </button>
+        </Link>
     )
 }

@@ -53,7 +53,7 @@ export default function HeroSection() {
                     <Link
                         className="w-full sm:w-[155px] h-[50px] rounded-[50px] py-4 lg:py-[16px] px-6 lg:px-[22px] 
                         bg-transparent border border-white hover:bg-white hover:bg-opacity-10 transition-colors no-underline flex items-center justify-center"
-                        href='/services/tour'
+                        href='/infrastructure/tour'
                     >
                         <p className="font-roboto font-medium text-sm lg:text-[15.36px] text-white leading-[100%]">
                             Book A Tour

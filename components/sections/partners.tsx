@@ -4,7 +4,7 @@ export default function Partners() {
     return (
         <section className="w-full min-h-[436px] flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-[49px] bg-[#F5F9FF] py-16 lg:py-0 px-4 sm:px-6 mb-[40px]">
             {/* Partners Logo Grid - Maintains exact dimensions on large screens */}
-            <div className="w-full lg:w-[599.06px] h-auto lg:h-[178.34px] flex flex-wrap items-center gap-4 lg:gap-[19px]">
+            <div className="w-full lg:w-[599.06px] h-auto lg:h-[178.34px] flex flex-wrap items-center gap-6 lg:gap-[19px]">
                 <div className="relative w-[134.7px] h-[58.08px]">
                     <Image
                         src='/images/partners/silicon.png'

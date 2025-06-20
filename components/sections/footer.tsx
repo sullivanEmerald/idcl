@@ -1,32 +1,33 @@
 import Image from "next/image";
+import Link from "next/link";
 import Logo from "../general/logo";
 
 const Solution = [
     {
         header: "Solutions",
         data: [
-            { name: "Appointment Booking", width: "149px" },
-            { name: "Book A tour", width: "81px" },
-            { name: "Vendor Registration", width: "136px" },
-            { name: "Jobs & Recruitment", width: "134px" },
+            { name: "Appointment Booking", width: "149px", url: '/appointment' },
+            { name: "Book A tour", width: "81px", url: '/infrastructure/tour' },
+            { name: "Vendor Registration", width: "136px", url: '/vendor' },
+            { name: "Jobs & Recruitment", width: "134px", url: '/jobs' },
         ],
     },
     {
         header: "Company",
         data: [
-            { name: "About us", width: "61px" },
-            { name: "Contact us", width: "73px" },
-            { name: "Our Partners", width: "87px" },
-            { name: "Global Partnerships", width: "134px" },
+            { name: "About us", width: "61px", url: '/about' },
+            { name: "Contact us", width: "73px", url: '/contact' },
+            { name: "Our Partners", width: "87px", url: '/' },
+            { name: "Global Partnerships", width: "134px", url: '/partnership' },
         ],
     },
     {
         header: "Resource",
         data: [
-            { name: "FAQs", width: "35px" },
-            { name: "Hackathon", width: "75px" },
-            { name: "Privacy Policy", width: "95px" },
-            { name: "Terms & Condition", width: "124px" },
+            { name: "FAQs", width: "35px", url: '#' },
+            { name: "Hackathon", width: "75px", url: '#' },
+            { name: "Privacy Policy", width: "95px", url: '#' },
+            { name: "Terms & Condition", width: "124px", url: '#' },
         ],
     },
 ];
@@ -88,13 +89,13 @@ export default function Footer() {
                                 </p>
                                 <div className="flex flex-col gap-3">
                                     {item.data.map((link, i) => (
-                                        <p
+                                        <Link href={link.url}
                                             key={i}
                                             className="font-lexend font-normal leading-[20px] text-[14px] text-[#827F7F]"
                                             style={{ width: link.width }}
                                         >
                                             {link.name}
-                                        </p>
+                                        </Link>
                                     ))}
                                 </div>
                             </div>

@@ -16,15 +16,15 @@ export const navItems = [
             { label: "Public Sector & Business Solutions", href: "/services/public" },
             { label: "IP Awareness & Training", href: "/services/awareness" },
             { label: "Commercialization of IP & Innovation Support", href: "/services/commercialization" },
-            { label: "Vendor Registration – IDCL", href: "/services/vendor" },
-            { label: "Tour – IDCL", href: "/services/tour" },
-            { label: "Jobs & Recruitment", href: "/services/jobs" },
+            // { label: "Vendor Registration – IDCL", href: "/services/vendor" },
+            // { label: "Tour – IDCL", href: "/services/tour" },
+            // { label: "Jobs & Recruitment", href: "/services/jobs" },
         ],
     },
     { label: "Talents", href: "/talent" },
     { label: "Global Partners", href: "/partnership" },
     { label: "Smart Infrastructure", href: "/infrastructure" },
-    { label: "Our News", href: "/news" },
+    { label: "Events", href: "/event" },
 ];
 
 export default function Navigation() {
@@ -35,8 +35,6 @@ export default function Navigation() {
     const toggleSubmenu = (index: number | null) => {
         setActiveSubmenu(activeSubmenu === index ? null : index);
     };
-
-
 
     return (
         <nav className="hidden md:block" ref={navRef}>
