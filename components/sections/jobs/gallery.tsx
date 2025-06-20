@@ -1,47 +1,39 @@
-import Logo from "@/components/general/logo";
+"use client"
 import LogoNew from "@/components/general/logonew";
 import Image from "next/image";
 
+const images = [
+    '/images/jobs/gallery/first.png',
+    '/images/jobs/gallery/second.png',
+    '/images/jobs/gallery/third.png',
+];
+
 export default function JobGallery() {
     return (
-        <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-
-            <div className="relative w-full h-[300px] sm:h-[350px] md:h-[402px]">
-                <Image
-                    src='/images/jobs/gallery/first.png'
-                    fill
-                    alt="gallery image 1"
-                    className="object-cover"
-                    priority
-                />
+        <div className="relative w-full overflow-hidden h-[300px] sm:h-[350px] md:h-[402px]">
+            <div className="flex w-[200%] animate-scroll">
+                {[...Array(2)].map((_, i) => (
+                    <div key={i} className="flex">
+                        {images.map((src, index) => (
+                            <div
+                                key={`image-${i}-${index}`}
+                                className="relative w-[480px] h-[300px] sm:h-[350px] md:h-[402px] shrink-0"
+                            >
+                                <Image
+                                    src={src}
+                                    fill
+                                    alt={`gallery image ${index + 1}`}
+                                    className="object-cover"
+                                    priority
+                                />
+                            </div>
+                        ))}
+                        <div className="relative w-[480px] h-[300px] sm:h-[350px] md:h-[402px] bg-[#075DF2] flex items-center justify-center shrink-0">
+                            <LogoNew />
+                        </div>
+                    </div>
+                ))}
             </div>
-
-
-            <div className="relative w-full h-[300px] sm:h-[350px] md:h-[402px]">
-                <Image
-                    src='/images/jobs/gallery/second.png'
-                    fill
-                    alt="gallery image 2"
-                    className="object-cover"
-                    priority
-                />
-            </div>
-
-
-            <div className="relative w-full h-[300px] sm:h-[350px] md:h-[402px]">
-                <Image
-                    src='/images/jobs/gallery/third.png'
-                    fill
-                    alt="gallery image 3"
-                    className="object-cover"
-                    priority
-                />
-            </div>
-
-            <div className="relative w-full h-[300px] sm:h-[350px] bg-[#075DF2] md:h-[402px] flex py-[100px] px-[40px] md:py-[151px] md:px-[86px] shrink-0">
-                <LogoNew />
-            </div>
-
-        </section>
-    )
+        </div>
+    );
 }
