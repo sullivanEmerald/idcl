@@ -5,7 +5,7 @@ import TalentHero from "@/components/sections/talents/hero";
 import TalentHire from "@/components/sections/talents/hire";
 import TalentOrganisation from "@/components/sections/talents/organisation";
 import TalentTestimonials from "@/components/sections/talents/stories";
-import { EllipseData, names } from "@/data/elllipse";
+import { names } from "@/data/elllipse";
 
 
 export default function EventsPage() {

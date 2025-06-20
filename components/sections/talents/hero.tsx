@@ -185,7 +185,7 @@ export default function TalentHero() {
 
                     <Link
                         className="w-full h-[50px] rounded-[56px] py-3 md:py-[16px] px-4 md:px-[22px] bg-transparent border border-[#FFFFFF] hover:bg-white/10 transition-colors flex items-center justify-center gap-[10px]"
-                        href="/services/startup"
+                        href="/talent/pools"
                     >
                         <p className="font-roboto font-medium text-sm md:text-[15px] text-[#F5F9FF] leading-[100%] tracking-normal text-center">
                             Browse Talent Pool
