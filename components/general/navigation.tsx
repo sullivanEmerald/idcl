@@ -40,8 +40,8 @@ export default function Navigation() {
         <nav className="hidden md:block" ref={navRef}>
             <ul className="flex items-center gap-8 py-4 px-5">
                 {navItems.map((item, index) => {
-
-                    const isActiveLink = pathname.startsWith(item.href);
+                    const isHome = item.href === '/';
+                    const isActiveLink = isHome ? pathname === '/' : pathname.startsWith(item.href);
 
                     return (<li key={index} className="relative group">
                         {item.subItems ? (
