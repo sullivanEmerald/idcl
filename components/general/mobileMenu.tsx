@@ -52,7 +52,8 @@ export default function MobileMenu() {
                     <ul className="flex flex-col gap-4">
                         {navItems.map((item, index) => {
 
-                            const isActiveLink = pathname.startsWith(item.href);
+                            const isHome = item.href === '/';
+                            const isActiveLink = isHome ? pathname === '/' : pathname.startsWith(item.href);
 
                             return (<li key={index} className="relative group">
                                 {item.subItems ? (
