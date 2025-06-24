@@ -11,5 +11,10 @@ export const newsService = {
         return response.data;
     },
 
+    getBlog: async (id: string) => {
+        const response = await axiosInstance.get(`/blog/${id}`)
+        return response.data;
+    }
+
 
 }
