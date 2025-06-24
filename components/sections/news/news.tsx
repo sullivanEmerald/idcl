@@ -38,7 +38,7 @@ export default function News() {
 
     return (
         <div className="w-full sm:w-[1200px] py-10 mx-auto space-y-10">
-            {news.length < 0 || latest === null ? (
+            {news.length < 1 || latest === null ? (
                 <p className="text-md text-gray-400">No news updated or found. Visit again soon</p>
             ) : (
                 <>
@@ -66,7 +66,7 @@ export default function News() {
                     <main className="space-y-4">
                         <h2 className="border-l-4 px-2 capitalize py-0 border-l-red-500 text-sm sm:text-lg font-medium">More News</h2>
                         <section className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {news.length > 0 ? news.map((item, i) => (
+                            {news.map((item, i) => (
                                 <Link href={`/news/${item._id}`} key={i} className="w-full border rounded-[10px] shadow-lg p-2 group hover:shadow-2xl cursor-pointer">
                                     <Image
                                         src={item?.image}
@@ -87,11 +87,7 @@ export default function News() {
                                         <p className="border-l-4 px-2 capitalize py-0 border-l-red-500 text-sm sm:text-lg font-medium">{item?.location}</p>
                                     </div>
                                 </Link>
-                            )) : (
-                                <p className="text-red-400 text-md">
-                                    No more news available
-                                </p>
-                            )}
+                            ))}
                         </section>
                     </main>
                 </>
