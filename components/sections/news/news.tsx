@@ -5,6 +5,15 @@ import { Blogs } from "@/types/news";
 import Image from "next/image";
 import Link from "next/link";
 import NewsSkeleton from "@/skeleton/news";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination"
 
 export default function News() {
     const [isFetching, setIsFetching] = useState(true)
@@ -18,8 +27,10 @@ export default function News() {
         const getAllNews = async () => {
             try {
                 const data = await newsService.getAllnews(currentPage);
+                console.log(data)
                 setLatest(data.latest)
                 setNews(data.blogs)
+                setTotalPages(data.totalPages)
                 setFilteredNews(data.blogs)
             } catch (error) {
                 console.log(error)
@@ -28,7 +39,7 @@ export default function News() {
             }
         }
         getAllNews();
-    }, [])
+    }, [currentPage])
 
     if (isFetching) {
         return <NewsSkeleton />
@@ -36,7 +47,7 @@ export default function News() {
 
     return (
         <div className="w-full">
-            {news.length < 1 || latest === null ? (
+            {filteredNews.length < 1 || latest === null ? (
                 <p className="text-md w-1/2 p-6 text-gray-400">No news updated or found. Visit again soon</p>
             ) : (
                 <>
@@ -144,6 +155,62 @@ export default function News() {
                             </section>
                         </div>
                     </main>
+                    {!isFetching && filteredNews.length > 0 && (
+                        <div className="p-4 sm:p-6 border-t">
+                            <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        <PaginationPrevious
+                                            href="#"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setCurrentPage(prev => Math.max(prev - 1, 1));
+                                            }}
+                                            aria-disabled={currentPage === 1}
+                                            className={currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""}
+                                        />
+                                    </PaginationItem>
+
+                                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                        const page = i + 1;
+                                        return (
+                                            <PaginationItem key={page}>
+                                                <PaginationLink
+                                                    href="#"
+                                                    isActive={page === currentPage}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setCurrentPage(page);
+                                                    }}
+                                                    className={`bg-gray-400 rounded-full text-white ${page === currentPage ? 'bg-[#005DFF]' : null}`}
+                                                >
+                                                    {page}
+                                                </PaginationLink>
+                                            </PaginationItem>
+                                        );
+                                    })}
+
+                                    {totalPages > 5 && (
+                                        <PaginationItem>
+                                            <PaginationEllipsis />
+                                        </PaginationItem>
+                                    )}
+
+                                    <PaginationItem>
+                                        <PaginationNext
+                                            href="#"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                                            }}
+                                            aria-disabled={currentPage === totalPages}
+                                            className={currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""}
+                                        />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+                        </div>
+                    )}
                 </>
             )}
         </div>
