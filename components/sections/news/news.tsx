@@ -67,7 +67,7 @@ export default function News() {
                                 <span className="font-satoshi text-[#1E1E1E] text-sm sm:text-md lg-[14px] font-bold">{latest?.createdAt}</span>
                             </div>
                             <p className="font-satoshi text-sm sm:text-md lg:text-[24px] capitalize font-bold">{latest?.title}</p>
-                            <article className="line-clamp-10 text-ellipsis font-satoshi text-[#061A2E] text-sm sm:text-m lg:text-[18px] leading-[27px] font-normal">{latest?.body}</article>
+                            <article className="line-clamp-10 overflow-hidden text-ellipsis font-satoshi text-[#061A2E] text-sm sm:text-m lg:text-[18px] leading-[27px] font-normal">{latest?.body}</article>
                         </div>
                     </div>
 
