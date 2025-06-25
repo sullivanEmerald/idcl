@@ -37,7 +37,7 @@ export default function News() {
     return (
         <div className="w-full">
             {news.length < 1 || latest === null ? (
-                <p className="text-md text-gray-400">No news updated or found. Visit again soon</p>
+                <p className="text-md w-1/2 p-6 text-gray-400">No news updated or found. Visit again soon</p>
             ) : (
                 <>
                     {/* Featured News Section - Made more responsive */}
