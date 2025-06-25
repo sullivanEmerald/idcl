@@ -66,8 +66,19 @@ export default function News() {
                                 </p>
                                 <span className="font-satoshi text-[#1E1E1E] text-sm sm:text-md lg-[14px] font-bold">{latest?.createdAt}</span>
                             </div>
-                            <p className="font-satoshi text-sm sm:text-md lg:text-[24px] capitalize font-bold">{latest?.title}</p>
-                            <article className="line-clamp-8 flex-1 overflow-hidden text-ellipsis font-satoshi text-[#061A2E] text-sm sm:text-m lg:text-[18px] leading-[27px] font-normal">{latest?.body}</article>
+                            <p className="font-satoshi text-sm sm:text-md lg:text-[24px] capitalize font-bold line-clamp-2 leading-[25px] flex-1 overflow-hidden">{latest?.title}</p>
+                            <p
+                                className="font-satoshi text-[#061A2E] text-sm sm:text-md lg:text-[18px] leading-[27px] font-normal"
+                                style={{
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 8,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                }}
+                            >
+                                {latest?.body}
+                            </p>
                         </div>
                     </div>
 
