@@ -1,5 +1,7 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const GlobalPartnersCollection = [
     {
@@ -36,15 +38,51 @@ const GlobalPartnersCollection = [
 
 export default function GlobalPartners() {
     return (
-        <section className="w-full px-4 sm:px-6 mx-auto py-12 sm:py-16 lg:py-[80px] max-w-[1200px]">
-            <h1 className="font-satoshi font-bold text-2xl sm:text-3xl lg:text-[32px] text-center leading-[1.1] lg:leading-[35px] mb-6 lg:mb-[27px]">
+        <motion.section
+            className="w-full px-4 sm:px-6 mx-auto py-12 sm:py-16 lg:py-[80px] max-w-[1200px]"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.7, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.18 }
+                }
+            }}
+        >
+            <motion.h1
+                className="font-satoshi font-bold text-2xl sm:text-3xl lg:text-[32px] text-center leading-[1.1] lg:leading-[35px] mb-6 lg:mb-[27px]"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+            >
                 Meet Our Global Allies
-            </h1>
-            <div className="flex flex-col items-center sm:flex-row flex-wrap justify-center gap-4 sm:gap-[30px]">
+            </motion.h1>
+            <motion.div
+                className="flex flex-col items-center sm:flex-row flex-wrap justify-center gap-4 sm:gap-[30px]"
+                variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                        opacity: 1,
+                        transition: { staggerChildren: 0.12, delayChildren: 0.2 }
+                    }
+                }}
+                initial="hidden"
+                animate="visible"
+            >
                 {GlobalPartnersCollection.map((item, index) => (
-                    <div
+                    <motion.div
                         key={index}
                         className="w-full sm:w-[calc(50%-15px)] md:w-[calc(33.333%-20px)] lg:w-[256px] flex flex-col items-center gap-3 sm:gap-4"
+                        initial={{ opacity: 0, scale: 0.92, y: 30 }}
+                        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                        viewport={{ once: false, amount: 0.2 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
+                        whileTap={{ scale: 0.97 }}
                     >
                         <div className="w-[107px] h-[107px] flex items-center justify-center">
                             <Image
@@ -73,9 +111,9 @@ export default function GlobalPartners() {
                                 Learn More
                             </span>
                         </Link>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
-        </section>
+            </motion.div>
+        </motion.section>
     );
 }

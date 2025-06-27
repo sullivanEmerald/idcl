@@ -14,6 +14,7 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination"
+import { motion } from "framer-motion";
 
 export default function News() {
     const [isFetching, setIsFetching] = useState(true)
@@ -67,69 +68,114 @@ export default function News() {
     }
 
     return (
-        <div className="w-full">
+        <motion.div
+            className="w-full"
+            initial="hidden"
+            animate="visible"
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.7, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.18 }
+                }
+            }}
+        >
             {filteredNews.length < 1 || latest === null ? (
-                <p className="text-md w-1/2 p-6 text-gray-400">No news updated or found. Visit again soon</p>
+                <motion.p
+                    className="text-md w-1/2 p-6 text-gray-400"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                >
+                    No news updated or found. Visit again soon
+                </motion.p>
             ) : (
                 <>
                     {/* Featured News Section - Made more responsive */}
-                    <Link
-                        href={`/news/${latest._id}`}
-                        className="w-full max-w-[1199px] px-4 sm:px-6 py-[30px] sm:py-[50px] mx-auto flex flex-col md:flex-row items-center justify-center gap-4 lg:gap-[33px]"
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.96, y: 40 }}
+                        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                        viewport={{ once: false, amount: 0.2 }}
+                        transition={{ duration: 0.8, ease: "backOut" }}
                     >
-                        <aside className="w-full space-y-4">
-                            <h2 className="border-l-4 px-2 capitalize py-0 border-l-red-500 text-sm sm:text-lg font-medium">latest News</h2>
-                            <div className="relative w-full h-[300px] sm:h-[400px] md:h-[456px] overflow-hidden rounded-[10px]">
-                                <Image
-                                    src={latest?.image!}
-                                    alt="latest-news-photo"
-                                    fill
-                                    className="object-cover rounded-[10px] transition-transform duration-300 ease-in-out hover:scale-105"
-                                    priority
-                                    quality={100}
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                />
-                            </div>
-                        </aside>
-                        <div className="w-full space-y-[24px] px-4 sm:px-0">
-                            <div className="flex items-center justify-between w-full text-gray-500">
-                                <div className="bg-[#303030] w-[69px] rounded-[5px] flex items-center justify-center text-[14px] gap-[10px]">
-                                    <span className="font-satoshi font-black px-[7px] py-[3px] text-sm sm:text-md text-[14px] text-white">
-                                        {latest?.time}
+                        <Link
+                            href={`/news/${latest._id}`}
+                            className="w-full max-w-[1199px] px-4 sm:px-6 py-[30px] sm:py-[50px] mx-auto flex flex-col md:flex-row items-center justify-center gap-4 lg:gap-[33px]"
+                        >
+                            <aside className="w-full space-y-4">
+                                <h2 className="border-l-4 px-2 capitalize py-0 border-l-red-500 text-sm sm:text-lg font-medium">latest News</h2>
+                                <div className="relative w-full h-[300px] sm:h-[400px] md:h-[456px] overflow-hidden rounded-[10px]">
+                                    <Image
+                                        src={latest?.image!}
+                                        alt="latest-news-photo"
+                                        fill
+                                        className="object-cover rounded-[10px] transition-transform duration-300 ease-in-out hover:scale-105"
+                                        priority
+                                        quality={100}
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    />
+                                </div>
+                            </aside>
+                            <div className="w-full space-y-[24px] px-4 sm:px-0">
+                                <div className="flex items-center justify-between w-full text-gray-500">
+                                    <div className="bg-[#303030] w-[69px] rounded-[5px] flex items-center justify-center text-[14px] gap-[10px]">
+                                        <span className="font-satoshi font-black px-[7px] py-[3px] text-sm sm:text-md text-[14px] text-white">
+                                            {latest?.time}
+                                        </span>
+                                    </div>
+                                    <span className="font-satoshi text-[#1E1E1E] text-sm sm:text-md lg:text-[14px] font-bold">
+                                        {latest?.createdAt}
                                     </span>
                                 </div>
-                                <span className="font-satoshi text-[#1E1E1E] text-sm sm:text-md lg:text-[14px] font-bold">
-                                    {latest?.createdAt}
-                                </span>
+                                <p className="font-satoshi text-sm sm:text-md lg:text-[24px] capitalize font-bold line-clamp-2 leading-[25px] overflow-hidden">
+                                    {latest?.title}
+                                </p>
+                                <p
+                                    className="font-satoshi text-[#061A2E] text-sm sm:text-md lg:text-[18px] leading-[27px] font-normal"
+                                    style={{
+                                        display: '-webkit-box',
+                                        WebkitLineClamp: 8,
+                                        WebkitBoxOrient: 'vertical',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis'
+                                    }}
+                                >
+                                    {latest?.body}
+                                </p>
                             </div>
-                            <p className="font-satoshi text-sm sm:text-md lg:text-[24px] capitalize font-bold line-clamp-2 leading-[25px] overflow-hidden">
-                                {latest?.title}
-                            </p>
-                            <p
-                                className="font-satoshi text-[#061A2E] text-sm sm:text-md lg:text-[18px] leading-[27px] font-normal"
-                                style={{
-                                    display: '-webkit-box',
-                                    WebkitLineClamp: 8,
-                                    WebkitBoxOrient: 'vertical',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis'
-                                }}
-                            >
-                                {latest?.body}
-                            </p>
-                        </div>
-                    </Link>
-
+                        </Link>
+                    </motion.div>
                     {/* News Grid Section */}
-                    <main className="space-y-4 bg-[#F2F2F2] w-full">
+                    <motion.main
+                        className="space-y-4 bg-[#F2F2F2] w-full"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: false, amount: 0.2 }}
+                        transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+                    >
                         <div className="w-full max-w-[1199px] px-4 sm:px-6 mx-auto py-[30px] sm:py-[50px] space-y-4">
                             <h2 className="border-l-4 px-2 capitalize py-0 border-l-red-500 text-sm sm:text-lg font-medium">More News</h2>
-                            <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                            <motion.section
+                                className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                                variants={{
+                                    hidden: { opacity: 0 },
+                                    visible: {
+                                        opacity: 1,
+                                        transition: { staggerChildren: 0.12, delayChildren: 0.2 }
+                                    }
+                                }}
+                                initial="hidden"
+                                animate="visible"
+                            >
                                 {news.map((item, i) => (
-                                    <Link
-                                        href={`/news/${item._id}`}
+                                    <motion.div
                                         key={i}
                                         className="w-full p-4 bg-white border rounded-[10px] shadow-lg hover:shadow-gray-500 group hover:shadow-2xl cursor-pointer flex flex-col items-center gap-4 min-h-[480px] sm:min-h-[520px] relative"
+                                        initial={{ opacity: 0, scale: 0.92, y: 30 }}
+                                        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                                        viewport={{ once: false, amount: 0.2 }}
+                                        transition={{ duration: 0.6, ease: "easeOut" }}
                                     >
                                         <div className="relative w-full h-[180px] sm:h-[172px] overflow-hidden rounded-[10px]">
                                             <Image
@@ -171,11 +217,11 @@ export default function News() {
                                                 {item?.location}
                                             </p>
                                         </div>
-                                    </Link>
+                                    </motion.div>
                                 ))}
-                            </section>
+                            </motion.section>
                         </div>
-                    </main>
+                    </motion.main>
                     {!isFetching && filteredNews.length > 0 && (
                         <div className="p-4 sm:p-6 border-t">
                             <Pagination>
@@ -234,6 +280,6 @@ export default function News() {
                     )}
                 </>
             )}
-        </div>
+        </motion.div>
     )
 }
