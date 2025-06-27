@@ -22,17 +22,20 @@ export default function News() {
     const [news, setNews] = useState<Blogs[]>([])
     const [filteredNews, setFilteredNews] = useState<Blogs[]>([])
     const [latest, setLatest] = useState<Blogs | null>(null)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         const getAllNews = async () => {
             try {
+                setError(null);
                 const data = await newsService.getAllnews(currentPage);
                 console.log(data)
                 setLatest(data.latest)
                 setNews(data.blogs)
                 setTotalPages(data.totalPages)
                 setFilteredNews(data.blogs)
-            } catch (error) {
+            } catch (error: any) {
+                setError("Failed to load news. Please try again.");
                 console.log(error)
             } finally {
                 setIsFetching(false)
@@ -43,6 +46,24 @@ export default function News() {
 
     if (isFetching) {
         return <NewsSkeleton />
+    }
+
+    if (error) {
+        return (
+            <div className="w-full flex flex-col items-center justify-center py-12">
+                <p className="text-md text-red-500 mb-4">{error}</p>
+                <button
+                    className="px-6 py-2 bg-[#005DFF] text-white rounded-full font-medium hover:bg-[#003e99] transition-colors"
+                    onClick={() => {
+                        setIsFetching(true);
+                        setError(null);
+                        setTimeout(() => setCurrentPage(1), 100); // force refetch
+                    }}
+                >
+                    Retry
+                </button>
+            </div>
+        );
     }
 
     return (
