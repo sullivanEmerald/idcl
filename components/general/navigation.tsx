@@ -11,7 +11,6 @@ export const navItems = [
         label: "Services",
         href: "/services",
         subItems: [
-            { label: "Smart Infrastructure and Innovation Facilities", href: "/services/infrastructure" },
             { label: "Startup Incubation/Accleration", href: "/services/startup" },
             { label: "Public Sector & Business Solutions", href: "/services/public" },
             { label: "IP Awareness & Training", href: "/services/awareness" },
@@ -21,10 +20,10 @@ export const navItems = [
             // { label: "Jobs & Recruitment", href: "/services/jobs" },
         ],
     },
-    { label: "Talents", href: "/talent" },
-    { label: "Global Partners", href: "/partnership" },
     { label: "Smart Infrastructure", href: "/infrastructure" },
+    { label: "Talents", href: "/talent" },
     { label: "Events", href: "/event" },
+    { label: "Global Partners", href: "/partnership" }
 ];
 
 export default function Navigation() {
