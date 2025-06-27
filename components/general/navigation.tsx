@@ -75,7 +75,7 @@ export default function Navigation() {
                                 </button>
                                 <ul
                                     className={`${activeSubmenu === index ? "block" : "hidden"
-                                        } absolute left-0 mt-0 bg-white p-2 rounded-md shadow-lg border w-[300px] group-hover:block z-10`}
+                                        } absolute left-0 mt-3 bg-white p-2 rounded-md shadow-lg border w-[300px] group-hover:block z-10`}
                                 >
                                     {item.subItems.map((subItem, subIndex) => (
                                         <li key={subIndex}>

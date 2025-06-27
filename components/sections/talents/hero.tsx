@@ -1,3 +1,4 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { motion } from "framer-motion";
 
 export const ScheduleFormData = [
     {
@@ -78,9 +80,28 @@ export const ScheduleFormData = [
 
 export default function TalentHero() {
     return (
-        <section className="relative w-full min-h-[400px] md:min-h-[618px] mb-0 px-4 sm:px-6 lg:px-0">
+        <motion.section
+            className="relative w-full min-h-[400px] md:min-h-[618px] mb-0 px-4 sm:px-6 lg:px-0"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.7, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+                }
+            }}
+        >
             {/* Background Images */}
-            <div className="absolute inset-0 -z-10">
+            <motion.div
+                className="absolute inset-0 -z-10"
+                initial={{ opacity: 0, scale: 1.05 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ duration: 0.9, ease: "easeOut" }}
+            >
                 <Image
                     src="/images/talent/image.png"
                     alt="Background"
@@ -88,9 +109,14 @@ export default function TalentHero() {
                     className="object-cover"
                     priority
                 />
-            </div>
-
-            <div className="absolute inset-0 -z-10">
+            </motion.div>
+            <motion.div
+                className="absolute inset-0 -z-10"
+                initial={{ opacity: 0, scale: 1.05 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ duration: 1.1, delay: 0.1, ease: "easeOut" }}
+            >
                 <Image
                     src="/images/talent/cover.png"
                     alt="Overlay"
@@ -98,21 +124,42 @@ export default function TalentHero() {
                     className="object-cover"
                     priority
                 />
-            </div>
-
+            </motion.div>
             {/* Content */}
-            <div className="relative z-10 w-full lg:w-[896px] pt-10 md:pt-20 lg:top-[10px] lg:left-[110px] flex flex-col gap-4 md:gap-[15px] mx-auto lg:mx-0">
-                <h1 className="font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-[1.2] md:leading-[89px] w-full lg:w-[896px] tracking-[0.007em] text-[#ffffff] text-center lg:text-left">
+            <motion.div
+                className="relative z-10 w-full lg:w-[896px] pt-10 md:pt-20 lg:top-[10px] lg:left-[110px] flex flex-col gap-4 md:gap-[15px] mx-auto lg:mx-0"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+            >
+                <motion.h1
+                    className="font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-[1.2] md:leading-[89px] w-full lg:w-[896px] tracking-[0.007em] text-[#ffffff] text-center lg:text-left"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false, amount: 0.2 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                >
                     Hire Certified Tech Talent from Across Africa—Fast.
-                </h1>
-
-                <div className="flex items-center gap-4 md:gap-[24px] self-stretch border-l-4 border-[#ffffff] pl-4 md:pl-[25px]">
+                </motion.h1>
+                <motion.div
+                    className="flex items-center gap-4 md:gap-[24px] self-stretch border-l-4 border-[#ffffff] pl-4 md:pl-[25px]"
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: false, amount: 0.2 }}
+                    transition={{ delay: 0.4, duration: 0.5 }}
+                >
                     <p className="font-satoshi font-medium text-base sm:text-lg md:text-xl lg:text-[24px] leading-normal md:leading-[34px] tracking-[0.007em] text-[#ffffff] flex-[1_0_0]">
                         We produce top-tier, job-ready professionals ready to work on your most pressing digital needs. Tell us what you need—we'll match you with certified, reliable talent, quickly and efficiently.
                     </p>
-                </div>
-
-                <div className="w-full md:w-[450px] flex flex-col sm:flex-row items-center gap-4 md:gap-[24px] justify-center lg:justify-start">
+                </motion.div>
+                <motion.div
+                    className="w-full md:w-[450px] flex flex-col sm:flex-row items-center gap-4 md:gap-[24px] justify-center lg:justify-start"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false, amount: 0.2 }}
+                    transition={{ delay: 0.5, duration: 0.5 }}
+                >
                     <Dialog>
                         <DialogTrigger asChild>
                             <button className="w-full h-[50px] rounded-[50px] py-3 md:py-[16px] px-4 md:px-[22px] bg-[#FFFFFF] hover:bg-[#f0f0f0] transition-colors flex items-center justify-center">
@@ -121,7 +168,6 @@ export default function TalentHero() {
                                 </p>
                             </button>
                         </DialogTrigger>
-
                         <DialogContent className="bg-[#fff] max-h-screen overflow-y-auto w-full max-w-[90vw] md:max-w-2xl lg:max-w-4xl">
                             <DialogHeader>
                                 <DialogTitle className="font-satoshi text-2xl md:text-[30px] font-bold leading-normal text-[#344054]">
@@ -141,9 +187,7 @@ export default function TalentHero() {
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             {item.options?.map((option, i) => (
-                                                                <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>
-                                                                    {option}
-                                                                </SelectItem>
+                                                                <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>{option}</SelectItem>
                                                             ))}
                                                         </SelectContent>
                                                     </Select>
@@ -158,7 +202,6 @@ export default function TalentHero() {
                                                 )}
                                             </div>
                                         ))}
-
                                         <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-[16px] self-end w-full sm:w-auto">
                                             <button
                                                 type="button"
@@ -182,7 +225,6 @@ export default function TalentHero() {
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
-
                     <Link
                         className="w-full h-[50px] rounded-[56px] py-3 md:py-[16px] px-4 md:px-[22px] bg-transparent border border-[#FFFFFF] hover:bg-white/10 transition-colors flex items-center justify-center gap-[10px]"
                         href="/talent/pools"
@@ -191,8 +233,8 @@ export default function TalentHero() {
                             Browse Talent Pool
                         </p>
                     </Link>
-                </div>
-            </div>
-        </section>
+                </motion.div>
+            </motion.div>
+        </motion.section>
     );
 }

@@ -1,4 +1,6 @@
+"use client"
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const TestimonialData = [
     {
@@ -28,23 +30,57 @@ const TestimonialData = [
 ];
 
 export default function TalentTestimonials() {
+    const containerVariants = {
+        hidden: { opacity: 0, y: 40 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.7, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+        }
+    };
+    const cardVariants = {
+        hidden: { opacity: 0, scale: 0.92, y: 30 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: { duration: 0.6, ease: "easeOut" }
+        }
+    };
     return (
-        <section className="w-full max-w-[1200px] mx-auto flex flex-col gap-10 lg:gap-[54px] items-center px-4">
+        <motion.section
+            className="w-full max-w-[1200px] mx-auto flex flex-col gap-10 lg:gap-[54px] items-center px-4"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+        >
             {/* Header */}
-            <header className="flex flex-col gap-5 lg:gap-[21px] items-center text-center w-full max-w-[620px]">
+            <motion.header
+                className="flex flex-col gap-5 lg:gap-[21px] items-center text-center w-full max-w-[620px]"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+            >
                 <p className="font-satoshi font-bold text-[24px] lg:text-[32px] leading-[1.2] text-[#3B3B3B]">
                     Success Stories from Our Hiring Partners
                 </p>
                 <span className="font-satoshi font-light text-[16px] lg:text-[20px] leading-[1.4] text-[#000000] max-w-[653px]">
                     Hear from the companies that hired with confidence..
                 </span>
-            </header>
-
-            <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-4">
+            </motion.header>
+            <motion.section
+                className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-4"
+                variants={containerVariants}
+            >
                 {TestimonialData.map((item, index) => (
-                    <div
+                    <motion.div
                         key={index}
                         className="relative w-full max-w-[287px] min-h-[376px] mx-auto sm:mx-0 flex flex-col gap-[10px] p-6 md:py-[30px] md:px-[22px] border border-[#EAEAEA] rounded-[10px]"
+                        variants={cardVariants}
+                        whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
+                        whileTap={{ scale: 0.97 }}
                     >
                         <div className="flex items-center gap-4 md:gap-[20px]">
                             <Image
@@ -77,9 +113,9 @@ export default function TalentTestimonials() {
                                 />
                             ))}
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
-            </section>
-        </section>
+            </motion.section>
+        </motion.section>
     );
 }

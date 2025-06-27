@@ -2,13 +2,32 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
+const imageVariants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } }
+};
+
+const contentVariants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut", delay: 0.2 } }
+};
+
+const buttonVariants = {
+    hidden: { scale: 0, opacity: 0 },
+    visible: { scale: 1, opacity: 1, transition: { duration: 0.5, delay: 0.6, type: "spring", stiffness: 200 } }
+};
+
 export default function Glance() {
     return (
         <section className="flex flex-col lg:flex-row w-full items-center justify-center px-4 sm:px-6 md:px-8 lg:px-[121px] py-12 md:py-16 lg:h-[710px] gap-8 md:gap-12 lg:gap-[65px] bg-[#F5F9FF]">
             {/* Image Section - Order changes on mobile */}
             <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }} className="order-2 lg:order-1 w-full lg:w-auto">
+                variants={imageVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.5 }}
+                className="order-2 lg:order-1 w-full lg:w-auto"
+            >
                 <Image
                     src='/images/home/glance.png'
                     alt='glance image'
@@ -21,7 +40,12 @@ export default function Glance() {
 
             {/* Content Section */}
             <motion.div
-                className="order-1 lg:order-2 flex flex-col items-start gap-4 md:gap-[17px] w-full lg:w-[570px]">
+                variants={contentVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.5 }}
+                className="order-1 lg:order-2 flex flex-col items-start gap-4 md:gap-[17px] w-full lg:w-[570px]"
+            >
                 <div
                     className="flex flex-col items-start w-full lg:w-[570px] gap-4 md:gap-[21px]">
                     <div className="flex items-center w-[125px] h-[34px] gap-[10px] bg-[#D8F5FF] rounded-[20px] justify-center">
@@ -44,8 +68,12 @@ export default function Glance() {
                 </div>
 
                 <motion.button
-                    initial={{ scale: 0 }} animate={{ scale: 1 }}
-                    className="w-[123px] bg-transparent text-[#005DFF] h-[50px] rounded-[56px] border border-[#005DFF] py-3 md:py-[16px] px-4 font-Roboto font-bold text-sm md:text-[15.36px] leading-[1] tracking-[0em] hover:bg-[#0000FF] hover:text-white transition-colors">
+                    variants={buttonVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.5 }}
+                    className="w-[123px] bg-transparent text-[#005DFF] h-[50px] rounded-[56px] border border-[#005DFF] py-3 md:py-[16px] px-4 font-Roboto font-bold text-sm md:text-[15.36px] leading-[1] tracking-[0em] hover:bg-[#0000FF] hover:text-white transition-colors"
+                >
                     Learn More
                 </motion.button>
             </motion.div>

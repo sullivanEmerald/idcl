@@ -1,4 +1,6 @@
+"use client";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const TestimonialData = [
     {
@@ -27,36 +29,78 @@ const TestimonialData = [
     },
 ];
 
+const containerVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.7,
+            ease: "easeOut",
+            when: "beforeChildren",
+            staggerChildren: 0.18
+        }
+    }
+};
+
+const cardVariants = {
+    hidden: { opacity: 0, scale: 0.92, y: 30 },
+    visible: {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: "easeOut" }
+    }
+};
+
 export default function Testimonials() {
     return (
-        <section className="w-full max-w-[1200px] px-4 mx-auto py-16 flex flex-col gap-12 md:gap-[54px] items-center justify-center">
+        <motion.section
+            className="w-full max-w-[1200px] px-4 mx-auto py-16 flex flex-col gap-12 md:gap-[54px] items-center justify-center"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
             <header className="w-full max-w-[867px] flex flex-col gap-5 md:gap-[21px] items-center justify-center text-center">
-                <div className="flex items-center w-[153px] h-[34px] gap-[10px] bg-[#D8F5FF] rounded-[20px] justify-center">
-                    <span className="
-                        font-satoshi 
-                        font-normal 
-                        text-[16px] 
-                        leading-[1.5] 
-                        tracking-[0.08em] 
-                        uppercase
-                        text-[#0000FF]
-                    ">
+                <motion.div
+                    className="flex items-center w-[153px] h-[34px] gap-[10px] bg-[#D8F5FF] rounded-[20px] justify-center"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 20, delay: 0.2 }}
+                >
+                    <span className="font-satoshi font-normal text-[16px] leading-[1.5] tracking-[0.08em] uppercase text-[#0000FF]">
                         Testimonials
                     </span>
-                </div>
-                <h2 className="w-full max-w-[318px] font-satoshi font-bold text-2xl md:text-[32px] leading-[1.1] tracking-normal capitalize text-[#3B3B3B]">
+                </motion.div>
+                <motion.h2
+                    className="w-full max-w-[318px] font-satoshi font-bold text-2xl md:text-[32px] leading-[1.1] tracking-normal capitalize text-[#3B3B3B]"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                >
                     What Our Clients Say
-                </h2>
-                <p className="font-satoshi font-light text-base md:text-[20px] leading-[1] md:leading-[1.3] tracking-[0em] text-[#000000] w-full max-w-[653px]">
+                </motion.h2>
+                <motion.p
+                    className="font-satoshi font-light text-base md:text-[20px] leading-[1] md:leading-[1.3] tracking-[0em] text-[#000000] w-full max-w-[653px]"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.5 }}
+                >
                     Trusted by innovators, learners, and partners across West Africa and beyond.
-                </p>
+                </motion.p>
             </header>
 
-            <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-4">
+            <motion.section
+                className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-4"
+                variants={containerVariants}
+            >
                 {TestimonialData.map((item, index) => (
-                    <div
+                    <motion.div
                         key={index}
-                        className="relative w-full max-w-[287px] min-h-[376px] mx-auto sm:mx-0 flex flex-col gap-[10px] p-6 md:py-[30px] md:px-[22px] border border-[#EAEAEA] rounded-[10px]"
+                        className="relative w-full max-w-[287px] min-h-[376px] mx-auto sm:mx-0 flex flex-col gap-[10px] p-6 md:py-[30px] md:px-[22px] border border-[#EAEAEA] rounded-[10px] bg-white shadow-md"
+                        variants={cardVariants}
+                        whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
+                        whileTap={{ scale: 0.97 }}
                     >
                         <div className="flex items-center gap-4 md:gap-[20px]">
                             <Image
@@ -89,9 +133,9 @@ export default function Testimonials() {
                                 />
                             ))}
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
-            </section>
-        </section>
+            </motion.section>
+        </motion.section>
     )
 }

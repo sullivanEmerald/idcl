@@ -1,74 +1,107 @@
+"use client"
 import Image from "next/image"
+import { motion } from "framer-motion";
+
+const partners = [
+    { src: '/images/partners/silicon.png', alt: 'Silicon Valley', w: 134.7, h: 58.08 },
+    { src: '/images/partners/us.png', alt: 'US', w: 183.18, h: 58.08 },
+    { src: '/images/partners/zinox.png', alt: 'Zinox', w: 183.18, h: 58.08 },
+    { src: '/images/partners/berkeley.png', alt: 'Berkeley', w: 134.7, h: 58.08 },
+    { src: '/images/partners/imo.png', alt: 'Imo', w: 102.18, h: 101.26 },
+];
+
+const containerVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.7,
+            ease: "easeOut",
+            when: "beforeChildren",
+            staggerChildren: 0.15
+        }
+    }
+};
+
+const logoVariants = {
+    hidden: { opacity: 0, scale: 0.85, y: 30 },
+    visible: {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: "easeOut" }
+    }
+};
 
 export default function Partners() {
     return (
-        <section className="w-full min-h-[436px] flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-[49px] bg-[#F5F9FF] py-16 lg:py-0 px-4 sm:px-6 mb-[40px]">
+        <motion.section
+            className="w-full min-h-[436px] flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-[49px] bg-[#F5F9FF] py-16 lg:py-0 px-4 sm:px-6 mb-[40px]"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.3 }}
+        >
             {/* Partners Logo Grid - Maintains exact dimensions on large screens */}
-            <div className="w-full lg:w-[599.06px] h-auto lg:h-[178.34px] flex flex-wrap items-center gap-6 lg:gap-[19px]">
-                <div className="relative w-[134.7px] h-[58.08px]">
-                    <Image
-                        src='/images/partners/silicon.png'
-                        style={{ objectFit: "cover" }}
-                        fill
-                        alt='Silicon Valley'
-                    />
-                </div>
-                <div className="relative w-[183.18px] h-[58.08px]">
-                    <Image
-                        src='/images/partners/us.png'
-                        fill
-                        style={{ objectFit: "cover" }}
-                        alt='US'
-                    />
-                </div>
-                <div className="relative w-[183.18px] h-[58.08px]">
-                    <Image
-                        src='/images/partners/zinox.png'
-                        fill
-                        style={{ objectFit: "cover" }}
-                        alt='Zinox'
-                    />
-                </div>
-                <div className="relative w-[134.7px] h-[58.08px]">
-                    <Image
-                        src='/images/partners/berkeley.png'
-                        fill
-                        style={{ objectFit: "cover" }}
-                        alt='Berkeley'
-                    />
-                </div>
-                <div className="relative w-[102.18px] h-[101.26px]">
-                    <Image
-                        src='/images/partners/imo.png'
-                        fill
-                        style={{ objectFit: "cover" }}
-                        alt='Imo'
-                    />
-                </div>
-            </div>
+            <motion.div
+                className="w-full lg:w-[599.06px] h-auto lg:h-[178.34px] flex flex-wrap items-center gap-6 lg:gap-[19px]"
+                variants={containerVariants}
+            >
+                {partners.map((p, i) => (
+                    <motion.div
+                        key={i}
+                        className={`relative`} style={{ width: p.w, height: p.h }}
+                        variants={logoVariants}
+                    >
+                        <Image
+                            src={p.src}
+                            style={{ objectFit: "cover" }}
+                            fill
+                            alt={p.alt}
+                        />
+                    </motion.div>
+                ))}
+            </motion.div>
 
             {/* Text Content - Pixel perfect on large screens */}
-            <section className="w-full lg:w-[557.44px] h-auto lg:h-[271px] flex flex-col gap-4 lg:gap-[17px]">
-                <div className="flex items-center w-[142px] h-[34px] gap-[10px] bg-[#D8F5FF] rounded-[20px] justify-center">
-                    <span className="
-                        font-satoshi 
-                        font-normal 
-                        text-[16px] 
-                        leading-[1.5] 
-                        tracking-[0.08em] 
-                        uppercase
-                        text-[#0000FF]
-                    ">
+            <motion.section
+                className="w-full lg:w-[557.44px] h-auto lg:h-[271px] flex flex-col gap-4 lg:gap-[17px]"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                viewport={{ once: false, amount: 0.3 }}
+            >
+                <motion.div
+                    className="flex items-center w-[142px] h-[34px] gap-[10px] bg-[#D8F5FF] rounded-[20px] justify-center"
+                    initial={{ scale: 0, opacity: 0 }}
+                    whileInView={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 20, delay: 0.2 }}
+                    viewport={{ once: false, amount: 0.3 }}
+                >
+                    <span className="font-satoshi font-normal text-[16px] leading-[1.5] tracking-[0.08em] uppercase text-[#0000FF]">
                         Partners
                     </span>
-                </div>
-                <h2 className="font-satoshi font-bold text-2xl sm:text-[32px] leading-[1.1] tracking-normal capitalize">
+                </motion.div>
+                <motion.h2
+                    className="font-satoshi font-bold text-2xl sm:text-[32px] leading-[1.1] tracking-normal capitalize"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                    viewport={{ once: false, amount: 0.3 }}
+                >
                     Core Partners
-                </h2>
-                <p className="w-full lg:w-[557.44px] font-vietnam font-normal text-sm sm:text-[14px] leading-6 sm:leading-[24px] tracking-[-0.0025em] text-[#616771]">
+                </motion.h2>
+                <motion.p
+                    className="w-full lg:w-[557.44px] font-vietnam font-normal text-sm sm:text-[14px] leading-6 sm:leading-[24px] tracking-[-0.0025em] text-[#616771]"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.5 }}
+                    viewport={{ once: false, amount: 0.3 }}
+                >
                     Achieving Africa's digital future is not the work of one actor—it demands the collective strength of governments, the private sector, development organizations, academia, and civil society. These core partners play complementary roles in enabling inclusive growth, scalable innovation, and sustainable digital infrastructure across the continent.
-                </p>
-            </section>
-        </section>
+                </motion.p>
+            </motion.section>
+        </motion.section>
     )
 }

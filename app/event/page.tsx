@@ -1,3 +1,5 @@
+"use client";
+
 import GeneralEllipse from "@/components/general/ellipse";
 import HeroSection from "@/components/sections/events/hero";
 import EventsHub from "@/components/sections/events/hub";

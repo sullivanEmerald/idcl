@@ -1,5 +1,7 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const HireableSkills = [
     {
@@ -40,17 +42,51 @@ const HireableSkills = [
 ];
 
 export default function TalentExpertise() {
+    const containerVariants = {
+        hidden: { opacity: 0, y: 40 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.7, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+        }
+    };
+    const cardVariants = {
+        hidden: { opacity: 0, scale: 0.92, y: 30 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: { duration: 0.6, ease: "easeOut" }
+        }
+    };
     return (
-        <section className="bg-[#F5F9FF] flex flex-col items-center justify-center gap-[40px] lg:gap-[64px] px-4 py-10 lg:h-[1075px]">
-            <h1 className="text-[#3B3B3B] font-satoshi text-[24px] lg:text-[32px] font-bold leading-[110%] text-center capitalize">
+        <motion.section
+            className="bg-[#F5F9FF] flex flex-col items-center justify-center gap-[40px] lg:gap-[64px] px-4 py-10 lg:h-[1075px]"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+        >
+            <motion.h1
+                className="text-[#3B3B3B] font-satoshi text-[24px] lg:text-[32px] font-bold leading-[110%] text-center capitalize"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+            >
                 Expertise You Can Hire Today
-            </h1>
-
-            <div className="flex flex-wrap justify-center gap-[20px] lg:gap-[22px] w-full lg:w-[1198px]">
+            </motion.h1>
+            <motion.div
+                className="flex flex-wrap justify-center gap-[20px] lg:gap-[22px] w-full lg:w-[1198px]"
+                variants={containerVariants}
+            >
                 {HireableSkills.map((item, index) => (
-                    <div
+                    <motion.div
                         key={index}
                         className="rounded-[11px] w-full max-w-[335px] lg:w-[283px]"
+                        variants={cardVariants}
+                        whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
+                        whileTap={{ scale: 0.97 }}
                     >
                         <Image
                             src={item.image}
@@ -78,9 +114,9 @@ export default function TalentExpertise() {
                                 </Link>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
-        </section>
+            </motion.div>
+        </motion.section>
     );
 }
