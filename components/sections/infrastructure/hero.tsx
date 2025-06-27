@@ -19,6 +19,7 @@ export default function HeroSection() {
                 }
             }}
         >
+            {/* Background Image Animation */}
             <motion.div
                 className="absolute inset-0 -z-10"
                 initial={{ opacity: 0, scale: 1.1 }}
@@ -34,6 +35,7 @@ export default function HeroSection() {
                     priority
                 />
             </motion.div>
+            {/* Overlay Animation */}
             <motion.div
                 className="absolute inset-0 -z-10"
                 initial={{ opacity: 0, scale: 1.1 }}
@@ -49,6 +51,7 @@ export default function HeroSection() {
                     priority
                 />
             </motion.div>
+            {/* Main Content Animation */}
             <motion.div
                 className="absolute z-10 w-full px-4 lg:w-[1164px] lg:left-[110px] top-1/2 lg:top-[140px] transform lg:transform-none -translate-y-1/2 lg:translate-y-0 flex flex-col gap-4 lg:gap-[15px]"
                 initial={{ opacity: 0, y: 60 }}
@@ -84,7 +87,7 @@ export default function HeroSection() {
                     transition={{ duration: 0.7, delay: 0.5, ease: "easeOut" }}
                 >
                     <Link
-                        className="w-full sm:w-[130px] h-[50px] rounded-[50px] py-4 lg:py-[16px] px-6 lg:px-[22px] 
+                        className="w-full sm:w-[130px] h-[50px] rounded-[50px] py-4 lg:py-[16px] px-6 lg:px-[22px] \
                         bg-white hover:bg-opacity-90 transition-opacity no-underline flex items-center justify-center"
                         href='/contact'
                     >
@@ -93,7 +96,7 @@ export default function HeroSection() {
                         </p>
                     </Link>
                     <Link
-                        className="w-full sm:w-[155px] h-[50px] rounded-[50px] py-4 lg:py-[16px] px-6 lg:px-[22px] 
+                        className="w-full sm:w-[155px] h-[50px] rounded-[50px] py-4 lg:py-[16px] px-6 lg:px-[22px] \
                         bg-transparent border border-white hover:bg-white hover:bg-opacity-10 transition-colors no-underline flex items-center justify-center"
                         href='/infrastructure/tour'
                     >

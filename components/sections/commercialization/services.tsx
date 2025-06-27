@@ -1,47 +1,84 @@
-import Image from "next/image"
+"use client";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 const Services = [
     {
         image: "/images/commercializaton/services/one.png",
-        header: 'IP Valuation',
-        body: 'Understand the true value of your intellectual property.',
+        header: "IP Valuation",
+        body: "Understand the true value of your intellectual property.",
     },
     {
         image: "/images/commercializaton/services/two.png",
-        header: 'Licensing & Deal-Making',
-        body: 'Structure winning deals and strategic partnerships.',
+        header: "Licensing & Deal-Making",
+        body: "Structure winning deals and strategic partnerships.",
     },
     {
         image: "/images/commercializaton/services/three.png",
-        header: 'Go-to-Market Strategy',
-        body: 'Plan and execute successful market entry.',
+        header: "Go-to-Market Strategy",
+        body: "Plan and execute successful market entry.",
     },
     {
         image: "/images/commercializaton/services/four.png",
-        header: 'Business Mentorship',
-        body: 'Get expert insights to grow and scale confidently.',
+        header: "Business Mentorship",
+        body: "Get expert insights to grow and scale confidently.",
     },
     {
         image: "/images/commercializaton/services/five.png",
-        header: 'Market Exposure & Promotion',
-        body: 'Amplify your brand and reach the right audience.',
+        header: "Market Exposure & Promotion",
+        body: "Amplify your brand and reach the right audience.",
     },
     {
         image: "/images/commercializaton/services/six.png",
-        header: 'Legal & Documentation Support',
-        body: 'Professional support for contracts, policies, and legal documents.',
+        header: "Legal & Documentation Support",
+        body: "Professional support for contracts, policies, and legal documents.",
     },
-]
+];
 
 export default function CommercializationIpServices() {
     return (
-        <section className="w-full flex py-[60px] sm:py-[80px] lg:py-[112px] flex-col items-center justify-center gap-[30px] sm:gap-[40px] lg:gap-[51px] bg-[#144DAF] px-4 sm:px-6 lg:px-0">
-            <h1 className="font-satoshi font-bold text-[24px] sm:text-[28px] lg:text-[32px] leading-[26px] sm:leading-[31px] lg:leading-[35px] text-[#fff] text-center">
+        <motion.section
+            className="w-full flex py-[60px] sm:py-[80px] lg:py-[112px] flex-col items-center justify-center gap-[30px] sm:gap-[40px] lg:gap-[51px] bg-[#144DAF] px-4 sm:px-6 lg:px-0"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                        duration: 0.8,
+                        ease: "easeOut",
+                        when: "beforeChildren",
+                        staggerChildren: 0.15,
+                    },
+                },
+            }}
+        >
+            <motion.h1
+                className="font-satoshi font-bold text-[24px] sm:text-[28px] lg:text-[32px] leading-[26px] sm:leading-[31px] lg:leading-[35px] text-[#fff] text-center"
+                variants={{
+                    hidden: { opacity: 0 },
+                    visible: { opacity: 1, transition: { duration: 0.6 } },
+                }}
+            >
                 IP Services We Offer
-            </h1>
+            </motion.h1>
             <section className="w-full sm:w-auto lg:w-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[20px] sm:gap-[30px] lg:gap-[30px]">
                 {Services.map((item, index) => (
-                    <div key={index} className="flex w-full sm:w-[300px] lg:w-[250px] py-[1px] flex-col items-center">
+                    <motion.div
+                        key={index}
+                        className="flex w-full sm:w-[300px] lg:w-[250px] py-[1px] flex-col items-center"
+                        variants={{
+                            hidden: { opacity: 0, y: 20 },
+                            visible: {
+                                opacity: 1,
+                                y: 0,
+                                transition: { duration: 0.7 },
+                            },
+                        }}
+                    >
                         <div className="w-full">
                             <Image
                                 src={item.image}
@@ -62,9 +99,9 @@ export default function CommercializationIpServices() {
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
             </section>
-        </section>
-    )
+        </motion.section>
+    );
 }

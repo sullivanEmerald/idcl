@@ -1,3 +1,6 @@
+"use client";
+import { motion } from "framer-motion";
+
 const EventsData = [
     {
         image: '/images/events/background.png',
@@ -43,11 +46,28 @@ const EventsData = [
 
 export default function AwarenessUpcomingEvents() {
     return (
-        <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-12 md:py-16 lg:py-[60px]">
+        <motion.section
+            className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-12 md:py-16 lg:py-[60px]"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1, y: 0,
+                    transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+                }
+            }}
+        >
             <div className="max-w-[1198px] mx-auto flex flex-col items-center gap-8 md:gap-12 lg:gap-[50px]">
-                <p className="font-satoshi font-bold text-2xl sm:text-3xl md:text-[32px] text-[#3B3B3B] leading-[1.1] tracking-normal">
+                <motion.p
+                    className="font-satoshi font-bold text-2xl sm:text-3xl md:text-[32px] text-[#3B3B3B] leading-[1.1] tracking-normal"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6 }}
+                >
                     Upcoming Events
-                </p>
+                </motion.p>
                 <div className="overflow-hidden relative">
                     <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
                     <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
@@ -78,6 +98,6 @@ export default function AwarenessUpcomingEvents() {
                     </div>
                 </div>
             </div>
-        </section>
+        </motion.section>
     )
 }

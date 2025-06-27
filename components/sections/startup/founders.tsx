@@ -1,4 +1,6 @@
+"use client";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const TestimonialData = [
     {
@@ -30,21 +32,67 @@ const TestimonialData = [
 
 export default function StartUpFounders() {
     return (
-        <section className="w-full max-w-[1200px] mx-auto flex py-12 lg:py-[80px] flex-col gap-8 lg:gap-[54px] items-center justify-center px-4 sm:px-6">
+        <motion.section
+            className="w-full max-w-[1200px] mx-auto flex py-12 lg:py-[80px] flex-col gap-8 lg:gap-[54px] items-center justify-center px-4 sm:px-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1, y: 0,
+                    transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+                }
+            }}
+        >
             <header className="w-full max-w-[620px] flex flex-col gap-4 lg:gap-[21px] items-center justify-center text-center">
-                <p className="font-satoshi font-bold text-2xl sm:text-3xl lg:text-[32px] leading-[1.1] tracking-normal capitalize text-[#3B3B3B]">
+                <motion.p
+                    className="font-satoshi font-bold text-2xl sm:text-3xl lg:text-[32px] leading-[1.1] tracking-normal capitalize text-[#3B3B3B]"
+                    variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        visible: {
+                            opacity: 1, y: 0,
+                            transition: { duration: 0.8, ease: "easeOut" }
+                        }
+                    }}
+                >
                     What Our Founders Are Saying
-                </p>
-                <span className="font-satoshi font-light text-base sm:text-lg lg:text-[20px] leading-normal lg:leading-[1] tracking-[0em] text-[#000000]">
+                </motion.p>
+                <motion.span
+                    className="font-satoshi font-light text-base sm:text-lg lg:text-[20px] leading-normal lg:leading-[1] tracking-[0em] text-[#000000]"
+                    variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        visible: {
+                            opacity: 1, y: 0,
+                            transition: { duration: 0.8, ease: "easeOut" }
+                        }
+                    }}
+                >
                     Hear from Founders of startups, hatched from our incubator.
-                </span>
+                </motion.span>
             </header>
 
-            <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-4">
+            <motion.section
+                className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-4"
+                variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                        opacity: 1,
+                        transition: { duration: 0.8, ease: "easeOut", staggerChildren: 0.2 }
+                    }
+                }}
+            >
                 {TestimonialData.map((item, index) => (
-                    <div
+                    <motion.div
                         key={index}
                         className="relative w-full max-w-[287px] min-h-[376px] mx-auto sm:mx-0 flex flex-col gap-[10px] p-6 md:py-[30px] md:px-[22px] border border-[#EAEAEA] rounded-[10px]"
+                        variants={{
+                            hidden: { opacity: 0, y: 20 },
+                            visible: {
+                                opacity: 1, y: 0,
+                                transition: { duration: 0.8, ease: "easeOut" }
+                            }
+                        }}
                     >
                         <div className="flex items-center gap-4 md:gap-[20px]">
                             <Image
@@ -77,9 +125,9 @@ export default function StartUpFounders() {
                                 />
                             ))}
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
-            </section>
-        </section>
+            </motion.section>
+        </motion.section>
     )
 }

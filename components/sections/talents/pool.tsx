@@ -1,4 +1,5 @@
 "use client"
+import { motion } from "framer-motion";
 import {
     Select,
     SelectContent,
@@ -174,7 +175,19 @@ export default function TalentPool() {
             </div>
 
             {/* Talent Pool Section */}
-            <section className="bg-white rounded-lg sm:rounded-xl overflow-hidden shadow-sm">
+            <motion.section
+                className="bg-white rounded-lg sm:rounded-xl overflow-hidden shadow-sm"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.2 }}
+                variants={{
+                    hidden: { opacity: 0, y: 40 },
+                    visible: {
+                        opacity: 1, y: 0,
+                        transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+                    }
+                }}
+            >
                 {/* Header */}
                 <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white">
                     <div>
@@ -331,7 +344,7 @@ export default function TalentPool() {
                         </Pagination>
                     </div>
                 )}
-            </section>
+            </motion.section>
         </div>
     );
 }

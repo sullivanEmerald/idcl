@@ -90,7 +90,7 @@ export default function TalentHero() {
                 visible: {
                     opacity: 1,
                     y: 0,
-                    transition: { duration: 0.7, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+                    transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
                 }
             }}
         >

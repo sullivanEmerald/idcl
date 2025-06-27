@@ -1,5 +1,5 @@
-"use client"
-import Image from "next/image"
+"use client";
+import Image from "next/image";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScheduleFormData } from "./hero";
+import { motion } from "framer-motion";
 
 const HiringMethods = [
     "Fill the Employer Request Form",
@@ -29,7 +30,19 @@ const HiringMethods = [
 
 export default function TalentHire() {
     return (
-        <section className="mx-auto px-4 py-10">
+        <motion.section
+            className="mx-auto px-4 py-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1, y: 0,
+                    transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+                }
+            }}
+        >
             <section className="flex flex-col items-center justify-center gap-[40px] lg:gap-[53px] w-full lg:w-[1201px] mx-auto relative">
                 {/* Header */}
                 <div className="flex flex-col items-center gap-[14px] lg:gap-[21px] w-full lg:w-[620px] text-center">
@@ -142,6 +155,6 @@ export default function TalentHire() {
                 </Dialog>
 
             </section>
-        </section>
+        </motion.section>
     );
 }

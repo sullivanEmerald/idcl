@@ -1,4 +1,5 @@
-"use client"
+"use client";
+import { motion } from "framer-motion";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -147,14 +148,31 @@ const SupportRequest: FormField[] = [
     },
 ];
 
-export default function IdeaSubmissionForm() {
-
+export default function IdeaSubmissionFormSection() {
     return (
-        <div className="bg-[#fff] w-full max-w-[834px] mx-auto rounded-[12px] sm:rounded-[14px] lg:rounded-[16px] flex flex-col p-[20px] sm:p-[26px] lg:p-[32px] justify-center border border-[#E4E4E4]">
+        <motion.section
+            className="bg-[#fff] w-full max-w-[834px] mx-auto rounded-[12px] sm:rounded-[14px] lg:rounded-[16px] flex flex-col p-[20px] sm:p-[26px] lg:p-[32px] justify-center border border-[#E4E4E4]"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1, y: 0,
+                    transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+                }
+            }}
+        >
             <form className="flex flex-col gap-[18px] sm:gap-[21px] lg:gap-[24px]">
-                <h1 className="font-figtree font-bold text-[18px] sm:text-[19px] lg:text-[21px] text-[#344054] leading-[26px] sm:leading-[28px] lg:leading-[31px]">
+                <motion.h1
+                    className="font-figtree font-bold text-[18px] sm:text-[19px] lg:text-[21px] text-[#344054] leading-[26px] sm:leading-[28px] lg:leading-[31px]"
+                    variants={{
+                        hidden: { opacity: 0, y: 10 },
+                        visible: { opacity: 1, y: 0 }
+                    }}
+                >
                     Innovator Information
-                </h1>
+                </motion.h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 sm:gap-x-5 lg:gap-x-6">
                     {PersonalInformation.map((item, index) => (
                         <div key={index} className="grid w-full items-center gap-1.5 mb-3 sm:mb-3 lg:mb-4">
@@ -171,9 +189,15 @@ export default function IdeaSubmissionForm() {
                         </div>
                     ))}
                 </div>
-                <h1 className="font-figtree font-bold text-[18px] sm:text-[19px] lg:text-[21px] text-[#344054] leading-[26px] sm:leading-[28px] lg:leading-[31px]">
+                <motion.h1
+                    className="font-figtree font-bold text-[18px] sm:text-[19px] lg:text-[21px] text-[#344054] leading-[26px] sm:leading-[28px] lg:leading-[31px]"
+                    variants={{
+                        hidden: { opacity: 0, y: 10 },
+                        visible: { opacity: 1, y: 0 }
+                    }}
+                >
                     Partnership Details
-                </h1>
+                </motion.h1>
                 <div>
                     {IdeaDetails.map((item, index) => (
                         <div key={index} className="grid w-full items-center gap-1.5 mb-3 sm:mb-3 lg:mb-4">
@@ -225,9 +249,15 @@ export default function IdeaSubmissionForm() {
                         </div>
                     ))}
                 </div>
-                <h1 className="font-figtree font-bold text-[18px] sm:text-[19px] lg:text-[21px] text-[#344054] leading-[26px] sm:leading-[28px] lg:leading-[31px]">
+                <motion.h1
+                    className="font-figtree font-bold text-[18px] sm:text-[19px] lg:text-[21px] text-[#344054] leading-[26px] sm:leading-[28px] lg:leading-[31px]"
+                    variants={{
+                        hidden: { opacity: 0, y: 10 },
+                        visible: { opacity: 1, y: 0 }
+                    }}
+                >
                     Support Requested
-                </h1>
+                </motion.h1>
                 <div>
                     {SupportRequest.map((item, index) => (
                         <div key={index} className="grid w-full items-center gap-1.5 mb-3 sm:mb-3 lg:mb-4">
@@ -317,6 +347,6 @@ export default function IdeaSubmissionForm() {
                     </button>
                 </div>
             </form>
-        </div>
-    )
+        </motion.section>
+    );
 }

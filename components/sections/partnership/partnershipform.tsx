@@ -1,3 +1,5 @@
+"use client";
+import { motion } from "framer-motion";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -91,9 +93,28 @@ const PartnershipDetails: FormField[] = [
 
 export default function PartnershipForm() {
     return (
-        <div className="bg-[#fff] w-[834px] rounded-[16px] flex flex-col p-[32px] justify-center border border-[#E4E4E4]">
+        <motion.section
+            className="bg-[#fff] w-[834px] rounded-[16px] flex flex-col p-[32px] justify-center border border-[#E4E4E4]"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1, y: 0,
+                    transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+                }
+            }}
+        >
             <form className="flex flex-col gap-[24px]">
-                <h1 className="font-figtree font-bold text-[21px] text-[#344054] leading-[31px]">Personal Information</h1>
+                <motion.h1
+                    className="font-figtree font-bold text-[21px] text-[#344054] leading-[31px]"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                >
+                    Personal Information
+                </motion.h1>
                 <div className="grid grid-cols-2 gap-x-6">
                     {PersonalInformation.map((item, index) => (
                         <div key={index} className="grid w-full items-center gap-1.5 mb-4">
@@ -110,7 +131,14 @@ export default function PartnershipForm() {
                         </div>
                     ))}
                 </div>
-                <h1 className="font-figtree font-bold text-[21px] text-[#344054] leading-[31px]">Partnership Details</h1>
+                <motion.h1
+                    className="font-figtree font-bold text-[21px] text-[#344054] leading-[31px]"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                >
+                    Partnership Details
+                </motion.h1>
                 <div>
                     {PartnershipDetails.map((item, index) => (
                         <div key={index} className="grid w-full items-center gap-1.5 mb-4">
@@ -163,6 +191,6 @@ export default function PartnershipForm() {
                     ))}
                 </div>
             </form>
-        </div>
+        </motion.section>
     )
 }

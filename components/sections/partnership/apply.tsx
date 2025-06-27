@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import PartnershipForm from "./partnershipform";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { motion } from "framer-motion";
 
 interface FormField {
     label: string;
@@ -93,7 +94,19 @@ const PartnershipDetails: FormField[] = [
 ];
 export default function ApplyPartnershipHeroSection() {
     return (
-        <section className="relative w-full h-auto">
+        <motion.section
+            className="relative w-full h-auto"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1, y: 0,
+                    transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+                }
+            }}
+        >
             <div className="absolute inset-0 -z-10">
                 <Image
                     src="/images/partnership/image.png"
@@ -193,6 +206,6 @@ export default function ApplyPartnershipHeroSection() {
                     </form>
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 }

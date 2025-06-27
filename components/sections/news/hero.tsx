@@ -10,11 +10,10 @@ export default function NewsHeroSection() {
             whileInView="visible"
             viewport={{ once: false, amount: 0.2 }}
             variants={{
-                hidden: { opacity: 0, scale: 1.05 },
+                hidden: { opacity: 0, y: 40 },
                 visible: {
-                    opacity: 1,
-                    scale: 1,
-                    transition: { duration: 0.9, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.18 }
+                    opacity: 1, y: 0,
+                    transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
                 }
             }}
         >

@@ -1,5 +1,8 @@
+"use client";
 import Image from "next/image";
 import Testimonials from "../testimonial";
+import { motion } from "framer-motion";
+
 const TestimonialData = [
     {
         image: '/images/testimonial/chinedu.png',
@@ -29,16 +32,43 @@ const TestimonialData = [
 
 export default function AwarenessTestimonials() {
     return (
-        <section className="w-full px-4 sm:px-6 md:px-8 py-12 md:py-16 lg:py-[80px]">
+        <motion.section
+            className="w-full px-4 sm:px-6 md:px-8 py-12 md:py-16 lg:py-[80px]"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1, y: 0,
+                    transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+                }
+            }}
+        >
             <div className="max-w-[1200px] mx-auto flex flex-col gap-8 md:gap-12 lg:gap-[54px] items-center">
-                <h2 className="font-satoshi font-bold text-2xl sm:text-3xl md:text-[32px] leading-[1.1] tracking-normal capitalize text-[#3B3B3B] text-center">
+                <motion.h2
+                    className="font-satoshi font-bold text-2xl sm:text-3xl md:text-[32px] leading-[1.1] tracking-normal capitalize text-[#3B3B3B] text-center"
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: { opacity: 1, transition: { duration: 0.6 } }
+                    }}
+                >
                     Testimonials
-                </h2>
-                <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-4">
+                </motion.h2>
+                <motion.section
+                    className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-4"
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: { opacity: 1, transition: { duration: 0.6 } }
+                    }}
+                >
                     {TestimonialData.map((item, index) => (
-                        <div
+                        <motion.div
                             key={index}
                             className="relative w-full max-w-[287px] min-h-[376px] mx-auto sm:mx-0 flex flex-col gap-[10px] p-6 md:py-[30px] md:px-[22px] border border-[#EAEAEA] rounded-[10px]"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7 }}
                         >
                             <div className="flex items-center gap-4 md:gap-[20px]">
                                 <Image
@@ -71,10 +101,10 @@ export default function AwarenessTestimonials() {
                                     />
                                 ))}
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
-                </section>
+                </motion.section>
             </div>
-        </section>
+        </motion.section>
     )
 }

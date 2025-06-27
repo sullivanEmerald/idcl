@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
@@ -9,7 +11,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-
 import {
     Dialog,
     DialogContent,
@@ -18,6 +19,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { motion } from "framer-motion";
 
 const ScheduleFormData = [
     {
@@ -79,7 +81,20 @@ const ScheduleFormData = [
 
 export default function StartUpHeroSection() {
     return (
-        <section className="relative w-full min-h-[400px] sm:min-h-[500px] lg:min-h-[618px] mb-0">
+        <motion.section
+            className="relative w-full min-h-[400px] sm:min-h-[500px] lg:min-h-[618px] mb-0"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, scale: 1.05 },
+                visible: {
+                    opacity: 1,
+                    scale: 1,
+                    transition: { duration: 0.9, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.18 }
+                }
+            }}
+        >
             {/* Background Images */}
             <div className="absolute inset-0 -z-10">
                 <Image
@@ -198,6 +213,6 @@ export default function StartUpHeroSection() {
                     </div>
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 }

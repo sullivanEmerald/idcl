@@ -1,8 +1,23 @@
+"use client";
 import Image from "next/image";
 import IdeaSubmissionForm from "./ideasubmissionform";
+import { motion } from "framer-motion";
+
 export default function IdeaSubmissionHeroSection() {
     return (
-        <section className="relative w-full min-h-[618px] mb-0">
+        <motion.section
+            className="relative w-full min-h-[618px] mb-0"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                    opacity: 1, y: 0,
+                    transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
+                }
+            }}
+        >
             {/* Background Images */}
             <div className="absolute inset-0 -z-10">
                 <Image
@@ -28,9 +43,11 @@ export default function IdeaSubmissionHeroSection() {
 
             {/* Text Content (on top of both images) */}
             <div className="relative z-10  flex flex-col justify-center items-center gap-[50px] py-[80px]">
-                <h1 className="font-satoshi w-[991px] text-[60px] font-black leading-[67px] text-[#fff]">Idea Submission Form – IP Commercialization & Innovation Support </h1>
+                <h1 className="font-satoshi w-[991px] text-[60px] font-black leading-[67px] text-[#fff]">
+                    Idea Submission Form – IP Commercialization & Innovation Support
+                </h1>
                 <IdeaSubmissionForm />
             </div>
-        </section>
+        </motion.section>
     );
 }
