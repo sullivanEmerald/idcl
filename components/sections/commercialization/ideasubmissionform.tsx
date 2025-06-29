@@ -152,16 +152,9 @@ export default function IdeaSubmissionFormSection() {
     return (
         <motion.section
             className="bg-[#fff] w-full max-w-[834px] mx-auto rounded-[12px] sm:rounded-[14px] lg:rounded-[16px] flex flex-col p-[20px] sm:p-[26px] lg:p-[32px] justify-center border border-[#E4E4E4]"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
-            variants={{
-                hidden: { opacity: 0, y: 40 },
-                visible: {
-                    opacity: 1, y: 0,
-                    transition: { duration: 0.8, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.15 }
-                }
-            }}
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
         >
             <form className="flex flex-col gap-[18px] sm:gap-[21px] lg:gap-[24px]">
                 <motion.h1

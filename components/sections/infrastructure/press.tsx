@@ -33,7 +33,7 @@ export default function InfrastructurePress() {
                 className="w-full lg:w-[867px] h-auto lg:h-[160px] flex flex-col gap-3 lg:gap-[17px]"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
             >
                 <div className="w-full h-auto lg:h-[35px] flex items-center justify-center">
@@ -46,7 +46,7 @@ export default function InfrastructurePress() {
                 </p>
             </motion.div>
             <motion.div
-                className="w-full max-w-[1200px] h-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-y-[35px]"
+                className="w-full max-w-[1200px] h-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-y-[35px]"
                 variants={{
                     hidden: { opacity: 0 },
                     visible: {
@@ -60,20 +60,25 @@ export default function InfrastructurePress() {
                 {PressImages.map((item, index) => (
                     <motion.div
                         key={index}
+                        className="w-full flex justify-center items-center"
                         initial={{ opacity: 0, scale: 0.92, y: 30 }}
                         whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                        viewport={{ once: false, amount: 0.2 }}
                         transition={{ duration: 0.6, ease: "easeOut" }}
-                        whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
+                        // whileHover={{ scale: 1.03, boxShadow: "0 4px 16px rgba(0,93,255,0.10)" }}
+                        viewport={{ once: true, amount: 0.2 }}
                         whileTap={{ scale: 0.97 }}
                     >
-                        <Image
-                            src={item}
-                            alt="3D Printing Press Example"
-                            width={289}
-                            height={289}
-                            className="object-cover rounded-[10px]"
-                        />
+                        <div className="w-full max-w-[320px] sm:max-w-[260px] md:max-w-[289px]">
+                            <Image
+                                src={item}
+                                alt="3D Printing Press Example"
+                                width={289}
+                                height={289}
+                                className="object-cover rounded-[10px] w-full h-auto"
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 289px"
+                                priority={index === 0}
+                            />
+                        </div>
                     </motion.div>
                 ))}
             </motion.div>

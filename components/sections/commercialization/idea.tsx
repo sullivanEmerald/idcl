@@ -42,8 +42,8 @@ export default function IdeaSubmissionHeroSection() {
             </div>
 
             {/* Text Content (on top of both images) */}
-            <div className="relative z-10  flex flex-col justify-center items-center gap-[50px] py-[80px]">
-                <h1 className="font-satoshi w-[991px] text-[60px] font-black leading-[67px] text-[#fff]">
+            <div className="relative z-10 flex flex-col justify-center items-center gap-[50px] py-[80px]top-4">
+                <h1 className="font-satoshi w-[991px] text-[50px] font-black leading-[67px] text-[#fff]">
                     Idea Submission Form – IP Commercialization & Innovation Support
                 </h1>
                 <IdeaSubmissionForm />

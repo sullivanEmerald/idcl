@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 
 const UpdateData = [
     {
@@ -146,7 +147,12 @@ export default function Updates() {
                     </motion.div>
                 </div>
             </div>
-            <Button>View More News</Button>
+            <Link
+                href='/news'
+                className="p-2 px-4 h-[45px] rounded-[56px] bg-[#005DFF] font-roboto text-lg text-white font-medium transition-colors duration-200 hover:bg-transparent hover:border border-[#005DFF] focus:bg-[#003EA6] group"
+            >
+                <p className="group-hover:text-[#005DFF]">View All News</p>
+            </Link>
         </motion.section>
     )
 }

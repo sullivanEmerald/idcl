@@ -18,7 +18,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { talentService } from "@/services/talent";
 import { toast } from "sonner";
 import {
@@ -37,6 +37,16 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+    DialogClose,
+} from "@/components/ui/dialog"
+import { Mail, BadgeCheck, Calendar, User, Clock, GraduationCap, X } from "lucide-react";
 
 export interface TalentInterface {
     id: string;
@@ -61,6 +71,11 @@ export default function TalentPool() {
         batch: 'all',
         isApproved: 'all'
     });
+
+    // Modal state
+    const [open, setOpen] = useState(false);
+    const [selectedTalent, setSelectedTalent] = useState<TalentInterface | null>(null);
+    const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
 
     useEffect(() => {
         const getAllTalents = async () => {
@@ -112,6 +127,12 @@ export default function TalentPool() {
 
         setFilteredTalents(results);
     }, [filters, talents]);
+
+    // Open modal with selected talent
+    const handleViewTalent = (talent: TalentInterface) => {
+        setSelectedTalent(talent);
+        setOpen(true);
+    };
 
     return (
         <div className="w-full max-w-[1200px] px-4 sm:px-6 mx-auto py-4 sm:py-6 flex flex-col gap-4 sm:gap-6 md:gap-8">
@@ -259,7 +280,10 @@ export default function TalentPool() {
                                             {talent.date}
                                         </TableCell>
                                         <TableCell className="text-right px-2 sm:px-4">
-                                            <DropdownMenu>
+                                            <DropdownMenu
+                                                open={dropdownOpen === talent.id}
+                                                onOpenChange={(open) => setDropdownOpen(open ? talent.id : null)}
+                                            >
                                                 <DropdownMenuTrigger className="focus:outline-none">
                                                     <div className="w-6 h-6 flex items-center justify-center">
                                                         <Image
@@ -267,13 +291,17 @@ export default function TalentPool() {
                                                             width={10}
                                                             height={10}
                                                             alt="Actions"
+                                                            className="cursor-pointer"
                                                         />
                                                     </div>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="min-w-[120px]">
                                                     <DropdownMenuItem
                                                         className="cursor-pointer"
-                                                        onClick={() => router.push(`/admin/dashboard/talent/${talent.id}`)}
+                                                        onClick={() => {
+                                                            setDropdownOpen(null);
+                                                            handleViewTalent(talent);
+                                                        }}
                                                     >
                                                         <Eye className="h-4 w-4 mr-2" />
                                                         View
@@ -345,6 +373,79 @@ export default function TalentPool() {
                     </div>
                 )}
             </motion.section>
+
+            {/* Talent Details Modal */}
+            <Dialog
+                open={open}
+                onOpenChange={(isOpen) => {
+                    setOpen(isOpen);
+                    if (!isOpen) {
+                        setTimeout(() => setSelectedTalent(null), 200);
+                    }
+                }}
+            >
+                <DialogContent className="max-w-[95vw] sm:max-w-[420px] rounded-2xl p-0 overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-white via-[#f7faff] to-[#eaf1ff]">
+                    {selectedTalent && (
+                        <div className="flex flex-col items-center gap-7 py-10 px-6 bg-transparent">
+                            <div className="w-28 h-28 relative rounded-full overflow-hidden border-4 border-[#E0E7FF] shadow-lg bg-white mb-2">
+                                <Image
+                                    src={selectedTalent.image || '/default-avatar.png'}
+                                    fill
+                                    alt={selectedTalent.name}
+                                    className="object-cover"
+                                />
+                            </div>
+                            <div className="w-full flex flex-col items-center gap-3">
+                                <span className="flex items-center gap-3 text-2xl font-bold text-[#101828]">
+                                    <span className="rounded-full bg-[#e3edff] p-2 flex items-center justify-center">
+                                        <User className="w-6 h-6 text-[#005DFF]" />
+                                    </span>
+                                    {selectedTalent.name}
+                                </span>
+                                <span className="flex items-center gap-3 text-base text-[#005DFF] font-medium">
+                                    <span className="rounded-full bg-[#e3edff] p-2 flex items-center justify-center">
+                                        <GraduationCap className="w-5 h-5" />
+                                    </span>
+                                    {selectedTalent.track}
+                                </span>
+                                <span className="flex items-center gap-3 text-sm text-[#667085]">
+                                    <span className="rounded-full bg-[#f3f4f6] p-2 flex items-center justify-center">
+                                        <Mail className="w-4 h-4" />
+                                    </span>
+                                    {selectedTalent.email}
+                                </span>
+                                <span className="flex items-center gap-3 text-sm text-[#667085]">
+                                    <span className="rounded-full bg-[#f3f4f6] p-2 flex items-center justify-center">
+                                        <Calendar className="w-4 h-4" />
+                                    </span>
+                                    {selectedTalent.date}
+                                </span>
+                                <span className="flex items-center gap-3 text-sm text-[#667085]">
+                                    <span className="rounded-full bg-[#e3edff] p-2 flex items-center justify-center">
+                                        <BadgeCheck className="w-4 h-4 text-[#005DFF]" />
+                                    </span>
+                                    Batch: <span className="font-semibold text-[#101828]">{selectedTalent.fullYear}</span>
+                                </span>
+                                <span className={`mt-3 px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 shadow-sm
+                                    ${selectedTalent.isApproved
+                                        ? "bg-green-100 text-green-700"
+                                        : "bg-yellow-100 text-yellow-700"
+                                    }`}>
+                                    <span className={`rounded-full p-1 flex items-center justify-center
+                                        ${selectedTalent.isApproved ? "bg-green-200" : "bg-yellow-200"}`}>
+                                        {selectedTalent.isApproved ? (
+                                            <BadgeCheck className="w-4 h-4" />
+                                        ) : (
+                                            <Clock className="w-4 h-4" />
+                                        )}
+                                    </span>
+                                    {selectedTalent.isApproved ? "Approved" : "Pending"}
+                                </span>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

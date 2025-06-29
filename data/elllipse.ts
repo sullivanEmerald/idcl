@@ -83,8 +83,8 @@ export const EllipseData = [
                 href: '/'
             },
             second: {
-                name: 'Book a Campus Tour',
-                href: '/'
+                name: 'Book a Tour',
+                href: '/infrastructure/tour'
             }
         }
 
