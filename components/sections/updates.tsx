@@ -125,6 +125,11 @@ export default function Updates() {
                 <div
                     className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#D8F5FF] scrollbar-track-transparent relative"
                     ref={scrollRef}
+                    style={{
+                        scrollbarWidth: "thin",
+                        scrollbarColor: "#D8F5FF transparent",
+                        overflowY: "hidden" // <-- Hide vertical scrollbar
+                    }}
                 >
                     <motion.div
                         className="flex flex-row items-stretch gap-4 sm:gap-6 lg:gap-[33.48px] min-w-[340px] sm:min-w-[700px] md:min-w-[1000px] lg:min-w-[1198px]"
@@ -140,7 +145,7 @@ export default function Updates() {
                                 whileHover={{ scale: 1.03, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
                                 whileTap={{ scale: 0.97 }}
                             >
-                                <Link href={`/news/${item._id}`} className="flex flex-col h-full">
+                                <Link href={`/news/${item._id}`} className="flex flex-col h-full gap-4 sm:gap-6 lg:gap-[15.76px]">
                                     <div className="relative w-full aspect-[381.77/246.2] rounded-t-[16px] overflow-hidden">
                                         <Image
                                             src={item.image}
@@ -161,7 +166,7 @@ export default function Updates() {
                                         <p className=" px-3 font-lexend font-bold text-xs sm:text-sm lg:text-[13.79px] leading-tight lg:leading-[1.45] tracking-tight lg:tracking-[-0.02em] text-[#827F7F]">
                                             {`Published ${new Date(item.createdAt).toLocaleDateString()}`}
                                         </p>
-                                        <p className="px-3 font-lexend font-bold text-xs sm:text-sm lg:text-[13px] leading-tight lg:leading-[1.45] tracking-tight lg:tracking-[-0.02em] text-[#827F7F]">
+                                        <p className="px-3 font-lexend font-bold text-xs sm:text-sm lg:text-[13px] leading-tight lg:leading-[1.45] tracking-tight lg:tracking-[-0.02em] text-[#827F7F] truncate">
                                             {item.time} | {item.location}
                                         </p>
                                     </div>
