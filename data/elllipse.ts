@@ -115,10 +115,6 @@ export const EllipseData = [
                 name: 'Become a Partner',
                 href: '/partnership/apply'
             },
-            second: {
-                name: 'Download Partnership Brochure',
-                href: '/'
-            }
         }
 
     },

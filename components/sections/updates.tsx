@@ -2,7 +2,9 @@
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { newsService } from "@/services/news";
+import { Blogs } from "@/types/news";
 import Link from "next/link";
 
 const UpdateData = [
@@ -52,6 +54,21 @@ const cardVariants = {
 
 export default function Updates() {
     const scrollRef = useRef<HTMLDivElement>(null);
+    const [news, setNews] = useState<Blogs[]>([]);
+
+
+    useEffect(() => {
+        const getAllNews = async () => {
+            try {
+                const data = await newsService.getAllnews(1, 10);
+                console.log(data);
+                setNews(data.blogs)
+            } catch (error) {
+                console.error('Error fetching news:', error);
+            }
+        }
+        getAllNews();
+    }, [])
 
     useEffect(() => {
         const scrollContainer = scrollRef.current;
@@ -114,7 +131,7 @@ export default function Updates() {
                         style={{ scrollSnapType: 'x mandatory' }}
                         variants={containerVariants}
                     >
-                        {UpdateData.concat(UpdateData).map((item, index) => (
+                        {news.concat(news).map((item, index) => (
                             <motion.div
                                 key={index}
                                 className="relative flex-shrink-0 w-[90vw] sm:w-[340px] md:w-[380px] lg:w-[381.77px] h-auto lg:h-[407.77px] flex flex-col gap-4 sm:gap-6 lg:gap-[15.76px] bg-white rounded-[16px] shadow-md transition-shadow duration-300 hover:shadow-xl"
@@ -123,25 +140,32 @@ export default function Updates() {
                                 whileHover={{ scale: 1.03, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
                                 whileTap={{ scale: 0.97 }}
                             >
-                                <div className="relative w-full aspect-[381.77/246.2] rounded-t-[16px] overflow-hidden">
-                                    <Image
-                                        src={item.image}
-                                        alt='updates'
-                                        fill
-                                        className="object-cover"
-                                    />
-                                </div>
-                                <div className="w-full flex flex-col gap-1 sm:gap-2 lg:gap-[3.94px] px-3 pt-2">
-                                    <p className="font-satoshi font-bold text-lg sm:text-xl lg:text-[19.7px] leading-snug lg:leading-[1.31] tracking-tight lg:tracking-[0.17px] text-[#282A2D]">
-                                        {item.name}
-                                    </p>
-                                    <p className="font-satoshi font-normal text-base sm:text-lg lg:text-[17.73px] leading-normal lg:leading-[1.42] tracking-[0.007em] text-[#616771] line-clamp-2 overflow-hidden text-ellipsis">
-                                        {item.text}
-                                    </p>
-                                </div>
-                                <p className="w-full px-3 font-lexend font-bold text-xs sm:text-sm lg:text-[13.79px] leading-tight lg:leading-[1.45] tracking-tight lg:tracking-[-0.02em] text-[#827F7F]">
-                                    {item.date}
-                                </p>
+                                <Link href={`/news/${item._id}`} className="flex flex-col h-full">
+                                    <div className="relative w-full aspect-[381.77/246.2] rounded-t-[16px] overflow-hidden">
+                                        <Image
+                                            src={item.image}
+                                            alt='updates'
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+                                    <div className="w-full flex flex-col gap-1 sm:gap-2 lg:gap-[3.94px] px-3 pt-2">
+                                        <p className="font-satoshi font-bold text-lg sm:text-xl lg:text-[19.7px] leading-snug lg:leading-[1.31] tracking-tight lg:tracking-[0.17px] text-[#282A2D] truncate">
+                                            {item.title}
+                                        </p>
+                                        <p className="font-satoshi font-normal text-base sm:text-lg lg:text-[17.73px] leading-normal lg:leading-[1.42] tracking-[0.007em] text-[#616771] line-clamp-2 overflow-hidden text-ellipsis">
+                                            {item.snippet}
+                                        </p>
+                                    </div>
+                                    <div className="w-full flex items-center justify-between px-3 pb-3">
+                                        <p className=" px-3 font-lexend font-bold text-xs sm:text-sm lg:text-[13.79px] leading-tight lg:leading-[1.45] tracking-tight lg:tracking-[-0.02em] text-[#827F7F]">
+                                            {`Published ${new Date(item.createdAt).toLocaleDateString()}`}
+                                        </p>
+                                        <p className="px-3 font-lexend font-bold text-xs sm:text-sm lg:text-[13px] leading-tight lg:leading-[1.45] tracking-tight lg:tracking-[-0.02em] text-[#827F7F]">
+                                            {item.time} | {item.location}
+                                        </p>
+                                    </div>
+                                </Link>
                             </motion.div>
                         ))}
                     </motion.div>

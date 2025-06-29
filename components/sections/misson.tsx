@@ -109,27 +109,30 @@ export default function Mission({ isMission }: { isMission: boolean }) {
                 {misson.map((item, index) => (
                     <motion.div
                         key={index}
-                        className="w-full sm:w-1/2 xl:w-[382px] h-auto lg:h-[99px] p-6 lg:p-10 flex items-center gap-6 lg:gap-[26px]"
+                        className="w-full sm:w-1/2 xl:w-[382px] h-auto lg:h-[99px] p-0"
                         variants={cardVariants}
-                        whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
+                        // whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
                         whileTap={{ scale: 0.97 }}
                     >
-                        <div className="min-w-[60px] lg:min-w-[73.21px]">
-                            <Image
-                                src={item.icon}
-                                alt={item.alt}
-                                height={73.21}
-                                width={73.21}
-                                className="w-full h-auto"
-                            />
-                        </div>
-                        <div className="w-full lg:w-[262.79px] h-auto lg:h-[79px] flex flex-col gap-3 lg:gap-[14px]">
-                            <p className="font-satoshi font-bold text-xl lg:text-[19.45px] leading-[1.2] tracking-normal">
-                                {item.name}
-                            </p>
-                            <span className="font-satoshi font-normal text-base lg:text-[17.29px] leading-[1.2] tracking-normal text-[#1D2130]">
-                                {item.text}
-                            </span>
+                        {/* Make the shadow and hover effect apply to the outer motion.div */}
+                        <div className="flex items-center gap-6 lg:gap-[26px] w-full h-full min-h-[99px] bg-white rounded-2xl p-6 lg:p-10 transition-shadow duration-200">
+                            <div className="min-w-[60px] lg:min-w-[73.21px]">
+                                <Image
+                                    src={item.icon}
+                                    alt={item.alt}
+                                    height={73.21}
+                                    width={73.21}
+                                    className="w-full h-auto"
+                                />
+                            </div>
+                            <div className="w-full lg:w-[262.79px] h-auto lg:h-[79px] flex flex-col gap-3 lg:gap-[14px]">
+                                <p className="font-satoshi font-bold text-xl lg:text-[19.45px] leading-[1.2] tracking-normal">
+                                    {item.name}
+                                </p>
+                                <span className="font-satoshi font-normal text-base lg:text-[17.29px] leading-[1.2] tracking-normal text-[#1D2130]">
+                                    {item.text}
+                                </span>
+                            </div>
                         </div>
                     </motion.div>
                 ))}

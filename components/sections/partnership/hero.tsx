@@ -86,7 +86,7 @@ export default function PartnershipHeroSection() {
                     transition={{ duration: 0.7, delay: 0.5, ease: "easeOut" }}
                 >
                     <Link
-                        href='/services/partnership/apply'
+                        href='/partnership/apply'
                         className="flex py-3 sm:py-4 lg:py-[16px] px-4 sm:px-5 lg:px-[22px] w-full sm:w-full md:w-auto items-center justify-center gap-2 lg:gap-[10px] rounded-[56px] border-none bg-white hover:border hover:border-solid hover:border-white hover:bg-transparent group transition-all"
                     >
                         <p className="text-[#373737] group-hover:text-white font-roboto text-sm sm:text-[15px] font-medium leading-normal">

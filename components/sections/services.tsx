@@ -1,42 +1,49 @@
 "use client"
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const ServicesData = [
     {
         name: 'Digital Skill Development',
         image: '/images/services/digital.png',
         text: 'Training for individuals and civil servants',
+        href: '/services/startup',
     },
     {
         name: 'Startup Incubation',
         image: '/images/services/startup.png',
         text: 'Hackathons, mentoring, equity funding',
+        href: '/services/startup',
     },
     {
         name: 'Business Process Outsourcing',
         image: '/images/services/business.png',
         text: 'Call centers, remote customer support jobs',
+        href: '/infrastructure'
     },
     {
         name: 'Innovation Hubs & Infrastructure',
         image: '/images/services/innovation.png',
         text: 'Innovation Hubs & Infrastructure',
+        href: '/services/commercialization',
     },
     {
         name: 'Academic Partnerships',
         image: '/images/services/academic.png',
         text: 'Internships, research labs',
+        href: '/partnership'
     },
-    {
-        name: 'Smart City Solutions & Cybersecurity',
-        image: '/images/services/smart.png',
-        text: 'Data protection, urban planning',
-    },
+    // {
+    //     name: 'Smart City Solutions & Cybersecurity',
+    //     image: '/images/services/smart.png',
+    //     text: 'Data protection, urban planning',
+    // },
     {
         name: 'Hospitality & Events',
         image: '/images/services/hospitality.png',
         text: 'Guest lodging, restaurants',
+        href: '/events'
     },
     {
         name: 'Digital Infrastructure & ICT Training',
@@ -47,6 +54,7 @@ const ServicesData = [
         name: 'IP & Innovation Protection',
         image: '/images/services/ip.png',
         text: 'Patent support, IP law',
+        href: '/services/awareness'
     },
 ];
 
@@ -146,11 +154,16 @@ export default function Services({ isServices }: { isServices: boolean }) {
                                 <span className="font-satoshi font-normal text-base sm:text-lg lg:text-[16px] leading-[22px] tracking-[0.112px] self-stretch text-[#616771]">
                                     {item.text}
                                 </span>
-                                <button className="py-2 sm:py-3 lg:py-[12px] px-4 sm:px-6 lg:px-[33px] gap-2 sm:gap-3 lg:gap-[10px] rounded-[56px] border border-[#005DFF] bg-transparent w-full sm:w-[145px] hover:bg-[#005DFF]  group">
-                                    <p className="group-hover:text-white font-roboto font-medium leading-[1] tracking-normal text-sm sm:text-base lg:text-[15px] text-[#005DFF]">
-                                        Get Started
-                                    </p>
-                                </button>
+                                {item.href && (
+                                    <Link
+                                        href={item.href}
+                                        className="py-2 sm:py-3 lg:py-[12px] px-4 sm:px-6 lg:px-[33px] gap-2 sm:gap-3 lg:gap-[10px] rounded-[56px] border border-[#005DFF] bg-transparent w-full sm:w-[145px] hover:bg-[#005DFF] group"
+                                    >
+                                        <p className="group-hover:text-white font-roboto font-medium leading-[1] tracking-normal text-sm sm:text-base lg:text-[15px] text-[#005DFF]">
+                                            Get Started
+                                        </p>
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     </motion.div>

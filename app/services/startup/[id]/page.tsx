@@ -137,28 +137,27 @@ export default function StartUpProfilePage() {
 
 
             {isloading ? <StartupProfileSkeleton /> : (
-                <div className="relative px-4 sm:px-8 md:px-12 lg:px-[200px] py-8 sm:py-12 md:py-16 lg:py-[139px]">
+                <div className="relative flex justify-center items-center min-h-[80vh] px-4 sm:px-8 md:px-12 lg:px-[200px] py-8 sm:py-12 md:py-16 lg:py-[139px]">
                     <section className="flex flex-col lg:inline-flex items-start gap-4 lg:gap-[25px]">
                         {/* Logo - shown above on mobile, inline on lg */}
-                        <div className="lg:hidden self-center mb-4 rounded-full border w-12 h-12 lg:w-[100px] lg:h-[100px] border-[#005DFF] p-2 lg:p-6">
+                        <div className="lg:hidden self-center w-28 h-28 relative rounded-full overflow-hidden border-4 border-[#E0E7FF] shadow-lg bg-white mb-2">
                             <Image
                                 src={startupProfile.logo}
-                                alt="Startup Logo"
-                                width={64}
-                                height={64}
-                                className="object-cover"
+                                alt="Startup-logo"
+                                fill
                                 priority
+                                className="object-contain w-full h-full"
                             />
                         </div>
 
                         {/* Original logo position - hidden on mobile, shown on lg */}
-                        <div className="rounded-full border w-12 h-12 lg:w-[100px] lg:h-[100px] border-[#005DFF]  p-2 lg:p-6 hidden lg:block">
+                        <div className="w-28 h-28 relative rounded-full overflow-hidden border-4 border-[#E0E7FF] shadow-lg bg-white mb-2">
                             <Image
                                 src={startupProfile.logo}
                                 alt="Startup-logo"
-                                width={150}
-                                height={150}
-                                className="object-cover w-full h-full"
+                                fill
+                                priority
+                                className="object-contain w-full h-full"
                             />
                         </div>
 
