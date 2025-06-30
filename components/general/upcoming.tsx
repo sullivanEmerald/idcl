@@ -2,7 +2,7 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Select,
     SelectContent,
@@ -10,93 +10,46 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import Image from "next/image";
 import EventDisplay from "./event";
 import Link from "next/link";
+import { EventItem } from "@/types/event";
+import { eventsService } from "@/services/event";
 
-export const EventsData = [
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-]
 export default function UpcomingEventCom() {
+    const [events, setEvents] = useState<EventItem[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalEvents, setTotalEvents] = useState(0);
+    const [isFetching, setIsFetching] = useState(true);
+
+    useEffect(() => {
+        const upcomingEvents = async () => {
+            try {
+                const response = await eventsService.getUpcomingEvents(currentPage, 8);
+                console.log(response)
+                setEvents(response.data || []);
+                setTotalPages(response.totalPages);
+                setTotalEvents(response.totalEvents);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            } finally {
+                setIsFetching(false);
+            }
+        }
+
+        upcomingEvents();
+
+    }, [currentPage])
+
+    if (isFetching) {
+        return (
+            <div className="w-full h-screen flex items-center justify-center">
+                <p className="text-gray-500 text-lg font-semibold">Loading events...</p>
+            </div>
+        );
+    }
+
+
     return (
         <section className="w-full bg-[#144DAF] py-10 md:py-[81px] px-4 sm:px-6 lg:px-[121px]">
             <main className="w-full max-w-[1198px] mx-auto flex flex-col gap-8 md:gap-[50px]">
@@ -159,11 +112,28 @@ export default function UpcomingEventCom() {
                     </div>
                 </div>
                 {/* Events Grid */}
-                <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-[29px] w-full">
-                    {EventsData.map((item, index) => (
-                        <EventDisplay key={index} {...item} />
-                    ))}
-                </section>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-[39px]">
+                    {events.length === 0 ? (
+                        <div className="col-span-full flex flex-col items-center justify-center py-16">
+                            <p className="text-gray-500 text-lg font-semibold">No events found.</p>
+                        </div>
+                    ) : (
+                        events.map((event, index) => (
+                            <div key={index} className="w-full max-w-[362px] mx-auto">
+                                <EventDisplay
+                                    image={event.image}
+                                    name={event.name}
+                                    description={event.description}
+                                    tagline={event.tagline}
+                                    category={event.category}
+                                    day={new Date(event.startDate).getDate().toString()}
+                                    month={new Date(event.startDate).toLocaleString('default', { month: 'long' })}
+                                    time={new Date(event.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                />
+                            </div>
+                        ))
+                    )}
+                </div>
 
                 <Link href='/event/upcoming' className="w-full md:w-[152px]  mx-auto flex py-[12px] px-[33px] items-center justify-center gap-[10px] rounded-[56px] bg-[#fff]">
                     <p className="text-[#000] font-roboto text-[15px] font-medium leading-normal">More Events</p>
