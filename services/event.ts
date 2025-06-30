@@ -11,8 +11,12 @@ export const eventsService = {
         return response.data;
     },
 
-    getBlog: async (id: string) => {
-        const response = await axiosInstance.get(`/blog/${id}`)
+    getAllUpcomingEvent: async (page = 1, limit = 15) => {
+        const response = await axiosInstance.get('/event/upcoming/all', {
+            params: {
+                page, limit
+            }
+        })
         return response.data;
     }
 

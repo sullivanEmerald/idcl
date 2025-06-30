@@ -2,7 +2,7 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Select,
     SelectContent,
@@ -10,133 +10,64 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import Image from "next/image";
 import EventDisplay from "@/components/general/event";
-import Link from "next/link";
+import { eventsService } from "@/services/event";
+import { EventItem } from "@/types/event";
 
-export const EventsData = [
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-    {
-        image: '/images/events/background.png',
-        alt: 'Events',
-        header: 'Imo State Innovation & Investment Forum 2025',
-        text: 'Start-up Showcase',
-        body: 'Uniting visionaries, investors, and innovators to drive digital transformation, youth empowerment, and sustainable growth in Imo State.',
-        day: 14,
-        month: 'APR',
-        time: '2:00 Pm'
-    },
-]
+
+
+const eventCategories = [
+    "All",
+    "Conference",
+    "Workshop",
+    "Webinar",
+    "Meetup",
+    "Seminar",
+    "Hackathon",
+    "Networking",
+    "Panel Discussion",
+    "Expo"
+];
+
+
 export default function UpcomingEventSection() {
+    const [events, setEvents] = useState<EventItem[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [category, setCategory] = useState('All');
+    const [totalPages, setTotalPages] = useState(0);
+    const [isFetching, setIsFetching] = useState(false)
+    useEffect(() => {
+        const upcomingEvents = async () => {
+            try {
+                const response = await eventsService.getAllUpcomingEvent(currentPage, 15);
+                console.log(response)
+                setEvents(response.data || []);
+                setCurrentPage(response.page)
+                setTotalPages(response.totalPages);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            } finally {
+                setIsFetching(false);
+            }
+        }
+
+        upcomingEvents();
+
+    }, [])
+
+    const filteredEvents = events.filter(event => {
+
+        const matchesSearch =
+            event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            event.tagline.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            event.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesCategory = category === "All" ? true : event.category === category;
+
+        return matchesSearch && matchesCategory;
+    });
+
     return (
         <section className="w-full bg-[#144DAF] mb-[50px] py-8 sm:py-10 md:py-[81px] px-4 sm:px-6 lg:px-8 xl:px-[121px]">
             <main className="w-full max-w-[1198px] mx-auto flex flex-col gap-6 sm:gap-8 md:gap-[50px]">
@@ -153,6 +84,8 @@ export default function UpcomingEventSection() {
                                 <Input
                                     placeholder="Search"
                                     className="pl-10 rounded-[16px] w-full bg-white"
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    value={searchQuery}
                                 />
                             </div>
 
@@ -162,41 +95,26 @@ export default function UpcomingEventSection() {
                                 </p>
 
                                 <div className="flex-1 min-w-0">
-                                    <Select>
+                                    <Select value={category} onValueChange={setCategory}>
                                         <SelectTrigger
                                             className="w-full h-[36px] sm:h-[44px] rounded-[16px] border border-[#D0D5DD] bg-[#E1ECFF] flex items-center justify-between px-3 focus:ring-0 focus:ring-offset-0 data-[state=open]:bg-[#E1ECFF]"
                                         >
-                                            <SelectValue
-                                                placeholder={
-                                                    <span className="font-figtree font-medium text-xs sm:text-sm md:text-[16px] leading-[1.5] truncate">
-                                                        Start-up Showcase
-                                                    </span>
-                                                }
-                                            />
+                                            <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent
                                             className="rounded-[16px] border border-[#D0D5DD] bg-[#E1ECFF] w-[var(--radix-select-trigger-width)] min-w-[120px]"
                                             position="popper"
                                             align="end"
                                         >
-                                            <SelectItem
-                                                value="light"
-                                                className="font-figtree font-medium text-xs sm:text-sm md:text-[16px] focus:bg-[#D0D5DD]"
-                                            >
-                                                Expired
-                                            </SelectItem>
-                                            <SelectItem
-                                                value="dark"
-                                                className="font-figtree font-medium text-xs sm:text-sm md:text-[16px] focus:bg-[#D0D5DD]"
-                                            >
-                                                Upcoming
-                                            </SelectItem>
-                                            <SelectItem
-                                                value="system"
-                                                className="font-figtree font-medium text-xs sm:text-sm md:text-[16px] focus:bg-[#D0D5DD]"
-                                            >
-                                                Scheduled
-                                            </SelectItem>
+                                            {eventCategories.map((option, idx) => (
+                                                <SelectItem
+                                                    key={idx}
+                                                    value={option}
+                                                    className="font-inter font-medium text-xs md:text-[15px] focus:bg-[#D0D5DD]"
+                                                >
+                                                    {option}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -205,11 +123,28 @@ export default function UpcomingEventSection() {
                     </div>
                 </section>
 
-                <section className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5 lg:gap-[29px] w-full">
-                    {EventsData.map((item, index) => (
-                        <EventDisplay key={index} {...item} />
-                    ))}
-                </section>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-[39px]">
+                    {filteredEvents.length === 0 ? (
+                        <div className="col-span-full flex flex-col items-center justify-center py-16">
+                            <p className="text-gray-500 text-lg font-semibold">No events found.</p>
+                        </div>
+                    ) : (
+                        filteredEvents.map((event, index) => (
+                            <div key={index} className="w-full max-w-[362px] mx-auto">
+                                <EventDisplay
+                                    image={event.image}
+                                    name={event.name}
+                                    description={event.description}
+                                    tagline={event.tagline}
+                                    category={event.category}
+                                    day={new Date(event.startDate).getDate().toString()}
+                                    month={new Date(event.startDate).toLocaleString('default', { month: 'long' })}
+                                    time={new Date(event.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                />
+                            </div>
+                        ))
+                    )}
+                </div>
 
                 {/*  View More Button for Mobile for optimization */}
                 <div className="md:hidden flex justify-center mt-4">

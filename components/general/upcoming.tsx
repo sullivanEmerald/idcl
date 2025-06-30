@@ -143,8 +143,13 @@ export default function UpcomingEventCom() {
                     )}
                 </div>
 
-                <Link href='/event/upcoming' className="w-full md:w-[152px]  mx-auto flex py-[12px] px-[33px] items-center justify-center gap-[10px] rounded-[56px] bg-[#fff]">
-                    <p className="text-[#000] font-roboto text-[15px] font-medium leading-normal">More Events</p>
+                <Link
+                    href='/event/upcoming'
+                    className="w-full md:w-[152px] mx-auto flex py-[12px] px-[33px] items-center justify-center gap-[10px] rounded-[56px] bg-[#fff] transition-colors duration-200 hover:bg-[#005DFF] group"
+                >
+                    <p className="text-[#000] font-roboto text-[15px] font-medium leading-normal group-hover:text-white transition-colors duration-200">
+                        More Events
+                    </p>
                 </Link>
             </main>
 
