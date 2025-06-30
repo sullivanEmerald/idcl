@@ -29,17 +29,17 @@ export default function EventDisplay({ image, name, description, tagline, day, m
             <div className="flex-1 w-full py-4 px-5 sm:py-5 sm:px-6 rounded-b-[18px] flex flex-col gap-3 justify-between">
                 {/* Header Section */}
                 <div className="flex flex-col gap-2 flex-1">
-                    <h1 className="text-black font-satoshi text-lg sm:text-xl font-bold leading-6 sm:leading-7 truncate">
+                    <h1 className="text-black font-satoshi text-lg sm:text-xl font-bold leading-6 sm:leading-7 truncate capitalize">
                         {name}
                     </h1>
 
                     <div className="bg-black w-fit px-3 py-1 rounded-[15px] border border-[rgba(0,0,0,0.23)]">
-                        <p className="font-satoshi text-white text-xs sm:text-sm font-bold leading-5 truncate">
+                        <p className="font-satoshi text-white text-xs sm:text-sm font-bold leading-5 truncate capitalize">
                             {tagline}
                         </p>
                     </div>
 
-                    <p className="font-satoshi text-xs sm:text-sm font-normal leading-5 text-[#6A6A6A] line-clamp-2 min-h-[40px]">
+                    <p className="font-satoshi text-xs sm:text-sm font-normal leading-5 text-[#6A6A6A] line-clamp-2 min-h-[40px] line-clamp-2">
                         {description}
                     </p>
                 </div>

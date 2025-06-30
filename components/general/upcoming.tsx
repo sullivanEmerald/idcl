@@ -1,7 +1,4 @@
 "use client"
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react";
 import {
     Select,
@@ -14,10 +11,23 @@ import EventDisplay from "./event";
 import Link from "next/link";
 import { EventItem } from "@/types/event";
 import { eventsService } from "@/services/event";
+const eventCategories = [
+    "All",
+    "Conference",
+    "Workshop",
+    "Webinar",
+    "Meetup",
+    "Seminar",
+    "Hackathon",
+    "Networking",
+    "Panel Discussion",
+    "Expo"
+];
 
 export default function UpcomingEventCom() {
     const [events, setEvents] = useState<EventItem[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [category, setCategory] = useState('All');
     const [totalPages, setTotalPages] = useState(0);
     const [totalEvents, setTotalEvents] = useState(0);
     const [isFetching, setIsFetching] = useState(true);
@@ -40,6 +50,13 @@ export default function UpcomingEventCom() {
         upcomingEvents();
 
     }, [currentPage])
+
+    const filteredEvents = events.filter(event => {
+
+        const matchesCategory = category === "All" ? true : event.category === category;
+
+        return matchesCategory;
+    });
 
     if (isFetching) {
         return (
@@ -69,7 +86,7 @@ export default function UpcomingEventCom() {
 
                         {/* Select Component - Enhanced Mobile Behavior */}
                         <div className="flex-1 min-w-0"> {/* Ensures select doesn't overflow */}
-                            <Select>
+                            <Select value={category} onValueChange={(value) => setCategory(value)}>
                                 <SelectTrigger
                                     className="w-full h-[44px] rounded-[16px] border border-[#D0D5DD] bg-[#E1ECFF] 
                     flex items-center justify-between px-3 focus:ring-0 focus:ring-offset-0
@@ -88,24 +105,15 @@ export default function UpcomingEventCom() {
                                     position="popper"
                                     align="end"
                                 >
-                                    <SelectItem
-                                        value="light"
-                                        className="font-figtree font-medium text-sm md:text-[16px] focus:bg-[#D0D5DD]"
-                                    >
-                                        Expired
-                                    </SelectItem>
-                                    <SelectItem
-                                        value="dark"
-                                        className="font-figtree font-medium text-sm md:text-[16px] focus:bg-[#D0D5DD]"
-                                    >
-                                        Upcoming
-                                    </SelectItem>
-                                    <SelectItem
-                                        value="system"
-                                        className="font-figtree font-medium text-sm md:text-[16px] focus:bg-[#D0D5DD]"
-                                    >
-                                        Scheduled
-                                    </SelectItem>
+                                    {eventCategories.map((option, idx) => (
+                                        <SelectItem
+                                            key={idx}
+                                            value={option}
+                                            className="font-inter font-medium text-xs md:text-[15px] focus:bg-[#D0D5DD]"
+                                        >
+                                            {option}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -113,12 +121,12 @@ export default function UpcomingEventCom() {
                 </div>
                 {/* Events Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-[39px]">
-                    {events.length === 0 ? (
+                    {filteredEvents.length === 0 ? (
                         <div className="col-span-full flex flex-col items-center justify-center py-16">
                             <p className="text-gray-500 text-lg font-semibold">No events found.</p>
                         </div>
                     ) : (
-                        events.map((event, index) => (
+                        filteredEvents.map((event, index) => (
                             <div key={index} className="w-full max-w-[362px] mx-auto">
                                 <EventDisplay
                                     image={event.image}
