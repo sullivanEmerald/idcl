@@ -13,6 +13,15 @@ import {
 import EventDisplay from "@/components/general/event";
 import { eventsService } from "@/services/event";
 import { EventItem } from "@/types/event";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationPrevious,
+    PaginationNext,
+    PaginationEllipsis,
+} from "@/components/ui/pagination";
 
 
 
@@ -36,25 +45,25 @@ export default function UpcomingEventSection() {
     const [searchQuery, setSearchQuery] = useState('');
     const [category, setCategory] = useState('All');
     const [totalPages, setTotalPages] = useState(0);
-    const [isFetching, setIsFetching] = useState(false)
+    const [isFetching, setIsFetching] = useState(false);
+
     useEffect(() => {
         const upcomingEvents = async () => {
+            setIsFetching(true);
             try {
                 const response = await eventsService.getAllUpcomingEvent(currentPage, 15);
-                console.log(response)
                 setEvents(response.data || []);
-                setCurrentPage(response.page)
+                setCurrentPage(response.page);
                 setTotalPages(response.totalPages);
             } catch (error) {
                 console.error('Error fetching events:', error);
             } finally {
                 setIsFetching(false);
             }
-        }
+        };
 
         upcomingEvents();
-
-    }, [])
+    }, [currentPage]);
 
     const filteredEvents = events.filter(event => {
 
@@ -67,6 +76,21 @@ export default function UpcomingEventSection() {
 
         return matchesSearch && matchesCategory;
     });
+
+    // Helper for pagination range
+    const getPageNumbers = () => {
+        const pages = [];
+        const maxShown = 3;
+        let start = Math.max(1, currentPage - 1);
+        let end = Math.min(totalPages, start + maxShown - 1);
+        if (end - start < maxShown - 1) {
+            start = Math.max(1, end - maxShown + 1);
+        }
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
+        return pages;
+    };
 
     return (
         <section className="w-full bg-[#144DAF] mb-[50px] py-8 sm:py-10 md:py-[81px] px-4 sm:px-6 lg:px-8 xl:px-[121px]">
@@ -146,6 +170,70 @@ export default function UpcomingEventSection() {
                     )}
                 </div>
 
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex justify-center mt-8">
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem>
+                                    <PaginationPrevious
+                                        href="#"
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            if (currentPage > 1) setCurrentPage(currentPage - 1);
+                                        }}
+                                        aria-disabled={currentPage === 1}
+                                        className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                                    />
+                                </PaginationItem>
+                                {getPageNumbers().map((page) => (
+                                    <PaginationItem key={page}>
+                                        <PaginationLink
+                                            href="#"
+                                            isActive={page === currentPage}
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                setCurrentPage(page);
+                                            }}
+                                        >
+                                            {page}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                ))}
+                                {totalPages > 3 && getPageNumbers().at(-1)! < totalPages && (
+                                    <>
+                                        <PaginationItem>
+                                            <PaginationEllipsis />
+                                        </PaginationItem>
+                                        <PaginationItem>
+                                            <PaginationLink
+                                                href="#"
+                                                onClick={e => {
+                                                    e.preventDefault();
+                                                    setCurrentPage(totalPages);
+                                                }}
+                                            >
+                                                {totalPages}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    </>
+                                )}
+                                <PaginationItem>
+                                    <PaginationNext
+                                        href="#"
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                                        }}
+                                        aria-disabled={currentPage === totalPages}
+                                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                                    />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
+                    </div>
+                )}
+
                 {/*  View More Button for Mobile for optimization */}
                 <div className="md:hidden flex justify-center mt-4">
                     <Button className="bg-white text-[#144DAF] hover:bg-gray-100 rounded-lg">
@@ -154,5 +242,5 @@ export default function UpcomingEventSection() {
                 </div>
             </main>
         </section>
-    )
+    );
 }
