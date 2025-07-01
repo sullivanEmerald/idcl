@@ -43,7 +43,7 @@ const ServicesData = [
         name: 'Hospitality & Events',
         image: '/images/services/hospitality.png',
         text: 'Guest lodging, restaurants',
-        href: '/events'
+        href: '/event'
     },
     {
         name: 'Digital Infrastructure & ICT Training',
