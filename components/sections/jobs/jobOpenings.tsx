@@ -62,7 +62,7 @@ export default function JobOpenings() {
 
                         <div className="flex gap-[12px] sm:gap-[16px]">
                             <Link
-                                href={`/services/jobs/${index}/apply`}
+                                href={`/jobs/${index}/apply`}
                                 className="py-[10px] px-[20px] h-[42px] w-[114px] rounded-[56px] bg-[#005DFF] "
                             >
                                 <p className="font-roboto font-normal leading-normal text-[14px] sm:text-[15px] text-[#fff]">
@@ -70,7 +70,7 @@ export default function JobOpenings() {
                                 </p>
                             </Link>
                             <Link
-                                href={`/services/jobs/${index}`}
+                                href={`/jobs/${index}`}
                                 className="py-[12px] px-[32px] h-[42px] rounded-[56px] bg-transparent border border-[#005DFF]"
                             >
                                 <p className="font-satoshi font-bold leading-[18px] sm:leading-[19px] text-[15px] sm:text-[16px] text-[#005DFF]">
