@@ -92,14 +92,14 @@ export default function AwarenessHeroSection() {
                         viewport={{ once: false, amount: 0.2 }}
                         transition={{ duration: 0.7, delay: 0.5, ease: "easeOut" }}
                     >
-                        <Link
+                        {/* <Link
                             className="w-full sm:w-[221px] h-[50px] rounded-[50px] py-[16px] px-[22px] bg-white flex items-center justify-center border-none no-underline hover:bg-opacity-90 transition-all duration-200"
                             href="#"
                         >
                             <p className="font-roboto font-medium text-[15px] text-[#373737] leading-[100%] tracking-normal">
                                 Join Upcoming Workshop
                             </p>
-                        </Link>
+                        </Link> */}
                     </motion.div>
                 </motion.div>
             </motion.div>

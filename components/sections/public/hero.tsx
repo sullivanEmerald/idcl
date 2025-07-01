@@ -52,7 +52,7 @@ export default function PublicHeroSection() {
             </motion.div>
             {/* Content */}
             <motion.div
-                className="relative z-10 w-full px-4 lg:w-[896px] lg:top-[80px] lg:left-[120px] flex flex-col gap-3 lg:gap-[15px] pt-20 lg:pt-0"
+                className="relative z-10 w-full px-4 lg:w-[896px] top-4 md:top-[80px] lg:left-[120px] flex flex-col gap-3 lg:gap-[15px] lg:pt-0"
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, amount: 0.2 }}
