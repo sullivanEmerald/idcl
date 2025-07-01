@@ -119,7 +119,7 @@ export default function StartUpHeroSection() {
             {/* Content */}
             <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 xl:px-[120px] pt-12 sm:pt-16 lg:pt-[80px] pb-12">
                 <div className="w-full lg:w-[896px] flex flex-col gap-3 sm:gap-4 lg:gap-[15px]">
-                    <h1 className="font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-[1.1] sm:leading-[1.2] lg:leading-[89px] tracking-[0.007em] text-white">
+                    <h1 className="font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[70px] leading-[1.1] sm:leading-[1.2] lg:leading-[89px] tracking-[0.007em] text-white">
                         Empowering African Startups to Scale with Confidence
                     </h1>
 

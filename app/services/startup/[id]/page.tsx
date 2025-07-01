@@ -109,38 +109,34 @@ export default function StartUpProfilePage() {
 
     return (
         <section className="relative w-full h-auto sm:h-[391px] lg:h-[500px]">
-            <div className="absolute inset-0 -z-10 hidden sm:block">
+            {/* Background Images */}
+            <div className="absolute inset-0 -z-10 w-full h-[391px]">
                 <Image
                     src="/images/startup/heroimage.png"
                     alt="Background"
                     fill
                     className="object-cover"
                     priority
+                    sizes="100vw"
                 />
             </div>
-
-
-            <div className="absolute inset-0 -z-10 hidden sm:block">
+            <div className="absolute inset-0 -z-10 w-full h-[391px]">
                 <Image
                     src="/images/startup/risecover.png"
                     alt="Overlay"
                     fill
                     className="object-cover"
                     priority
+                    sizes="100vw"
+                    style={{ opacity: 0.85 }}
                 />
             </div>
-
-
-            <div className="absolute inset-0 -z-10 sm:hidden bg-gray-100">
-                {/* You might want to add a mobile-specific background here */}
-            </div>
-
 
             {isloading ? <StartupProfileSkeleton /> : (
                 <div className="relative flex justify-center items-center min-h-[80vh] px-4 sm:px-8 md:px-12 lg:px-[200px] py-8 sm:py-12 md:py-16 lg:py-[139px]">
                     <section className="flex flex-col lg:inline-flex items-start gap-4 lg:gap-[25px]">
                         {/* Logo - shown above on mobile, inline on lg */}
-                        <div className="lg:hidden self-center w-28 h-28 relative rounded-full overflow-hidden border-4 border-[#E0E7FF] shadow-lg bg-white mb-2">
+                        {/* <div className="lg:hidden self-center w-28 h-28 relative rounded-full overflow-hidden border-4 border-[#E0E7FF] shadow-lg bg-white mb-2">
                             <Image
                                 src={startupProfile.logo}
                                 alt="Startup-logo"
@@ -148,7 +144,7 @@ export default function StartUpProfilePage() {
                                 priority
                                 className="object-contain w-full h-full"
                             />
-                        </div>
+                        </div> */}
 
                         {/* Original logo position - hidden on mobile, shown on lg */}
                         <div className="w-28 h-28 relative rounded-full overflow-hidden border-4 border-[#E0E7FF] shadow-lg bg-white mb-2">
