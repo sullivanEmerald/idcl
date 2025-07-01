@@ -52,7 +52,7 @@ export default function AboutUsHeroSection() {
                 transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
             >
                 <motion.h1
-                    className="w-full font-satoshi font-black leading-[1.12] tracking-[0.007em] text-white text-3xl sm:text-4xl md:text-5xl lg:text-[80px] self-stretch text-center lg:text-left"
+                    className="w-full font-satoshi font-black leading-[1.12] tracking-[0.007em] text-white text-3xl sm:text-4xl md:text-5xl lg:text-[70px] self-stretch text-center lg:text-left"
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
