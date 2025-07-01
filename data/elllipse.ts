@@ -22,10 +22,10 @@ export const EllipseData = [
                 name: 'Submit an Event Request',
                 href: '/'
             },
-            second: {
-                name: 'Contact Our Events Team',
-                href: '/'
-            }
+            // second: {
+            //     name: 'Contact Our Events Team',
+            //     href: '/'
+            // }
         }
 
     },
@@ -35,13 +35,10 @@ export const EllipseData = [
         body: 'Submit a hiring request and we’ll connect you with the right professionals within 72 hours.',
         buttons: {
             first: {
-                name: 'Submit Hiring Request',
-                href: '/'
+                name: 'Submit Talent Request',
+                href: '/talent'
             },
-            second: {
-                name: 'Speak with Talent Advisor',
-                href: '/'
-            }
+
         }
 
     },
@@ -64,11 +61,11 @@ export const EllipseData = [
         buttons: {
             first: {
                 name: 'Partner With Us',
-                href: '/'
+                href: '/partnership'
             },
             second: {
-                name: 'Book a Campus Tour',
-                href: '/'
+                name: 'Book A Tour',
+                href: '/infrastructure/tour'
             }
         }
 
@@ -80,7 +77,7 @@ export const EllipseData = [
         buttons: {
             first: {
                 name: 'Partner With Us',
-                href: '/'
+                href: '/partnership'
             },
             second: {
                 name: 'Book a Tour',
@@ -96,11 +93,11 @@ export const EllipseData = [
         buttons: {
             first: {
                 name: 'Partner With Us',
-                href: '/'
+                href: '/partnership'
             },
             second: {
-                name: 'Book a Campus Tour',
-                href: '/'
+                name: 'Book A Tour',
+                href: '/infrastructure/tour'
             }
         }
 
@@ -136,7 +133,7 @@ export const EllipseData = [
         body: "Get the knowledge and tools to defend your intellectual property—before someone else takes credit for it.",
         buttons: {
             first: {
-                name: 'Join Upcoming Workshop',
+                name: 'Join Upcoming IP Workshop',
                 href: '#'
             },
         }
@@ -148,7 +145,7 @@ export const EllipseData = [
         body: "Let’s help you evaluate, protect, and scale it. Join our commercialization pipeline and access expert support from day one.",
         buttons: {
             first: {
-                name: 'Submit Your Innovation',
+                name: 'Submit Your Idea',
                 href: '#'
             },
             second: {

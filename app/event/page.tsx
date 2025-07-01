@@ -18,7 +18,7 @@ export default function EventsPage() {
             <EventsTech />
             <EventsHub />
             <EventsWhyUs />
-            <GeneralEllipse name={names.upcoming} />
+            <GeneralEllipse name={names.events} />
         </>
     )
 }

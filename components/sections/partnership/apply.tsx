@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import PartnershipForm from "./partnershipform";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -131,78 +130,19 @@ export default function ApplyPartnershipHeroSection() {
 
             {/* Text Content (on top of both images) */}
             <div className="relative z-10 flex flex-col justify-center items-center gap-[50px] py-[80px]">
-                <h1 className="font-satoshi text-[60px] font-black leading-[67px] text-[#fff]">Partnerships Application Form </h1>
-                <div className="bg-[#fff] w-[834px] rounded-[16px] flex flex-col p-[32px] justify-center border border-[#E4E4E4]">
+                <h1 className="font-satoshi text-[32px] sm:text-[40px] md:text-[48px] lg:text-[60px] font-black leading-tight lg:leading-[67px] text-[#fff] text-center">
+                    Partnerships Application Form
+                </h1>
+                <div className="bg-[#fff] w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:w-[834px] rounded-[16px] flex flex-col p-4 sm:p-6 md:p-8 lg:p-[32px] justify-center border border-[#E4E4E4]">
                     <form className="flex flex-col gap-[24px]">
-                        <h1 className="font-figtree font-bold text-[21px] text-[#344054] leading-[31px]">Personal Information</h1>
-                        <div className="grid grid-cols-2 gap-x-6">
-                            {PersonalInformation.map((item, index) => (
-                                <div key={index} className="grid w-full items-center gap-1.5 mb-4">
-                                    <Label htmlFor={item.name} className="font-figtree text-[18px] leading-[27px] text-[#344054]">
-                                        {item.label}
-                                    </Label>
-                                    <Input
-                                        type={item.type}
-                                        id={item.name}
-                                        name={item.name}
-                                        placeholder={item.placeholder}
-                                        className="w-full placeholder:font-figtree "
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                        <h1 className="font-figtree font-bold text-[21px] text-[#344054] leading-[31px]">Partnership Details</h1>
-                        <div>
-                            {PartnershipDetails.map((item, index) => (
-                                <div key={index} className="grid w-full items-center gap-1.5 mb-4">
-                                    <Label htmlFor={item.name} className="font-figtree text-[18px] leading-[27px] text-[#344054]">
-                                        {item.label}
-                                    </Label>
-
-                                    {item.type === 'select' ? (
-                                        <Select>
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder={item.placeholder} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {item.options?.map((option, i) => (
-                                                    <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>
-                                                        {option}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    ) : item.type === 'photo' ? (
-                                        <FileUploader
-                                            accept=".pdf"
-                                            maxSize={5 * 1024 * 1024}
-                                            onDrop={(files) => {
-                                                const file = files[0];
-                                                if (file) {
-                                                    // Set the mediaFiles for UI preview
-                                                    console.log(file)
-                                                }
-                                            }}
-                                        />
-                                    ) : item.type === 'textarea' ? (
-                                        <Textarea
-                                            id={item.name}
-                                            name={item.name}
-                                            placeholder={item.placeholder}
-                                            className="w-full min-h-[120px]"
-                                        />
-                                    ) : (
-                                        <Input
-                                            type={item.type}
-                                            id={item.name}
-                                            name={item.name}
-                                            placeholder={item.placeholder}
-                                            className="w-full placeholder:font-figtree "
-                                        />
-                                    )}
-                                </div>
-                            ))}
-                        </div>
+                        <iframe
+                            src="https://office.imodigitalcity.com/partner-with-us"
+                            title="Partnership Application"
+                            width="100%"
+                            height="900"
+                            className="w-full min-h-[600px] rounded-[12px] border-0"
+                            allowFullScreen
+                        ></iframe>
                     </form>
                 </div>
             </div>
