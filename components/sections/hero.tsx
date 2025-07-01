@@ -78,13 +78,13 @@ export default function HeroSection() {
                     className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 md:gap-[24px] w-full sm:w-auto"
                 >
                     <Link
-                        href="/"
+                        href="/infrastructure"
                         className="rounded-[56px] py-3 sm:py-4 md:py-[16px] px-4 sm:px-5 md:px-[22px] bg-white no-underline flex items-center justify-center gap-2 sm:gap-[10px] border-none font-roboto font-medium transition-all hover:bg-transparent hover:text-[#F5F9FF] hover:border hover:border-solid hover:border-[#F5F9FF] text-sm sm:text-base w-full sm:w-auto text-center h-[50px]"
                     >
                         Explore Our Ecosystem
                     </Link>
                     <Link
-                        href="/"
+                        href="/partnership"
                         className="rounded-[56px] py-3 sm:py-4 md:py-[16px] px-4 sm:px-5 md:px-[22px] bg-transparent no-underline flex items-center justify-center gap-2 sm:gap-[10px] text-[#F5F9FF] text-sm sm:text-base hover:bg-white hover:border-none hover:text-[#373737] transition-all border border-white font-roboto font-medium w-full sm:w-auto h-[50px] text-center"
                     >
                         Partner With Us
