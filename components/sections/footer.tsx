@@ -17,19 +17,19 @@ const Solution = [
         data: [
             { name: "About us", width: "61px", url: '/about' },
             { name: "Contact us", width: "73px", url: '/contact' },
-            { name: "Our Partners", width: "87px", url: '/' },
+            { name: "Our News", width: "87px", url: '/news' },
             { name: "Global Partnerships", width: "134px", url: '/partnership' },
         ],
     },
-    {
-        header: "Resource",
-        data: [
-            { name: "FAQs", width: "35px", url: '#' },
-            { name: "Hackathon", width: "75px", url: '#' },
-            { name: "Privacy Policy", width: "95px", url: '#' },
-            { name: "Terms & Condition", width: "124px", url: '#' },
-        ],
-    },
+    // {
+    //     header: "Resource",
+    //     data: [
+    //         { name: "FAQs", width: "35px", url: '#' },
+    //         { name: "Hackathon", width: "75px", url: '#' },
+    //         { name: "Privacy Policy", width: "95px", url: '#' },
+    //         { name: "Terms & Condition", width: "124px", url: '#' },
+    //     ],
+    // },
 ];
 
 const socials = [
@@ -76,7 +76,7 @@ export default function Footer() {
                 </div>
 
                 {/* Links & Socials */}
-                <div className="flex flex-col-reverse lg:flex-row gap-12 lg:gap-[67px] w-full">
+                <div className="flex flex-col gap-6 lg:flex-row lg:justify-between w-full">
                     {/* Links */}
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-8 lg:flex lg:gap-[67px]">
                         {Solution.map((item, index) => (
