@@ -81,7 +81,7 @@ export const ScheduleFormData = [
 export default function TalentHero() {
     return (
         <motion.section
-            className="relative w-full min-h-[400px] md:min-h-[618px] mb-0 px-4 sm:px-6 lg:px-0"
+            className="relative w-full min-h-[400px] md:min-h-[618px] mb-0 px-4 py-4 md:py-0 sm:px-6 lg:px-0"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: false, amount: 0.2 }}
@@ -127,14 +127,14 @@ export default function TalentHero() {
             </motion.div>
             {/* Content */}
             <motion.div
-                className="relative z-10 w-full lg:w-[896px] pt-10 md:pt-20 lg:top-[10px] lg:left-[110px] flex flex-col gap-4 md:gap-[15px] mx-auto lg:mx-0"
+                className="relative z-10 w-full lg:w-[896px] pt-8 md:pt-20 lg:top-[20px] lg:left-[110px] flex flex-col gap-4 md:gap-[15px] mx-auto lg:mx-0"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, amount: 0.2 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
             >
                 <motion.h1
-                    className="font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-[1.2] md:leading-[89px] w-full lg:w-[896px] tracking-[0.007em] text-[#ffffff] text-center lg:text-left"
+                    className="font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[70px] leading-[1.2] md:leading-[89px] w-full lg:w-[896px] tracking-[0.007em] text-[#ffffff] text-center lg:text-left"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: false, amount: 0.2 }}
