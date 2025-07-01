@@ -27,7 +27,7 @@ export default function IdeaSubmissionPage() {
             </div>
 
             {/* Centered Content */}
-            <div className="relative z-10 flex flex-col justify-center items-center w-full max-w-4xl gap-8">
+            <div className="relative z-10 top-[60px] flex flex-col justify-center items-center w-full max-w-4xl gap-8">
                 <h1 className="font-satoshi w-full max-w-[991px] text-[28px] sm:text-[40px] lg:text-[60px] font-black leading-[32px] sm:leading-[45px] lg:leading-[67px] text-[#fff] text-center">
                     Idea Submission Form – IP Commercialization & Innovation Support
                 </h1>

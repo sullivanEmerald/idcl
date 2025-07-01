@@ -85,14 +85,14 @@ export default function CommercializationHeroSection() {
                     viewport={{ once: false, amount: 0.2 }}
                     transition={{ duration: 0.7, delay: 0.5, ease: "easeOut" }}
                 >
-                    <Link
+                    {/* <Link
                         className="w-full sm:w-[127px] h-[50px] rounded-[50px] bg-[#FFFFFF] no-underline flex items-center justify-center gap-[10px]"
                         href="#"
                     >
                         <p className="font-roboto font-medium text-[15px] text-[#373737] leading-normal tracking-normal">
                             Get Support
                         </p>
-                    </Link>
+                    </Link> */}
                     <Link
                         className="w-full sm:w-[162px] h-[50px] rounded-[50px] bg-transparent border border-[#FFFFFF] no-underline flex items-center justify-center"
                         href="/services/commercialization/idea"
