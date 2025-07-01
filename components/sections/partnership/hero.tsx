@@ -52,7 +52,7 @@ export default function PartnershipHeroSection() {
                 />
             </motion.div>
             <motion.div
-                className="relative z-10 w-full lg:w-[1167px] mx-auto lg:mx-0 lg:left-[120px] top-[200px] lg:top-[150px] transform lg:transform-none -translate-y-1/2 lg:translate-y-0 px-6 sm:px-8 lg:px-0 py-8 sm:py-0 flex flex-col items-start gap-6 sm:gap-4 lg:gap-[15px]"
+                className="relative z-10 w-full lg:w-[1167px] mx-auto lg:mx-0 lg:left-[120px] top-[10px] lg:top-[150px] transform lg:transform-none -translate-y-1/2 lg:translate-y-0 px-6 sm:px-8 lg:px-0 py-8 sm:py-0 flex flex-col items-start gap-6 sm:gap-4 lg:gap-[15px]"
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, amount: 0.2 }}
@@ -93,11 +93,11 @@ export default function PartnershipHeroSection() {
                             Apply Now
                         </p>
                     </Link>
-                    <button className="flex py-3 sm:py-4 lg:py-[16px] px-4 sm:px-5 lg:px-[22px] w-full sm:w-full md:w-auto items-center justify-center gap-2 lg:gap-[10px] rounded-[56px] border border-white bg-transparent hover:bg-white hover:border-none group transition-all">
+                    {/* <button className="flex py-3 sm:py-4 lg:py-[16px] px-4 sm:px-5 lg:px-[22px] w-full sm:w-full md:w-auto items-center justify-center gap-2 lg:gap-[10px] rounded-[56px] border border-white bg-transparent hover:bg-white hover:border-none group transition-all">
                         <p className="text-white group-hover:text-[#373737] font-roboto text-sm sm:text-[15px] font-medium leading-normal">
                             Download Program Guide
                         </p>
-                    </button>
+                    </button> */}
                 </motion.div>
             </motion.div>
         </motion.section>
