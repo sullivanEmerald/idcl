@@ -30,10 +30,18 @@ export default function HeroSection() {
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="w-full h-full"
+                className="w-full h-[680px]"
             >
                 <Image
-                    src="/images/hero2.jpg"
+                    src="/images/home/image.png"
+                    alt="Background"
+                    fill
+                    className="object-cover"
+                    priority
+                />
+
+                <Image
+                    src="/images/home/cover.png"
                     alt="Background"
                     fill
                     className="object-cover"
