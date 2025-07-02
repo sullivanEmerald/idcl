@@ -144,58 +144,16 @@ export default function StartUpHeroSection() {
                                     <DialogDescription className="overflow-y-auto">
                                         <form className="flex flex-col px-4 sm:px-6 lg:px-[16px] py-4 gap-4 sm:gap-6 lg:gap-[32px]">
                                             <h1 className="font-satoshi text-xl sm:text-2xl lg:text-[30px] font-bold leading-normal text-[#344054]">
-                                                Submit Talent Request
+                                                Submit Startup Request
                                             </h1>
-
-                                            {ScheduleFormData.map((item, index) => (
-                                                <div key={index} className="grid w-full items-center gap-2 lg:gap-1.5">
-                                                    <Label htmlFor={item.name} className="font-figtree text-sm sm:text-base lg:text-[18px] leading-normal text-[#344054]">
-                                                        {item.label}
-                                                    </Label>
-
-                                                    {item.type === 'select' ? (
-                                                        <Select>
-                                                            <SelectTrigger className="w-full">
-                                                                <SelectValue placeholder={item.placeholder} />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                {item.options?.map((option, i) => (
-                                                                    <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>
-                                                                        {option}
-                                                                    </SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
-                                                    ) : (
-                                                        <Input
-                                                            type={item.type}
-                                                            id={item.name}
-                                                            name={item.name}
-                                                            placeholder={item.placeholder}
-                                                            className="w-full"
-                                                        />
-                                                    )}
-                                                </div>
-                                            ))}
-
-                                            <div className="flex flex-col sm:flex-row items-center justify-end gap-3 sm:gap-4 lg:gap-[16px] w-full mt-4">
-                                                <button
-                                                    type="button"
-                                                    className="w-full sm:w-auto px-4 py-2 lg:py-[10px] lg:px-[24px] bg-[#F9FAFB] hover:bg-gray-100 rounded-full lg:rounded-[50px] transition-colors duration-200"
-                                                >
-                                                    <p className="font-figtree font-semibold text-sm sm:text-base lg:text-[18px] text-[#005DFF] leading-normal">
-                                                        Cancel
-                                                    </p>
-                                                </button>
-                                                <button
-                                                    type="submit"
-                                                    className="w-full sm:w-auto px-4 py-2 lg:py-[10px] lg:px-[24px] bg-[#005DFF] hover:bg-[#004ACC] shadow-sm rounded-full lg:rounded-[50px] transition-colors duration-200"
-                                                >
-                                                    <p className="font-figtree font-semibold text-sm sm:text-base lg:text-[18px] text-white leading-normal">
-                                                        Submit
-                                                    </p>
-                                                </button>
-                                            </div>
+                                            <iframe
+                                                src="https://office.imodigitalcity.com/startups"
+                                                title="Startup Application"
+                                                width="100%"
+                                                height="900"
+                                                className="w-full min-h-[600px] rounded-[12px] border-0"
+                                                allowFullScreen
+                                            ></iframe>
                                         </form>
                                     </DialogDescription>
                                 </DialogHeader>

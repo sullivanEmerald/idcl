@@ -1,15 +1,17 @@
 "use client"
 import Image from "next/image";
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+// import {
+//     Select,
+//     SelectContent,
+//     SelectItem,
+//     SelectTrigger,
+//     SelectValue,
+// } from "@/components/ui/select";
 import {
     Dialog,
     DialogContent,
@@ -79,6 +81,7 @@ export const ScheduleFormData = [
 ];
 
 export default function TalentHero() {
+    const [iframeLoaded, setIframeLoaded] = useState(false);
     return (
         <motion.section
             className="relative w-full min-h-[400px] md:min-h-[618px] mb-0 px-4 py-4 md:py-0 sm:px-6 lg:px-0"
@@ -168,59 +171,29 @@ export default function TalentHero() {
                                 </p>
                             </button>
                         </DialogTrigger>
-                        <DialogContent className="bg-[#fff] max-h-screen overflow-y-auto w-full max-w-[90vw] md:max-w-2xl lg:max-w-4xl">
+                        <DialogContent className="bg-[#fff] max-h-screen overflow-y-auto w-full max-w-[90vw] md:max-w-2xl lg:max-w-2xl">
                             <DialogHeader>
                                 <DialogTitle className="font-satoshi text-2xl md:text-[30px] font-bold leading-normal text-[#344054]">
                                     Submit Talent Request
                                 </DialogTitle>
                                 <DialogDescription className="overflow-y-auto">
-                                    <form className="flex flex-col px-4 md:px-[16px] justify-center items-start gap-6 md:gap-[32px] self-stretch py-4">
-                                        {ScheduleFormData.map((item, index) => (
-                                            <div key={index} className="grid w-full items-center gap-2 md:gap-1.5">
-                                                <Label htmlFor={item.name} className="font-figtree text-base md:text-[18px] leading-[1.5] text-[#344054]">
-                                                    {item.label}
-                                                </Label>
-                                                {item.type === 'select' ? (
-                                                    <Select>
-                                                        <SelectTrigger className="w-full">
-                                                            <SelectValue placeholder={item.placeholder} />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            {item.options?.map((option, i) => (
-                                                                <SelectItem key={i} value={option.toLowerCase().replace(' ', '-')}>{option}</SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                ) : (
-                                                    <Input
-                                                        type={item.type}
-                                                        id={item.name}
-                                                        name={item.name}
-                                                        placeholder={item.placeholder}
-                                                        className="w-full"
-                                                    />
-                                                )}
-                                            </div>
-                                        ))}
-                                        <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-[16px] self-end w-full sm:w-auto">
-                                            <button
-                                                type="button"
-                                                className="flex py-2 md:py-[10px] px-4 md:px-[24px] items-center justify-center gap-2 bg-[#F9FAFB] rounded-[50px] w-full sm:w-auto"
-                                            >
-                                                <p className="font-figtree font-semibold text-base md:text-[18px] text-[#005DFF] leading-[24px]">
-                                                    Cancel
-                                                </p>
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                className="flex py-2 md:py-[10px] px-4 md:px-[24px] items-center justify-center gap-2 bg-[#005DFF] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] rounded-[50px] w-full sm:w-auto hover:bg-[#004acc] transition-colors"
-                                            >
-                                                <p className="font-figtree font-semibold text-base md:text-[18px] text-[#fff] leading-[24px]">
-                                                    Submit
-                                                </p>
-                                            </button>
+                                    {!iframeLoaded && (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-20 rounded-[12px]">
+                                            <Loader2 className="animate-spin text-blue-400" />
                                         </div>
-                                    </form>
+                                    )}
+                                    <iframe
+                                        src="https://office.imodigitalcity.com/talents"
+                                        title="Talent Application"
+                                        width="100%"
+                                        height="900"
+                                        className="w-full min-h-[600px] rounded-[12px] border-0"
+                                        allowFullScreen
+                                        onLoad={() => {
+                                            // Fix: Only set as loaded if the iframe's contentWindow is accessible and loaded
+                                            setTimeout(() => setIframeLoaded(true), 500);
+                                        }}
+                                    ></iframe>
                                 </DialogDescription>
                             </DialogHeader>
                         </DialogContent>

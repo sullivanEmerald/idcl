@@ -57,7 +57,7 @@ export default function AboutUsHeroSection() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
                 >
-                    About Us – Imo Digital City Ltd (IDCL)
+                    About Imo Digital City Ltd (IDCL)
                 </motion.h1>
                 <motion.p
                     className="font-satoshi font-medium text-xl lg:text-2xl leading-[1.42] tracking-[0.007em] text-white border-l-4 border-l-white pl-3 sm:pl-4 md:pl-[25px] md:text-[24px] lg:text-left"

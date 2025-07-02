@@ -136,7 +136,7 @@ export const EllipseData = [
                 name: 'Join Upcoming IP Workshop',
                 href: '#'
             },
-        }
+        },
 
     },
     {

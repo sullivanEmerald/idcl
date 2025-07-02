@@ -6,8 +6,8 @@ import { motion } from "framer-motion";
 const Leaders = [
     {
         image: '/images/about/leader.png',
-        name: 'John Doe',
-        position: 'position',
+        name: 'Mrs Stella Ezenduka',
+        position: 'General Manager',
         social: [
             {
                 icon: '/images/about/icons/Facebook.png',
@@ -25,8 +25,8 @@ const Leaders = [
     },
     {
         image: '/images/about/leader.png',
-        name: 'John Doe',
-        position: 'position',
+        name: 'Primus Amaefule',
+        position: 'Hub Supervisor ',
         social: [
             {
                 icon: '/images/about/icons/Facebook.png',
@@ -44,8 +44,8 @@ const Leaders = [
     },
     {
         image: '/images/about/leader.png',
-        name: 'John Doe',
-        position: 'position',
+        name: 'Chibuike Mebrim',
+        position: 'Learning Supervisor',
         social: [
             {
                 icon: '/images/about/icons/Facebook.png',
@@ -63,8 +63,8 @@ const Leaders = [
     },
     {
         image: '/images/about/leader.png',
-        name: 'John Doe',
-        position: 'position',
+        name: 'Udoka Onwueme',
+        position: 'Admin',
         social: [
             {
                 icon: '/images/about/icons/Facebook.png',
@@ -80,82 +80,6 @@ const Leaders = [
             },
         ]
     },
-    {
-        image: '/images/about/leader.png',
-        name: 'John Doe',
-        position: 'position',
-        social: [
-            {
-                icon: '/images/about/icons/Facebook.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Twitter.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Instagram.png',
-                href: ''
-            },
-        ]
-    },
-    {
-        image: '/images/about/leader.png',
-        name: 'John Doe',
-        position: 'position',
-        social: [
-            {
-                icon: '/images/about/icons/Facebook.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Twitter.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Instagram.png',
-                href: ''
-            },
-        ]
-    },
-    {
-        image: '/images/about/leader.png',
-        name: 'John Doe',
-        position: 'position',
-        social: [
-            {
-                icon: '/images/about/icons/Facebook.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Twitter.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Instagram.png',
-                href: ''
-            },
-        ]
-    },
-    {
-        image: '/images/about/leader.png',
-        name: 'John Doe',
-        position: 'position',
-        social: [
-            {
-                icon: '/images/about/icons/Facebook.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Twitter.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Instagram.png',
-                href: ''
-            },
-        ]
-    }
 ]
 
 export default function AboutLeaderShip() {

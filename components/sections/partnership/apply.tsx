@@ -24,73 +24,73 @@ interface FormField {
     options?: string[]; // optional property
 }
 
-const PersonalInformation: FormField[] = [
-    {
-        label: 'Full Name',
-        name: 'fullname',
-        placeholder: 'Enter your full name',
-        type: 'text'
-    },
-    {
-        label: 'Organisation Name',
-        name: 'company',
-        placeholder: 'organisation name',
-        type: 'text'
-    },
-    {
-        label: 'Phone Number',
-        name: 'phone',
-        placeholder: 'Enter the role you\'re hiring for',
-        type: 'text'
-    },
-    {
-        label: 'Email Address',
-        name: 'email',
-        placeholder: 'email',
-        type: 'text'
-    },
-    {
-        label: 'Positon/Role',
-        name: 'position',
-        placeholder: 'e.g Managing Director',
-        type: 'text'
-    },
-]
+// const PersonalInformation: FormField[] = [
+//     {
+//         label: 'Full Name',
+//         name: 'fullname',
+//         placeholder: 'Enter your full name',
+//         type: 'text'
+//     },
+//     {
+//         label: 'Organisation Name',
+//         name: 'company',
+//         placeholder: 'organisation name',
+//         type: 'text'
+//     },
+//     {
+//         label: 'Phone Number',
+//         name: 'phone',
+//         placeholder: 'Enter the role you\'re hiring for',
+//         type: 'text'
+//     },
+//     {
+//         label: 'Email Address',
+//         name: 'email',
+//         placeholder: 'email',
+//         type: 'text'
+//     },
+//     {
+//         label: 'Positon/Role',
+//         name: 'position',
+//         placeholder: 'e.g Managing Director',
+//         type: 'text'
+//     },
+// ]
 
-const PartnershipDetails: FormField[] = [
+// const PartnershipDetails: FormField[] = [
 
-    {
-        label: 'Type of Partnership',
-        name: 'type',
-        placeholder: 'Select Partnership Type',
-        type: 'select',
-        options: ['Tech Brand', 'Investor', 'Development', 'Organization']
-    },
-    {
-        label: 'How would your organization contribute to the partnership?',
-        name: 'reason',
-        placeholder: 'organisational contribution',
-        type: 'text'
-    },
-    {
-        label: 'What impact would you like to see from this collaboration?',
-        name: 'expectation',
-        placeholder: 'Collaboration Expectation',
-        type: 'text'
-    },
-    {
-        label: "Any relevant case studies or projects you've worked on that demonstrate your capability? (Please upload any supporting documents or provide links)",
-        name: 'file',
-        type: 'photo',
-        placeholder: 'document',
-    },
-    {
-        label: 'References or Testimonials',
-        name: 'references',
-        placeholder: 'References or Testimonials',
-        type: 'textarea'
-    },
-];
+//     {
+//         label: 'Type of Partnership',
+//         name: 'type',
+//         placeholder: 'Select Partnership Type',
+//         type: 'select',
+//         options: ['Tech Brand', 'Investor', 'Development', 'Organization']
+//     },
+//     {
+//         label: 'How would your organization contribute to the partnership?',
+//         name: 'reason',
+//         placeholder: 'organisational contribution',
+//         type: 'text'
+//     },
+//     {
+//         label: 'What impact would you like to see from this collaboration?',
+//         name: 'expectation',
+//         placeholder: 'Collaboration Expectation',
+//         type: 'text'
+//     },
+//     {
+//         label: "Any relevant case studies or projects you've worked on that demonstrate your capability? (Please upload any supporting documents or provide links)",
+//         name: 'file',
+//         type: 'photo',
+//         placeholder: 'document',
+//     },
+//     {
+//         label: 'References or Testimonials',
+//         name: 'references',
+//         placeholder: 'References or Testimonials',
+//         type: 'textarea'
+//     },
+// ];
 export default function ApplyPartnershipHeroSection() {
     return (
         <motion.section
