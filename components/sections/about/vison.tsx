@@ -9,14 +9,14 @@ export default function AboutUSVision() {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
         >
             {/* Image - responsive sizing with exact dimensions on lg+ */}
             <motion.div
                 initial={{ opacity: 0, x: -60 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                viewport={{ once: false, amount: 0.3 }}
+                viewport={{ once: true, amount: 0.3 }}
             >
                 <Image
                     src='/images/vision/vision.png'
@@ -33,7 +33,7 @@ export default function AboutUSVision() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-                viewport={{ once: false, amount: 0.3 }}
+                viewport={{ once: true, amount: 0.3 }}
             >
                 <div className="w-full lg:w-[599px] flex items-start gap-4 sm:gap-6 lg:gap-[25px]">
                     <Image src='/images/vision/eyes.png' width={63} height={63} priority alt="vision-image" />
@@ -43,7 +43,7 @@ export default function AboutUSVision() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-                            viewport={{ once: false, amount: 0.3 }}
+                            viewport={{ once: true, amount: 0.3 }}
                         >
                             Our Vision
                         </motion.h2>
@@ -52,7 +52,7 @@ export default function AboutUSVision() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-                            viewport={{ once: false, amount: 0.3 }}
+                            viewport={{ once: true, amount: 0.3 }}
                         >
                             To become the leading hub for digital innovation and entrepreneurship in West Africa.
                         </motion.p>
@@ -67,7 +67,7 @@ export default function AboutUSVision() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
-                            viewport={{ once: false, amount: 0.3 }}
+                            viewport={{ once: true, amount: 0.3 }}
                         >
                             Our Mission
                         </motion.h2>
@@ -76,7 +76,7 @@ export default function AboutUSVision() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
-                            viewport={{ once: false, amount: 0.3 }}
+                            viewport={{ once: true, amount: 0.3 }}
                         >
                             To empower West Africa's digital ecosystem through innovation, skill development, and entrepreneurship support that connects talent with opportunity.
                         </motion.p>
