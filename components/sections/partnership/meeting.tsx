@@ -101,7 +101,7 @@ export default function GlobalPartners() {
                         whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
                         whileTap={{ scale: 0.97 }}
                     >
-                        <div className="w-[107px] h-[107px] relative overflow-hidden">
+                        <div className="w-[110px] h-[107px] relative overflow-hidden">
                             <Image
                                 src={item.image}
                                 alt={`${item.header} logo`}

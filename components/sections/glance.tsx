@@ -58,7 +58,7 @@ export default function Glance() {
                     </p>
                 </div>
 
-                <div className="font-satoshi font-light text-base md:text-lg lg:text-[18px] leading-normal w-full lg:w-[570px] text-[#000] flex flex-col gap-4 md:gap-[17px]">
+                <div className="font-satoshi font-normal text-base md:text-lg lg:text-[18px] leading-normal w-full lg:w-[570px] text-[#000] flex flex-col gap-4 md:gap-[17px]">
                     <p>
                         Welcome to Imo Digital City Ltd (IDCL), where local innovation meets global technology. As West Africa's premier tech incubation and acceleration hub, we connect startups, digital talent, and governments with global opportunities. Explore our digital skills training, startup programs, and smart innovation infrastructure—all from one platform
                     </p>

@@ -135,7 +135,7 @@ export default function Services({ isServices }: { isServices: boolean }) {
                         <motion.div
                             initial={{ opacity: 0, x: -40 }}
                             whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: false, amount: 0.5 }}
+                            viewport={{ once: true, amount: 0.5 }}
                             transition={{ duration: 0.6, ease: "easeOut" }}
                         >
                             <Image

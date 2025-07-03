@@ -42,13 +42,13 @@ export default function Objectives({ isObjective }: { isObjective: boolean }) {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
         >
             {/* Image - Responsive with exact LG dimensions */}
             <motion.div
                 initial={{ opacity: 0, x: -60, scale: 0.9 }}
                 whileInView={{ opacity: 1, x: 0, scale: 1 }}
-                viewport={{ once: false, amount: 0.4 }}
+                viewport={{ once: true, amount: 0.4 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
             >
                 <Image
@@ -66,7 +66,7 @@ export default function Objectives({ isObjective }: { isObjective: boolean }) {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-                viewport={{ once: false, amount: 0.3 }}
+                viewport={{ once: true, amount: 0.3 }}
             >
                 {isObjective && (
                     <motion.div
@@ -74,7 +74,7 @@ export default function Objectives({ isObjective }: { isObjective: boolean }) {
                         initial={{ scale: 0, opacity: 0 }}
                         whileInView={{ scale: 1, opacity: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 20, delay: 0.4 }}
-                        viewport={{ once: false, amount: 0.3 }}
+                        viewport={{ once: true, amount: 0.3 }}
                     >
                         <span className="font-satoshi font-normal text-sm lg:text-[16px] leading-[1.5] tracking-[0.08em] uppercase text-[#0000FF]">
                             Strategic Objectives
@@ -87,7 +87,7 @@ export default function Objectives({ isObjective }: { isObjective: boolean }) {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5, duration: 0.5 }}
-                    viewport={{ once: false, amount: 0.3 }}
+                    viewport={{ once: true, amount: 0.3 }}
                 >
                     Our Blueprint for Impacts
                 </motion.h2>

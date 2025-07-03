@@ -66,7 +66,7 @@ export default function Mission({ isMission }: { isMission: boolean }) {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
         >
             <header className="w-full px-6 lg:px-0 lg:w-[867px] h-auto lg:h-[198px] flex flex-col gap-4 lg:gap-[17px] items-center justify-center text-center">
                 {isMission && (
@@ -75,7 +75,7 @@ export default function Mission({ isMission }: { isMission: boolean }) {
                         initial={{ scale: 0, opacity: 0 }}
                         whileInView={{ scale: 1, opacity: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 20, delay: 0.2 }}
-                        viewport={{ once: false, amount: 0.3 }}
+                        viewport={{ once: true, amount: 0.3 }}
                     >
                         <span className="font-satoshi font-normal text-[16px] leading-[1.5] tracking-[0.08em] uppercase text-[#0000FF]">
                             Our Mission
@@ -87,7 +87,7 @@ export default function Mission({ isMission }: { isMission: boolean }) {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.5 }}
-                    viewport={{ once: false, amount: 0.3 }}
+                    viewport={{ once: true, amount: 0.3 }}
                 >
                     Core Values
                 </motion.p>
@@ -96,7 +96,7 @@ export default function Mission({ isMission }: { isMission: boolean }) {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4, duration: 0.5 }}
-                    viewport={{ once: false, amount: 0.3 }}
+                    viewport={{ once: true, amount: 0.3 }}
                 >
                     To empower West Africa's digital ecosystem through innovation, skill development, and entrepreneurship support that connects talent with opportunity
                 </motion.span>
@@ -105,6 +105,7 @@ export default function Mission({ isMission }: { isMission: boolean }) {
             <motion.section
                 className="w-full px-6 lg:px-0 lg:w-[1197px] h-auto lg:h-[265px] flex flex-col sm:flex-row flex-wrap items-center justify-center mt-8 lg:mt-0"
                 variants={containerVariants}
+                viewport={{ once: true, amount: 0.3 }}
             >
                 {misson.map((item, index) => (
                     <motion.div
@@ -113,6 +114,7 @@ export default function Mission({ isMission }: { isMission: boolean }) {
                         variants={cardVariants}
                         // whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
                         whileTap={{ scale: 0.97 }}
+                        viewport={{ once: true, amount: 0.3 }}
                     >
                         {/* Make the shadow and hover effect apply to the outer motion.div */}
                         <div className="flex items-center gap-6 lg:gap-[26px] w-full h-full min-h-[99px] bg-white rounded-2xl p-6 lg:p-10 transition-shadow duration-200">

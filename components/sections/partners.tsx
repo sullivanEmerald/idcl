@@ -41,7 +41,7 @@ export default function Partners() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
         >
             {/* Partners Logo Grid - Maintains exact dimensions on large screens */}
             <motion.div
@@ -56,7 +56,7 @@ export default function Partners() {
                     >
                         <Image
                             src={p.src}
-                            style={{ objectFit: "cover" }}
+                            style={{ objectFit: "contain" }}
                             fill
                             alt={p.alt}
                         />
@@ -70,14 +70,14 @@ export default function Partners() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
-                viewport={{ once: false, amount: 0.3 }}
+                viewport={{ once: true, amount: 0.3 }}
             >
                 <motion.div
                     className="flex items-center w-[142px] h-[34px] gap-[10px] bg-[#D8F5FF] rounded-[20px] justify-center"
                     initial={{ scale: 0, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
                     transition={{ type: "spring", stiffness: 400, damping: 20, delay: 0.2 }}
-                    viewport={{ once: false, amount: 0.3 }}
+                    viewport={{ once: true, amount: 0.3 }}
                 >
                     <span className="font-satoshi font-normal text-[16px] leading-[1.5] tracking-[0.08em] uppercase text-[#0000FF]">
                         Partners
