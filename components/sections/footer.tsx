@@ -34,29 +34,22 @@ const Solution = [
 
 const socials = [
     {
-        src: "/images/socials/linkedin.png",
-        href: "",
-        alt: "linkedin",
-        width: 13.5,
-        height: 13.5,
-    },
-    {
         src: "/images/socials/facebook.png",
-        href: "",
+        href: "https://web.facebook.com/profile.php?id=61577175636103",
         alt: "facebook",
         width: 8.93,
         height: 14.39,
     },
     {
         src: "/images/socials/instagram.png",
-        href: "",
+        href: "https://www.instagram.com/imodigitalcity/",
         alt: "instagram",
         width: 13,
         height: 13,
     },
     {
         src: "/images/socials/youtube.png",
-        href: "",
+        href: "https://www.youtube.com.com/",
         alt: "youtube",
         width: 16,
         height: 11,
@@ -105,8 +98,11 @@ export default function Footer() {
                     {/* Socials */}
                     <div className="flex justify-center lg:justify-start gap-3 lg:gap-[12px]">
                         {socials.map((item, index) => (
-                            <div
+                            <Link
                                 key={index}
+                                href={item.href || "#"}
+                                target={item.href ? "_blank" : undefined}
+                                rel={item.href ? "noopener noreferrer" : undefined}
                                 className="w-[45px] h-[45px] border border-[#ECEFF3] rounded-full flex items-center justify-center"
                             >
                                 <Image
@@ -115,7 +111,7 @@ export default function Footer() {
                                     width={item.width}
                                     height={item.height}
                                 />
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
