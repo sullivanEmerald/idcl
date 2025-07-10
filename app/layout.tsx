@@ -1,40 +1,46 @@
 import type { Metadata } from "next";
-import localFont from 'next/font/local'
-import { Roboto, Poppins, Be_Vietnam_Pro, Figtree, Mulish, Jost, Lexend } from "next/font/google";
+// import localFont from 'next/font/local'
+import { Roboto, Poppins, Be_Vietnam_Pro, Figtree, Mulish, Jost, Lexend, Montserrat } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/general/header";
 import { Toaster } from 'sonner'
 
-const satoshi = localFont({
-  src: [
-    {
-      path: '../public/fonts/Satoshi-Medium.woff2',
-      weight: '500',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/Satoshi-Light.woff2',
-      weight: '300',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/Satoshi-Regular.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/Satoshi-Bold.woff2',
-      weight: '700',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/Satoshi-Black.woff2',
-      weight: '900',
-      style: 'normal',
-    },
-  ],
-  variable: "--font-satoshi",
-  display: "swap",
+// const satoshi = localFont({
+//   src: [
+//     {
+//       path: '../public/fonts/Satoshi-Medium.woff2',
+//       weight: '500',
+//       style: 'normal',
+//     },
+//     {
+//       path: '../public/fonts/Satoshi-Light.woff2',
+//       weight: '300',
+//       style: 'normal',
+//     },
+//     {
+//       path: '../public/fonts/Satoshi-Regular.woff2',
+//       weight: '400',
+//       style: 'normal',
+//     },
+//     {
+//       path: '../public/fonts/Satoshi-Bold.woff2',
+//       weight: '700',
+//       style: 'normal',
+//     },
+//     {
+//       path: '../public/fonts/Satoshi-Black.woff2',
+//       weight: '900',
+//       style: 'normal',
+//     },
+//   ],
+//   variable: "--font-satoshi",
+//   display: "swap",
+// });
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-satoshi',
 });
 
 const roboto = Roboto({
@@ -85,7 +91,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${satoshi.variable} ${jost.variable} ${mulish.variable} ${figtree.variable} ${be_Vietnam_Pro.variable} ${lexend.variable} ${roboto.variable} ${poppins.variable}`}>
+    <html lang="en" className={`${montserrat.variable} ${jost.variable} ${mulish.variable} ${figtree.variable} ${be_Vietnam_Pro.variable} ${lexend.variable} ${roboto.variable} ${poppins.variable}`}>
       <body className="font-sans antialiased relative flex flex-col min-h-screen">
         <Toaster richColors position="top-center" />
         <Header />
