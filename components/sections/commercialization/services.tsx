@@ -41,7 +41,7 @@ export default function CommercializationIpServices() {
             className="w-full flex py-[60px] sm:py-[80px] lg:py-[112px] flex-col items-center justify-center gap-[30px] sm:gap-[40px] lg:gap-[51px] bg-[#144DAF] px-4 sm:px-6 lg:px-0"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {

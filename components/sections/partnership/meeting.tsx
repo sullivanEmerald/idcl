@@ -59,7 +59,7 @@ export default function GlobalPartners() {
             className="w-full px-4 sm:px-6 mx-auto py-12 sm:py-16 lg:py-[80px] max-w-[1200px]"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {
@@ -73,7 +73,7 @@ export default function GlobalPartners() {
                 className="font-satoshi font-bold text-2xl sm:text-3xl lg:text-[32px] text-center leading-[1.1] lg:leading-[35px] mb-6 lg:mb-[27px]"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
             >
                 Meet Our Global Allies

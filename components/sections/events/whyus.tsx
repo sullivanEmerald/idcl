@@ -32,7 +32,7 @@ export default function EventsWhyUs() {
             className="flex flex-col gap-[31px] py-[80px]"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {
@@ -46,7 +46,7 @@ export default function EventsWhyUs() {
                 className="flex flex-col items-center justify-center gap-[21px] self-stretch text-[#3B3B3B] font-satoshi font-bold text-[32px] leading-[1.1] tracking-normal"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
             >
                 Why Choose IDCL for Your Event?
@@ -69,7 +69,7 @@ export default function EventsWhyUs() {
                         className="w-[263px] h-[202px] pt-[24px] pr-[40px] pb-[16px] pl-[40px] flex flex-col items-center justify-center gap-[16px] bg-[#F9FAFB] rounded-[32px] self-stretch"
                         initial={{ opacity: 0, scale: 0.92, y: 30 }}
                         whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                        viewport={{ once: false, amount: 0.2 }}
+                        viewport={{ once: true, amount: 0.2 }}
                         transition={{ duration: 0.6, ease: "easeOut" }}
                         whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
                         whileTap={{ scale: 0.97 }}

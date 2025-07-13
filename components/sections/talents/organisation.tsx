@@ -53,7 +53,7 @@ export default function TalentOrganisation() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
         >
             <div className="w-full px-4 lg:px-0 lg:w-[900px] flex flex-col mx-auto gap-6 lg:gap-[31px] items-center justify-center">
                 <motion.h1

@@ -8,7 +8,7 @@ export default function InfrastructureMobile() {
             className="w-full flex items-center justify-center py-12 lg:py-[80px] px-4 lg:px-0 mb-[40px]"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {
@@ -34,7 +34,7 @@ export default function InfrastructureMobile() {
                     className="w-full lg:w-[450px] h-auto lg:h-[241px] flex flex-col gap-4 lg:gap-[17px]"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: false, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
                 >
                     <h2 className="font-satoshi font-black text-2xl md:text-3xl lg:text-[32px] leading-[1.1] tracking-normal text-[#3B3B3B]">
@@ -48,7 +48,7 @@ export default function InfrastructureMobile() {
                     className="relative w-full lg:w-auto h-[300px] lg:h-auto"
                     initial={{ opacity: 0, scale: 0.92, y: 30 }}
                     whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                    viewport={{ once: false, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
                 >
                     <div className="relative w-[280px] h-[280px] lg:w-[336.53px] lg:h-[336.53px] mx-auto">

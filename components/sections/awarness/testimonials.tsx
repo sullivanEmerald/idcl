@@ -36,7 +36,7 @@ export default function AwarenessTestimonials() {
             className="w-full px-4 sm:px-6 md:px-8 py-12 md:py-16 lg:py-[80px]"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {

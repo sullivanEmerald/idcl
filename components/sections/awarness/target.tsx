@@ -31,7 +31,7 @@ export default function AwarenessTargetSection() {
             className="bg-[#144DAF] w-full min-h-[400px] sm:min-h-[500px] lg:h-[659px] py-12 sm:py-16 md:py-20 lg:py-[112px] px-4 sm:px-6"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {

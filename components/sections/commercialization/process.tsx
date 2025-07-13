@@ -41,7 +41,7 @@ export default function CommercializationProcess() {
             className="w-full max-w-[1014px] flex flex-col gap-[50px] md:gap-[75px] items-center mx-auto py-[40px] md:py-[80px] px-4 sm:px-6 lg:px-0"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {

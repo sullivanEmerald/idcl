@@ -9,7 +9,7 @@ export default function AwarenessHeroSection() {
             className="relative w-full min-h-[618px] mb-0"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, scale: 1.05 },
                 visible: {
@@ -24,7 +24,7 @@ export default function AwarenessHeroSection() {
                 className="absolute inset-0 -z-10"
                 initial={{ opacity: 0, scale: 1.1 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 1.1, ease: "easeOut" }}
             >
                 <Image
@@ -39,7 +39,7 @@ export default function AwarenessHeroSection() {
                 className="absolute inset-0 -z-10"
                 initial={{ opacity: 0, scale: 1.1 }}
                 whileInView={{ opacity: 0.85, scale: 1 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 1.3, delay: 0.1, ease: "easeOut" }}
             >
                 <Image
@@ -55,21 +55,21 @@ export default function AwarenessHeroSection() {
                 className="relative z-10 container mx-auto px-5 sm:px-6 lg:px-8 xl:px-[120px] pt-[80px]"
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             >
                 <motion.div
                     className="max-w-[896px] flex flex-col gap-[15px]"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: false, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.7, delay: 0.3, ease: "backOut" }}
                 >
                     <motion.h1
                         className="font-satoshi font-black text-[40px] leading-[1.2] sm:text-[50px] md:text-[60px] lg:text-[70px] xl:text-[80px] xl:leading-[89px] tracking-[0.007em] text-white"
                         initial={{ opacity: 0, y: 40, scale: 0.95 }}
                         whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                        viewport={{ once: false, amount: 0.2 }}
+                        viewport={{ once: true, amount: 0.2 }}
                         transition={{ duration: 0.7, delay: 0.35, ease: "backOut" }}
                     >
                         Empowering Creators Through Intellectual Property Education
@@ -78,7 +78,7 @@ export default function AwarenessHeroSection() {
                         className="flex items-center gap-[24px] self-stretch border-l-4 border-white pl-[15px] sm:pl-[25px]"
                         initial={{ opacity: 0, x: -40 }}
                         whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: false, amount: 0.2 }}
+                        viewport={{ once: true, amount: 0.2 }}
                         transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
                     >
                         <p className="font-satoshi font-medium text-[18px] leading-[1.4] sm:text-[20px] md:text-[22px] lg:text-[24px] lg:leading-[34px] tracking-[0.007em] text-white">
@@ -89,7 +89,7 @@ export default function AwarenessHeroSection() {
                         className="w-full sm:w-[299px] h-[50px] flex items-center gap-[24px] mt-4"
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false, amount: 0.2 }}
+                        viewport={{ once: true, amount: 0.2 }}
                         transition={{ duration: 0.7, delay: 0.5, ease: "easeOut" }}
                     >
                         {/* <Link

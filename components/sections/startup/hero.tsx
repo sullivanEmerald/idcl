@@ -85,7 +85,7 @@ export default function StartUpHeroSection() {
             className="relative w-full min-h-[400px] sm:min-h-[500px] lg:min-h-[618px] mb-0"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, scale: 1.05 },
                 visible: {

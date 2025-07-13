@@ -74,7 +74,7 @@ export default function HeroSection() {
             className="relative w-full overflow-hidden h-[420px] sm:h-[480px] md:h-[500px] lg:h-[601.34px]"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, scale: 1.05 },
                 visible: {
@@ -89,7 +89,7 @@ export default function HeroSection() {
                 className="absolute inset-0 -z-10 w-full h-full"
                 initial={{ opacity: 0, scale: 1.1 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 1.1, ease: "easeOut" }}
             >
                 <Image
@@ -104,7 +104,7 @@ export default function HeroSection() {
                 className="absolute inset-0 -z-10 w-full h-full"
                 initial={{ opacity: 0, scale: 1.1 }}
                 whileInView={{ opacity: 0.85, scale: 1 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 1.3, delay: 0.1, ease: "easeOut" }}
             >
                 <Image
@@ -119,14 +119,14 @@ export default function HeroSection() {
                 className="absolute z-10 w-full sm:max-w-[896px] px-4 sm:px-6 left-0 sm:left-20 right-0 top-20 md:top-40 flex flex-col items-start" // Ensures vertical centering on all screens
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             >
                 <motion.h1
                     className="w-full max-w-2xl font-satoshi font-black text-3xl sm:text-4xl md:text-5xl lg:text-[80px] leading-tight lg:leading-[1.12] tracking-wide lg:tracking-[0.007em] text-white text-center sm:text-left"
                     initial={{ opacity: 0, y: 40, scale: 0.95 }}
                     whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                    viewport={{ once: false, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.7, delay: 0.3, ease: "backOut" }}
                 >
                     Events at IDCL
@@ -135,7 +135,7 @@ export default function HeroSection() {
                     className="flex items-center mt-2 lg:mt-[15px] border-l-4 border-white pl-4 lg:pl-[25px] max-w-xl"
                     initial={{ opacity: 0, x: -40 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: false, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
                 >
                     <p className="font-satoshi w-full font-medium text-base sm:text-lg md:text-xl lg:text-[24px] leading-relaxed lg:leading-[1.42] tracking-wide lg:tracking-[0.007em] text-white sm:text-left">
@@ -146,7 +146,7 @@ export default function HeroSection() {
                     className="w-full max-w-xl flex flex-col sm:flex-row gap-4 lg:gap-[24px] mt-6 sm:mt-8 items-center"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: false, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.7, delay: 0.5, ease: "easeOut" }}
                 >
                     <Dialog>

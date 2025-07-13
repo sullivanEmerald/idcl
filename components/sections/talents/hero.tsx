@@ -87,7 +87,7 @@ export default function TalentHero() {
             className="relative w-full min-h-[400px] md:min-h-[618px] mb-0 px-4 py-4 md:py-0 sm:px-6 lg:px-0"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {
@@ -102,7 +102,7 @@ export default function TalentHero() {
                 className="absolute inset-0 -z-10"
                 initial={{ opacity: 0, scale: 1.05 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.9, ease: "easeOut" }}
             >
                 <Image
@@ -117,7 +117,7 @@ export default function TalentHero() {
                 className="absolute inset-0 -z-10"
                 initial={{ opacity: 0, scale: 1.05 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 1.1, delay: 0.1, ease: "easeOut" }}
             >
                 <Image
@@ -133,14 +133,14 @@ export default function TalentHero() {
                 className="relative z-10 w-full lg:w-[896px] pt-8 md:pt-20 lg:top-[20px] lg:left-[110px] flex flex-col gap-4 md:gap-[15px] mx-auto lg:mx-0"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
             >
                 <motion.h1
                     className="font-satoshi font-black text-4xl sm:text-5xl md:text-6xl lg:text-[70px] leading-[1.2] md:leading-[89px] w-full lg:w-[896px] tracking-[0.007em] text-[#ffffff] text-center lg:text-left"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: false, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     transition={{ delay: 0.3, duration: 0.5 }}
                 >
                     Hire Certified Tech Talent from Across Africa—Fast.
@@ -149,7 +149,7 @@ export default function TalentHero() {
                     className="flex items-center gap-4 md:gap-[24px] self-stretch border-l-4 border-[#ffffff] pl-4 md:pl-[25px]"
                     initial={{ opacity: 0, x: -30 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: false, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     transition={{ delay: 0.4, duration: 0.5 }}
                 >
                     <p className="font-satoshi font-medium text-base sm:text-lg md:text-xl lg:text-[24px] leading-normal md:leading-[34px] tracking-[0.007em] text-[#ffffff] flex-[1_0_0]">
@@ -160,7 +160,7 @@ export default function TalentHero() {
                     className="w-full md:w-[450px] flex flex-col sm:flex-row items-center gap-4 md:gap-[24px] justify-center lg:justify-start"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: false, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     transition={{ delay: 0.5, duration: 0.5 }}
                 >
                     <Dialog>

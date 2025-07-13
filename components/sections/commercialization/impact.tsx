@@ -9,7 +9,7 @@ export default function CommercializationImpact() {
             className="w-full flex flex-col items-center justify-center py-[60px] sm:py-[80px] lg:py-[100px] gap-[24px] sm:gap-[29px] lg:gap-[34px] shrink-0 px-4 sm:px-6 lg:px-0"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {

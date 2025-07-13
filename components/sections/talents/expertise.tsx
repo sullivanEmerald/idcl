@@ -65,13 +65,13 @@ export default function TalentExpertise() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
         >
             <motion.h1
                 className="text-[#3B3B3B] font-satoshi text-[24px] lg:text-[32px] font-bold leading-[110%] text-center capitalize"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
             >
                 Expertise You Can Hire Today

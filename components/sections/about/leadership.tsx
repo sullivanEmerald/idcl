@@ -127,7 +127,7 @@ export default function AboutLeaderShip() {
                     className="w-full max-w-[1140px] h-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-[32px]"
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: false, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.2 }}
                 >
                     {Leaders.map((item, index) => (
                         <motion.div

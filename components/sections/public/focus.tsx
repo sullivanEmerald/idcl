@@ -40,7 +40,7 @@ export default function PublicFocus() {
             className="flex w-full py-12 md:py-16 lg:py-[80px] bg-[#F5F9FF] flex-col gap-12 md:gap-16 lg:gap-[64px] items-center px-4 lg:px-0"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {
@@ -54,7 +54,7 @@ export default function PublicFocus() {
                 className="font-satoshi font-bold text-2xl md:text-3xl lg:text-[32px] text-center text-[#3B3B3B] w-full lg:self-stretch"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
             >
                 Our Focus Areas
@@ -70,7 +70,7 @@ export default function PublicFocus() {
                         className="border-none flex flex-col w-full sm:w-[calc(50%-12px)] xl:w-[283px] py-[1px] items-center h-auto xl:h-[333px]"
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false, amount: 0.2 }}
+                        viewport={{ once: true, amount: 0.2 }}
                         transition={{ duration: 0.7, delay: 0.1 * index, ease: "easeOut" }}
                     >
                         <div className="w-full xl:w-[283px] aspect-[283/180] relative">

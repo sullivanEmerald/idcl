@@ -32,7 +32,7 @@ export default function AwareLearning() {
             className="w-full py-12 md:py-[68px] px-6 sm:px-8 md:px-12 lg:px-[139px] flex flex-col items-center justify-center gap-6 sm:gap-8 md:gap-[36px]"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {

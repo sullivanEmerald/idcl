@@ -36,7 +36,7 @@ export default function StartUpFounders() {
             className="w-full max-w-[1200px] mx-auto flex py-12 lg:py-[80px] flex-col gap-8 lg:gap-[54px] items-center justify-center px-4 sm:px-6"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {

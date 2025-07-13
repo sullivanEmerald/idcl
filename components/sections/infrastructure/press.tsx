@@ -19,7 +19,7 @@ export default function InfrastructurePress() {
             className="w-full flex flex-col gap-4 lg:gap-[17px] items-center justify-center py-10 lg:py-[80px] px-4 lg:px-0"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {

@@ -49,7 +49,7 @@ export default function EventsHub() {
             className="w-full px-4 sm:px-6 lg:px-0 lg:w-[1198px] h-auto lg:h-[585px] mx-auto flex flex-col items-center gap-6 lg:gap-[50px] py-8 lg:py-0"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: {
@@ -63,7 +63,7 @@ export default function EventsHub() {
                 className="relative w-full lg:w-[867px] h-auto flex flex-col gap-4 lg:gap-[17px]"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
             >
                 <div className="w-full h-auto flex items-center justify-center">
@@ -97,7 +97,7 @@ export default function EventsHub() {
                                 className='w-full sm:w-[285px]'
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: false, amount: 0.2 }}
+                                viewport={{ once: true, amount: 0.2 }}
                                 transition={{ duration: 0.7, ease: "easeOut" }}
                             >
                                 <img src={item.image} alt={item.alt} className="block w-full" />
