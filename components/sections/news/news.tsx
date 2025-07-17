@@ -31,8 +31,8 @@ export default function News() {
                 setError(null);
                 const data = await newsService.getAllnews(currentPage);
                 console.log(data)
-                setLatest(data.latest)
-                setNews(data.blogs)
+                setLatest(data.latest || null)
+                setNews(data.blogs || [])
                 setTotalPages(data.totalPages)
                 setFilteredNews(data.blogs)
             } catch (error: any) {
