@@ -35,7 +35,7 @@ export default function FoundersDevelopmentProgramPage() {
                 className="absolute inset-0 w-full h-full"
             >
                 <Image
-                    src='/images/founders/image.png'
+                    src='/images/founders/background.jpeg'
                     alt="background"
                     className="object-cover"
                     fill
