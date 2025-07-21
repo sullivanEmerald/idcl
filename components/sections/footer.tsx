@@ -21,15 +21,15 @@ const Solution = [
             { name: "Global Partnerships", width: "134px", url: '/partnership' },
         ],
     },
-    // {
-    //     header: "Resource",
-    //     data: [
-    //         { name: "FAQs", width: "35px", url: '#' },
-    //         { name: "Hackathon", width: "75px", url: '#' },
-    //         { name: "Privacy Policy", width: "95px", url: '#' },
-    //         { name: "Terms & Condition", width: "124px", url: '#' },
-    //     ],
-    // },
+    {
+        header: "Resource",
+        data: [
+            { name: "IDCL News", width: "35px", url: '/news' },
+            // { name: "Hackathon", width: "75px", url: '#' },
+            // { name: "Privacy Policy", width: "95px", url: '#' },
+            // { name: "Terms & Condition", width: "124px", url: '#' },
+        ],
+    },
 ];
 
 const socials = [

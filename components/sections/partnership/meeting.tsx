@@ -20,7 +20,7 @@ const GlobalPartnersCollection = [
         website: 'https://imostate.gov.ng/'
     },
     {
-        image: '/images/partners/us.png',
+        image: '/images/partners/us.jpeg',
         header: 'US Market Access Center (USMAC)',
         body: "Partnering with Imo State to establish a digital city, USMAC brings Silicon Valley expertise to empower Nigerian startups with global market access, mentorship, and investment opportunities.",
         website: 'https://usmarketaccess.com/'

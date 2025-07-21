@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function GetStarted() {
     return (
-        <Link href='/news'
+        <Link href='/founders-development-program'
             className="
                 flex items-center justify-center
                 min-w-[145px] h-[42px]          
@@ -19,14 +19,13 @@ export default function GetStarted() {
             <span className="
         font-roboto                     
         font-medium                    
-        text-[15.36px]                
+        text-[15px]                
         leading-none                   
         tracking-[0]                                       
         text-center text-[#FFFFFF]                 
-        w-[79px]
           
       ">
-                Our News
+                Founders Development
             </span>
         </Link>
     )

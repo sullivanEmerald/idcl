@@ -10,7 +10,8 @@ export const names = {
     awareness: 'awareness',
     commercialization: 'commercialization',
     infrastructure: 'infrastructure',
-    innovation: 'innovation'
+    innovation: 'innovation',
+    founders: 'founders',
 }
 export const EllipseData = [
     {
@@ -186,6 +187,19 @@ export const EllipseData = [
                 name: 'Book a Consultation',
                 href: '#'
             }
+        }
+
+    },
+    {
+        name: names.founders,
+        header: 'Applications for the Next Cohort Are Now Open',
+        body: "Submit your application before [Deadline Date] and take the first step toward global acceleration.",
+        buttons: {
+            first: {
+                name: 'Apply Now',
+                href: '#'
+            },
+
         }
 
     },
