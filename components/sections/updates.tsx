@@ -110,7 +110,7 @@ export default function Updates() {
                     </span>
                 </motion.div>
                 <motion.p
-                    className="w-full sm:w-[238px] h-auto font-satoshi font-bold text-2xl sm:text-3xl lg:text-[32px] leading-[1.1] tracking-normal text-[#3B3B3B] text-center"
+                    className="w-full sm:w-[238px] h-auto font-satoshi font-bold text-2xl sm:text-3xl lg:text-[25px] leading-[1.1] tracking-normal text-[#3B3B3B] text-center"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.5 }}
