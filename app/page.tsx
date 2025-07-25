@@ -37,7 +37,7 @@ export default function Header() {
             <DialogDescription>
               <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[500px] rounded-[16px] overflow-hidden">
                 <Image
-                  src="/images/summer/bootcamp.png"
+                  src="/images/summer/bootcamp.jpeg"
                   alt="Summer Tech Bootcamp"
                   fill
                   className="object-cover w-full h-full"
