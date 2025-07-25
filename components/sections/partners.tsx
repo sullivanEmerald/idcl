@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 const partners = [
     { src: '/images/partners/silicon.png', alt: 'Silicon Valley', w: 134.7, h: 58.08 },
-    { src: '/images/partners/us.png', alt: 'US', w: 183.18, h: 58.08 },
+    { src: '/images/partners/us.jpeg', alt: 'US', w: 183.18, h: 58.08 },
     { src: '/images/partners/zinox.png', alt: 'Zinox', w: 183.18, h: 58.08 },
     { src: '/images/partners/berkeley.png', alt: 'Berkeley', w: 134.7, h: 58.08 },
     { src: '/images/partners/imo.png', alt: 'Imo', w: 102.18, h: 101.26 },

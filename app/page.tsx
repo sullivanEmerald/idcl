@@ -1,4 +1,5 @@
 "use client";
+
 import HeroSection from "@/components/sections/hero";
 import Glance from "@/components/sections/glance";
 import Mission from "@/components/sections/misson";
@@ -16,6 +17,7 @@ import Image from "next/image";
 
 export default function Header() {
   const [dialogOpen, setDialogOpen] = useState(true);
+
   return (
     <>
       <HeroSection />
@@ -30,36 +32,36 @@ export default function Header() {
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent
-          className="w-[400px] sm:w-[500px] md:w-[600px] lg:w-[700px] h-[350px] sm:h-[400px] md:h-[500px] lg:h-[500px] rounded-[16px] p-0 border border-[#E4E4E4]"
-          style={{ overflow: 'hidden' }}
+          className="w-[90vw] max-w-[500px] rounded-[16px] p-0 border border-[#E4E4E4] overflow-hidden"
+          style={{ height: '95vh', padding: 0 }}
         >
           <DialogHeader>
             <DialogDescription>
-              <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[500px] rounded-[16px] overflow-hidden">
+              <div className="relative w-full h-[93vh] min-h-[400px] rounded-[16px] overflow-hidden">
+                {/* Use object-contain to ensure the whole image is visible */}
                 <Image
                   src="/images/summer/bootcamp.jpeg"
                   alt="Summer Tech Bootcamp"
                   fill
-                  className="object-cover w-full h-full"
-                  style={{ zIndex: 1 }}
+                  className="object-contain w-full h-full"
                   priority
                 />
-                {/* Close button top right */}
-                <button
+                {/* Close button */}
+                {/* <button
                   onClick={() => setDialogOpen(false)}
                   className="absolute top-0 right-0 m-6 px-4 py-2 rounded-full bg-white/80 text-[#005DFF] font-bold hover:bg-white transition shadow-lg z-20"
                   aria-label="Close dialog"
                 >
                   Close
-                </button>
-                {/* Learn More button bottom center */}
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex justify-center w-full z-20">
+                </button> */}
+                {/* Register Now button */}
+                <div className="absolute bottom-6 right-6 flex justify-end w-auto z-20">
                   <Link
                     href="/summer-tech-bootcamp"
                     className="px-6 py-2 rounded-full bg-[#005DFF] text-white font-semibold hover:bg-[#003399] transition shadow-lg border-2 border-white drop-shadow-lg"
                     style={{ background: 'rgba(0,93,255,0.95)' }}
                   >
-                    Learn More
+                    Register Now!!
                   </Link>
                 </div>
               </div>
@@ -68,5 +70,5 @@ export default function Header() {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }
