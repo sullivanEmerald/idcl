@@ -175,12 +175,20 @@ export default function AboutLeaderShip() {
                             whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(0,93,255,0.12)" }}
                             whileTap={{ scale: 0.97 }}
                         >
-                            <motion.img
-                                src={item.image}
-                                alt={item.name}
-                                className="w-auto h-auto max-h-[120px]"
+                            <motion.div
+                                className="relative w-[100px] h-[100px] p-2 bg-white rounded-full border-2 border-[#005DFF] shadow-lg mx-auto mb-2 transition-transform duration-300 hover:scale-105"
                                 variants={imageVariants}
-                            />
+                            >
+                                <Image
+                                    src={item.image}
+                                    alt={item.name}
+                                    fill
+                                    className="object-cover rounded-full"
+                                    style={{ zIndex: 1 }}
+                                    sizes="100px"
+                                    priority={index === 0}
+                                />
+                            </motion.div>
                             <div className="text-center">
                                 <p className="text-[18px] leading-[28px] font-poppins font-semibold tracking-normal">{item.name}</p>
                                 <p className="font-poppins font-medium text-[18px] leading-[28px] tracking-normal text-[#005DFF]">{item.position}</p>
