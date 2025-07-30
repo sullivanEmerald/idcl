@@ -176,16 +176,16 @@ export default function AboutLeaderShip() {
                             whileTap={{ scale: 0.97 }}
                         >
                             <motion.div
-                                className="relative w-[100px] h-[100px] p-2 bg-white rounded-full border-2 border-[#005DFF] shadow-lg mx-auto mb-2 transition-transform duration-300 hover:scale-105"
+                                className="relative w-[100px] h-[100px] p-1 bg-white rounded-full border-2 border-[#E0E7FF] shadow-lg mx-auto mb-2 transition-transform duration-300 hover:scale-105 overflow-hidden"
                                 variants={imageVariants}
                             >
                                 <Image
                                     src={item.image}
                                     alt={item.name}
                                     fill
-                                    className="object-cover rounded-full"
-                                    style={{ zIndex: 1 }}
-                                    sizes="100px"
+                                    // className="rounded-full"
+                                    // style={{ zIndex: 1 }}
+                                    // sizes="100px"
                                     priority={index === 0}
                                 />
                             </motion.div>
