@@ -43,25 +43,6 @@ const Leaders = [
         ]
     },
     {
-        image: '/images/about/leader.png',
-        name: 'Chibuike Mebrim',
-        position: 'Learning Supervisor',
-        social: [
-            {
-                icon: '/images/about/icons/Facebook.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Twitter.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Instagram.png',
-                href: ''
-            },
-        ]
-    },
-    {
         image: '/images/about/udoka.png',
         name: 'Udoka Onwueme',
         position: 'Admin',
@@ -81,8 +62,27 @@ const Leaders = [
         ]
     },
     {
+        image: '/images/about/admin.png',
+        name: 'Chibuike Mebrim',
+        position: 'Learning Supervisor',
+        social: [
+            {
+                icon: '/images/about/icons/Facebook.png',
+                href: ''
+            },
+            {
+                icon: '/images/about/icons/Twitter.png',
+                href: ''
+            },
+            {
+                icon: '/images/about/icons/Instagram.png',
+                href: ''
+            },
+        ]
+    },
+    {
         image: '/images/about/accountant.png',
-        name: 'Amaka',
+        name: 'Ngozi Ariwuzo',
         position: 'Accountant',
         social: [
             {
@@ -100,28 +100,9 @@ const Leaders = [
         ]
     },
     {
-        image: '/images/about/team.png',
-        name: 'team member',
-        position: 'member',
-        social: [
-            {
-                icon: '/images/about/icons/Facebook.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Twitter.png',
-                href: ''
-            },
-            {
-                icon: '/images/about/icons/Instagram.png',
-                href: ''
-            },
-        ]
-    },
-    {
         image: '/images/about/team2.png',
-        name: 'team member',
-        position: 'member',
+        name: 'Anthony okonkwo',
+        position: 'Facility Manager',
         social: [
             {
                 icon: '/images/about/icons/Facebook.png',
