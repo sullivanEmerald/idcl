@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 const Leaders = [
     {
-        image: '/images/about/leader.png',
+        image: '/images/about/manager.png',
         name: 'Mrs Stella Ezenduka',
         position: 'General Manager',
         social: [
@@ -24,7 +24,7 @@ const Leaders = [
         ]
     },
     {
-        image: '/images/about/leader.png',
+        image: '/images/about/prime.png',
         name: 'Primus Amaefule',
         position: 'Hub Supervisor ',
         social: [
@@ -62,9 +62,66 @@ const Leaders = [
         ]
     },
     {
-        image: '/images/about/leader.png',
+        image: '/images/about/udoka.png',
         name: 'Udoka Onwueme',
         position: 'Admin',
+        social: [
+            {
+                icon: '/images/about/icons/Facebook.png',
+                href: ''
+            },
+            {
+                icon: '/images/about/icons/Twitter.png',
+                href: ''
+            },
+            {
+                icon: '/images/about/icons/Instagram.png',
+                href: ''
+            },
+        ]
+    },
+    {
+        image: '/images/about/accountant.png',
+        name: 'Amaka',
+        position: 'Accountant',
+        social: [
+            {
+                icon: '/images/about/icons/Facebook.png',
+                href: ''
+            },
+            {
+                icon: '/images/about/icons/Twitter.png',
+                href: ''
+            },
+            {
+                icon: '/images/about/icons/Instagram.png',
+                href: ''
+            },
+        ]
+    },
+    {
+        image: '/images/about/team.png',
+        name: 'team member',
+        position: 'member',
+        social: [
+            {
+                icon: '/images/about/icons/Facebook.png',
+                href: ''
+            },
+            {
+                icon: '/images/about/icons/Twitter.png',
+                href: ''
+            },
+            {
+                icon: '/images/about/icons/Instagram.png',
+                href: ''
+            },
+        ]
+    },
+    {
+        image: '/images/about/team2.png',
+        name: 'team member',
+        position: 'member',
         social: [
             {
                 icon: '/images/about/icons/Facebook.png',
