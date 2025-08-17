@@ -111,7 +111,7 @@ export default function FoundersDevelopmentProgramPage() {
                                         <div className="w-full max-w-[500px] md:max-w-[550px] lg:w-[534px] rounded-[12px] flex flex-col p-3 sm:p-6 md:p-8 border border-[#E4E4E4] bg-white">
                                             <form className="flex flex-col gap-[18px]">
                                                 <iframe
-                                                    src="https://office.imodigitalcity.com/partner-with-us"
+                                                    src="https://office.imodigitalcity.com/idcl-fdp-application"
                                                     title="Partnership Application"
                                                     width="100%"
                                                     height="600"
