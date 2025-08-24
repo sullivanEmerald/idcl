@@ -2,26 +2,50 @@ import Image from "next/image";
 
 const Questions = [
     {
-        question: "Can I reschedule my Tour?",
-        answer: "Yes. Simply reply to your confirmation email with your new preferred time.",
+        question: "Do I need to already have a startup or business idea?",
+        answer: "No. This program is about developing founders, not just startups. You don’t need an idea — we’ll help you discover, validate, and build opportunities.",
     },
     {
-        question: "What happens if I arrive without booking?",
-        answer: "",
+        question: "Is the program really free?",
+        answer: "Yes, 100% free. The program is fully sponsored by Imo State Government and powered by Imo Digital City in partnership with USMAC.",
     },
     {
-        question: "Is same-day booking possible??",
-        answer: "",
+        question: "Who can apply",
+        answer: "Nigerian citizens, ideally between 20–30 years old, with ambition, curiosity, and commitment. Priority is given to applicants from Imo State and the Southeast, but it is open nationwide.",
     },
     {
-        question: "Lorem ipsum dolor sit amet consectetur.",
-        answer: "",
+        question: "How long is the program?",
+        answer: "It’s a year-long journey, with in-person bootcamps in Owerri and structured remote mentorship phases.",
+    },
+    {
+        question: "Will I get funding if I join?",
+        answer: "This is not a grant or funding program. However, you’ll gain mentorship, global networks, and investor visibility — which often leads to funding opportunities later.",
+    },
+    {
+        question: "What will I gain from the program?",
+        answer: "You’ll gain founder mindset training, startup execution skills, global exposure, mentorship from Silicon Valley experts, and the chance to compete for a place in the final Silicon Valley immersion.",
+    },
+    {
+        question: "Do I need to quit my job or school to join?",
+        answer: "No. You don’t need to quit, but you must be able to commit to the schedule (in-person bootcamps, remote intensives, and team projects)",
+    },
+    {
+        question: "How are participants selected?",
+        answer: "Selection is based on mindset, coachability, problem-solving drive, and commitment — not on prior business success. Both AI pre-screening and human reviewers will evaluate applicants.",
+    },
+    {
+        question: "What happens after the program?",
+        answer: "You’ll join the IDCL Alumni Network, with continued access to mentors, opportunities, and future programs. The goal is to set you up for long-term success as a founder.",
+    },
+    {
+        question: "How do I apply?",
+        answer: "Click “Apply Now” on the official portal, fill out your profile and essays, and submit before the deadline. Shortlisted applicants will be notified by email and SMS.",
     },
 ];
 
 export default function FoundersFaqs() {
     return (
-        <section className="relative w-full mb-20">
+        <section className="relative w-full mb-20 mt-20">
             <Image
                 src="/images/tour/upward.png"
                 alt="Decorative top element"
@@ -31,7 +55,7 @@ export default function FoundersFaqs() {
             />
 
             {/* Main content with background image */}
-            <div className="relative w-full h-auto lg:h-[550px] flex flex-col items-center justify-center">
+            <div className="relative w-full h-auto flex flex-col items-center justify-center">
                 {/* Background image */}
                 <div className="absolute inset-0 -z-10">
                     <Image
@@ -54,7 +78,7 @@ export default function FoundersFaqs() {
                         </p>
                     </div>
 
-                    <div className="flex flex-col w-full lg:w-[605px] items-center gap-[19px]">
+                    <div className="flex flex-col w-full lg:w-[605px] max-h-[550px] overflow-y-auto items-center gap-[19px]">
                         {Questions.map((item, index) => (
                             <div
                                 key={index}

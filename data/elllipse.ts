@@ -192,8 +192,8 @@ export const EllipseData = [
     },
     {
         name: names.founders,
-        header: 'Applications for the Next Cohort Are Now Open',
-        body: "Submit your application before [Deadline Date] and take the first step toward global acceleration.",
+        header: 'Register your interest Now for the Founders Development Program',
+        body: "Get notified when application opens.",
         buttons: {
             first: {
                 name: 'Apply Now',

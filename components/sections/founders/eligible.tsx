@@ -52,7 +52,7 @@ export default function FoundersQualification() {
                         visible: { opacity: 1 }
                     }}
                 >
-                    Why Join the Founders Hackathon?
+                    Why Join the Founders Development Program?
                 </motion.h1>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-[30px] w-full max-w-[855px]">

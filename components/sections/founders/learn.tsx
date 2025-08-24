@@ -5,19 +5,19 @@ import { motion } from "framer-motion";
 const organisation = [
     {
         image: '/images/founders/learn/one.png',
-        body: 'Early-stage tech founders in Africa'
+        body: 'Young Ambitious Talents'
     },
     {
         image: '/images/founders/learn/two.png',
-        body: 'MVP or prototype ready'
+        body: 'Problem solvers with scalable ideas'
     },
     {
         image: '/images/founders/learn/three.png',
-        body: 'Strong team with clear vision'
+        body: 'Open minded builders'
     },
     {
         image: '/images/founders/learn/four.png',
-        body: 'Ambition to scale globally'
+        body: 'Committed team players'
     },
 ]
 

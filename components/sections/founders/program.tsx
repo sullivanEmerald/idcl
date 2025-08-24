@@ -5,32 +5,37 @@ import { motion } from "framer-motion";
 const TourProcess = [
     {
         stage: "01",
-        header: "Hackathon Kickoff",
-        body: "Virtual competition begins",
+        header: "Founder Selection",
+        body: "3-Day Bootcamp to stress test the founders (not the idea)",
+        list: ["100 candidates", "1 week", "In person"],
         color: "#00008E",
     },
     {
         stage: "02",
-        header: "Top Teams Selected ",
-        body: "Cohort formation",
+        header: "Opportunity Discovery",
+        body: "prototype validated through customer interviews",
+        list: ["40 participants", "11 weeks", "Hybrid"],
         color: "#005F8E",
     },
     {
         stage: "03",
-        header: "Acceleration Phase",
-        body: "Monthly check-ins, masterclasses",
+        header: "Solution Creation",
+        body: "MVP and early traction in the form of actual customers",
+        list: ["16 weeks", "12 teams", "Hybrid"],
         color: "#008E80",
     },
     {
         stage: "04",
-        header: "Demo Day Africa",
-        body: "Regional investor showcase",
+        header: "Local Go To Market",
+        body: "validate, refine, and execute market entry strategies",
+        list: ["12 weeks", "six start-ups", "hybrid"],
         color: "#80008E",
     },
     {
         stage: "05",
-        header: "Silicon Valley Final Pitch",
-        body: " For top 3 startups",
+        header: "Global Go to Market",
+        body: "Repeatable sales model and good validation of the business model",
+        list: ["3 weeks in silicon valley", "3 Teams", "Demo-day"],
         color: "#8E3E00",
     },
 ];
@@ -82,7 +87,7 @@ export default function FoundersProgram() {
                         }}
                     >
                         <h1
-                            className="font-poppins absolute top-[-30px] sm:top-[-45px] lg:top-[-59px] left-[-5px] sm:left-[-8px] lg:left-[-11px] font-bold text-[80px] sm:text-[120px] lg:text-[160px] leading-[100px] sm:leading-[150px] lg:leading-[200px]"
+                            className="font-poppins absolute top-[-30px] sm:top-[-45px] lg:top-[-70px] left-[-5px] sm:left-[-8px] lg:left-[-11px] font-bold text-[80px] sm:text-[120px] lg:text-[160px] leading-[100px] sm:leading-[150px] lg:leading-[200px]"
                             style={{ color: item.color, opacity: "0.1" }}
                         >
                             {item.stage}
@@ -94,6 +99,19 @@ export default function FoundersProgram() {
                             <p className="font-satoshi text-[14px] sm:text-[15px] lg:text-[16px] leading-[18px] sm:leading-[19.5px] lg:leading-[21px] font-medium text-center text-[#475467] self-stretch">
                                 {item.body}
                             </p>
+                            <div className="w-full flex flex-col gap-[10px] sm:gap-[12px] lg:gap-[15px]">
+                                {item.list.map((listItem, listIndex) => (
+                                    <div
+                                        key={listIndex}
+                                        className="flex items-start gap-2"
+                                    >
+                                        <div className="w-2 h-2 mt-1 rounded-full bg-[#000]" />
+                                        <p className="font-satoshi text-[14px] sm:text-[15px] lg:text-[16px] leading-[18px] sm:leading-[19.5px] lg:leading-[21px] font-normal text-[#475467]">
+                                            {listItem}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </motion.div>
                 ))}

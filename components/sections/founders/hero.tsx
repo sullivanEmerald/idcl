@@ -63,7 +63,7 @@ export default function FoundersDevelopmentProgramPage() {
 
             {/* Content Container */}
             <motion.div
-                className="absolute top-8 md:top-[100px] left-0 md:left-10 right-0 w-full px-4 sm:px-6 md:px-8 max-w-full flex flex-col gap-6 sm:gap-8 md:gap-[15px] items-center lg:items-start z-20"
+                className="absolute top-8 md:top-[150px] left-0 md:left-10 right-0 w-full px-4 sm:px-6 md:px-8 max-w-full flex flex-col gap-6 sm:gap-8 md:gap-[15px] items-center lg:items-start z-20"
                 initial={{ opacity: 0, y: 60 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
@@ -96,7 +96,7 @@ export default function FoundersDevelopmentProgramPage() {
                                 className="rounded-[56px] py-3 sm:py-4 md:py-[16px] px-4 sm:px-5 md:px-[22px] bg-[#005DFF] text-white flex items-center justify-center gap-2 sm:gap-[10px] font-roboto font-medium transition-all hover:bg-[#003399] text-sm sm:text-base w-full sm:w-auto h-[50px]"
                                 type="button"
                             >
-                                Apply Now
+                                Register Interest
                             </button>
                         </DialogTrigger>
                         <DialogContent
@@ -105,13 +105,14 @@ export default function FoundersDevelopmentProgramPage() {
                             <DialogHeader>
                                 <DialogDescription>
                                     <div className="relative z-10 flex flex-col justify-center items-center gap-[32px] py-[32px] px-4 sm:px-6">
-                                        <h3 className="font-satoshi text-[24px] sm:text-[32px] md:text-[36px] font-black leading-tight lg:leading-[50px] text-[#005DFF] text-center">
-                                            Founders Development Application Form
+                                        <h3 className="text-[#000] font-satoshi text-2xl sm:text-3xl lg:text-[32px] font-bold leading-[110%] capitalize text-center mb-8 text-[#005DFF]">
+                                            Get Notified when application opens
                                         </h3>
                                         <div className="w-full max-w-[500px] md:max-w-[550px] lg:w-[534px] rounded-[12px] flex flex-col p-3 sm:p-6 md:p-8 border border-[#E4E4E4] bg-white">
                                             <form className="flex flex-col gap-[18px]">
                                                 <iframe
-                                                    src="https://office.imodigitalcity.com/idcl-fdp-application"
+                                                    // src="https://office.imodigitalcity.com/idcl-fdp-application"
+                                                    src="https://office.imodigitalcity.com/founderdojo"
                                                     title="Partnership Application"
                                                     width="100%"
                                                     height="600"

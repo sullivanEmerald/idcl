@@ -6,14 +6,16 @@ import FoundersLearn from "@/components/sections/founders/learn";
 import FoundersProgram from "@/components/sections/founders/program";
 import FoundersFaqs from "@/components/sections/founders/faqs";
 import { names } from "@/data/elllipse";
+import FoundersApply from "@/components/sections/founders/apply";
 export default function FoundersDevelopmentProgram() {
     return (
         <>
             <FoundersDevelopmentProgramPage />
             <FoundersDevelopmentHakathon />
-            <FoundersLearn />
-            <FoundersQualification />
             <FoundersProgram />
+            <FoundersLearn />
+            <FoundersApply />
+            <FoundersQualification />
             <FoundersFaqs />
             <GeneralEllipse name={names.founders} />
         </>
