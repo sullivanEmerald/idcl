@@ -16,7 +16,7 @@ export default function FoundersDevelopmentHakathon() {
                 />
             </div>
             <div className="w-full max-w-[500px] flex flex-col items-center justify-center text-center gap-4">
-                <h1 className="font-satoshi text-2xl sm:text-3xl md:text-4xl font-bold mb-2">What is the Founders Development Hackathon?</h1>
+                <h1 className="font-satoshi text-2xl sm:text-3xl md:text-5xl font-bold mb-2">From Owerri to the World!!</h1>
                 <ul className="list-disc list-inside text-base sm:text-lg md:text-xl text-[#222] space-y-2">
                     {foundersReason.map((item, index) => (
                         <li key={index}>{item}</li>
