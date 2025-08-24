@@ -68,7 +68,7 @@ export default function FoundersProgram() {
                 {TourProcess.map((item, index) => (
                     <motion.div
                         key={index}
-                        className="relative w-full sm:w-[280px] lg:w-[264px] flex-shrink-0"
+                        className="relative w-full sm:w-[280px] lg:w-[264px] flex-shrink-0 flex flex-col items-start"
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: false, amount: 0.2 }}
@@ -92,7 +92,7 @@ export default function FoundersProgram() {
                         >
                             {item.stage}
                         </h1>
-                        <div className="flex w-full sm:w-[280px] lg:w-[264px] h-auto lg:h-[203px] py-[24px] sm:py-[30px] lg:py-[36px] px-[20px] sm:px-[25px] lg:px-[30px] flex-col justify-center items-center gap-[15px] sm:gap-[20px] lg:gap-[25px]">
+                        <div className="flex w-full sm:w-[280px] lg:w-[264px] h-auto lg:h-[203px] py-[24px] sm:py-[30px] lg:py-[36px] px-[20px] sm:px-[25px] lg:px-[30px] flex-col items-start gap-[15px] sm:gap-[20px] lg:gap-[25px]">
                             <p className="text-[#000] text-center font-satoshi text-[16px] sm:text-[18px] lg:text-[20px] font-bold">
                                 {item.header}
                             </p>

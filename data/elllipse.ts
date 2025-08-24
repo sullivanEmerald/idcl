@@ -192,7 +192,7 @@ export const EllipseData = [
     },
     {
         name: names.founders,
-        header: 'Register your interest Now for the Founders Development Program',
+        header: 'Register your interest!!!',
         body: "Get notified when application opens.",
         buttons: {
             first: {
@@ -201,6 +201,5 @@ export const EllipseData = [
             },
 
         }
-
     },
 ]

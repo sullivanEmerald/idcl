@@ -9,7 +9,7 @@ const organisation = [
     },
     {
         image: '/images/founders/learn/two.png',
-        body: 'Problem solvers with scalable ideas'
+        body: 'Problem solvers'
     },
     {
         image: '/images/founders/learn/three.png',
