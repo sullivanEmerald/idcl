@@ -82,7 +82,7 @@ export default function FoundersDevelopmentProgramPage() {
                     className="flex items-start border-l-4 border-white pl-3 sm:pl-6 md:pl-[25px] w-full max-w-[900px]"
                 >
                     <p className="font-satoshi font-medium text-sm sm:text-lg md:text-xl lg:text-[24px] leading-[1.4] md:leading-[1.42] tracking-[0.007em] text-white text-center lg:text-left">
-                        Compete, connect, and grow through a year-long acceleration journey. Work with global mentors, pitch to world-class investors, and unlock opportunities beyond borders. Applications now open.
+                        Compete, connect, and grow through a year-long acceleration journey. Work with global mentors, pitch to world-class investors, and unlock opportunities beyond borders.
                     </p>
                 </motion.div>
 
